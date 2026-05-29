@@ -1,13 +1,12 @@
 schema:
   name: string
   image: string
-  verse:
-    name: string
-    media: string
-    origin: string
-  gender: string
-  age: string
-  classifications: list
+  verse_id: option_id
+  gender_id: option_id
+  age:
+    value: integer_or_null
+    unknown: boolean
+  classification_ids: list
   keys:
     - name: string
       image: string
@@ -26,16 +25,55 @@ schema:
       intelligence: string
       attacks: list
 
+options:
+  media:
+    - id: comics
+      name: "Comics"
+  origins:
+    - id: marvel-comics
+      name: "Marvel Comics"
+      media_id: comics
+  verses:
+    - id: marvel-mainstream
+      name: "Mainstream"
+      media_id: comics
+      origin_id: marvel-comics
+    - id: marvel-maestro
+      name: "Maestro"
+      media_id: comics
+      origin_id: marvel-comics
+  genders:
+    - id: male
+      name: "Male"
+    - id: female
+      name: "Female"
+    - id: nonbinary
+      name: "Non-binary"
+    - id: unknown
+      name: "Unknown"
+  classifications:
+    - id: human-mutate
+      name: "Human Mutate"
+    - id: scientist
+      name: "Scientist"
+    - id: fugitive-on-the-run
+      name: "Fugitive on the Run"
+    - id: avenger
+      name: "Avenger"
+    - id: defender
+      name: "Defender"
+    - id: avatar-of-the-devil
+      name: "Avatar of the Devil"
+
 empty_character:
   name: ""
   image: ""
-  verse:
-    name: ""
-    media: ""
-    origin: ""
-  gender: ""
-  age: ""
-  classifications: []
+  verse_id: ""
+  gender_id: unknown
+  age:
+    value: null
+    unknown: true
+  classification_ids: []
   keys:
     - name: ""
       image: ""
