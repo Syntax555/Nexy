@@ -2,6 +2,13 @@
 
 Jekyll is a static site generator that transforms Markdown content into complete websites. It's blog-aware and powers GitHub Pages.
 
+## GitHub Pages Compatibility
+
+- Treat GitHub Pages compatibility as a requirement for every site change.
+- Use Jekyll features, plugins, and configuration that work on GitHub Pages, or include a documented GitHub Pages-compatible fallback.
+- Before considering work finished, run the relevant production build/deploy check, such as `JEKYLL_ENV=production bundle exec jekyll build`, and confirm the site can deploy cleanly to GitHub Pages.
+- When the user asks for finished work to be published, commit the completed changes and push them to the GitHub remote.
+
 ## Installation
 
 ### Prerequisites
