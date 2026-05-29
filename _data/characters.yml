@@ -1,30 +1,49 @@
-# Internal character data for future pages.
-# This file is data-only and does not render anything by itself.
-#
-# Replace the empty list below with entries using this shape:
-#
-# characters:
-#   - tier: ""
-#     name: ""
-#     verse:
-#       name: "" # Optional verse label, such as Mainstream. Leave empty for now.
-#       media: "" # Example: Comics
-#       origin: "" # Example: Marvel Comics
-#     gender: ""
-#     age: ""
-#     classifications: []
-#     powers: []
-#     resistances: []
-#     attack_potency: ""
-#     speed: ""
-#     lifting_strength: ""
-#     striking_strength: ""
-#     durability: ""
-#     stamina: ""
-#     range: ""
-#     standard_equipment: []
-#     optional_equipment: []
-#     intelligence: ""
-#     attacks: []
+schema:
+  tier: string
+  name: string
+  verse:
+    name: string
+    media: string
+    origin: string
+  gender: string
+  age: string
+  classifications: list
+  powers: list
+  resistances: list
+  attack_potency: string
+  speed: string
+  lifting_strength: string
+  striking_strength: string
+  durability: string
+  stamina: string
+  range: string
+  standard_equipment: list
+  optional_equipment: list
+  intelligence: string
+  attacks: list
+
+empty_character:
+  tier: ""
+  name: ""
+  verse:
+    name: ""
+    media: ""
+    origin: ""
+  gender: ""
+  age: ""
+  classifications: []
+  powers: []
+  resistances: []
+  attack_potency: ""
+  speed: ""
+  lifting_strength: ""
+  striking_strength: ""
+  durability: ""
+  stamina: ""
+  range: ""
+  standard_equipment: []
+  optional_equipment: []
+  intelligence: ""
+  attacks: []
 
 characters: []
