@@ -10,6 +10,7 @@ schema:
   classifications: list
   keys:
     - name: string
+      image: string
       tier: string
       powers: list
       resistances: list
@@ -37,6 +38,7 @@ empty_character:
   classifications: []
   keys:
     - name: "Standard"
+      image: ""
       tier: ""
       powers: []
       resistances: []
