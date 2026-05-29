@@ -27,7 +27,7 @@ schema:
       range: string
       standard_equipment: list
       optional_equipment: list
-      intelligence: string
+      intelligence: intelligence_tier_id
       attacks: list
 
 options:
@@ -631,6 +631,46 @@ options:
     - id: inapplicable
       name: "Inapplicable"
       rank: 55
+  intelligence_tiers:
+    - id: mindless
+      name: "Mindless"
+      rank: 1
+    - id: instinctive
+      name: "Instinctive"
+      rank: 2
+    - id: animalistic
+      name: "Animalistic"
+      rank: 3
+    - id: high-animalistic
+      name: "High Animalistic"
+      rank: 4
+    - id: below-average
+      name: "Below Average"
+      rank: 5
+    - id: average
+      name: "Average"
+      rank: 6
+    - id: above-average
+      name: "Above Average"
+      rank: 7
+    - id: gifted
+      name: "Gifted"
+      rank: 8
+    - id: genius
+      name: "Genius"
+      rank: 9
+    - id: extraordinary-genius
+      name: "Extraordinary Genius"
+      rank: 10
+    - id: supergenius
+      name: "Supergenius"
+      rank: 11
+    - id: nigh-omniscient
+      name: "Nigh-Omniscient"
+      rank: 12
+    - id: omniscient
+      name: "Omniscient"
+      rank: 13
 
 empty_character:
   name: ""
@@ -654,7 +694,7 @@ empty_character:
       range: ""
       standard_equipment: []
       optional_equipment: []
-      intelligence: ""
+      intelligence: mindless
       attacks: []
 
 characters: []
