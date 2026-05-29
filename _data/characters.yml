@@ -12,11 +12,11 @@ schema:
       tier: string
       powers: list
       resistances: list
-      attack_potency: string
+      attack_potency: attack_durability_tier_id
       speed: string
       lifting_strength: string
       striking_strength: string
-      durability: string
+      durability: attack_durability_tier_id
       stamina: string
       range: string
       standard_equipment: list
@@ -63,6 +63,169 @@ options:
       name: "Defender"
     - id: avatar-of-the-devil
       name: "Avatar of the Devil"
+  attack_durability_tiers:
+    - id: low-hypoverse
+      name: "Low Hypoverse"
+      rank: 1
+    - id: hypoverse
+      name: "Hypoverse"
+      rank: 2
+    - id: high-hypoverse
+      name: "High Hypoverse"
+      rank: 3
+    - id: below-average-human
+      name: "Below Average Human"
+      rank: 4
+    - id: human
+      name: "Human"
+      rank: 5
+    - id: athlete
+      name: "Athlete"
+      rank: 6
+    - id: street
+      name: "Street"
+      rank: 7
+    - id: wall
+      name: "Wall"
+      rank: 8
+    - id: small-building
+      name: "Small Building"
+      rank: 9
+    - id: building
+      name: "Building"
+      rank: 10
+    - id: large-building
+      name: "Large Building"
+      rank: 11
+    - id: city-block
+      name: "City Block"
+      rank: 12
+    - id: multi-city-block
+      name: "Multi-City Block"
+      rank: 13
+    - id: small-town
+      name: "Small Town"
+      rank: 14
+    - id: town
+      name: "Town"
+      rank: 15
+    - id: large-town
+      name: "Large Town"
+      rank: 16
+    - id: small-city
+      name: "Small City"
+      rank: 17
+    - id: city
+      name: "City"
+      rank: 18
+    - id: mountain
+      name: "Mountain"
+      rank: 19
+    - id: large-mountain
+      name: "Large Mountain"
+      rank: 20
+    - id: island
+      name: "Island"
+      rank: 21
+    - id: large-island
+      name: "Large Island"
+      rank: 22
+    - id: small-country
+      name: "Small Country"
+      rank: 23
+    - id: country
+      name: "Country"
+      rank: 24
+    - id: large-country
+      name: "Large Country"
+      rank: 25
+    - id: continent
+      name: "Continent"
+      rank: 26
+    - id: multi-continent
+      name: "Multi-Continent"
+      rank: 27
+    - id: moon
+      name: "Moon"
+      rank: 28
+    - id: small-planet
+      name: "Small Planet"
+      rank: 29
+    - id: planet
+      name: "Planet"
+      rank: 30
+    - id: large-planet
+      name: "Large Planet"
+      rank: 31
+    - id: brown-dwarf
+      name: "Brown Dwarf"
+      rank: 32
+    - id: small-star
+      name: "Small Star"
+      rank: 33
+    - id: star
+      name: "Star"
+      rank: 34
+    - id: large-star
+      name: "Large Star"
+      rank: 35
+    - id: solar-system
+      name: "Solar System"
+      rank: 36
+    - id: multi-solar-system
+      name: "Multi-Solar System"
+      rank: 37
+    - id: galaxy
+      name: "Galaxy"
+      rank: 38
+    - id: multi-galaxy
+      name: "Multi-Galaxy"
+      rank: 39
+    - id: universe
+      name: "Universe"
+      rank: 40
+    - id: high-universe
+      name: "High Universe"
+      rank: 41
+    - id: universe-plus
+      name: "Universe+"
+      rank: 42
+    - id: low-multiverse
+      name: "Low Multiverse"
+      rank: 43
+    - id: multiverse
+      name: "Multiverse"
+      rank: 44
+    - id: multiverse-plus
+      name: "Multiverse+"
+      rank: 45
+    - id: low-complex-multiverse
+      name: "Low Complex Multiverse"
+      rank: 46
+    - id: complex-multiverse
+      name: "Complex Multiverse"
+      rank: 47
+    - id: high-complex-multiverse
+      name: "High Complex Multiverse"
+      rank: 48
+    - id: hyperverse
+      name: "Hyperverse"
+      rank: 49
+    - id: high-hyperverse
+      name: "High Hyperverse"
+      rank: 50
+    - id: low-outerverse
+      name: "Low Outerverse"
+      rank: 51
+    - id: outerverse
+      name: "Outerverse"
+      rank: 52
+    - id: high-outerverse
+      name: "High Outerverse"
+      rank: 53
+    - id: boundless
+      name: "Boundless"
+      rank: 54
 
 empty_character:
   name: ""
