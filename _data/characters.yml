@@ -1,5 +1,4 @@
 schema:
-  tier: string
   name: string
   image: string
   verse:
@@ -9,22 +8,24 @@ schema:
   gender: string
   age: string
   classifications: list
-  powers: list
-  resistances: list
-  attack_potency: string
-  speed: string
-  lifting_strength: string
-  striking_strength: string
-  durability: string
-  stamina: string
-  range: string
-  standard_equipment: list
-  optional_equipment: list
-  intelligence: string
-  attacks: list
+  keys:
+    - name: string
+      tier: string
+      powers: list
+      resistances: list
+      attack_potency: string
+      speed: string
+      lifting_strength: string
+      striking_strength: string
+      durability: string
+      stamina: string
+      range: string
+      standard_equipment: list
+      optional_equipment: list
+      intelligence: string
+      attacks: list
 
 empty_character:
-  tier: ""
   name: ""
   image: ""
   verse:
@@ -34,18 +35,21 @@ empty_character:
   gender: ""
   age: ""
   classifications: []
-  powers: []
-  resistances: []
-  attack_potency: ""
-  speed: ""
-  lifting_strength: ""
-  striking_strength: ""
-  durability: ""
-  stamina: ""
-  range: ""
-  standard_equipment: []
-  optional_equipment: []
-  intelligence: ""
-  attacks: []
+  keys:
+    - name: "Standard"
+      tier: ""
+      powers: []
+      resistances: []
+      attack_potency: ""
+      speed: ""
+      lifting_strength: ""
+      striking_strength: ""
+      durability: ""
+      stamina: ""
+      range: ""
+      standard_equipment: []
+      optional_equipment: []
+      intelligence: ""
+      attacks: []
 
 characters: []
