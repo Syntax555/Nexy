@@ -1,6 +1,5 @@
 schema:
   name: string
-  image: string
   verse_id: option_id
   gender_id: option_id
   age:
@@ -67,7 +66,6 @@ options:
 
 empty_character:
   name: ""
-  image: ""
   verse_id: ""
   gender_id: unknown
   age:
