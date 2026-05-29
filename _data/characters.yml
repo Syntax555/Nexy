@@ -241,11 +241,11 @@ empty_character:
       tier: ""
       powers: []
       resistances: []
-      attack_potency: ""
+      attack_potency: low-hypoverse
       speed: ""
       lifting_strength: ""
       striking_strength: ""
-      durability: ""
+      durability: low-hypoverse
       stamina: ""
       range: ""
       standard_equipment: []
