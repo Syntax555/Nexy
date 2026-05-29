@@ -1,0 +1,12 @@
+title: Nexy
+description: Minimal GitHub Pages site
+url: "https://syntax555.github.io"
+baseurl: "/Nexy"
+
+markdown: kramdown
+exclude:
+  - AGENTS.md
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
