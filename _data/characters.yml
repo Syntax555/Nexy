@@ -1,0 +1,30 @@
+# Internal character data for future pages.
+# This file is data-only and does not render anything by itself.
+#
+# Replace the empty list below with entries using this shape:
+#
+# characters:
+#   - tier: ""
+#     name: ""
+#     verse:
+#       name: "" # Optional verse label, such as Mainstream. Leave empty for now.
+#       media: "" # Example: Comics
+#       origin: "" # Example: Marvel Comics
+#     gender: ""
+#     age: ""
+#     classifications: []
+#     powers: []
+#     resistances: []
+#     attack_potency: ""
+#     speed: ""
+#     lifting_strength: ""
+#     striking_strength: ""
+#     durability: ""
+#     stamina: ""
+#     range: ""
+#     standard_equipment: []
+#     optional_equipment: []
+#     intelligence: ""
+#     attacks: []
+
+characters: []
