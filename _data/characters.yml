@@ -37,7 +37,7 @@ empty_character:
   age: ""
   classifications: []
   keys:
-    - name: "Standard"
+    - name: ""
       image: ""
       tier: ""
       powers: []
