@@ -6,10 +6,16 @@ schema:
     value: integer_or_null
     unknown: boolean
   classification_ids: list
+  derived:
+    key_tier:
+      from:
+        - attack_potency
+        - durability
+      rule: highest_rank
+      display: attack_durability_tiers.tier
   keys:
     - name: string
       image: string
-      tier: string
       powers: list
       resistances: list
       attack_potency: attack_durability_tier_id
@@ -66,165 +72,219 @@ options:
   attack_durability_tiers:
     - id: low-hypoverse
       name: "Low Hypoverse"
+      tier: "11-C"
       rank: 1
     - id: hypoverse
       name: "Hypoverse"
+      tier: "11-B"
       rank: 2
     - id: high-hypoverse
       name: "High Hypoverse"
+      tier: "11-A"
       rank: 3
     - id: below-average-human
       name: "Below Average Human"
+      tier: "10-C"
       rank: 4
     - id: human
       name: "Human"
+      tier: "10-B"
       rank: 5
     - id: athlete
       name: "Athlete"
+      tier: "10-A"
       rank: 6
     - id: street
       name: "Street"
+      tier: "9-C"
       rank: 7
     - id: wall
       name: "Wall"
+      tier: "9-B"
       rank: 8
     - id: small-building
       name: "Small Building"
+      tier: "9-A"
       rank: 9
     - id: building
       name: "Building"
+      tier: "8-C"
       rank: 10
     - id: large-building
       name: "Large Building"
+      tier: "High 8-C"
       rank: 11
     - id: city-block
       name: "City Block"
+      tier: "8-B"
       rank: 12
     - id: multi-city-block
       name: "Multi-City Block"
+      tier: "8-A"
       rank: 13
     - id: small-town
       name: "Small Town"
+      tier: "Low 7-C"
       rank: 14
     - id: town
       name: "Town"
+      tier: "7-C"
       rank: 15
     - id: large-town
       name: "Large Town"
+      tier: "High 7-C"
       rank: 16
     - id: small-city
       name: "Small City"
+      tier: "Low 7-B"
       rank: 17
     - id: city
       name: "City"
+      tier: "7-B"
       rank: 18
     - id: mountain
       name: "Mountain"
+      tier: "7-A"
       rank: 19
     - id: large-mountain
       name: "Large Mountain"
+      tier: "High 7-A"
       rank: 20
     - id: island
       name: "Island"
+      tier: "6-C"
       rank: 21
     - id: large-island
       name: "Large Island"
+      tier: "High 6-C"
       rank: 22
     - id: small-country
       name: "Small Country"
+      tier: "Low 6-B"
       rank: 23
     - id: country
       name: "Country"
+      tier: "6-B"
       rank: 24
     - id: large-country
       name: "Large Country"
+      tier: "High 6-B"
       rank: 25
     - id: continent
       name: "Continent"
+      tier: "6-A"
       rank: 26
     - id: multi-continent
       name: "Multi-Continent"
+      tier: "High 6-A"
       rank: 27
     - id: moon
       name: "Moon"
+      tier: "5-C"
       rank: 28
     - id: small-planet
       name: "Small Planet"
+      tier: "Low 5-B"
       rank: 29
     - id: planet
       name: "Planet"
+      tier: "5-B"
       rank: 30
     - id: large-planet
       name: "Large Planet"
+      tier: "5-A"
       rank: 31
     - id: brown-dwarf
       name: "Brown Dwarf"
+      tier: "High 5-A"
       rank: 32
     - id: small-star
       name: "Small Star"
+      tier: "Low 4-C"
       rank: 33
     - id: star
       name: "Star"
+      tier: "4-C"
       rank: 34
     - id: large-star
       name: "Large Star"
+      tier: "High 4-C"
       rank: 35
     - id: solar-system
       name: "Solar System"
+      tier: "4-B"
       rank: 36
     - id: multi-solar-system
       name: "Multi-Solar System"
+      tier: "4-A"
       rank: 37
     - id: galaxy
       name: "Galaxy"
+      tier: "3-C"
       rank: 38
     - id: multi-galaxy
       name: "Multi-Galaxy"
+      tier: "3-B"
       rank: 39
     - id: universe
       name: "Universe"
+      tier: "3-A"
       rank: 40
     - id: high-universe
       name: "High Universe"
+      tier: "High 3-A"
       rank: 41
     - id: universe-plus
       name: "Universe+"
+      tier: "Low 2-C"
       rank: 42
     - id: low-multiverse
       name: "Low Multiverse"
+      tier: "2-C"
       rank: 43
     - id: multiverse
       name: "Multiverse"
+      tier: "2-B"
       rank: 44
     - id: multiverse-plus
       name: "Multiverse+"
+      tier: "2-A"
       rank: 45
     - id: low-complex-multiverse
       name: "Low Complex Multiverse"
+      tier: "Low 1-C"
       rank: 46
     - id: complex-multiverse
       name: "Complex Multiverse"
+      tier: "1-C"
       rank: 47
     - id: high-complex-multiverse
       name: "High Complex Multiverse"
+      tier: "High 1-C"
       rank: 48
     - id: hyperverse
       name: "Hyperverse"
+      tier: "1-B"
       rank: 49
     - id: high-hyperverse
       name: "High Hyperverse"
+      tier: "High 1-B"
       rank: 50
     - id: low-outerverse
       name: "Low Outerverse"
+      tier: "Low 1-A"
       rank: 51
     - id: outerverse
       name: "Outerverse"
+      tier: "1-A"
       rank: 52
     - id: high-outerverse
       name: "High Outerverse"
+      tier: "High 1-A"
       rank: 53
     - id: boundless
       name: "Boundless"
+      tier: "0"
       rank: 54
 
 empty_character:
@@ -238,7 +298,6 @@ empty_character:
   keys:
     - name: ""
       image: ""
-      tier: ""
       powers: []
       resistances: []
       attack_potency: low-hypoverse
