@@ -70,11 +70,11 @@ schema:
       nature_sets_field: magic_natures
       nature_ref_field: magic_nature_ids
       applies_to: raw_magic_itself_not_sorcerer_user_level
+      alias_rule: aliases_are_same_magic_nature_not_separate_entries
       grant_rule: magic_power_refs_may_inherit_raw_magic_nature_grants
       duplicate_power_rule: strongest_profile_or_effect_wins
       examples:
-        nature_of_magic: raw_magic_properties
-        magical_energy: raw_magical_energy_properties
+        nature_of_magic_or_magical_energy: raw_magic_properties
     usage_requirements:
       applies_to:
         - equipment
@@ -140,6 +140,7 @@ schema:
       magic_nature:
         id: string
         name: string
+        aliases: list
         description: string
         applies_to: raw_magic
         inherits_nature_ids: list
@@ -395,13 +396,6 @@ options:
         - magic
       type_ids: []
       effects: []
-    - id: magical-energy
-      name: "Magical Energy"
-      tags:
-        - magic
-        - raw-magic
-      type_ids: []
-      effects: []
     - id: conceptual-manipulation
       name: "Conceptual Manipulation"
       tags: []
@@ -479,7 +473,9 @@ options:
   magic_natures:
     - id: nature-of-magic
       name: "Nature of Magic"
-      description: "Powers and abilities of raw magic itself, not a sorcerer-user level."
+      aliases:
+        - "Magical Energy"
+      description: "Powers and abilities of raw magic/magical energy itself, not a sorcerer-user level."
       applies_to: raw_magic
       inherits_nature_ids: []
       power_refs:
@@ -489,23 +485,6 @@ options:
           magic_level_id: null
           magic_nature_ids:
             - nature-of-magic
-          condition: null
-          effects: null
-      resistance_refs: []
-      effects: []
-    - id: magical-energy
-      name: "Magical Energy"
-      description: "Properties and abilities of raw magical energy itself."
-      applies_to: raw_magic
-      inherits_nature_ids:
-        - nature-of-magic
-      power_refs:
-        - id: magical-energy
-          modifier: normal
-          type_ids: []
-          magic_level_id: null
-          magic_nature_ids:
-            - magical-energy
           condition: null
           effects: null
       resistance_refs: []
