@@ -397,11 +397,11 @@ options:
     - id: marvel-mainstream
       name: "Mainstream"
       media_id: comics
-      origin_id: marvel-comics
+      source_id: marvel-comics
     - id: marvel-maestro
       name: "Maestro"
       media_id: comics
-      origin_id: marvel-comics
+      source_id: marvel-comics
   genders:
     - id: male
       name: "Male"
