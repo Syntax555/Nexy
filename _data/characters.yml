@@ -28,7 +28,10 @@ schema:
       attack_potency:
         value: attack_durability_tier_id
         modifier: stat_modifier_id
-      speed:
+      combat_speed:
+        value: speed_tier_id
+        modifier: stat_modifier_id
+      reaction_speed:
         value: speed_tier_id
         modifier: stat_modifier_id
       lifting_strength:
@@ -883,7 +886,10 @@ empty_character:
       attack_potency:
         value: low-hypoverse
         modifier: normal
-      speed:
+      combat_speed:
+        value: immobile
+        modifier: normal
+      reaction_speed:
         value: immobile
         modifier: normal
       lifting_strength:
