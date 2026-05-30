@@ -29,11 +29,57 @@ schema:
         - travel_speed
         - flight_speed
       compare_rule: ignore_null
+    effects:
+      activation_rule: requirements_met_and_not_nullified
+      stat_rule: best_composite_rank_per_stat
+      source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
+      nullification_rule: matching_resistance_ids_disable_effect
+      stat_effects:
+        attack_potency: ranked_attack_durability_or_null
+        attack_speed: ranked_speed_or_null
+        combat_speed: ranked_speed_or_null
+        reaction_speed: ranked_speed_or_null
+        travel_speed: ranked_speed_or_null
+        flight_speed: ranked_speed_or_null
+        lifting_strength: ranked_lifting_strength_or_null
+        striking_strength: ranked_striking_strength_or_null
+        durability: ranked_attack_durability_or_null
+        stamina: ranked_stamina_or_null
+        range: ranked_range_or_null
+        intelligence: ranked_intelligence_or_null
+      grants:
+        power_ids: list
+        resistance_ids: list
+      requirements:
+        stat_minimums: list
+        power_ids: list
+        equipment_ids: list
+      nullified_by:
+        resistance_ids: list
+        power_ids: list
+    catalog_entries:
+      power:
+        id: string
+        name: string
+        effects: list
+      resistance:
+        id: string
+        name: string
+        resists_power_ids: list
+        resists_effect_ids: list
+      equipment:
+        id: string
+        name: string
+        effects: list
+      attack:
+        id: string
+        name: string
+        effects: list
   keys:
     - name: string
       image: string
-      powers: list
-      resistances: list
+      power_ids: list
+      resistance_ids: list
       attack_potency:
         value: attack_durability_tier_id
         modifier: stat_modifier_id
@@ -59,12 +105,12 @@ schema:
       range:
         value: range_tier_id
         modifier: stat_modifier_id
-      standard_equipment: list
-      optional_equipment: list
+      standard_equipment_ids: list
+      optional_equipment_ids: list
       intelligence:
         value: intelligence_tier_id
         modifier: stat_modifier_id
-      attacks: list
+      attack_ids: list
 
 options:
   stat_modifiers:
@@ -146,6 +192,10 @@ options:
       name: "Defender"
     - id: avatar-of-the-devil
       name: "Avatar of the Devil"
+  powers: []
+  resistances: []
+  equipment: []
+  attacks: []
   attack_durability_tiers:
     - id: low-hypoverse
       name: "Low Hypoverse"
@@ -891,8 +941,8 @@ empty_character:
   keys:
     - name: ""
       image: ""
-      powers: []
-      resistances: []
+      power_ids: []
+      resistance_ids: []
       attack_potency:
         value: low-hypoverse
         modifier: normal
@@ -918,11 +968,11 @@ empty_character:
       range:
         value: below-standard-melee-range
         modifier: normal
-      standard_equipment: []
-      optional_equipment: []
+      standard_equipment_ids: []
+      optional_equipment_ids: []
       intelligence:
         value: mindless
         modifier: normal
-      attacks: []
+      attack_ids: []
 
 characters: []
