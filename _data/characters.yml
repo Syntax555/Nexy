@@ -18,8 +18,16 @@ schema:
         modifier_suffix: stat_modifiers.display_suffix
     ranked_stat:
       value: tier_id
-      modifier: stat_modifier_id
-      composite_rank: "(value.rank - 1) * 8 + modifier.rank"
+      modifier: stat_modifier_id_or_null
+      default_modifier: normal
+      missing_modifier_rule: missing_or_null_modifier_uses_default_modifier
+      shorthand_rule: plain_tier_id_expands_to_value_with_default_modifier
+      composite_rank: "(value.rank - 1) * 8 + resolved_modifier.rank"
+      examples:
+        durability_value_only:
+          value: city
+          resolved_modifier: normal
+        durability_shorthand: city
     key_identity:
       selector_field: key
       names_field: names
@@ -257,34 +265,34 @@ schema:
           condition: string_or_null
       attack_potency:
         value: attack_durability_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       attack_speed: ranked_speed_or_null
       combat_speed:
         value: speed_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       reaction_speed: ranked_speed_or_null
       travel_speed: ranked_speed_or_null
       flight_speed: ranked_speed_or_null
       lifting_strength:
         value: lifting_strength_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       striking_strength:
         value: striking_strength_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       durability:
         value: attack_durability_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       stamina:
         value: stamina_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       range:
         value: range_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       standard_equipment_ids: list
       optional_equipment_ids: list
       intelligence:
         value: intelligence_tier_id
-        modifier: stat_modifier_id
+        modifier: stat_modifier_id_or_null_defaults_to_normal
       attack_ids: list
 
 options:
