@@ -177,6 +177,20 @@ schema:
           id: martial-arts-mastery
           martial_arts_degree_id: expert
         master_martial_artist_beats_expert_when_stats_are_similar: true
+    acrobatics:
+      power_id: acrobatics
+      degree_field: power_refs.acrobatics_degree_id
+      degree_catalog: acrobatics_degrees
+      default_degree: unspecified
+      missing_degree_rule: missing_or_null_degree_uses_default_degree
+      comparison_rule: higher_rank_is_more_skilled
+      stat_rule: acrobatics_degree_is_a_skill_tiebreaker_and_does_not_change_stats_by_itself
+      requirement_rule: required_degree_met_when_owned_degree_rank_gte_required_degree_rank
+      display_rule: degree_name_can_display_instead_of_plain_power_name_when_present
+      examples:
+        expert_acrobat:
+          id: acrobatics
+          acrobatics_degree_id: expert
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -281,6 +295,7 @@ schema:
             modifier: ability_modifier_id
             type_ids: list_or_null
             martial_arts_degree_id: martial_arts_degree_id_or_null
+            acrobatics_degree_id: acrobatics_degree_id_or_null
             magic_level_id: magic_level_id_or_null
             magic_nature_ids: list_or_null
             source_variant: string_or_null
@@ -295,6 +310,7 @@ schema:
             modifier: ability_modifier_id
             type_ids: list_or_null
             martial_arts_degree_id: martial_arts_degree_id_or_null
+            acrobatics_degree_id: acrobatics_degree_id_or_null
             magic_level_id: magic_level_id_or_null
             magic_nature_ids: list_or_null
             source_variant: string_or_null
@@ -311,6 +327,7 @@ schema:
           modifier: ability_modifier_id
           type_ids: list_or_null
           martial_arts_degree_id: martial_arts_degree_id_or_null
+          acrobatics_degree_id: acrobatics_degree_id_or_null
           magic_level_id: magic_level_id_or_null
           magic_nature_ids: list_or_null
           source_variant: string_or_null
@@ -605,6 +622,15 @@ options:
       name: "Master Martial Artist"
       rank: 2
       display_as_power_name: false
+  acrobatics_degrees:
+    - id: unspecified
+      name: "Acrobatics"
+      rank: 0
+      display_as_power_name: true
+    - id: expert
+      name: "Expert Acrobat"
+      rank: 1
+      display_as_power_name: false
   powers:
     - id: weapon-mastery
       name: "Weapon Mastery"
@@ -643,6 +669,19 @@ options:
       degree_ids:
         - expert
         - master
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects: []
+    - id: acrobatics
+      name: "Acrobatics"
+      aliases: []
+      variants: []
+      tags: []
+      type_ids: []
+      degree_ids:
+        - expert
       grants:
         power_refs: []
         resistance_refs: []
