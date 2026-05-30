@@ -162,6 +162,21 @@ schema:
         marksmanship_uses_rifle_or_pistol_equipment: allowed
         sword_mastery_uses_rifle_equipment: not_allowed
         all_weapons_mastery_uses_any_weapon_equipment: allowed
+    martial_arts_mastery:
+      power_id: martial-arts-mastery
+      degree_field: power_refs.martial_arts_degree_id
+      degree_catalog: martial_arts_degrees
+      default_degree: unspecified
+      missing_degree_rule: missing_or_null_degree_uses_default_degree
+      comparison_rule: higher_rank_is_more_skilled
+      stat_rule: martial_arts_degree_is_a_skill_tiebreaker_and_does_not_change_stats_by_itself
+      requirement_rule: required_degree_met_when_owned_degree_rank_gte_required_degree_rank
+      display_rule: degree_name_can_display_instead_of_plain_power_name_when_present
+      examples:
+        expert_martial_artist:
+          id: martial-arts-mastery
+          martial_arts_degree_id: expert
+        master_martial_artist_beats_expert_when_stats_are_similar: true
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -227,6 +242,7 @@ schema:
         variants: list
         tags: list
         type_ids: list
+        degree_ids: list
         grants:
           power_refs: list
           resistance_refs: list
@@ -264,6 +280,7 @@ schema:
           - id: power_id
             modifier: ability_modifier_id
             type_ids: list_or_null
+            martial_arts_degree_id: martial_arts_degree_id_or_null
             magic_level_id: magic_level_id_or_null
             magic_nature_ids: list_or_null
             source_variant: string_or_null
@@ -277,6 +294,7 @@ schema:
           - id: power_id
             modifier: ability_modifier_id
             type_ids: list_or_null
+            martial_arts_degree_id: martial_arts_degree_id_or_null
             magic_level_id: magic_level_id_or_null
             magic_nature_ids: list_or_null
             source_variant: string_or_null
@@ -292,6 +310,7 @@ schema:
         - id: power_id
           modifier: ability_modifier_id
           type_ids: list_or_null
+          martial_arts_degree_id: martial_arts_degree_id_or_null
           magic_level_id: magic_level_id_or_null
           magic_nature_ids: list_or_null
           source_variant: string_or_null
@@ -573,6 +592,19 @@ options:
       name: "Type 1"
       covers_all: false
       covers_type_ids: []
+  martial_arts_degrees:
+    - id: unspecified
+      name: "Martial Arts Mastery"
+      rank: 0
+      display_as_power_name: true
+    - id: expert
+      name: "Expert Martial Artist"
+      rank: 1
+      display_as_power_name: false
+    - id: master
+      name: "Master Martial Artist"
+      rank: 2
+      display_as_power_name: false
   powers:
     - id: weapon-mastery
       name: "Weapon Mastery"
@@ -595,6 +627,7 @@ options:
         - bow
         - crossbow
         - thrown-weapon
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -607,6 +640,9 @@ options:
       tags:
         - mastery
       type_ids: []
+      degree_ids:
+        - expert
+        - master
       grants:
         power_refs: []
         resistance_refs: []
@@ -619,6 +655,7 @@ options:
       tags:
         - mastery
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -630,6 +667,7 @@ options:
       variants: []
       tags: []
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -642,6 +680,7 @@ options:
       tags:
         - magic
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -654,6 +693,7 @@ options:
       tags:
         - magic
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -666,6 +706,7 @@ options:
       tags: []
       type_ids:
         - conceptual-manipulation-type-1
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -679,6 +720,7 @@ options:
         - magic
         - magic-type
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -701,6 +743,7 @@ options:
         - magic
         - magic-type
       type_ids: []
+      degree_ids: []
       grants:
         power_refs:
           - id: mystic-being
@@ -723,6 +766,7 @@ options:
         - magic
         - magic-type
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -736,6 +780,7 @@ options:
         - magic
         - hellfire
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -750,6 +795,7 @@ options:
         - magic-type
         - demonic-magic
       type_ids: []
+      degree_ids: []
       grants:
         power_refs:
           - id: innate-demon-physiology
@@ -778,6 +824,7 @@ options:
       tags:
         - demonic-magic
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -790,6 +837,7 @@ options:
       tags:
         - demonic-magic
       type_ids: []
+      degree_ids: []
       grants:
         power_refs: []
         resistance_refs: []
@@ -803,6 +851,7 @@ options:
         - magic
         - hell-lord
       type_ids: []
+      degree_ids: []
       grants:
         power_refs:
           - id: hellfire
