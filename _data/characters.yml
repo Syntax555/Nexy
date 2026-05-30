@@ -251,8 +251,8 @@ options:
       tags:
         - mastery
       effects: []
-    - id: master-martial-artist
-      name: "Master Martial Artist"
+    - id: martial-arts-mastery
+      name: "Martial Arts Mastery"
       tags:
         - mastery
       effects: []
