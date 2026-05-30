@@ -24,6 +24,12 @@ schema:
       selector_field: key
       names_field: names
       rule: names_belong_to_selected_key
+    key_images:
+      field: images
+      rule: cosmetic_only
+      items:
+        name: string
+        image: string
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -82,7 +88,9 @@ schema:
   keys:
     - key: string
       names: list
-      image: string
+      images:
+        - name: string
+          image: string
       power_ids: list
       resistance_ids: list
       attack_potency:
@@ -946,7 +954,7 @@ empty_character:
   keys:
     - key: ""
       names: []
-      image: ""
+      images: []
       power_ids: []
       resistance_ids: []
       attack_potency:
