@@ -20,6 +20,15 @@ schema:
       value: tier_id
       modifier: stat_modifier_id
       composite_rank: "(value.rank - 1) * 8 + modifier.rank"
+    speed_display:
+      default_label: "Speed"
+      default_field: combat_speed
+      nullable_fields:
+        - attack_speed
+        - reaction_speed
+        - travel_speed
+        - flight_speed
+      compare_rule: ignore_null
   keys:
     - name: string
       image: string
@@ -28,12 +37,13 @@ schema:
       attack_potency:
         value: attack_durability_tier_id
         modifier: stat_modifier_id
+      attack_speed: ranked_speed_or_null
       combat_speed:
         value: speed_tier_id
         modifier: stat_modifier_id
-      reaction_speed:
-        value: speed_tier_id
-        modifier: stat_modifier_id
+      reaction_speed: ranked_speed_or_null
+      travel_speed: ranked_speed_or_null
+      flight_speed: ranked_speed_or_null
       lifting_strength:
         value: lifting_strength_tier_id
         modifier: stat_modifier_id
@@ -886,12 +896,13 @@ empty_character:
       attack_potency:
         value: low-hypoverse
         modifier: normal
+      attack_speed: null
       combat_speed:
         value: immobile
         modifier: normal
-      reaction_speed:
-        value: immobile
-        modifier: normal
+      reaction_speed: null
+      travel_speed: null
+      flight_speed: null
       lifting_strength:
         value: insubstantial
         modifier: normal
