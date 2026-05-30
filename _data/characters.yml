@@ -103,6 +103,81 @@ schema:
       examples:
         dark_dimension_magic_grants_mystic_being: mystic_being_then_grants_basic_magic
         hell_lord_grants_three_magic_branches: hellfire_and_both_demonic_magic_types
+    power_nullification:
+      power_id: power-nullification
+      aliases:
+        - negation
+      effect_field: effects.power_nullification
+      target_power_ids_field: target_power_ids
+      target_effect_ids_field: target_effect_ids
+      target_type_ids_field: target_type_ids
+      target_tag_ids_field: target_tag_ids
+      default_scope_rule: empty_targets_mean_all_powers
+      specific_negation_rule: target_power_ids_limit_nullification_to_those_powers
+      display_rule: targeted_power_nullification_can_display_as_target_power_name_negation
+      strength_rule: limited_by_ability_modifier_profile_and_best_nullified_scope_unless_indirect_method
+      resistance_rule: can_be_resisted_by_matching_power_nullification_resistance_or_immunity
+      timing_options:
+        - before_activation
+        - after_activation
+        - active_effect_only
+        - passive_field
+      duration_options:
+        - temporary
+        - permanent
+        - conditional
+      delivery_options:
+        - touch
+        - line_of_sight
+        - ranged
+        - area
+        - field
+        - passive
+      power_absorption_rule: stealing_nullified_powers_requires_power_absorption_or_explicit_absorb_flag
+      examples:
+        broad_power_nullification:
+          id: power-nullification
+          effects:
+            - power_nullification:
+                target_power_ids: []
+        regeneration_negation:
+          id: power-nullification
+          effects:
+            - power_nullification:
+                target_power_ids:
+                  - regeneration
+        magic_nullification:
+          id: power-nullification
+          effects:
+            - power_nullification:
+                target_tag_ids:
+                  - magic
+    resistance_negation:
+      power_id: resistance-negation
+      effect_field: effects.resistance_negation
+      target_resistance_ids_field: target_resistance_ids
+      target_resisted_power_ids_field: target_resisted_power_ids
+      target_resisted_effect_ids_field: target_resisted_effect_ids
+      default_scope_rule: empty_targets_mean_all_resistances_only_when_scope_all_resistances_is_true
+      specific_negation_rule: target_resistance_or_resisted_power_ids_limit_which_resistances_are_disabled
+      immunity_rule: immunity_is_disabled_only_when_overrides_immunity_is_true
+      strength_rule: limited_by_ability_modifier_profile_and_best_negated_resistance_scope
+      interaction_rule: disabled_resistance_refs_do_not_nullify_matching_effects_while_negated
+      examples:
+        electricity_resistance_negation:
+          id: resistance-negation
+          effects:
+            - resistance_negation:
+                target_resisted_power_ids:
+                  - electricity-manipulation
+                overrides_immunity: false
+        immunity_override:
+          id: resistance-negation
+          effects:
+            - resistance_negation:
+                target_resistance_ids: []
+                scope_all_resistances: true
+                overrides_immunity: true
     magic_levels:
       power_id: magic
       level_field: magic_level_id
@@ -215,6 +290,27 @@ schema:
         name: string
         image: string
         priority: integer
+        condition: string_or_null
+      power_nullification:
+        target_power_ids: list
+        target_effect_ids: list
+        target_type_ids: list
+        target_tag_ids: list
+        timing: timing_option
+        duration: duration_option
+        delivery: delivery_option
+        indirect_method: boolean
+        absorb: boolean
+        condition: string_or_null
+      resistance_negation:
+        target_resistance_ids: list
+        target_resisted_power_ids: list
+        target_resisted_effect_ids: list
+        scope_all_resistances: boolean
+        overrides_immunity: boolean
+        timing: timing_option
+        duration: duration_option
+        delivery: delivery_option
         condition: string_or_null
       stat_effects:
         attack_potency: ranked_attack_durability_or_null
@@ -712,6 +808,33 @@ options:
         resistance_refs: []
         magic_level_ids: []
       effects: []
+    - id: power-nullification
+      name: "Power Nullification"
+      aliases:
+        - "Negation"
+      variants: []
+      tags:
+        - nullification
+      type_ids: []
+      degree_ids: []
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects: []
+    - id: resistance-negation
+      name: "Resistance Negation"
+      aliases: []
+      variants: []
+      tags:
+        - nullification
+      type_ids: []
+      degree_ids: []
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects: []
     - id: magic
       name: "Magic"
       aliases: []
@@ -925,6 +1048,16 @@ options:
       name: "Magic Resistance"
       resists_power_ids:
         - magic
+      resists_effect_ids: []
+    - id: power-nullification-resistance
+      name: "Power Nullification Resistance"
+      resists_power_ids:
+        - power-nullification
+      resists_effect_ids: []
+    - id: resistance-negation-resistance
+      name: "Resistance Negation Resistance"
+      resists_power_ids:
+        - resistance-negation
       resists_effect_ids: []
   magic_levels:
     - id: basic-level-magic-users
