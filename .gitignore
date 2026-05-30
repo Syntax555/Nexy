@@ -6,6 +6,7 @@ _site/
 
 # Bundler local install paths
 .bundle/
+Gemfile.lock
 vendor/
 
 # Local editor and Codex workspace state

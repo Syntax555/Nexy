@@ -2,8 +2,15 @@ title: Nexy
 description: Minimal GitHub Pages site
 url: "https://syntax555.github.io"
 baseurl: "/Nexy"
+lang: en
+encoding: utf-8
+safe: true
+strict_front_matter: true
 
 markdown: kramdown
+kramdown:
+  input: GFM
+
 exclude:
   - AGENTS.md
   - Gemfile
