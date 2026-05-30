@@ -11,26 +11,90 @@ schema:
       from:
         - attack_potency
         - durability
-      rule: highest_rank
-      display: attack_durability_tiers.tier
+      rule: highest_composite_rank
+      display:
+        value: attack_durability_tiers.tier
+        modifier_prefix: stat_modifiers.display_prefix
+        modifier_suffix: stat_modifiers.display_suffix
+    ranked_stat:
+      value: tier_id
+      modifier: stat_modifier_id
+      composite_rank: "(value.rank - 1) * 8 + modifier.rank"
   keys:
     - name: string
       image: string
       powers: list
       resistances: list
-      attack_potency: attack_durability_tier_id
-      speed: speed_tier_id
-      lifting_strength: lifting_strength_tier_id
-      striking_strength: striking_strength_tier_id
-      durability: attack_durability_tier_id
-      stamina: stamina_tier_id
-      range: range_tier_id
+      attack_potency:
+        value: attack_durability_tier_id
+        modifier: stat_modifier_id
+      speed:
+        value: speed_tier_id
+        modifier: stat_modifier_id
+      lifting_strength:
+        value: lifting_strength_tier_id
+        modifier: stat_modifier_id
+      striking_strength:
+        value: striking_strength_tier_id
+        modifier: stat_modifier_id
+      durability:
+        value: attack_durability_tier_id
+        modifier: stat_modifier_id
+      stamina:
+        value: stamina_tier_id
+        modifier: stat_modifier_id
+      range:
+        value: range_tier_id
+        modifier: stat_modifier_id
       standard_equipment: list
       optional_equipment: list
-      intelligence: intelligence_tier_id
+      intelligence:
+        value: intelligence_tier_id
+        modifier: stat_modifier_id
       attacks: list
 
 options:
+  stat_modifiers:
+    - id: at-most
+      name: "At most"
+      display_prefix: "At most"
+      display_suffix: ""
+      rank: 1
+    - id: lower
+      name: "Lower"
+      display_prefix: "Lower"
+      display_suffix: ""
+      rank: 2
+    - id: possibly
+      name: "Possibly"
+      display_prefix: "Possibly"
+      display_suffix: ""
+      rank: 3
+    - id: likely
+      name: "Likely"
+      display_prefix: "Likely"
+      display_suffix: ""
+      rank: 4
+    - id: normal
+      name: "Normal"
+      display_prefix: ""
+      display_suffix: ""
+      rank: 5
+    - id: plus
+      name: "+"
+      display_prefix: ""
+      display_suffix: "+"
+      rank: 6
+    - id: higher
+      name: "Higher"
+      display_prefix: "Higher"
+      display_suffix: ""
+      rank: 7
+    - id: at-least
+      name: "At least"
+      display_prefix: "At least"
+      display_suffix: ""
+      rank: 8
   media:
     - id: comics
       name: "Comics"
@@ -816,16 +880,32 @@ empty_character:
       image: ""
       powers: []
       resistances: []
-      attack_potency: low-hypoverse
-      speed: immobile
-      lifting_strength: insubstantial
-      striking_strength: low-hypoverse-level
-      durability: low-hypoverse
-      stamina: unknown
-      range: below-standard-melee-range
+      attack_potency:
+        value: low-hypoverse
+        modifier: normal
+      speed:
+        value: immobile
+        modifier: normal
+      lifting_strength:
+        value: insubstantial
+        modifier: normal
+      striking_strength:
+        value: low-hypoverse-level
+        modifier: normal
+      durability:
+        value: low-hypoverse
+        modifier: normal
+      stamina:
+        value: unknown
+        modifier: normal
+      range:
+        value: below-standard-melee-range
+        modifier: normal
       standard_equipment: []
       optional_equipment: []
-      intelligence: mindless
+      intelligence:
+        value: mindless
+        modifier: normal
       attacks: []
 
 characters: []
