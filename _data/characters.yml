@@ -32,6 +32,7 @@ schema:
         image: string
     ability_modifier:
       default: normal
+      also_known_as: ability_profile
       display:
         value: ability.name
         modifier_prefix: ability_modifiers.display_prefix
@@ -41,9 +42,12 @@ schema:
         normal_resistance_vs_limited_power: nullified
         limited_resistance_vs_normal_power: not_nullified
         limited_resistance_vs_limited_power: nullified
+      profile_order_rule: higher_coverage_rank_is_stronger
     power_effects:
       identity_field: id
       identity_rule: same_power_id_is_same_power_even_when_effects_differ
+      type_field: type_ids
+      type_rule: empty_type_ids_means_all_or_unspecified_types
       catalog_effects_field: effects
       local_effects_field: power_refs.effects
       resolution_rule: use_local_power_ref_effects_when_present_else_catalog_power_effects
@@ -52,6 +56,15 @@ schema:
         forcefield_creation_on_invisible_woman: local_effects
         forcefield_creation_on_another_character: different_local_effects_same_power_id
         infinity_gauntlet: catalog_equipment_effects
+    magic_levels:
+      power_id: magic
+      level_field: magic_level_id
+      inheritance_rule: higher_magic_level_inherits_all_lower_level_grants
+      duplicate_power_rule: highest_magic_level_rank_then_profile_rank_then_effect_rank_wins
+      resistance_rule: magic_level_resistance_covers_same_or_lower_level_rank
+      examples:
+        low_tier_sorcerer_resistance_vs_basic_magic: nullified
+        basic_magic_resistance_vs_low_tier_sorcerer: not_nullified
     usage_requirements:
       applies_to:
         - equipment
@@ -97,11 +110,23 @@ schema:
         resistance_refs: list
         power_refs: list
     catalog_entries:
+      power_type:
+        id: string
+        power_id: power_id
+        name: string
       power:
         id: string
         name: string
         tags: list
+        type_ids: list
         effects: list
+      magic_level:
+        id: string
+        name: string
+        rank: integer
+        inherits_level_ids: list
+        power_refs: list
+        resistance_refs: list
       resistance:
         id: string
         name: string
@@ -113,6 +138,9 @@ schema:
         required_power_refs:
           - id: power_id
             modifier: ability_modifier_id
+            type_ids: list_or_null
+            magic_level_id: magic_level_id_or_null
+            condition: string_or_null
         effects: list
       attack:
         id: string
@@ -120,6 +148,9 @@ schema:
         required_power_refs:
           - id: power_id
             modifier: ability_modifier_id
+            type_ids: list_or_null
+            magic_level_id: magic_level_id_or_null
+            condition: string_or_null
         effects: list
   keys:
     - key: string
@@ -130,10 +161,16 @@ schema:
       power_refs:
         - id: power_id
           modifier: ability_modifier_id
+          type_ids: list_or_null
+          magic_level_id: magic_level_id_or_null
+          condition: string_or_null
           effects: list_or_null
       resistance_refs:
         - id: resistance_id
           modifier: ability_modifier_id
+          type_ids: list_or_null
+          magic_level_id: magic_level_id_or_null
+          condition: string_or_null
       attack_potency:
         value: attack_durability_tier_id
         modifier: stat_modifier_id
@@ -209,16 +246,54 @@ options:
       display_suffix: ""
       rank: 8
   ability_modifiers:
+    - id: minor
+      name: "Minor"
+      display_prefix: "Minor"
+      display_suffix: ""
+      coverage_rank: 1
+      availability: always
     - id: limited
       name: "Limited"
       display_prefix: "Limited"
       display_suffix: ""
-      coverage_rank: 1
+      coverage_rank: 2
+      availability: always
+    - id: conditional
+      name: "Conditional"
+      display_prefix: "Conditional"
+      display_suffix: ""
+      coverage_rank: 3
+      availability: condition_required
+    - id: unconventional
+      name: "Unconventional"
+      display_prefix: "Unconventional"
+      display_suffix: ""
+      coverage_rank: 4
+      availability: irregular
     - id: normal
       name: "Normal"
       display_prefix: ""
       display_suffix: ""
-      coverage_rank: 2
+      coverage_rank: 5
+      availability: always
+    - id: enhanced
+      name: "Enhanced"
+      display_prefix: "Enhanced"
+      display_suffix: ""
+      coverage_rank: 6
+      availability: always
+    - id: greater
+      name: "Greater"
+      display_prefix: "Greater"
+      display_suffix: ""
+      coverage_rank: 7
+      availability: always
+    - id: immense
+      name: "Immense"
+      display_prefix: "Immense"
+      display_suffix: ""
+      coverage_rank: 8
+      availability: always
   media:
     - id: comics
       name: "Comics"
@@ -257,27 +332,120 @@ options:
       name: "Defender"
     - id: avatar-of-the-devil
       name: "Avatar of the Devil"
+  power_types:
+    - id: conceptual-manipulation-type-1
+      power_id: conceptual-manipulation
+      name: "Type 1"
   powers:
     - id: weapon-mastery
       name: "Weapon Mastery"
       tags:
         - mastery
+      type_ids: []
       effects: []
     - id: martial-arts-mastery
       name: "Martial Arts Mastery"
       tags:
         - mastery
+      type_ids: []
       effects: []
     - id: stealth-mastery
       name: "Stealth Mastery"
       tags:
         - mastery
+      type_ids: []
       effects: []
     - id: forcefield-creation
       name: "Forcefield Creation"
       tags: []
+      type_ids: []
       effects: []
-  resistances: []
+    - id: magic
+      name: "Magic"
+      tags:
+        - magic
+      type_ids: []
+      effects: []
+    - id: magical-aura
+      name: "Magical Aura"
+      tags:
+        - magic
+      type_ids: []
+      effects: []
+    - id: conceptual-manipulation
+      name: "Conceptual Manipulation"
+      tags: []
+      type_ids:
+        - conceptual-manipulation-type-1
+      effects: []
+  resistances:
+    - id: magic-resistance
+      name: "Magic Resistance"
+      resists_power_ids:
+        - magic
+      resists_effect_ids: []
+  magic_levels:
+    - id: basic-level-magic-users
+      name: "Basic-Level Magic Users"
+      rank: 1
+      inherits_level_ids: []
+      power_refs:
+        - id: magic
+          modifier: normal
+          type_ids: []
+          magic_level_id: basic-level-magic-users
+          effects: null
+        - id: magical-aura
+          modifier: normal
+          type_ids: []
+          magic_level_id: null
+          effects: null
+        - id: conceptual-manipulation
+          modifier: normal
+          type_ids:
+            - conceptual-manipulation-type-1
+          magic_level_id: null
+          effects: null
+      resistance_refs: []
+    - id: low-tier-sorcerers
+      name: "Low-Tier Sorcerers"
+      rank: 2
+      inherits_level_ids:
+        - basic-level-magic-users
+      power_refs:
+        - id: magic
+          modifier: enhanced
+          type_ids: []
+          magic_level_id: low-tier-sorcerers
+          effects: null
+      resistance_refs: []
+    - id: master-sorcerers
+      name: "Master Sorcerers"
+      rank: 3
+      inherits_level_ids:
+        - basic-level-magic-users
+        - low-tier-sorcerers
+      power_refs:
+        - id: magic
+          modifier: greater
+          type_ids: []
+          magic_level_id: master-sorcerers
+          effects: null
+      resistance_refs: []
+    - id: sorcerer-supreme-level
+      name: "Sorcerer Supreme Level"
+      rank: 4
+      inherits_level_ids:
+        - basic-level-magic-users
+        - low-tier-sorcerers
+        - master-sorcerers
+      power_refs:
+        - id: magic
+          modifier: immense
+          type_ids: []
+          magic_level_id: sorcerer-supreme-level
+          effects: null
+      resistance_refs: []
   equipment: []
   attacks: []
   attack_durability_tiers:
