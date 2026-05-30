@@ -129,11 +129,15 @@ schema:
       power_id: weapon-mastery
       form_field: power_refs.type_ids
       equipment_type_field: equipment.weapon_type_ids
+      attack_type_field: attack.weapon_type_ids
       equipment_requirement_field: equipment.required_power_refs
       all_type_id: all-weapons
       all_rule: all_weapons_satisfies_any_weapon_mastery_type_requirement
       empty_type_rule: empty_weapon_mastery_type_ids_means_unspecified_not_all
-      coverage_rule: owned_type_satisfies_required_type_when_same_or_when_required_type_is_in_owned_covers_type_ids
+      close_combat_rule: weapon_mastery_without_marksmanship_is_for_close_combat_weapons
+      marksmanship_rule: marksmanship_is_weapon_mastery_for_firearms_and_projectile_weapons
+      skill_degree_rule: degree_of_skill_is_descriptive_not_a_separate_mastery_type
+      coverage_rule: owned_type_satisfies_required_type_when_same_or_when_required_type_is_directly_or_transitively_in_owned_covers_type_ids
       equipment_type_rule: weapon_type_ids_describe_equipment_but_required_power_refs_enforce_mastery
       examples:
         sword_equipment_requirement:
@@ -144,6 +148,21 @@ schema:
         marksmanship_uses_rifle_or_pistol_equipment: allowed
         sword_mastery_uses_rifle_equipment: not_allowed
         all_weapons_mastery_uses_any_weapon_equipment: allowed
+    weapon_resistance:
+      resistance_id: weapon-resistance
+      form_field: resistance_refs.type_ids
+      equipment_type_field: equipment.weapon_type_ids
+      attack_type_field: attack.weapon_type_ids
+      all_type_id: all-weapons
+      all_rule: all_weapons_resistance_covers_any_weapon_type
+      empty_type_rule: empty_weapon_resistance_type_ids_means_unspecified_not_all
+      coverage_rule: resistance_type_covers_weapon_type_when_same_or_when_weapon_type_is_directly_or_transitively_in_resistance_covers_type_ids
+      interaction_rule: matching_weapon_resistance_can_nullify_or_reduce_weapon_equipment_and_weapon_attack_effects
+      examples:
+        sword_resistance_vs_sword: resists
+        sword_resistance_vs_rifle: does_not_resist
+        marksmanship_resistance_vs_bow_or_pistol: resists
+        all_weapons_resistance_vs_any_weapon: resists
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -238,6 +257,7 @@ schema:
         name: string
         resists_power_ids: list
         resists_effect_ids: list
+        resists_weapon_type_ids: list
       equipment:
         id: string
         name: string
@@ -254,6 +274,7 @@ schema:
       attack:
         id: string
         name: string
+        weapon_type_ids: list
         required_power_refs:
           - id: power_id
             modifier: ability_modifier_id
@@ -453,9 +474,27 @@ options:
       name: "All Weapons"
       covers_all: true
       covers_type_ids: []
+    - id: close-combat-weapon
+      power_id: weapon-mastery
+      name: "Close Combat Weapon"
+      covers_all: false
+      covers_type_ids:
+        - sword
+        - spear
+        - knife
     - id: sword
       power_id: weapon-mastery
       name: "Sword"
+      covers_all: false
+      covers_type_ids: []
+    - id: spear
+      power_id: weapon-mastery
+      name: "Spear"
+      covers_all: false
+      covers_type_ids: []
+    - id: knife
+      power_id: weapon-mastery
+      name: "Knife"
       covers_all: false
       covers_type_ids: []
     - id: marksmanship
@@ -463,9 +502,26 @@ options:
       name: "Marksmanship"
       covers_all: false
       covers_type_ids:
+        - projectile-weapon
         - firearm
         - rifle
         - pistol
+        - shotgun
+        - bow
+        - crossbow
+        - thrown-weapon
+    - id: projectile-weapon
+      power_id: weapon-mastery
+      name: "Projectile Weapon"
+      covers_all: false
+      covers_type_ids:
+        - firearm
+        - rifle
+        - pistol
+        - shotgun
+        - bow
+        - crossbow
+        - thrown-weapon
     - id: firearm
       power_id: weapon-mastery
       name: "Firearm"
@@ -473,6 +529,7 @@ options:
       covers_type_ids:
         - rifle
         - pistol
+        - shotgun
     - id: rifle
       power_id: weapon-mastery
       name: "Rifle"
@@ -481,6 +538,26 @@ options:
     - id: pistol
       power_id: weapon-mastery
       name: "Pistol"
+      covers_all: false
+      covers_type_ids: []
+    - id: shotgun
+      power_id: weapon-mastery
+      name: "Shotgun"
+      covers_all: false
+      covers_type_ids: []
+    - id: bow
+      power_id: weapon-mastery
+      name: "Bow"
+      covers_all: false
+      covers_type_ids: []
+    - id: crossbow
+      power_id: weapon-mastery
+      name: "Crossbow"
+      covers_all: false
+      covers_type_ids: []
+    - id: thrown-weapon
+      power_id: weapon-mastery
+      name: "Thrown Weapon"
       covers_all: false
       covers_type_ids: []
     - id: conceptual-manipulation-type-1
@@ -497,11 +574,19 @@ options:
         - mastery
       type_ids:
         - all-weapons
+        - close-combat-weapon
         - sword
+        - spear
+        - knife
         - marksmanship
+        - projectile-weapon
         - firearm
         - rifle
         - pistol
+        - shotgun
+        - bow
+        - crossbow
+        - thrown-weapon
       grants:
         power_refs: []
         resistance_refs: []
@@ -745,6 +830,12 @@ options:
       resists_power_ids:
         - magic
       resists_effect_ids: []
+      resists_weapon_type_ids: []
+    - id: weapon-resistance
+      name: "Weapon Resistance"
+      resists_power_ids: []
+      resists_effect_ids: []
+      resists_weapon_type_ids: []
   magic_levels:
     - id: basic-level-magic-users
       name: "Basic-Level Magic Users"
