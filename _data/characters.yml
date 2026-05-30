@@ -96,10 +96,15 @@ schema:
       nature_ref_field: magic_nature_ids
       applies_to: raw_magic_itself_not_sorcerer_user_level
       alias_rule: aliases_are_same_magic_nature_not_separate_entries
-      grant_rule: magic_power_refs_may_inherit_raw_magic_nature_grants
+      grant_rule: magic_power_refs_may_inherit_raw_magic_nature_payloads
+      application_rule: applies_only_to_magic_power_refs_attacks_or_effects_that_reference_magic_nature_ids
+      display_rule: do_not_list_magic_natures_as_character_powers
+      ownership_rule: magic_nature_grants_are_effect_payloads_not_character_key_power_refs
       duplicate_power_rule: strongest_profile_or_effect_wins
       examples:
         nature_of_magic_or_magical_energy: raw_magic_properties
+        magic_attack_with_nature_of_magic: inherits_raw_magic_payload
+        character_with_magic_attack: does_not_gain_magic_nature_as_owned_power
     usage_requirements:
       applies_to:
         - equipment
@@ -173,7 +178,9 @@ schema:
         name: string
         aliases: list
         description: string
+        display: hidden_from_character_power_list
         applies_to: raw_magic
+        ownership: effect_payload
         inherits_nature_ids: list
         power_refs: list
         resistance_refs: list
@@ -714,17 +721,11 @@ options:
       aliases:
         - "Magical Energy"
       description: "Powers and abilities of raw magic/magical energy itself, not a sorcerer-user level."
+      display: hidden_from_character_power_list
       applies_to: raw_magic
+      ownership: effect_payload
       inherits_nature_ids: []
-      power_refs:
-        - id: magic
-          modifier: normal
-          type_ids: []
-          magic_level_id: null
-          magic_nature_ids:
-            - nature-of-magic
-          condition: null
-          effects: null
+      power_refs: []
       resistance_refs: []
       effects: []
   equipment: []
