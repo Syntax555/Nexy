@@ -30,6 +30,17 @@ schema:
       items:
         name: string
         image: string
+    ability_modifier:
+      default: normal
+      display:
+        value: ability.name
+        modifier_prefix: ability_modifiers.display_prefix
+        modifier_suffix: ability_modifiers.display_suffix
+      nullification_rule: same_ability_id_and_resistance_coverage_rank_gte_power_coverage_rank
+      examples:
+        normal_resistance_vs_limited_power: nullified
+        limited_resistance_vs_normal_power: not_nullified
+        limited_resistance_vs_limited_power: nullified
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -43,7 +54,7 @@ schema:
       activation_rule: requirements_met_and_not_nullified
       stat_rule: best_composite_rank_per_stat
       source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
-      nullification_rule: matching_resistance_ids_disable_effect
+      nullification_rule: matching_ability_id_with_sufficient_resistance_coverage_disable_effect
       stat_effects:
         attack_potency: ranked_attack_durability_or_null
         attack_speed: ranked_speed_or_null
@@ -58,15 +69,15 @@ schema:
         range: ranked_range_or_null
         intelligence: ranked_intelligence_or_null
       grants:
-        power_ids: list
-        resistance_ids: list
+        power_refs: list
+        resistance_refs: list
       requirements:
         stat_minimums: list
-        power_ids: list
+        power_refs: list
         equipment_ids: list
       nullified_by:
-        resistance_ids: list
-        power_ids: list
+        resistance_refs: list
+        power_refs: list
     catalog_entries:
       power:
         id: string
@@ -91,8 +102,12 @@ schema:
       images:
         - name: string
           image: string
-      power_ids: list
-      resistance_ids: list
+      power_refs:
+        - id: power_id
+          modifier: ability_modifier_id
+      resistance_refs:
+        - id: resistance_id
+          modifier: ability_modifier_id
       attack_potency:
         value: attack_durability_tier_id
         modifier: stat_modifier_id
@@ -167,6 +182,17 @@ options:
       display_prefix: "At least"
       display_suffix: ""
       rank: 8
+  ability_modifiers:
+    - id: limited
+      name: "Limited"
+      display_prefix: "Limited"
+      display_suffix: ""
+      coverage_rank: 1
+    - id: normal
+      name: "Normal"
+      display_prefix: ""
+      display_suffix: ""
+      coverage_rank: 2
   media:
     - id: comics
       name: "Comics"
@@ -955,8 +981,8 @@ empty_character:
     - key: ""
       names: []
       images: []
-      power_ids: []
-      resistance_ids: []
+      power_refs: []
+      resistance_refs: []
       attack_potency:
         value: low-hypoverse
         modifier: normal
