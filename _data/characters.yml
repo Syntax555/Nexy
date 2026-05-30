@@ -129,15 +129,32 @@ schema:
       power_id: resistance-negation
       effect_field: effects.resistance_negation
       target_resistance_ids_field: target_resistance_ids
-      target_rule: target_resistance_ids_list_which_resistances_are_negated
-      empty_target_rule: empty_target_resistance_ids_means_unspecified_not_all
+      target_immunity_ids_field: target_immunity_ids
+      all_resistances_rule: empty_target_resistance_ids_negates_all_resistant_level_resistances
+      target_rule: non_empty_target_resistance_ids_negates_only_listed_resistant_level_resistances
+      immunity_rule: immunity_level_resistance_is_negated_only_when_its_resistance_id_is_in_target_immunity_ids
+      empty_immunity_target_rule: empty_target_immunity_ids_never_negates_immunity
       interaction_rule: disabled_resistance_refs_do_not_nullify_matching_effects_while_negated
       examples:
+        all_resistances_negation:
+          id: resistance-negation
+          effects:
+            - resistance_negation:
+                target_resistance_ids: []
+                target_immunity_ids: []
         magic_resistance_negation:
           id: resistance-negation
           effects:
             - resistance_negation:
                 target_resistance_ids:
+                  - magic-resistance
+                target_immunity_ids: []
+        magic_immunity_negation:
+          id: resistance-negation
+          effects:
+            - resistance_negation:
+                target_resistance_ids: []
+                target_immunity_ids:
                   - magic-resistance
     magic_levels:
       power_id: magic
@@ -256,6 +273,7 @@ schema:
         target_power_ids: list
       resistance_negation:
         target_resistance_ids: list
+        target_immunity_ids: list
       stat_effects:
         attack_potency: ranked_attack_durability_or_null
         attack_speed: ranked_speed_or_null
