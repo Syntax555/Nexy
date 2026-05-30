@@ -47,12 +47,25 @@ schema:
         value: ability.name
         modifier_prefix: ability_modifiers.display_prefix
         modifier_suffix: ability_modifiers.display_suffix
-      nullification_rule: same_ability_id_and_resistance_coverage_rank_gte_power_coverage_rank
+      nullification_rule: same_ability_id_and_resistance_coverage_rank_gte_power_coverage_rank_unless_resistance_level_is_immunity
       examples:
         normal_resistance_vs_limited_power: nullified
         limited_resistance_vs_normal_power: not_nullified
         limited_resistance_vs_limited_power: nullified
       profile_order_rule: higher_coverage_rank_is_stronger
+    resistance_level:
+      default: resistant
+      field: resistance_refs.level
+      missing_level_rule: missing_or_null_level_uses_default_level
+      resistant_rule: uses_ability_modifier_coverage_rank_to_determine_nullification
+      immunity_rule: blocks_matching_power_or_effect_regardless_of_ability_modifier_profile
+      display:
+        resistant: resistance.name
+        immunity: "Immunity to resistance.name"
+      examples:
+        immunity_vs_immense_power: nullified
+        immunity_vs_any_matching_profile: nullified
+        resistant_vs_higher_profile: depends_on_ability_modifier_coverage_rank
     power_effects:
       identity_field: id
       identity_rule: same_power_id_is_same_power_even_when_effects_differ
@@ -162,7 +175,7 @@ schema:
       activation_rule: requirements_met_and_not_nullified
       stat_rule: best_composite_rank_per_stat
       source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
-      nullification_rule: matching_ability_id_with_sufficient_resistance_coverage_disable_effect
+      nullification_rule: matching_resistance_disables_effect_when_immunity_or_sufficient_ability_modifier_coverage
       image_rule: active_image_update_changes_displayed_image_only_not_key_identity_or_stats
       image_conflict_rule: highest_priority_wins_then_source_order_then_base_key_image
       image_source_order:
@@ -286,6 +299,7 @@ schema:
           effects: list_or_null
       resistance_refs:
         - id: resistance_id
+          level: resistance_level_id_or_null_defaults_to_resistant
           modifier: ability_modifier_id
           type_ids: list_or_null
           magic_level_id: magic_level_id_or_null
@@ -415,6 +429,15 @@ options:
       display_suffix: ""
       coverage_rank: 8
       availability: always
+  resistance_levels:
+    - id: resistant
+      name: "Resistance"
+      rank: 1
+      bypasses_ability_modifier_coverage: false
+    - id: immunity
+      name: "Immunity"
+      rank: 2
+      bypasses_ability_modifier_coverage: true
   media:
     - id: comics
       name: "Comics"
