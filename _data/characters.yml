@@ -83,10 +83,13 @@ schema:
       level_field: magic_level_id
       inheritance_rule: higher_magic_level_inherits_all_lower_level_grants
       duplicate_power_rule: highest_magic_level_rank_then_profile_rank_then_effect_rank_wins
-      resistance_rule: magic_level_resistance_covers_same_or_lower_level_rank
+      resistance_rule: covers_magic_power_refs_at_same_or_lower_level_rank_only
+      source_power_rule: does_not_resist_non_magic_source_powers_that_grant_magic_levels
       examples:
         low_tier_sorcerer_resistance_vs_basic_magic: nullified
         basic_magic_resistance_vs_low_tier_sorcerer: not_nullified
+        sorcerer_supreme_resistance_vs_basic_magic_granted_by_mystic_being: nullified
+        sorcerer_supreme_resistance_vs_mystic_being_source_power: not_nullified_unless_resists_mystic_being
     magic_natures:
       power_id: magic
       nature_sets_field: magic_natures
