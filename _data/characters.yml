@@ -41,6 +41,17 @@ schema:
         normal_resistance_vs_limited_power: nullified
         limited_resistance_vs_normal_power: not_nullified
         limited_resistance_vs_limited_power: nullified
+    power_effects:
+      identity_field: id
+      identity_rule: same_power_id_is_same_power_even_when_effects_differ
+      catalog_effects_field: effects
+      local_effects_field: power_refs.effects
+      resolution_rule: use_local_power_ref_effects_when_present_else_catalog_power_effects
+      interaction_rule: requirements_resistances_and_synergies_match_by_power_id_not_effect_list
+      examples:
+        forcefield_creation_on_invisible_woman: local_effects
+        forcefield_creation_on_another_character: different_local_effects_same_power_id
+        infinity_gauntlet: catalog_equipment_effects
     usage_requirements:
       applies_to:
         - equipment
@@ -119,6 +130,7 @@ schema:
       power_refs:
         - id: power_id
           modifier: ability_modifier_id
+          effects: list_or_null
       resistance_refs:
         - id: resistance_id
           modifier: ability_modifier_id
@@ -260,6 +272,10 @@ options:
       name: "Stealth Mastery"
       tags:
         - mastery
+      effects: []
+    - id: forcefield-creation
+      name: "Forcefield Creation"
+      tags: []
       effects: []
   resistances: []
   equipment: []
