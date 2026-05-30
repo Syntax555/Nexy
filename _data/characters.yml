@@ -20,6 +20,10 @@ schema:
       value: tier_id
       modifier: stat_modifier_id
       composite_rank: "(value.rank - 1) * 8 + modifier.rank"
+    key_identity:
+      selector_field: key
+      names_field: names
+      rule: names_belong_to_selected_key
     speed_display:
       default_label: "Speed"
       default_field: combat_speed
@@ -76,7 +80,8 @@ schema:
         name: string
         effects: list
   keys:
-    - name: string
+    - key: string
+      names: list
       image: string
       power_ids: list
       resistance_ids: list
@@ -939,7 +944,8 @@ empty_character:
     unknown: true
   classification_ids: []
   keys:
-    - name: ""
+    - key: ""
+      names: []
       image: ""
       power_ids: []
       resistance_ids: []
