@@ -348,6 +348,20 @@ derived:
     examples:
       destined_one_suit: equipment_effect_updates_stats_powers_and_display_image
       ms_marvel_key_with_suit: same_key_different_active_image
+  tooltips:
+    applies_to:
+      - power_refs
+      - equipment
+    display_rule: hover_and_keyboard_focus_show_game_effect_summary
+    source_rule: tooltip_uses_catalog_effects_unless_local_ref_effects_are_present
+    status_fields:
+      - status
+      - disabled
+      - nullified
+      - resisted
+      - status_reason
+    fallback_rule: show_no_game_effects_defined_when_no_effects_or_requirements_exist
+    future_status_rule: nullified_resisted_or_disabled_entries_remain_visible_but_marked_in_tooltip
   catalog_entries:
     power_type:
       id: string
