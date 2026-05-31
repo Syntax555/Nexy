@@ -1,3 +1,5 @@
+- id: human
+  name: "Human"
 - id: human-mutate
   name: "Human Mutate"
 - id: scientist

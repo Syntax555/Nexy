@@ -1,0 +1,50 @@
+name: "Dagger"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+  display: "Mid 20s"
+classification_ids:
+  - human
+  - human-mutate
+keys:
+  - key: dagger
+    names:
+      - "Dagger"
+    images:
+      - name: "Dagger"
+        image: "assets/images/characters/dagger/dagger.png"
+    power_refs: []
+    resistance_refs: []
+    attack_potency:
+      value: athlete
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: superhuman
+      modifier: normal
+    striking_strength:
+      value: athlete-level
+      modifier: normal
+    durability:
+      value: athlete
+      modifier: normal
+    stamina:
+      value: peak-human
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []
