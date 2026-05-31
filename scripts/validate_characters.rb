@@ -167,7 +167,6 @@ def validate_stat_effects(context, stat_effects, sets)
     "reaction_speed" => :speed_tiers,
     "travel_speed" => :speed_tiers,
     "flight_speed" => :speed_tiers,
-    "perception_speed" => :speed_tiers,
     "lifting_strength" => :lifting_strength_tiers,
     "striking_strength" => :striking_strength_tiers,
     "durability" => :attack_durability_tiers,
@@ -407,7 +406,6 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_ranked_stat("#{key_context}.reaction_speed", key["reaction_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.travel_speed", key["travel_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.flight_speed", key["flight_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_ranked_stat("#{key_context}.perception_speed", key["perception_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.lifting_strength", key["lifting_strength"], sets[:lifting_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.striking_strength", key["striking_strength"], sets[:striking_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.durability", key["durability"], sets[:attack_durability_tiers], sets[:stat_modifiers]))

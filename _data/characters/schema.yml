@@ -271,7 +271,6 @@ derived:
       - reaction_speed
       - travel_speed
       - flight_speed
-      - perception_speed
     compare_rule: ignore_null
     display_rule: group_equal_speed_values_and_omit_combat_speed_label_when_it_is_the_only_speed
     default_display_labels:
@@ -280,7 +279,6 @@ derived:
       reaction_speed: "reactions"
       travel_speed: "movement speed"
       flight_speed: "flight speed"
-      perception_speed: "perceptions"
     label_override_rule: ranked_speed_stat_label_overrides_default_display_label
     note_rule: ranked_speed_stat_note_displays_after_its_speed_group
   effects:
@@ -311,7 +309,6 @@ derived:
       reaction_speed: ranked_speed_or_null
       travel_speed: ranked_speed_or_null
       flight_speed: ranked_speed_or_null
-      perception_speed: ranked_speed_or_null
       lifting_strength: ranked_lifting_strength_or_null
       striking_strength: ranked_striking_strength_or_null
       durability: ranked_attack_durability_or_null
@@ -441,7 +438,6 @@ keys:
     reaction_speed: ranked_speed_or_null
     travel_speed: ranked_speed_or_null
     flight_speed: ranked_speed_or_null
-    perception_speed: ranked_speed_or_null
     lifting_strength:
       value: lifting_strength_tier_id
       modifier: stat_modifier_id_or_null_defaults_to_normal

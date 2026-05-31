@@ -27,7 +27,6 @@ keys:
     reaction_speed: null
     travel_speed: null
     flight_speed: null
-    perception_speed: null
     lifting_strength:
       value: superhuman
       modifier: normal

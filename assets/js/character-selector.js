@@ -23,8 +23,7 @@
     ["attack_speed", "attack speed"],
     ["reaction_speed", "reactions"],
     ["travel_speed", "movement speed"],
-    ["flight_speed", "flight speed"],
-    ["perception_speed", "perceptions"]
+    ["flight_speed", "flight speed"]
   ];
 
   const byId = (items, id) => items.find((item) => item.id === id);
