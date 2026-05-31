@@ -1,5 +1,8 @@
 (() => {
   const data = JSON.parse(document.getElementById("character-data").textContent);
+  data.empty_character = normalizeCharacterEntry("empty", data.empty_character);
+  data.characters = normalizeCharacterEntries(data.characters);
+
   const options = data.options;
   const statModifiers = options.stat_modifiers;
 
@@ -25,6 +28,29 @@
     "\"": "&quot;",
     "'": "&#39;"
   }[char]));
+
+  function normalizeCharacterEntry(entryId, character) {
+    return { ...character, entry_id: entryId };
+  }
+
+  function normalizeCharacterEntries(entries) {
+    if (Array.isArray(entries)) return entries;
+
+    return Object.entries(entries || {})
+      .filter(([entryId]) => entryId !== "empty")
+      .map(([entryId, character]) => normalizeCharacterEntry(entryId, character));
+  }
+
+  function assetUrl(path) {
+    const value = String(path || "");
+    if (!value || /^(?:[a-z]+:)?\/\//i.test(value) || value.startsWith("data:")) return value;
+
+    const baseurl = data.baseurl || "";
+    const normalizedPath = value.startsWith("/") ? value : `/${value}`;
+    if (baseurl && normalizedPath.startsWith(`${baseurl}/`)) return normalizedPath;
+
+    return `${baseurl}${normalizedPath}`;
+  }
 
   function normalizedStat(stat) {
     return typeof stat === "string" ? { value: stat, modifier: "normal" } : stat;
@@ -134,7 +160,7 @@
 
     card.innerHTML = `
       <div class="character-image">
-        ${image ? `<img src="${escapeHtml(image.image)}" alt="${escapeHtml(image.name)}">` : `<div class="empty-image">?</div>`}
+        ${image ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="${escapeHtml(image.name)}">` : `<div class="empty-image">?</div>`}
       </div>
       <div class="character-content">
         <h3 class="character-heading">${escapeHtml(title(displayCharacter.name))}</h3>
@@ -157,13 +183,13 @@
       mediaId: null,
       originId: null,
       verseId: null,
-      characterName: null,
+      characterId: null,
       keyId: null,
       emptySelected: false
     };
 
     function clearSelection() {
-      state.characterName = null;
+      state.characterId = null;
       state.keyId = null;
       state.emptySelected = false;
     }
@@ -181,7 +207,7 @@
     function selectedCharacter() {
       if (state.emptySelected) return data.empty_character;
 
-      return data.characters.find((character) => character.name === state.characterName) || null;
+      return data.characters.find((character) => character.entry_id === state.characterId) || null;
     }
 
     function displayCharacter() {
@@ -219,7 +245,7 @@
         }
 
         const keys = list(item.keys);
-        state.characterName = item.name;
+        state.characterId = item.entry_id;
         state.keyId = keys.length > 1 ? null : keys[0]?.key || null;
         state.step = keys.length > 1 ? "key" : "character";
       } else {

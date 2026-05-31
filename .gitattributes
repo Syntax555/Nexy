@@ -7,4 +7,5 @@
 *.md text eol=lf
 *.rb text eol=lf
 *.yml text eol=lf
+*.gitkeep text eol=lf
 Gemfile text eol=lf

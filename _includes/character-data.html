@@ -18,7 +18,8 @@
       "range_tiers": {{ site.data.characters.options.range_tiers | jsonify }},
       "intelligence_tiers": {{ site.data.characters.options.intelligence_tiers | jsonify }}
     },
-    "empty_character": {{ site.data.characters.empty_character | jsonify }},
-    "characters": {{ site.data.characters.characters | jsonify }}
+    "baseurl": {{ site.baseurl | jsonify }},
+    "empty_character": {{ site.data.characters.entries.empty | jsonify }},
+    "characters": {{ site.data.characters.entries | jsonify }}
   }
 </script>

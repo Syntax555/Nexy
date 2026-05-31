@@ -6,6 +6,7 @@ require "yaml"
 
 ROOT = File.expand_path("..", __dir__)
 CHARACTERS_DIR = File.join(ROOT, "_data", "characters")
+CHARACTER_ENTRIES_DIR = File.join(CHARACTERS_DIR, "entries")
 OPTIONS_DIR = File.join(CHARACTERS_DIR, "options")
 
 def load_yaml(path)
@@ -13,12 +14,28 @@ def load_yaml(path)
 end
 
 def load_characters_data
+  character_entries = load_character_entries
+  empty_character = character_entries.fetch("empty")
+  characters = character_entries
+               .reject { |entry_id, _character| entry_id == "empty" }
+               .map { |entry_id, character| character.merge("entry_id" => entry_id) }
+
   {
     "schema" => load_yaml(File.join(CHARACTERS_DIR, "schema.yml")),
     "options" => load_options_data,
-    "empty_character" => load_yaml(File.join(CHARACTERS_DIR, "empty_character.yml")),
-    "characters" => load_yaml(File.join(CHARACTERS_DIR, "characters.yml"))
+    "empty_character" => empty_character.merge("entry_id" => "empty"),
+    "characters" => characters
   }
+end
+
+def load_character_entries
+  Dir.children(CHARACTER_ENTRIES_DIR)
+     .grep(/\.ya?ml\z/)
+     .sort
+     .to_h do |filename|
+       key = File.basename(filename, File.extname(filename))
+       [key, load_yaml(File.join(CHARACTER_ENTRIES_DIR, filename))]
+     end
 end
 
 def load_options_data
@@ -29,6 +46,10 @@ def load_options_data
        key = File.basename(filename, File.extname(filename))
        [key, load_yaml(File.join(OPTIONS_DIR, filename))]
      end
+end
+
+def external_asset?(path)
+  path.match?(%r{\A(?:[a-z][a-z0-9+.-]*:)?//}i) || path.start_with?("data:")
 end
 
 def fail_with(message)
@@ -129,7 +150,7 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
   errors
 end
 
-def validate_images(context, images)
+def validate_images(context, images, entry_id: nil)
   return ["#{context} must be a list"] unless images.is_a?(Array)
 
   errors = []
@@ -143,7 +164,26 @@ def validate_images(context, images)
     end
 
     errors << "#{image_context}.name must be present" if image["name"].nil? || image["name"].to_s.empty?
-    errors << "#{image_context}.image must be present" if image["image"].nil? || image["image"].to_s.empty?
+    image_path = image["image"]
+
+    if image_path.nil? || image_path.to_s.empty?
+      errors << "#{image_context}.image must be present"
+      next
+    end
+
+    image_path = image_path.to_s
+    next if external_asset?(image_path)
+
+    normalized_path = image_path.delete_prefix("/")
+    expected_prefix = entry_id && entry_id != "empty" ? "assets/images/characters/#{entry_id}/" : "assets/images/characters/"
+
+    unless normalized_path.start_with?(expected_prefix)
+      errors << "#{image_context}.image local path must start with #{expected_prefix.inspect}"
+      next
+    end
+
+    absolute_path = File.join(ROOT, normalized_path)
+    errors << "#{image_context}.image local file does not exist at #{normalized_path.inspect}" unless File.file?(absolute_path)
   end
 
   errors
@@ -270,11 +310,15 @@ def validate_catalog_entry(context, entry, sets, type)
   errors
 end
 
-def validate_character(context, character, sets)
+def validate_character(context, character, sets, entry_id: nil)
   return ["#{context} must be a map"] unless character.is_a?(Hash)
 
   errors = []
   keys = character["keys"]
+
+  if entry_id && !entry_id.match?(/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/)
+    errors << "#{context} entry id #{entry_id.inspect} must use lowercase letters, numbers, and hyphens"
+  end
 
   errors.concat(validate_refs("#{context}.verse_id", [character["verse_id"]], sets[:verses], "verse", allow_blank: true))
   errors.concat(validate_refs("#{context}.gender_id", [character["gender_id"]], sets[:genders], "gender"))
@@ -304,7 +348,7 @@ def validate_character(context, character, sets)
       seen_keys[key_id] = true
     end
 
-    errors.concat(validate_images("#{key_context}.images", key["images"] || []))
+    errors.concat(validate_images("#{key_context}.images", key["images"] || [], entry_id: entry_id))
     errors.concat(validate_power_refs("#{key_context}.power_refs", key["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{key_context}.resistance_refs", key["resistance_refs"] || [], sets))
     errors.concat(validate_refs("#{key_context}.standard_equipment_ids", key["standard_equipment_ids"], sets[:equipment], "equipment"))
@@ -422,7 +466,7 @@ Array(options["attacks"]).each_with_index do |entry, index|
   errors.concat(validate_catalog_entry("options.attacks[#{index}]", entry, sets, :attack))
 end
 
-errors.concat(validate_character("empty_character", data["empty_character"], sets))
+errors.concat(validate_character("empty_character", data["empty_character"], sets, entry_id: "empty"))
 
 characters = data["characters"]
 
@@ -431,24 +475,17 @@ if characters.nil?
 elsif !characters.is_a?(Array)
   errors << "characters must be a list"
 else
-  seen_character_names = {}
-
   characters.each_with_index do |character, index|
     context = "characters[#{index}]"
+    entry_id = character["entry_id"] if character.is_a?(Hash)
 
     if character.is_a?(Hash)
       name = character["name"]
 
-      if name.nil? || name.to_s.empty?
-        errors << "#{context}.name must be present"
-      elsif seen_character_names.key?(name)
-        errors << "characters has duplicate name #{name.inspect}"
-      else
-        seen_character_names[name] = true
-      end
+      errors << "#{context}.name must be present" if name.nil? || name.to_s.empty?
     end
 
-    errors.concat(validate_character(context, character, sets))
+    errors.concat(validate_character(context, character, sets, entry_id: entry_id))
   end
 end
 
