@@ -356,12 +356,18 @@ title: Home
       "'": "&#39;"
     }[char]));
 
+    function normalizedStat(stat) {
+      return typeof stat === "string" ? { value: stat, modifier: "normal" } : stat;
+    }
+
     function modifier(stat) {
-      return byId(statModifiers, stat?.modifier || "normal") || byId(statModifiers, "normal");
+      const normalized = normalizedStat(stat);
+      return byId(statModifiers, normalized?.modifier || "normal") || byId(statModifiers, "normal");
     }
 
     function statEntry(stat, catalogName) {
-      return byId(options[catalogName], stat?.value);
+      const normalized = normalizedStat(stat);
+      return byId(options[catalogName], normalized?.value);
     }
 
     function compositeRank(stat, catalogName) {

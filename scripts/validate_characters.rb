@@ -45,30 +45,34 @@ def id_set(entries)
   Array(entries).filter_map { |entry| entry["id"] if entry.is_a?(Hash) }.to_set
 end
 
-def validate_unique_ranks(name, entries, minimum_rank: 1)
+def validate_unique_integer_field(name, entries, field, minimum_value: 1)
   errors = []
   seen = {}
 
   Array(entries).each do |entry|
     next unless entry.is_a?(Hash)
-    next unless entry.key?("rank")
+    next unless entry.key?(field)
 
-    rank = entry["rank"]
+    value = entry[field]
     id = entry["id"]
 
-    unless rank.is_a?(Integer) && rank >= minimum_rank
-      errors << "options.#{name}.#{id} rank must be an integer greater than or equal to #{minimum_rank}"
+    unless value.is_a?(Integer) && value >= minimum_value
+      errors << "options.#{name}.#{id} #{field} must be an integer greater than or equal to #{minimum_value}"
       next
     end
 
-    if seen.key?(rank)
-      errors << "options.#{name} rank #{rank} is used by both #{seen[rank].inspect} and #{id.inspect}"
+    if seen.key?(value)
+      errors << "options.#{name} #{field} #{value} is used by both #{seen[value].inspect} and #{id.inspect}"
     else
-      seen[rank] = id
+      seen[value] = id
     end
   end
 
   errors
+end
+
+def validate_unique_ranks(name, entries, minimum_rank: 1)
+  validate_unique_integer_field(name, entries, "rank", minimum_value: minimum_rank)
 end
 
 def validate_refs(context, values, allowed, label, allow_blank: false)
@@ -84,16 +88,40 @@ end
 def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
   return [] if allow_null && stat.nil?
 
-  unless stat.is_a?(Hash)
-    return ["#{context} must be a ranked stat map"]
+  if stat.is_a?(String)
+    value = stat
+    modifier = "normal"
+  elsif stat.is_a?(Hash)
+    value = stat["value"]
+    modifier = stat.fetch("modifier", "normal")
+  else
+    return ["#{context} must be a ranked stat map or tier id string"]
   end
 
   errors = []
-  value = stat["value"]
-  modifier = stat.fetch("modifier", "normal")
 
   errors.concat(validate_refs("#{context}.value", [value], allowed_values, "tier"))
   errors.concat(validate_refs("#{context}.modifier", [modifier], stat_modifiers, "stat modifier"))
+  errors
+end
+
+def validate_images(context, images)
+  return ["#{context} must be a list"] unless images.is_a?(Array)
+
+  errors = []
+
+  images.each_with_index do |image, index|
+    image_context = "#{context}[#{index}]"
+
+    unless image.is_a?(Hash)
+      errors << "#{image_context} must be a map"
+      next
+    end
+
+    errors << "#{image_context}.name must be present" if image["name"].nil? || image["name"].to_s.empty?
+    errors << "#{image_context}.image must be present" if image["image"].nil? || image["image"].to_s.empty?
+  end
+
   errors
 end
 
@@ -233,6 +261,8 @@ def validate_character(context, character, sets)
     return errors
   end
 
+  seen_keys = {}
+
   keys.each_with_index do |key, index|
     key_context = "#{context}.keys[#{index}]"
 
@@ -241,6 +271,16 @@ def validate_character(context, character, sets)
       next
     end
 
+    key_id = key["key"]
+    if key_id.nil? || key_id.to_s.empty?
+      errors << "#{key_context}.key must be present" unless context == "empty_character"
+    elsif seen_keys.key?(key_id)
+      errors << "#{context}.keys has duplicate key #{key_id.inspect}"
+    else
+      seen_keys[key_id] = true
+    end
+
+    errors.concat(validate_images("#{key_context}.images", key["images"] || []))
     errors.concat(validate_power_refs("#{key_context}.power_refs", key["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{key_context}.resistance_refs", key["resistance_refs"] || [], sets))
     errors.concat(validate_refs("#{key_context}.standard_equipment_ids", key["standard_equipment_ids"], sets[:equipment], "equipment"))
@@ -320,6 +360,8 @@ ranked_catalog_names.each do |name|
   errors.concat(validate_unique_ranks(name, options[name], minimum_rank: minimum_rank))
 end
 
+errors.concat(validate_unique_integer_field("ability_modifiers", options["ability_modifiers"], "coverage_rank"))
+
 sets = catalog_names.to_h { |name| [name.to_sym, id_set(options[name])] }
 
 Array(options["verses"]).each_with_index do |verse, index|
@@ -358,8 +400,32 @@ end
 
 errors.concat(validate_character("empty_character", data["empty_character"], sets))
 
-Array(data["characters"]).each_with_index do |character, index|
-  errors.concat(validate_character("characters[#{index}]", character, sets))
+characters = data["characters"]
+
+if characters.nil?
+  errors << "characters must be present"
+elsif !characters.is_a?(Array)
+  errors << "characters must be a list"
+else
+  seen_character_names = {}
+
+  characters.each_with_index do |character, index|
+    context = "characters[#{index}]"
+
+    if character.is_a?(Hash)
+      name = character["name"]
+
+      if name.nil? || name.to_s.empty?
+        errors << "#{context}.name must be present"
+      elsif seen_character_names.key?(name)
+        errors << "characters has duplicate name #{name.inspect}"
+      else
+        seen_character_names[name] = true
+      end
+    end
+
+    errors.concat(validate_character(context, character, sets))
+  end
 end
 
 if errors.any?
