@@ -317,6 +317,7 @@ derived:
       image: string
       priority: integer
       condition: string_or_null
+    tooltip: string_or_list_of_strings_or_null
     power_nullification:
       target_power_ids: list
     resistance_negation:
@@ -352,7 +353,12 @@ derived:
     applies_to:
       - power_refs
       - equipment
+      - attacks
+      - effects
     display_rule: hover_and_keyboard_focus_show_game_effect_summary
+    data_field: tooltip
+    tooltip_field_type: string_or_list_of_strings
+    tooltip_source_rule: written_tooltip_lines_display_before_generated_effect_lines
     source_rule: tooltip_uses_catalog_effects_unless_local_ref_effects_are_present
     status_fields:
       - status
@@ -372,6 +378,7 @@ derived:
     power:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       aliases: list
       variants: list
       tags: list
@@ -385,6 +392,7 @@ derived:
     derived_power_rule:
       id: string
       power_id: power_id
+      tooltip: string_or_list_of_strings_or_null
       min_matches: integer
       requirements:
         - stat: ranked_stat_field
@@ -394,6 +402,7 @@ derived:
     magic_level:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       rank: integer
       inherits_level_ids: list
       power_refs: list
@@ -401,6 +410,7 @@ derived:
     magic_nature:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       aliases: list
       description: string
       display: hidden_from_character_power_list
@@ -413,11 +423,13 @@ derived:
     resistance:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       resists_power_ids: list
       resists_effect_ids: list
     equipment:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       weapon_type_ids: list
       required_power_refs:
         - id: power_id
@@ -433,6 +445,7 @@ derived:
     attack:
       id: string
       name: string
+      tooltip: string_or_list_of_strings_or_null
       weapon_type_ids: list
       required_power_refs:
         - id: power_id
@@ -462,6 +475,7 @@ keys:
         source_variant: string_or_null
         condition: string_or_null
         effects: list_or_null
+        tooltip: string_or_list_of_strings_or_null
     resistance_refs:
       - id: resistance_id
         level: resistance_level_id_or_null_defaults_to_resistant
@@ -471,6 +485,7 @@ keys:
         magic_nature_ids: list_or_null
         source_variant: string_or_null
         condition: string_or_null
+        tooltip: string_or_list_of_strings_or_null
     attack_potency:
       value: attack_durability_tier_id
       modifier: stat_modifier_id_or_null_defaults_to_normal

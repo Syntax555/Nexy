@@ -1,5 +1,6 @@
 - id: superhuman-physical-characteristics
   name: "Superhuman Physical Characteristics"
+  tooltip: "Automatically granted when a key meets at least 2 of 4 physical stat requirements: Combat Speed at least Superhuman, Lifting Strength at least Superhuman, Striking Strength at least Street level, and Durability at least Street."
   aliases: []
   variants: []
   tags:
@@ -14,6 +15,7 @@
   effects: []
 - id: weapon-mastery
   name: "Weapon Mastery"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -41,6 +43,7 @@
   effects: []
 - id: martial-arts-mastery
   name: "Martial Arts Mastery"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -56,6 +59,7 @@
   effects: []
 - id: acrobatics
   name: "Acrobatics"
+  tooltip: ""
   aliases: []
   variants: []
   tags: []
@@ -69,6 +73,7 @@
   effects: []
 - id: stealth-mastery
   name: "Stealth Mastery"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -82,6 +87,7 @@
   effects: []
 - id: forcefield-creation
   name: "Forcefield Creation"
+  tooltip: ""
   aliases: []
   variants: []
   tags: []
@@ -94,6 +100,7 @@
   effects: []
 - id: power-nullification
   name: "Power Nullification"
+  tooltip: ""
   aliases:
     - "Negation"
   variants: []
@@ -108,6 +115,7 @@
   effects: []
 - id: resistance-negation
   name: "Resistance Negation"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -121,6 +129,7 @@
   effects: []
 - id: magic
   name: "Magic"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -134,6 +143,7 @@
   effects: []
 - id: magical-aura
   name: "Magical Aura"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -147,6 +157,7 @@
   effects: []
 - id: conceptual-manipulation
   name: "Conceptual Manipulation"
+  tooltip: ""
   aliases: []
   variants: []
   tags: []
@@ -160,6 +171,7 @@
   effects: []
 - id: mystic-being
   name: "Mystic Being"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -175,10 +187,12 @@
   effects: []
 - id: dark-dimension-magic
   name: "Dark Dimension Magic"
+  tooltip: ""
   aliases: []
   variants:
     - id: faltine
       name: "Faltine"
+      tooltip: ""
       inherits_base_grants: true
       grants:
         power_refs: []
@@ -205,6 +219,7 @@
   effects: []
 - id: chaos-magic
   name: "Chaos Magic"
+  tooltip: ""
   aliases:
     - "Hex Magic"
   variants: []
@@ -220,6 +235,7 @@
   effects: []
 - id: hellfire
   name: "Hellfire"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -234,6 +250,7 @@
   effects: []
 - id: demonic-magic
   name: "Demonic Magic"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -265,6 +282,7 @@
   effects: []
 - id: innate-demon-physiology
   name: "Innate Demon Physiology"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -278,6 +296,7 @@
   effects: []
 - id: standard-demonic-powers
   name: "Standard Demonic Powers"
+  tooltip: ""
   aliases: []
   variants: []
   tags:
@@ -291,6 +310,7 @@
   effects: []
 - id: hell-lord
   name: "Hell-Lord"
+  tooltip: ""
   aliases: []
   variants: []
   tags:

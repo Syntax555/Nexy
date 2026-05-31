@@ -281,6 +281,25 @@
     return lines;
   }
 
+  function tooltipLines(value) {
+    if (Array.isArray(value)) {
+      return value
+        .filter((line) => typeof line === "string")
+        .flatMap((line) => line.split(/\r?\n/))
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+
+    if (typeof value === "string") {
+      return value
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  }
+
   function characterKey(character, keyId = null) {
     const keys = list(character.keys);
     return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
@@ -396,6 +415,7 @@
   function effectTooltipLines(effect = {}) {
     const lines = [];
 
+    lines.push(...tooltipLines(effect.tooltip));
     if (effect.description) lines.push(effect.description);
 
     Object.entries(effect.stat_effects || {}).forEach(([statName, stat]) => {
@@ -436,7 +456,10 @@
     const requirements = list(rule.requirements);
     const minMatches = Number.isInteger(rule.min_matches) ? rule.min_matches : requirements.length;
     const metCount = requirements.filter((requirement) => meetsStatRequirement(key, requirement)).length;
-    const lines = [`Automatic: ${metCount}/${requirements.length} stat requirements met; needs ${minMatches}.`];
+    const lines = [
+      ...tooltipLines(rule.tooltip),
+      `Automatic: ${metCount}/${requirements.length} stat requirements met; needs ${minMatches}.`
+    ];
 
     requirements.forEach((requirement) => {
       const requirementText = formatStatRequirement(requirement);
@@ -449,7 +472,10 @@
   function powerTooltipLines(key, ref, power) {
     const lines = statusTooltipLines(ref);
     let hasGameData = false;
+    const writtenLines = [...tooltipLines(power.tooltip), ...tooltipLines(ref.tooltip)];
 
+    lines.push(...writtenLines);
+    if (writtenLines.length) hasGameData = true;
     if (power.description) lines.push(power.description);
     if (ref.condition) lines.push(`Condition: ${ref.condition}`);
 
@@ -491,7 +517,10 @@
   function equipmentTooltipLines(item) {
     const lines = statusTooltipLines(item);
     let hasGameData = false;
+    const writtenLines = tooltipLines(item.tooltip);
 
+    lines.push(...writtenLines);
+    if (writtenLines.length) hasGameData = true;
     if (item.description) lines.push(item.description);
 
     const weaponTypes = nameList(item.weapon_type_ids, "power_types");

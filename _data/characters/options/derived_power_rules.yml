@@ -1,5 +1,6 @@
 - id: superhuman-physical-characteristics
   power_id: superhuman-physical-characteristics
+  tooltip: "This rule keeps Superhuman Physical Characteristics derived from stats, so it does not need to be added manually to every qualifying character."
   min_matches: 2
   requirements:
     - stat: combat_speed
