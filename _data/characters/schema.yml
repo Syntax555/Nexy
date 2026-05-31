@@ -358,8 +358,10 @@ derived:
     display_rule: hover_and_keyboard_focus_show_game_effect_summary
     data_field: tooltip
     tooltip_field_type: string_or_list_of_strings
+    optional_rule: omit_tooltip_when_no_written_text_is_needed
     tooltip_source_rule: written_tooltip_lines_display_before_generated_effect_lines
     source_rule: tooltip_uses_catalog_effects_unless_local_ref_effects_are_present
+    generated_lines_rule: stat_effects_grants_requirements_and_status_still_display_when_tooltip_is_missing_or_blank
     status_fields:
       - status
       - disabled
