@@ -26,7 +26,7 @@
     ["flight_speed", "flight speed"]
   ];
 
-  const byId = (items, id) => items.find((item) => item.id === id);
+  const byId = (items, id) => (Array.isArray(items) ? items : []).find((item) => item.id === id);
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -164,6 +164,29 @@
       .filter(Boolean);
   }
 
+  function gender(character) {
+    return byId(options.genders, character.gender_id);
+  }
+
+  function ageText(character) {
+    const age = character.age || {};
+    if (age.display) return age.display;
+    if (age.value !== null && age.value !== undefined) return String(age.value);
+    return age.unknown ? "Unknown" : "";
+  }
+
+  function characterDetails(character) {
+    const details = [];
+    const genderEntry = gender(character);
+    const age = ageText(character);
+
+    if (genderEntry) details.push(`Gender: ${genderEntry.name}`);
+    if (age) details.push(`Age: ${age}`);
+    classifications(character).forEach((classification) => details.push(classification.name));
+
+    return details;
+  }
+
   function powers(key) {
     return list(key.power_refs).map((ref) => {
       const power = byId(options.powers, ref.id);
@@ -218,8 +241,8 @@
       `;
     }).join("");
 
-    const classificationTags = classifications(displayCharacter)
-      .map((classification) => `<li>${escapeHtml(classification.name)}</li>`)
+    const detailTags = characterDetails(displayCharacter)
+      .map((detail) => `<li>${escapeHtml(detail)}</li>`)
       .join("");
 
     const powerTags = powers(key).map((power) => `<li>${escapeHtml(power)}</li>`).join("");
@@ -232,7 +255,7 @@
       <div class="character-content">
         <h3 class="character-heading">${escapeHtml(title(displayCharacter.name))}</h3>
         <p class="character-subtitle">${escapeHtml(names.join(" / "))}</p>
-        ${classificationTags ? `<ul class="meta-list" aria-label="Classifications">${classificationTags}</ul>` : ""}
+        ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
         <ul class="stat-grid">${statRows}</ul>
         ${powerTags ? `<h4 class="section-title">Powers</h4><ul class="tag-list">${powerTags}</ul>` : ""}
         ${equipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${equipmentTags}</ul>` : ""}
