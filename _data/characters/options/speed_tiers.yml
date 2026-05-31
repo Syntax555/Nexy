@@ -1,0 +1,87 @@
+- id: immobile
+  name: "Immobile"
+  rank: 1
+- id: below-average-human
+  name: "Below Average Human"
+  rank: 2
+- id: average-human
+  name: "Average Human"
+  rank: 3
+- id: athletic-human
+  name: "Athletic Human"
+  rank: 4
+- id: peak-human
+  name: "Peak Human"
+  rank: 5
+- id: superhuman
+  name: "Superhuman"
+  rank: 6
+- id: subsonic
+  name: "Subsonic"
+  rank: 7
+- id: subsonic-plus
+  name: "Subsonic+"
+  rank: 8
+- id: transonic
+  name: "Transonic"
+  rank: 9
+- id: supersonic
+  name: "Supersonic"
+  rank: 10
+- id: supersonic-plus
+  name: "Supersonic+"
+  rank: 11
+- id: hypersonic
+  name: "Hypersonic"
+  rank: 12
+- id: hypersonic-plus
+  name: "Hypersonic+"
+  rank: 13
+- id: high-hypersonic
+  name: "High Hypersonic"
+  rank: 14
+- id: high-hypersonic-plus
+  name: "High Hypersonic+"
+  rank: 15
+- id: massively-hypersonic
+  name: "Massively Hypersonic"
+  rank: 16
+- id: massively-hypersonic-plus
+  name: "Massively Hypersonic+"
+  rank: 17
+- id: sub-relativistic
+  name: "Sub-Relativistic"
+  rank: 18
+- id: sub-relativistic-plus
+  name: "Sub-Relativistic+"
+  rank: 19
+- id: relativistic
+  name: "Relativistic"
+  rank: 20
+- id: relativistic-plus
+  name: "Relativistic+"
+  rank: 21
+- id: speed-of-light
+  name: "Speed of Light"
+  rank: 22
+- id: ftl
+  name: "FTL"
+  rank: 23
+- id: ftl-plus
+  name: "FTL+"
+  rank: 24
+- id: massively-ftl
+  name: "Massively FTL"
+  rank: 25
+- id: massively-ftl-plus
+  name: "Massively FTL+"
+  rank: 26
+- id: infinite-speed
+  name: "Infinite Speed"
+  rank: 27
+- id: immeasurable
+  name: "Immeasurable"
+  rank: 28
+- id: omnipresent
+  name: "Omnipresent"
+  rank: 29

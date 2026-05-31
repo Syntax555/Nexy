@@ -1,0 +1,5 @@
+- id: magic-resistance
+  name: "Magic Resistance"
+  resists_power_ids:
+    - magic
+  resists_effect_ids: []

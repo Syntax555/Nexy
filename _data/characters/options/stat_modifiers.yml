@@ -1,0 +1,40 @@
+- id: at-most
+  name: "At most"
+  display_prefix: "At most"
+  display_suffix: ""
+  rank: 1
+- id: lower
+  name: "Lower"
+  display_prefix: "Lower"
+  display_suffix: ""
+  rank: 2
+- id: possibly
+  name: "Possibly"
+  display_prefix: "Possibly"
+  display_suffix: ""
+  rank: 3
+- id: likely
+  name: "Likely"
+  display_prefix: "Likely"
+  display_suffix: ""
+  rank: 4
+- id: normal
+  name: "Normal"
+  display_prefix: ""
+  display_suffix: ""
+  rank: 5
+- id: plus
+  name: "+"
+  display_prefix: ""
+  display_suffix: "+"
+  rank: 6
+- id: higher
+  name: "Higher"
+  display_prefix: "Higher"
+  display_suffix: ""
+  rank: 7
+- id: at-least
+  name: "At least"
+  display_prefix: "At least"
+  display_suffix: ""
+  rank: 8

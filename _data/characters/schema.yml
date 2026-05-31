@@ -1,0 +1,441 @@
+name: string
+verse_id: option_id
+gender_id: option_id
+age:
+  value: integer_or_null
+  unknown: boolean
+classification_ids: list
+derived:
+  key_tier:
+    from:
+      - attack_potency
+      - durability
+    rule: highest_composite_rank
+    display:
+      value: attack_durability_tiers.tier
+      modifier_prefix: stat_modifiers.display_prefix
+      modifier_suffix: stat_modifiers.display_suffix
+  ranked_stat:
+    value: tier_id
+    modifier: stat_modifier_id_or_null
+    default_modifier: normal
+    missing_modifier_rule: missing_or_null_modifier_uses_default_modifier
+    shorthand_rule: plain_tier_id_expands_to_value_with_default_modifier
+    comparison_class_field: value.comparison_class
+    default_comparison_class: ordered
+    composite_rank: "(value.rank - 1) * 8 + resolved_modifier.rank"
+    ordered_comparison_rule: compare_by_composite_rank
+    transcendent_comparison_rule: compares_above_ordered_values_but_is_not_a_numeric_increment
+    transcendent_modifier_rule: modifiers_do_not_adjust_transcendent_values
+    examples:
+      durability_value_only:
+        value: city
+        resolved_modifier: normal
+      durability_shorthand: city
+      inapplicable_strength:
+        value: inapplicable
+        comparison_class: transcendent
+        resolved_modifier: normal
+  key_identity:
+    selector_field: key
+    names_field: names
+    rule: names_belong_to_selected_key
+  key_images:
+    field: images
+    rule: base_key_image_choices_are_cosmetic
+    effect_override_rule: active_image_effect_can_replace_displayed_key_image_without_changing_key
+    fallback_rule: selected_key_image_then_first_key_image_then_empty
+    items:
+      name: string
+      image: string
+  ability_modifier:
+    default: normal
+    also_known_as: ability_profile
+    display:
+      value: ability.name
+      modifier_prefix: ability_modifiers.display_prefix
+      modifier_suffix: ability_modifiers.display_suffix
+    nullification_rule: same_ability_id_and_resistance_coverage_rank_gte_power_coverage_rank_unless_resistance_level_is_immunity
+    examples:
+      normal_resistance_vs_limited_power: nullified
+      limited_resistance_vs_normal_power: not_nullified
+      limited_resistance_vs_limited_power: nullified
+    profile_order_rule: higher_coverage_rank_is_stronger
+  resistance_level:
+    default: resistant
+    field: resistance_refs.level
+    missing_level_rule: missing_or_null_level_uses_default_level
+    resistant_rule: uses_ability_modifier_coverage_rank_to_determine_nullification
+    immunity_rule: blocks_matching_power_or_effect_regardless_of_ability_modifier_profile
+    display:
+      resistant: resistance.name
+      immunity: "Immunity to resistance.name"
+    examples:
+      immunity_vs_immense_power: nullified
+      immunity_vs_any_matching_profile: nullified
+      resistant_vs_higher_profile: depends_on_ability_modifier_coverage_rank
+  power_effects:
+    identity_field: id
+    identity_rule: same_power_id_is_same_power_even_when_effects_differ
+    type_field: type_ids
+    type_rule: empty_type_ids_means_all_or_unspecified_types
+    alias_rule: aliases_are_same_power_not_separate_powers
+    source_variant_field: source_variant
+    source_variant_rule: variants_share_base_power_identity_but_may_add_local_effects
+    catalog_effects_field: effects
+    local_effects_field: power_refs.effects
+    resolution_rule: use_local_power_ref_effects_when_present_else_catalog_power_effects
+    interaction_rule: requirements_resistances_and_synergies_match_by_power_id_not_effect_list
+    image_rule: active_power_effects_may_update_displayed_key_image
+    examples:
+      forcefield_creation_on_invisible_woman: local_effects
+      forcefield_creation_on_another_character: different_local_effects_same_power_id
+      infinity_gauntlet: catalog_equipment_effects
+      transformation_power_image: active_power_effect_updates_displayed_image
+  power_grants:
+    applies_to:
+      - power
+      - equipment
+      - attack
+      - magic_level
+      - magic_nature
+    grant_fields:
+      - power_refs
+      - resistance_refs
+      - magic_level_ids
+    recursive_rule: keep_applying_granted_power_effects_until_no_new_refs
+    duplicate_power_rule: same_power_id_does_not_stack
+    strongest_profile_rule: highest_ability_modifier_coverage_rank_wins
+    stronger_by_default: false
+    cycle_rule: ignore_already_resolved_power_refs
+    examples:
+      dark_dimension_magic_grants_mystic_being: mystic_being_then_grants_basic_magic
+      hell_lord_grants_three_magic_branches: hellfire_and_both_demonic_magic_types
+  power_nullification:
+    power_id: power-nullification
+    aliases:
+      - negation
+    effect_field: effects.power_nullification
+    target_power_ids_field: target_power_ids
+    all_powers_rule: empty_target_power_ids_means_all_powers
+    negation_rule: non_empty_target_power_ids_negates_only_listed_powers
+    display_rule: targeted_power_nullification_can_display_as_target_power_name_negation
+    resistance_rule: can_be_resisted_by_matching_resistance_refs
+    examples:
+      broad_power_nullification:
+        id: power-nullification
+        effects:
+          - power_nullification:
+              target_power_ids: []
+      regeneration_negation:
+        id: power-nullification
+        effects:
+          - power_nullification:
+              target_power_ids:
+                - regeneration
+  resistance_negation:
+    power_id: resistance-negation
+    effect_field: effects.resistance_negation
+    target_resistance_ids_field: target_resistance_ids
+    target_immunity_ids_field: target_immunity_ids
+    all_resistances_rule: empty_target_resistance_ids_negates_all_resistant_level_resistances
+    target_rule: non_empty_target_resistance_ids_negates_only_listed_resistant_level_resistances
+    immunity_rule: immunity_level_resistance_is_negated_only_when_its_resistance_id_is_in_target_immunity_ids
+    empty_immunity_target_rule: empty_target_immunity_ids_never_negates_immunity
+    interaction_rule: disabled_resistance_refs_do_not_nullify_matching_effects_while_negated
+    examples:
+      all_resistances_negation:
+        id: resistance-negation
+        effects:
+          - resistance_negation:
+              target_resistance_ids: []
+              target_immunity_ids: []
+      magic_resistance_negation:
+        id: resistance-negation
+        effects:
+          - resistance_negation:
+              target_resistance_ids:
+                - magic-resistance
+              target_immunity_ids: []
+      magic_immunity_negation:
+        id: resistance-negation
+        effects:
+          - resistance_negation:
+              target_resistance_ids: []
+              target_immunity_ids:
+                - magic-resistance
+  magic_levels:
+    power_id: magic
+    level_field: magic_level_id
+    inheritance_rule: higher_magic_level_inherits_all_lower_level_grants
+    duplicate_power_rule: highest_magic_level_rank_then_profile_rank_then_effect_rank_wins
+    resistance_rule: covers_magic_power_refs_at_same_or_lower_level_rank_only
+    source_power_rule: does_not_resist_non_magic_source_powers_that_grant_magic_levels
+    examples:
+      low_tier_sorcerer_resistance_vs_basic_magic: nullified
+      basic_magic_resistance_vs_low_tier_sorcerer: not_nullified
+      sorcerer_supreme_resistance_vs_basic_magic_granted_by_mystic_being: nullified
+      sorcerer_supreme_resistance_vs_mystic_being_source_power: not_nullified_unless_resists_mystic_being
+  magic_natures:
+    power_id: magic
+    nature_sets_field: magic_natures
+    nature_ref_field: magic_nature_ids
+    applies_to: raw_magic_itself_not_sorcerer_user_level
+    alias_rule: aliases_are_same_magic_nature_not_separate_entries
+    grant_rule: magic_power_refs_may_inherit_raw_magic_nature_payloads
+    application_rule: applies_only_to_magic_power_refs_attacks_or_effects_that_reference_magic_nature_ids
+    display_rule: do_not_list_magic_natures_as_character_powers
+    ownership_rule: magic_nature_grants_are_effect_payloads_not_character_key_power_refs
+    duplicate_power_rule: strongest_profile_or_effect_wins
+    examples:
+      nature_of_magic_or_magical_energy: raw_magic_properties
+      magic_attack_with_nature_of_magic: inherits_raw_magic_payload
+      character_with_magic_attack: does_not_gain_magic_nature_as_owned_power
+  usage_requirements:
+    applies_to:
+      - equipment
+      - attack
+    required_power_refs_field: required_power_refs
+    rule: empty_required_power_refs_means_usable
+    power_match_rule: same_power_id_and_owned_coverage_rank_gte_required_coverage_rank
+    type_match_rule: owned_power_type_ids_must_cover_required_power_type_ids
+  weapon_mastery:
+    power_id: weapon-mastery
+    form_field: power_refs.type_ids
+    equipment_type_field: equipment.weapon_type_ids
+    attack_type_field: attack.weapon_type_ids
+    equipment_requirement_field: equipment.required_power_refs
+    all_type_id: all-weapons
+    all_rule: all_weapons_satisfies_any_weapon_mastery_type_requirement
+    empty_type_rule: empty_weapon_mastery_type_ids_means_unspecified_not_all
+    close_combat_rule: weapon_mastery_without_marksmanship_is_for_close_combat_weapons
+    marksmanship_rule: marksmanship_is_weapon_mastery_for_firearms_and_projectile_weapons
+    skill_degree_rule: degree_of_skill_is_descriptive_not_a_separate_mastery_type
+    coverage_rule: owned_type_satisfies_required_type_when_same_or_when_required_type_is_directly_or_transitively_in_owned_covers_type_ids
+    equipment_type_rule: weapon_type_ids_describe_equipment_but_required_power_refs_enforce_mastery
+    resistance_rule: weapon_effects_are_resisted_by_granted_power_or_effect_refs_not_weapon_type
+    examples:
+      sword_equipment_requirement:
+        id: weapon-mastery
+        type_ids:
+          - sword
+      sword_mastery_uses_sword_equipment: allowed
+      marksmanship_uses_rifle_or_pistol_equipment: allowed
+      sword_mastery_uses_rifle_equipment: not_allowed
+      all_weapons_mastery_uses_any_weapon_equipment: allowed
+  martial_arts_mastery:
+    power_id: martial-arts-mastery
+    degree_field: power_refs.martial_arts_degree_id
+    degree_catalog: martial_arts_degrees
+    default_degree: unspecified
+    missing_degree_rule: missing_or_null_degree_uses_default_degree
+    comparison_rule: higher_rank_is_more_skilled
+    stat_rule: martial_arts_degree_is_a_skill_tiebreaker_and_does_not_change_stats_by_itself
+    requirement_rule: required_degree_met_when_owned_degree_rank_gte_required_degree_rank
+    display_rule: degree_name_can_display_instead_of_plain_power_name_when_present
+    examples:
+      expert_martial_artist:
+        id: martial-arts-mastery
+        martial_arts_degree_id: expert
+      master_martial_artist_beats_expert_when_stats_are_similar: true
+  acrobatics:
+    power_id: acrobatics
+    degree_field: power_refs.acrobatics_degree_id
+    degree_catalog: acrobatics_degrees
+    default_degree: unspecified
+    missing_degree_rule: missing_or_null_degree_uses_default_degree
+    comparison_rule: higher_rank_is_more_skilled
+    stat_rule: acrobatics_degree_is_a_skill_tiebreaker_and_does_not_change_stats_by_itself
+    requirement_rule: required_degree_met_when_owned_degree_rank_gte_required_degree_rank
+    display_rule: degree_name_can_display_instead_of_plain_power_name_when_present
+    examples:
+      expert_acrobat:
+        id: acrobatics
+        acrobatics_degree_id: expert
+  speed_display:
+    default_label: "Speed"
+    default_field: combat_speed
+    nullable_fields:
+      - attack_speed
+      - reaction_speed
+      - travel_speed
+      - flight_speed
+    compare_rule: ignore_null
+  effects:
+    activation_rule: requirements_met_and_not_nullified
+    stat_rule: best_composite_rank_per_stat
+    source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
+    nullification_rule: matching_resistance_disables_effect_when_immunity_or_sufficient_ability_modifier_coverage
+    image_rule: active_image_update_changes_displayed_image_only_not_key_identity_or_stats
+    image_conflict_rule: highest_priority_wins_then_source_order_then_base_key_image
+    image_source_order:
+      - equipment
+      - power
+      - attack
+    image_update:
+      name: string
+      image: string
+      priority: integer
+      condition: string_or_null
+    power_nullification:
+      target_power_ids: list
+    resistance_negation:
+      target_resistance_ids: list
+      target_immunity_ids: list
+    stat_effects:
+      attack_potency: ranked_attack_durability_or_null
+      attack_speed: ranked_speed_or_null
+      combat_speed: ranked_speed_or_null
+      reaction_speed: ranked_speed_or_null
+      travel_speed: ranked_speed_or_null
+      flight_speed: ranked_speed_or_null
+      lifting_strength: ranked_lifting_strength_or_null
+      striking_strength: ranked_striking_strength_or_null
+      durability: ranked_attack_durability_or_null
+      stamina: ranked_stamina_or_null
+      range: ranked_range_or_null
+      intelligence: ranked_intelligence_or_null
+    grants:
+      power_refs: list
+      resistance_refs: list
+    requirements:
+      stat_minimums: list
+      power_refs: list
+      equipment_ids: list
+    nullified_by:
+      resistance_refs: list
+      power_refs: list
+    examples:
+      destined_one_suit: equipment_effect_updates_stats_powers_and_display_image
+      ms_marvel_key_with_suit: same_key_different_active_image
+  catalog_entries:
+    power_type:
+      id: string
+      power_id: power_id
+      name: string
+      covers_all: boolean
+      covers_type_ids: list
+    power:
+      id: string
+      name: string
+      aliases: list
+      variants: list
+      tags: list
+      type_ids: list
+      degree_ids: list
+      grants:
+        power_refs: list
+        resistance_refs: list
+        magic_level_ids: list
+      effects: list
+    magic_level:
+      id: string
+      name: string
+      rank: integer
+      inherits_level_ids: list
+      power_refs: list
+      resistance_refs: list
+    magic_nature:
+      id: string
+      name: string
+      aliases: list
+      description: string
+      display: hidden_from_character_power_list
+      applies_to: raw_magic
+      ownership: effect_payload
+      inherits_nature_ids: list
+      power_refs: list
+      resistance_refs: list
+      effects: list
+    resistance:
+      id: string
+      name: string
+      resists_power_ids: list
+      resists_effect_ids: list
+    equipment:
+      id: string
+      name: string
+      weapon_type_ids: list
+      required_power_refs:
+        - id: power_id
+          modifier: ability_modifier_id
+          type_ids: list_or_null
+          martial_arts_degree_id: martial_arts_degree_id_or_null
+          acrobatics_degree_id: acrobatics_degree_id_or_null
+          magic_level_id: magic_level_id_or_null
+          magic_nature_ids: list_or_null
+          source_variant: string_or_null
+          condition: string_or_null
+      effects: list
+    attack:
+      id: string
+      name: string
+      weapon_type_ids: list
+      required_power_refs:
+        - id: power_id
+          modifier: ability_modifier_id
+          type_ids: list_or_null
+          martial_arts_degree_id: martial_arts_degree_id_or_null
+          acrobatics_degree_id: acrobatics_degree_id_or_null
+          magic_level_id: magic_level_id_or_null
+          magic_nature_ids: list_or_null
+          source_variant: string_or_null
+          condition: string_or_null
+      effects: list
+keys:
+  - key: string
+    names: list
+    images:
+      - name: string
+        image: string
+    power_refs:
+      - id: power_id
+        modifier: ability_modifier_id
+        type_ids: list_or_null
+        martial_arts_degree_id: martial_arts_degree_id_or_null
+        acrobatics_degree_id: acrobatics_degree_id_or_null
+        magic_level_id: magic_level_id_or_null
+        magic_nature_ids: list_or_null
+        source_variant: string_or_null
+        condition: string_or_null
+        effects: list_or_null
+    resistance_refs:
+      - id: resistance_id
+        level: resistance_level_id_or_null_defaults_to_resistant
+        modifier: ability_modifier_id
+        type_ids: list_or_null
+        magic_level_id: magic_level_id_or_null
+        magic_nature_ids: list_or_null
+        source_variant: string_or_null
+        condition: string_or_null
+    attack_potency:
+      value: attack_durability_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    attack_speed: ranked_speed_or_null
+    combat_speed:
+      value: speed_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    reaction_speed: ranked_speed_or_null
+    travel_speed: ranked_speed_or_null
+    flight_speed: ranked_speed_or_null
+    lifting_strength:
+      value: lifting_strength_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    striking_strength:
+      value: striking_strength_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    durability:
+      value: attack_durability_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    stamina:
+      value: stamina_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    range:
+      value: range_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    standard_equipment_ids: list
+    optional_equipment_ids: list
+    intelligence:
+      value: intelligence_tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+    attack_ids: list

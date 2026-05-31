@@ -1,0 +1,105 @@
+- id: below-standard-melee-range
+  name: "Below Standard Melee Range"
+  rank: 1
+- id: standard-melee-range
+  name: "Standard Melee Range"
+  rank: 2
+- id: extended-melee-range
+  name: "Extended Melee Range"
+  rank: 3
+- id: several-meters
+  name: "Several Meters"
+  rank: 4
+- id: tens-of-meters
+  name: "Tens of Meters"
+  rank: 5
+- id: hundreds-of-meters
+  name: "Hundreds of Meters"
+  rank: 6
+- id: kilometers
+  name: "Kilometers"
+  rank: 7
+- id: tens-of-kilometers
+  name: "Tens of Kilometers"
+  rank: 8
+- id: hundreds-of-kilometers
+  name: "Hundreds of Kilometers"
+  rank: 9
+- id: thousands-of-kilometers
+  name: "Thousands of Kilometers"
+  rank: 10
+- id: planetary
+  name: "Planetary"
+  rank: 11
+- id: stellar
+  name: "Stellar"
+  rank: 12
+- id: interplanetary
+  name: "Interplanetary"
+  rank: 13
+- id: interstellar
+  name: "Interstellar"
+  rank: 14
+- id: galactic
+  name: "Galactic"
+  rank: 15
+- id: intergalactic
+  name: "Intergalactic"
+  rank: 16
+- id: universal
+  name: "Universal"
+  rank: 17
+- id: high-universal
+  name: "High Universal"
+  rank: 18
+- id: universal-plus
+  name: "Universal+"
+  rank: 19
+- id: interdimensional
+  name: "Interdimensional"
+  rank: 20
+- id: low-multiversal
+  name: "Low Multiversal"
+  rank: 21
+- id: multiversal
+  name: "Multiversal"
+  rank: 22
+- id: multiversal-plus
+  name: "Multiversal+"
+  rank: 23
+- id: extradimensional
+  name: "Extradimensional"
+  rank: 24
+- id: low-complex-multiversal
+  name: "Low Complex Multiversal"
+  rank: 25
+- id: complex-multiversal
+  name: "Complex Multiversal"
+  rank: 26
+- id: high-complex-multiversal
+  name: "High Complex Multiversal"
+  rank: 27
+- id: hyperversal
+  name: "Hyperversal"
+  rank: 28
+- id: high-hyperversal
+  name: "High Hyperversal"
+  rank: 29
+- id: low-outerversal
+  name: "Low Outerversal"
+  rank: 30
+- id: outerversal
+  name: "Outerversal"
+  rank: 31
+- id: outerversal-plus
+  name: "Outerversal+"
+  rank: 32
+- id: high-outerversal
+  name: "High Outerversal"
+  rank: 33
+- id: high-outerversal-plus
+  name: "High Outerversal+"
+  rank: 34
+- id: boundless
+  name: "Boundless"
+  rank: 35

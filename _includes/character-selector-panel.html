@@ -1,0 +1,13 @@
+<section class="selector-panel" data-selector="{{ include.side }}" aria-label="{{ include.aria_label | escape }}">
+  <div class="selector-bar">
+    <h2 class="side-title">{{ include.title | escape }}</h2>
+    <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
+  </div>
+  <div class="selector-body">
+    <aside class="choice-column">
+      <span class="choice-label" data-choice-label></span>
+      <ul class="choice-list" data-choice-list></ul>
+    </aside>
+    <article class="character-card" data-character-card></article>
+  </div>
+</section>

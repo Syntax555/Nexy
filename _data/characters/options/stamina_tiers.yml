@@ -1,0 +1,27 @@
+- id: unknown
+  name: "Unknown"
+  rank: 1
+- id: below-average
+  name: "Below Average"
+  rank: 2
+- id: average
+  name: "Average"
+  rank: 3
+- id: athletic
+  name: "Athletic"
+  rank: 4
+- id: peak-human
+  name: "Peak Human"
+  rank: 5
+- id: superhuman
+  name: "Superhuman"
+  rank: 6
+- id: infinite
+  name: "Infinite"
+  rank: 7
+- id: inapplicable
+  name: "Inapplicable"
+  rank: 8
+  comparison_class: transcendent
+  modifier_behavior: locked_to_normal
+  description: "Characters existing beyond quantitative and qualitative distinction alike."

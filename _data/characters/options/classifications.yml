@@ -1,0 +1,12 @@
+- id: human-mutate
+  name: "Human Mutate"
+- id: scientist
+  name: "Scientist"
+- id: fugitive-on-the-run
+  name: "Fugitive on the Run"
+- id: avenger
+  name: "Avenger"
+- id: defender
+  name: "Defender"
+- id: avatar-of-the-devil
+  name: "Avatar of the Devil"

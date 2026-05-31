@@ -1,0 +1,168 @@
+- id: low-hypoverse-level
+  name: "Low Hypoverse level"
+  rank: 1
+- id: hypoverse-level
+  name: "Hypoverse level"
+  rank: 2
+- id: high-hypoverse-level
+  name: "High Hypoverse level"
+  rank: 3
+- id: below-average-human-level
+  name: "Below Average Human level"
+  rank: 4
+- id: human-level
+  name: "Human level"
+  rank: 5
+- id: athlete-level
+  name: "Athlete level"
+  rank: 6
+- id: street-level
+  name: "Street level"
+  rank: 7
+- id: wall-level
+  name: "Wall level"
+  rank: 8
+- id: small-building-level
+  name: "Small Building level"
+  rank: 9
+- id: building-level
+  name: "Building level"
+  rank: 10
+- id: large-building-level
+  name: "Large Building level"
+  rank: 11
+- id: city-block-level
+  name: "City Block level"
+  rank: 12
+- id: multi-city-block-level
+  name: "Multi-City Block level"
+  rank: 13
+- id: small-town-level
+  name: "Small Town level"
+  rank: 14
+- id: town-level
+  name: "Town level"
+  rank: 15
+- id: large-town-level
+  name: "Large Town level"
+  rank: 16
+- id: small-city-level
+  name: "Small City level"
+  rank: 17
+- id: city-level
+  name: "City level"
+  rank: 18
+- id: mountain-level
+  name: "Mountain level"
+  rank: 19
+- id: large-mountain-level
+  name: "Large Mountain level"
+  rank: 20
+- id: island-level
+  name: "Island level"
+  rank: 21
+- id: large-island-level
+  name: "Large Island level"
+  rank: 22
+- id: small-country-level
+  name: "Small Country level"
+  rank: 23
+- id: country-level
+  name: "Country level"
+  rank: 24
+- id: large-country-level
+  name: "Large Country level"
+  rank: 25
+- id: continent-level
+  name: "Continent level"
+  rank: 26
+- id: multi-continent-level
+  name: "Multi-Continent level"
+  rank: 27
+- id: moon-level
+  name: "Moon level"
+  rank: 28
+- id: small-planet-level
+  name: "Small Planet level"
+  rank: 29
+- id: planet-level
+  name: "Planet level"
+  rank: 30
+- id: large-planet-level
+  name: "Large Planet level"
+  rank: 31
+- id: brown-dwarf-level
+  name: "Brown Dwarf level"
+  rank: 32
+- id: small-star-level
+  name: "Small Star level"
+  rank: 33
+- id: star-level
+  name: "Star level"
+  rank: 34
+- id: large-star-level
+  name: "Large Star level"
+  rank: 35
+- id: solar-system-level
+  name: "Solar System level"
+  rank: 36
+- id: multi-solar-system-level
+  name: "Multi-Solar System level"
+  rank: 37
+- id: galaxy-level
+  name: "Galaxy level"
+  rank: 38
+- id: multi-galaxy-level
+  name: "Multi-Galaxy level"
+  rank: 39
+- id: universe-level
+  name: "Universe level"
+  rank: 40
+- id: high-universe-level
+  name: "High Universe level"
+  rank: 41
+- id: universe-level-plus
+  name: "Universe level+"
+  rank: 42
+- id: low-multiverse-level
+  name: "Low Multiverse level"
+  rank: 43
+- id: multiverse-level
+  name: "Multiverse level"
+  rank: 44
+- id: multiverse-level-plus
+  name: "Multiverse level+"
+  rank: 45
+- id: low-complex-multiverse-level
+  name: "Low Complex Multiverse level"
+  rank: 46
+- id: complex-multiverse-level
+  name: "Complex Multiverse level"
+  rank: 47
+- id: high-complex-multiverse-level
+  name: "High Complex Multiverse level"
+  rank: 48
+- id: hyperverse-level
+  name: "Hyperverse level"
+  rank: 49
+- id: high-hyperverse-level
+  name: "High Hyperverse level"
+  rank: 50
+- id: low-outerverse-level
+  name: "Low Outerverse level"
+  rank: 51
+- id: outerverse-level
+  name: "Outerverse level"
+  rank: 52
+- id: outerverse-level-plus
+  name: "Outerverse level+"
+  rank: 53
+- id: high-outerverse-level
+  name: "High Outerverse level"
+  rank: 54
+- id: inapplicable
+  name: "Inapplicable"
+  rank: 55
+  comparison_class: transcendent
+  modifier_behavior: locked_to_normal
+  description: "Characters existing beyond quantitative and qualitative distinction alike."

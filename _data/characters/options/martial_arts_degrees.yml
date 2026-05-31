@@ -1,0 +1,12 @@
+- id: unspecified
+  name: "Martial Arts Mastery"
+  rank: 0
+  display_as_power_name: true
+- id: expert
+  name: "Expert Martial Artist"
+  rank: 1
+  display_as_power_name: false
+- id: master
+  name: "Master Martial Artist"
+  rank: 2
+  display_as_power_name: false

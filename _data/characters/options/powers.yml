@@ -1,0 +1,315 @@
+- id: weapon-mastery
+  name: "Weapon Mastery"
+  aliases: []
+  variants: []
+  tags:
+    - mastery
+  type_ids:
+    - all-weapons
+    - close-combat-weapon
+    - sword
+    - spear
+    - knife
+    - marksmanship
+    - projectile-weapon
+    - firearm
+    - rifle
+    - pistol
+    - shotgun
+    - bow
+    - crossbow
+    - thrown-weapon
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: martial-arts-mastery
+  name: "Martial Arts Mastery"
+  aliases: []
+  variants: []
+  tags:
+    - mastery
+  type_ids: []
+  degree_ids:
+    - expert
+    - master
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: acrobatics
+  name: "Acrobatics"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids:
+    - expert
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: stealth-mastery
+  name: "Stealth Mastery"
+  aliases: []
+  variants: []
+  tags:
+    - mastery
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: forcefield-creation
+  name: "Forcefield Creation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: power-nullification
+  name: "Power Nullification"
+  aliases:
+    - "Negation"
+  variants: []
+  tags:
+    - nullification
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: resistance-negation
+  name: "Resistance Negation"
+  aliases: []
+  variants: []
+  tags:
+    - nullification
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: magic
+  name: "Magic"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: magical-aura
+  name: "Magical Aura"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: conceptual-manipulation
+  name: "Conceptual Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids:
+    - conceptual-manipulation-type-1
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: mystic-being
+  name: "Mystic Being"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+    - magic-type
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids:
+      - basic-level-magic-users
+  effects: []
+- id: dark-dimension-magic
+  name: "Dark Dimension Magic"
+  aliases: []
+  variants:
+    - id: faltine
+      name: "Faltine"
+      inherits_base_grants: true
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects: []
+  tags:
+    - magic
+    - magic-type
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs:
+      - id: mystic-being
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: chaos-magic
+  name: "Chaos Magic"
+  aliases:
+    - "Hex Magic"
+  variants: []
+  tags:
+    - magic
+    - magic-type
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: hellfire
+  name: "Hellfire"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+    - hellfire
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: demonic-magic
+  name: "Demonic Magic"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+    - magic-type
+    - demonic-magic
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs:
+      - id: innate-demon-physiology
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+      - id: standard-demonic-powers
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: innate-demon-physiology
+  name: "Innate Demon Physiology"
+  aliases: []
+  variants: []
+  tags:
+    - demonic-magic
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: standard-demonic-powers
+  name: "Standard Demonic Powers"
+  aliases: []
+  variants: []
+  tags:
+    - demonic-magic
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: hell-lord
+  name: "Hell-Lord"
+  aliases: []
+  variants: []
+  tags:
+    - magic
+    - hell-lord
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs:
+      - id: hellfire
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+      - id: innate-demon-physiology
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+      - id: standard-demonic-powers
+        modifier: normal
+        type_ids: []
+        magic_level_id: null
+        magic_nature_ids: []
+        source_variant: null
+        condition: null
+        effects: null
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []

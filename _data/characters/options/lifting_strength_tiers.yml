@@ -1,0 +1,93 @@
+- id: insubstantial
+  name: "Insubstantial"
+  rank: 1
+- id: below-average-human
+  name: "Below Average Human"
+  rank: 2
+- id: average-human
+  name: "Average Human"
+  rank: 3
+- id: above-average-human
+  name: "Above Average Human"
+  rank: 4
+- id: athletic-human
+  name: "Athletic Human"
+  rank: 5
+- id: peak-human
+  name: "Peak Human"
+  rank: 6
+- id: superhuman
+  name: "Superhuman"
+  rank: 7
+- id: class-1
+  name: "Class 1"
+  rank: 8
+- id: class-5
+  name: "Class 5"
+  rank: 9
+- id: class-10
+  name: "Class 10"
+  rank: 10
+- id: class-25
+  name: "Class 25"
+  rank: 11
+- id: class-50
+  name: "Class 50"
+  rank: 12
+- id: class-100
+  name: "Class 100"
+  rank: 13
+- id: class-k
+  name: "Class K"
+  rank: 14
+- id: class-m
+  name: "Class M"
+  rank: 15
+- id: class-g
+  name: "Class G"
+  rank: 16
+- id: class-t
+  name: "Class T"
+  rank: 17
+- id: class-p
+  name: "Class P"
+  rank: 18
+- id: class-e
+  name: "Class E"
+  rank: 19
+- id: class-z
+  name: "Class Z"
+  rank: 20
+- id: class-y
+  name: "Class Y"
+  rank: 21
+- id: pre-stellar
+  name: "Pre-Stellar"
+  rank: 22
+- id: stellar
+  name: "Stellar"
+  rank: 23
+- id: multi-stellar
+  name: "Multi-Stellar"
+  rank: 24
+- id: galactic
+  name: "Galactic"
+  rank: 25
+- id: multi-galactic
+  name: "Multi-Galactic"
+  rank: 26
+- id: universal
+  name: "Universal"
+  rank: 27
+- id: infinite
+  name: "Infinite"
+  rank: 28
+- id: immeasurable
+  name: "Immeasurable"
+  rank: 29
+- id: inapplicable
+  name: "Inapplicable"
+  rank: 30
+  comparison_class: transcendent
+  modifier_behavior: locked_to_normal
+  description: "Characters existing beyond quantitative and qualitative distinction alike."

@@ -1,0 +1,61 @@
+- id: basic-level-magic-users
+  name: "Basic-Level Magic Users"
+  rank: 1
+  inherits_level_ids: []
+  power_refs:
+    - id: magic
+      modifier: normal
+      type_ids: []
+      magic_level_id: basic-level-magic-users
+      effects: null
+    - id: magical-aura
+      modifier: normal
+      type_ids: []
+      magic_level_id: null
+      effects: null
+    - id: conceptual-manipulation
+      modifier: normal
+      type_ids:
+        - conceptual-manipulation-type-1
+      magic_level_id: null
+      effects: null
+  resistance_refs: []
+- id: low-tier-sorcerers
+  name: "Low-Tier Sorcerers"
+  rank: 2
+  inherits_level_ids:
+    - basic-level-magic-users
+  power_refs:
+    - id: magic
+      modifier: enhanced
+      type_ids: []
+      magic_level_id: low-tier-sorcerers
+      effects: null
+  resistance_refs: []
+- id: master-sorcerers
+  name: "Master Sorcerers"
+  rank: 3
+  inherits_level_ids:
+    - basic-level-magic-users
+    - low-tier-sorcerers
+  power_refs:
+    - id: magic
+      modifier: greater
+      type_ids: []
+      magic_level_id: master-sorcerers
+      effects: null
+  resistance_refs: []
+- id: sorcerer-supreme-level
+  name: "Sorcerer Supreme Level"
+  rank: 4
+  inherits_level_ids:
+    - basic-level-magic-users
+    - low-tier-sorcerers
+    - master-sorcerers
+  power_refs:
+    - id: magic
+      modifier: immense
+      type_ids: []
+      magic_level_id: sorcerer-supreme-level
+      effects: null
+  resistance_refs: []

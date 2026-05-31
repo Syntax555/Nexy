@@ -1,0 +1,8 @@
+- id: resistant
+  name: "Resistance"
+  rank: 1
+  bypasses_ability_modifier_coverage: false
+- id: immunity
+  name: "Immunity"
+  rank: 2
+  bypasses_ability_modifier_coverage: true

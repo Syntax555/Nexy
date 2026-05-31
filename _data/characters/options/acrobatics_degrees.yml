@@ -1,0 +1,8 @@
+- id: unspecified
+  name: "Acrobatics"
+  rank: 0
+  display_as_power_name: true
+- id: expert
+  name: "Expert Acrobat"
+  rank: 1
+  display_as_power_name: false

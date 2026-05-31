@@ -1,0 +1,24 @@
+<script id="character-data" type="application/json">
+  {
+    "options": {
+      "media": {{ site.data.characters.options.media | jsonify }},
+      "origins": {{ site.data.characters.options.origins | jsonify }},
+      "verses": {{ site.data.characters.options.verses | jsonify }},
+      "classifications": {{ site.data.characters.options.classifications | jsonify }},
+      "powers": {{ site.data.characters.options.powers | jsonify }},
+      "power_types": {{ site.data.characters.options.power_types | jsonify }},
+      "martial_arts_degrees": {{ site.data.characters.options.martial_arts_degrees | jsonify }},
+      "equipment": {{ site.data.characters.options.equipment | jsonify }},
+      "stat_modifiers": {{ site.data.characters.options.stat_modifiers | jsonify }},
+      "attack_durability_tiers": {{ site.data.characters.options.attack_durability_tiers | jsonify }},
+      "speed_tiers": {{ site.data.characters.options.speed_tiers | jsonify }},
+      "lifting_strength_tiers": {{ site.data.characters.options.lifting_strength_tiers | jsonify }},
+      "striking_strength_tiers": {{ site.data.characters.options.striking_strength_tiers | jsonify }},
+      "stamina_tiers": {{ site.data.characters.options.stamina_tiers | jsonify }},
+      "range_tiers": {{ site.data.characters.options.range_tiers | jsonify }},
+      "intelligence_tiers": {{ site.data.characters.options.intelligence_tiers | jsonify }}
+    },
+    "empty_character": {{ site.data.characters.empty_character | jsonify }},
+    "characters": {{ site.data.characters.characters | jsonify }}
+  }
+</script>

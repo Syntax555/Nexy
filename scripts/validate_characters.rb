@@ -5,10 +5,34 @@ require "set"
 require "yaml"
 
 ROOT = File.expand_path("..", __dir__)
-CHARACTERS_FILE = File.join(ROOT, "_data", "characters.yml")
+CHARACTERS_DIR = File.join(ROOT, "_data", "characters")
+OPTIONS_DIR = File.join(CHARACTERS_DIR, "options")
+
+def load_yaml(path)
+  YAML.safe_load_file(path, aliases: true)
+end
+
+def load_characters_data
+  {
+    "schema" => load_yaml(File.join(CHARACTERS_DIR, "schema.yml")),
+    "options" => load_options_data,
+    "empty_character" => load_yaml(File.join(CHARACTERS_DIR, "empty_character.yml")),
+    "characters" => load_yaml(File.join(CHARACTERS_DIR, "characters.yml"))
+  }
+end
+
+def load_options_data
+  Dir.children(OPTIONS_DIR)
+     .grep(/\.ya?ml\z/)
+     .sort
+     .to_h do |filename|
+       key = File.basename(filename, File.extname(filename))
+       [key, load_yaml(File.join(OPTIONS_DIR, filename))]
+     end
+end
 
 def fail_with(message)
-  warn "characters.yml validation failed:"
+  warn "character data validation failed:"
   warn message
   exit 1
 end
@@ -304,7 +328,7 @@ def validate_character(context, character, sets)
   errors
 end
 
-data = YAML.safe_load_file(CHARACTERS_FILE, aliases: true)
+data = load_characters_data
 options = data.fetch("options")
 errors = []
 
@@ -432,4 +456,4 @@ if errors.any?
   fail_with(errors.map { |error| "- #{error}" }.join("\n"))
 end
 
-puts "characters.yml validation passed"
+puts "character data validation passed"

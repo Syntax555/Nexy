@@ -1,0 +1,12 @@
+- id: nature-of-magic
+  name: "Nature of Magic"
+  aliases:
+    - "Magical Energy"
+  description: "Powers and abilities of raw magic/magical energy itself, not a sorcerer-user level."
+  display: hidden_from_character_power_list
+  applies_to: raw_magic
+  ownership: effect_payload
+  inherits_nature_ids: []
+  power_refs: []
+  resistance_refs: []
+  effects: []

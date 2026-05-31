@@ -1,0 +1,96 @@
+- id: all-weapons
+  power_id: weapon-mastery
+  name: "All Weapons"
+  covers_all: true
+  covers_type_ids: []
+- id: close-combat-weapon
+  power_id: weapon-mastery
+  name: "Close Combat Weapon"
+  covers_all: false
+  covers_type_ids:
+    - sword
+    - spear
+    - knife
+- id: sword
+  power_id: weapon-mastery
+  name: "Sword"
+  covers_all: false
+  covers_type_ids: []
+- id: spear
+  power_id: weapon-mastery
+  name: "Spear"
+  covers_all: false
+  covers_type_ids: []
+- id: knife
+  power_id: weapon-mastery
+  name: "Knife"
+  covers_all: false
+  covers_type_ids: []
+- id: marksmanship
+  power_id: weapon-mastery
+  name: "Marksmanship"
+  covers_all: false
+  covers_type_ids:
+    - projectile-weapon
+    - firearm
+    - rifle
+    - pistol
+    - shotgun
+    - bow
+    - crossbow
+    - thrown-weapon
+- id: projectile-weapon
+  power_id: weapon-mastery
+  name: "Projectile Weapon"
+  covers_all: false
+  covers_type_ids:
+    - firearm
+    - rifle
+    - pistol
+    - shotgun
+    - bow
+    - crossbow
+    - thrown-weapon
+- id: firearm
+  power_id: weapon-mastery
+  name: "Firearm"
+  covers_all: false
+  covers_type_ids:
+    - rifle
+    - pistol
+    - shotgun
+- id: rifle
+  power_id: weapon-mastery
+  name: "Rifle"
+  covers_all: false
+  covers_type_ids: []
+- id: pistol
+  power_id: weapon-mastery
+  name: "Pistol"
+  covers_all: false
+  covers_type_ids: []
+- id: shotgun
+  power_id: weapon-mastery
+  name: "Shotgun"
+  covers_all: false
+  covers_type_ids: []
+- id: bow
+  power_id: weapon-mastery
+  name: "Bow"
+  covers_all: false
+  covers_type_ids: []
+- id: crossbow
+  power_id: weapon-mastery
+  name: "Crossbow"
+  covers_all: false
+  covers_type_ids: []
+- id: thrown-weapon
+  power_id: weapon-mastery
+  name: "Thrown Weapon"
+  covers_all: false
+  covers_type_ids: []
+- id: conceptual-manipulation-type-1
+  power_id: conceptual-manipulation
+  name: "Type 1"
+  covers_all: false
+  covers_type_ids: []
