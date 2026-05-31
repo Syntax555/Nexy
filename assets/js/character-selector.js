@@ -26,6 +26,21 @@
     ["flight_speed", "flight speed"]
   ];
 
+  const statCatalogs = {
+    attack_potency: "attack_durability_tiers",
+    attack_speed: "speed_tiers",
+    combat_speed: "speed_tiers",
+    reaction_speed: "speed_tiers",
+    travel_speed: "speed_tiers",
+    flight_speed: "speed_tiers",
+    lifting_strength: "lifting_strength_tiers",
+    striking_strength: "striking_strength_tiers",
+    durability: "attack_durability_tiers",
+    stamina: "stamina_tiers",
+    range: "range_tiers",
+    intelligence: "intelligence_tiers"
+  };
+
   const byId = (items, id) => (Array.isArray(items) ? items : []).find((item) => item.id === id);
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
@@ -187,8 +202,56 @@
     return details;
   }
 
+  function requirementStat(requirement) {
+    return {
+      value: requirement.value,
+      modifier: requirement.modifier || "normal"
+    };
+  }
+
+  function meetsStatRequirement(key, requirement) {
+    const catalog = statCatalogs[requirement.stat];
+    if (!catalog) return false;
+
+    const actual = key[requirement.stat];
+    if (!actual) return false;
+
+    const actualRank = compositeRank(actual, catalog);
+    const requiredRank = compositeRank(requirementStat(requirement), catalog);
+    if (!actualRank || !requiredRank) return false;
+
+    if (requirement.comparison === "at-most") return actualRank <= requiredRank;
+    if (requirement.comparison === "exact") return actualRank === requiredRank;
+
+    return actualRank >= requiredRank;
+  }
+
+  function derivedPowerRefs(key) {
+    return list(options.derived_power_rules).filter((rule) => {
+      const requirements = list(rule.requirements);
+      const minMatches = Number.isInteger(rule.min_matches) ? rule.min_matches : requirements.length;
+      const metCount = requirements.filter((requirement) => meetsStatRequirement(key, requirement)).length;
+
+      return metCount >= minMatches;
+    }).map((rule) => ({
+      id: rule.power_id,
+      modifier: "normal",
+      type_ids: []
+    }));
+  }
+
+  function powerRefs(key) {
+    const refs = [...list(key.power_refs)];
+
+    derivedPowerRefs(key).forEach((ref) => {
+      if (!refs.some((existingRef) => existingRef.id === ref.id)) refs.push(ref);
+    });
+
+    return refs;
+  }
+
   function powers(key) {
-    return list(key.power_refs).map((ref) => {
+    return powerRefs(key).map((ref) => {
       const power = byId(options.powers, ref.id);
       if (!power) return null;
 

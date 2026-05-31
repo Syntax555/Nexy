@@ -1,0 +1,20 @@
+- id: superhuman-physical-characteristics
+  power_id: superhuman-physical-characteristics
+  min_matches: 2
+  requirements:
+    - stat: combat_speed
+      value: superhuman
+      modifier: normal
+      comparison: at-least
+    - stat: lifting_strength
+      value: superhuman
+      modifier: normal
+      comparison: at-least
+    - stat: striking_strength
+      value: street-level
+      modifier: normal
+      comparison: at-least
+    - stat: durability
+      value: street
+      modifier: normal
+      comparison: at-least

@@ -9,6 +9,21 @@ CHARACTERS_DIR = File.join(ROOT, "_data", "characters")
 CHARACTER_ENTRIES_DIR = File.join(CHARACTERS_DIR, "entries")
 OPTIONS_DIR = File.join(CHARACTERS_DIR, "options")
 
+STAT_CATALOGS = {
+  "attack_potency" => :attack_durability_tiers,
+  "attack_speed" => :speed_tiers,
+  "combat_speed" => :speed_tiers,
+  "reaction_speed" => :speed_tiers,
+  "travel_speed" => :speed_tiers,
+  "flight_speed" => :speed_tiers,
+  "lifting_strength" => :lifting_strength_tiers,
+  "striking_strength" => :striking_strength_tiers,
+  "durability" => :attack_durability_tiers,
+  "stamina" => :stamina_tiers,
+  "range" => :range_tiers,
+  "intelligence" => :intelligence_tiers
+}.freeze
+
 def load_yaml(path)
   YAML.safe_load_file(path, aliases: true)
 end
@@ -160,25 +175,10 @@ end
 def validate_stat_effects(context, stat_effects, sets)
   return ["#{context} must be a map"] unless stat_effects.is_a?(Hash)
 
-  catalog_by_stat = {
-    "attack_potency" => :attack_durability_tiers,
-    "attack_speed" => :speed_tiers,
-    "combat_speed" => :speed_tiers,
-    "reaction_speed" => :speed_tiers,
-    "travel_speed" => :speed_tiers,
-    "flight_speed" => :speed_tiers,
-    "lifting_strength" => :lifting_strength_tiers,
-    "striking_strength" => :striking_strength_tiers,
-    "durability" => :attack_durability_tiers,
-    "stamina" => :stamina_tiers,
-    "range" => :range_tiers,
-    "intelligence" => :intelligence_tiers
-  }
-
   errors = []
 
   stat_effects.each do |stat_name, value|
-    catalog = catalog_by_stat[stat_name]
+    catalog = STAT_CATALOGS[stat_name]
 
     unless catalog
       errors << "#{context}.#{stat_name} is not a known stat effect"
@@ -186,6 +186,59 @@ def validate_stat_effects(context, stat_effects, sets)
     end
 
     errors.concat(validate_ranked_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+  end
+
+  errors
+end
+
+def validate_derived_power_rule(context, rule, sets)
+  return ["#{context} must be a map"] unless rule.is_a?(Hash)
+
+  errors = []
+  requirements = rule["requirements"]
+  min_matches = rule["min_matches"]
+
+  errors << "#{context} is missing id" if rule["id"].nil? || rule["id"].to_s.empty?
+  errors.concat(validate_refs("#{context}.power_id", [rule["power_id"]], sets[:powers], "power"))
+
+  unless requirements.is_a?(Array) && requirements.any?
+    errors << "#{context}.requirements must contain at least one requirement"
+    requirements = []
+  end
+
+  unless min_matches.is_a?(Integer) && min_matches.positive?
+    errors << "#{context}.min_matches must be a positive integer"
+  end
+
+  if min_matches.is_a?(Integer) && requirements.any? && min_matches > requirements.length
+    errors << "#{context}.min_matches cannot be greater than requirement count"
+  end
+
+  requirements.each_with_index do |requirement, index|
+    requirement_context = "#{context}.requirements[#{index}]"
+
+    unless requirement.is_a?(Hash)
+      errors << "#{requirement_context} must be a map"
+      next
+    end
+
+    stat = requirement["stat"]
+    catalog = STAT_CATALOGS[stat]
+    unless catalog
+      errors << "#{requirement_context}.stat #{stat.inspect} is not a ranked stat field"
+      next
+    end
+
+    comparison = requirement["comparison"] || "at-least"
+    unless %w[at-least at-most exact].include?(comparison)
+      errors << "#{requirement_context}.comparison must be at-least, at-most, or exact"
+    end
+
+    stat_requirement = {
+      "value" => requirement["value"],
+      "modifier" => requirement["modifier"] || "normal"
+    }
+    errors.concat(validate_ranked_stat(requirement_context, stat_requirement, sets[catalog], sets[:stat_modifiers]))
   end
 
   errors
@@ -431,6 +484,7 @@ catalog_names = %w[
   genders
   classifications
   power_types
+  derived_power_rules
   martial_arts_degrees
   acrobatics_degrees
   powers
@@ -489,6 +543,10 @@ end
 
 Array(options["powers"]).each_with_index do |entry, index|
   errors.concat(validate_catalog_entry("options.powers[#{index}]", entry, sets, :power))
+end
+
+Array(options["derived_power_rules"]).each_with_index do |entry, index|
+  errors.concat(validate_derived_power_rule("options.derived_power_rules[#{index}]", entry, sets))
 end
 
 Array(options["resistances"]).each_with_index do |entry, index|

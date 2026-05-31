@@ -122,6 +122,26 @@ derived:
     examples:
       dark_dimension_magic_grants_mystic_being: mystic_being_then_grants_basic_magic
       hell_lord_grants_three_magic_branches: hellfire_and_both_demonic_magic_types
+  derived_power_rules:
+    catalog: derived_power_rules
+    rule: powers_can_be_granted_automatically_from_key_stats
+    min_matches_rule: grant_power_when_met_requirement_count_is_greater_than_or_equal_to_min_matches
+    comparison_rule: compare_ranked_stats_by_composite_rank
+    default_modifier: normal
+    requirements:
+      stat: ranked_stat_field
+      value: tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+      comparison: at-least_or_at-most_or_exact
+    examples:
+      superhuman_physical_characteristics:
+        power_id: superhuman-physical-characteristics
+        min_matches: 2
+        requirements:
+          - combat_speed_at_least_superhuman
+          - lifting_strength_at_least_superhuman
+          - striking_strength_at_least_street_level
+          - durability_at_least_street
   power_nullification:
     power_id: power-nullification
     aliases:
@@ -348,6 +368,15 @@ derived:
         resistance_refs: list
         magic_level_ids: list
       effects: list
+    derived_power_rule:
+      id: string
+      power_id: power_id
+      min_matches: integer
+      requirements:
+        - stat: ranked_stat_field
+          value: tier_id
+          modifier: stat_modifier_id_or_null_defaults_to_normal
+          comparison: at-least_or_at-most_or_exact
     magic_level:
       id: string
       name: string
