@@ -395,10 +395,6 @@ title: Home
       return formatStat(chosen, "attack_durability_tiers", "tier");
     }
 
-    function characterForDisplay(character) {
-      return character || data.empty_character;
-    }
-
     function characterKey(character, keyId = null) {
       const keys = list(character.keys);
       return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
@@ -438,7 +434,14 @@ title: Home
     }
 
     function renderCard(card, character, keyId = null) {
-      const displayCharacter = characterForDisplay(character);
+      if (!character) {
+        card.hidden = true;
+        card.innerHTML = "";
+        return;
+      }
+
+      card.hidden = false;
+      const displayCharacter = character;
       const key = characterKey(displayCharacter, keyId);
       const image = list(key.images)[0];
       const names = list(key.names);
@@ -485,8 +488,15 @@ title: Home
         originId: null,
         verseId: null,
         characterName: null,
-        keyId: null
+        keyId: null,
+        emptySelected: false
       };
+
+      function clearSelection() {
+        state.characterName = null;
+        state.keyId = null;
+        state.emptySelected = false;
+      }
 
       function stepItems() {
         if (state.step === "media") return options.media;
@@ -499,7 +509,17 @@ title: Home
       }
 
       function selectedCharacter() {
+        if (state.emptySelected) return data.empty_character;
+
         return data.characters.find((character) => character.name === state.characterName) || null;
+      }
+
+      function displayCharacter() {
+        const character = selectedCharacter();
+        if (!character) return null;
+        if (state.step === "key" && !state.keyId) return null;
+
+        return character;
       }
 
       function choose(item) {
@@ -507,24 +527,30 @@ title: Home
           state.mediaId = item.id;
           state.originId = null;
           state.verseId = null;
-          state.characterName = null;
-          state.keyId = null;
+          clearSelection();
           state.step = "origin";
         } else if (state.step === "origin") {
           state.originId = item.id;
           state.verseId = null;
-          state.characterName = null;
-          state.keyId = null;
+          clearSelection();
           state.step = "verse";
         } else if (state.step === "verse") {
           state.verseId = item.id;
-          state.characterName = null;
-          state.keyId = null;
+          clearSelection();
           state.step = "character";
         } else if (state.step === "character") {
-          state.characterName = item.name;
+          clearSelection();
+
+          if (item === data.empty_character) {
+            state.emptySelected = true;
+            state.keyId = list(item.keys)[0]?.key || null;
+            render();
+            return;
+          }
+
           const keys = list(item.keys);
-          state.keyId = keys[0]?.key || null;
+          state.characterName = item.name;
+          state.keyId = keys.length > 1 ? null : keys[0]?.key || null;
           state.step = keys.length > 1 ? "key" : "character";
         } else {
           state.keyId = item.key;
@@ -538,17 +564,18 @@ title: Home
         if (state.step === "origin") {
           state.step = "media";
           state.mediaId = null;
+          clearSelection();
         } else if (state.step === "verse") {
           state.step = "origin";
           state.originId = null;
+          clearSelection();
         } else if (state.step === "character") {
           state.step = "verse";
           state.verseId = null;
-          state.characterName = null;
-          state.keyId = null;
+          clearSelection();
         } else {
           state.step = "character";
-          state.keyId = null;
+          clearSelection();
         }
 
         render();
@@ -576,15 +603,7 @@ title: Home
           button.type = "button";
           button.className = "choice-button";
           button.textContent = state.step === "key" ? title(item.key) : title(item.name);
-          button.addEventListener("click", () => {
-            if (item === data.empty_character) {
-              state.characterName = null;
-              state.keyId = null;
-              render();
-            } else {
-              choose(item);
-            }
-          });
+          button.addEventListener("click", () => choose(item));
 
           choiceList.appendChild(document.createElement("li")).appendChild(button);
         });
@@ -593,7 +612,7 @@ title: Home
       function render() {
         backButton.disabled = state.step === "media";
         renderChoices();
-        renderCard(card, selectedCharacter(), state.keyId);
+        renderCard(card, displayCharacter(), state.keyId);
       }
 
       backButton.addEventListener("click", back);
