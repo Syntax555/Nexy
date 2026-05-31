@@ -133,20 +133,62 @@ end
 def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
   return [] if allow_null && stat.nil?
 
+  errors = []
+
   if stat.is_a?(String)
     value = stat
     modifier = "normal"
   elsif stat.is_a?(Hash)
     value = stat["value"]
     modifier = stat.fetch("modifier", "normal")
+
+    %w[label note].each do |field|
+      next unless stat.key?(field)
+      next if stat[field].nil? || stat[field].is_a?(String)
+
+      errors << "#{context}.#{field} must be a string when present"
+    end
   else
     return ["#{context} must be a ranked stat map or tier id string"]
   end
 
-  errors = []
-
   errors.concat(validate_refs("#{context}.value", [value], allowed_values, "tier"))
   errors.concat(validate_refs("#{context}.modifier", [modifier], stat_modifiers, "stat modifier"))
+  errors
+end
+
+def validate_stat_effects(context, stat_effects, sets)
+  return ["#{context} must be a map"] unless stat_effects.is_a?(Hash)
+
+  catalog_by_stat = {
+    "attack_potency" => :attack_durability_tiers,
+    "attack_speed" => :speed_tiers,
+    "combat_speed" => :speed_tiers,
+    "reaction_speed" => :speed_tiers,
+    "travel_speed" => :speed_tiers,
+    "flight_speed" => :speed_tiers,
+    "perception_speed" => :speed_tiers,
+    "lifting_strength" => :lifting_strength_tiers,
+    "striking_strength" => :striking_strength_tiers,
+    "durability" => :attack_durability_tiers,
+    "stamina" => :stamina_tiers,
+    "range" => :range_tiers,
+    "intelligence" => :intelligence_tiers
+  }
+
+  errors = []
+
+  stat_effects.each do |stat_name, value|
+    catalog = catalog_by_stat[stat_name]
+
+    unless catalog
+      errors << "#{context}.#{stat_name} is not a known stat effect"
+      next
+    end
+
+    errors.concat(validate_ranked_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+  end
+
   errors
 end
 
@@ -251,6 +293,10 @@ def validate_effect(context, effect, sets)
     grants = effect["grants"]
     errors.concat(validate_power_refs("#{context}.grants.power_refs", grants["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{context}.grants.resistance_refs", grants["resistance_refs"] || [], sets))
+  end
+
+  if effect.key?("stat_effects")
+    errors.concat(validate_stat_effects("#{context}.stat_effects", effect["stat_effects"], sets))
   end
 
   if effect["power_nullification"].is_a?(Hash)
@@ -361,6 +407,7 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_ranked_stat("#{key_context}.reaction_speed", key["reaction_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.travel_speed", key["travel_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.flight_speed", key["flight_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
+    errors.concat(validate_ranked_stat("#{key_context}.perception_speed", key["perception_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.lifting_strength", key["lifting_strength"], sets[:lifting_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.striking_strength", key["striking_strength"], sets[:striking_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.durability", key["durability"], sets[:attack_durability_tiers], sets[:stat_modifiers]))

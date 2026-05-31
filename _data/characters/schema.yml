@@ -27,6 +27,8 @@ derived:
   ranked_stat:
     value: tier_id
     modifier: stat_modifier_id_or_null
+    label: string_or_null
+    note: string_or_null
     default_modifier: normal
     missing_modifier_rule: missing_or_null_modifier_uses_default_modifier
     shorthand_rule: plain_tier_id_expands_to_value_with_default_modifier
@@ -269,7 +271,18 @@ derived:
       - reaction_speed
       - travel_speed
       - flight_speed
+      - perception_speed
     compare_rule: ignore_null
+    display_rule: group_equal_speed_values_and_omit_combat_speed_label_when_it_is_the_only_speed
+    default_display_labels:
+      combat_speed: "combat speed"
+      attack_speed: "attack speed"
+      reaction_speed: "reactions"
+      travel_speed: "movement speed"
+      flight_speed: "flight speed"
+      perception_speed: "perceptions"
+    label_override_rule: ranked_speed_stat_label_overrides_default_display_label
+    note_rule: ranked_speed_stat_note_displays_after_its_speed_group
   effects:
     activation_rule: requirements_met_and_not_nullified
     stat_rule: best_composite_rank_per_stat
@@ -298,6 +311,7 @@ derived:
       reaction_speed: ranked_speed_or_null
       travel_speed: ranked_speed_or_null
       flight_speed: ranked_speed_or_null
+      perception_speed: ranked_speed_or_null
       lifting_strength: ranked_lifting_strength_or_null
       striking_strength: ranked_striking_strength_or_null
       durability: ranked_attack_durability_or_null
@@ -427,6 +441,7 @@ keys:
     reaction_speed: ranked_speed_or_null
     travel_speed: ranked_speed_or_null
     flight_speed: ranked_speed_or_null
+    perception_speed: ranked_speed_or_null
     lifting_strength:
       value: lifting_strength_tier_id
       modifier: stat_modifier_id_or_null_defaults_to_normal

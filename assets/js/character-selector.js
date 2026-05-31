@@ -9,13 +9,22 @@
   const statDefinitions = [
     ["Tier", "tier"],
     ["Attack Potency", "attack_potency", "attack_durability_tiers"],
-    ["Speed", "combat_speed", "speed_tiers"],
+    ["Speed", "speed"],
     ["Lifting Strength", "lifting_strength", "lifting_strength_tiers"],
     ["Striking Strength", "striking_strength", "striking_strength_tiers"],
     ["Durability", "durability", "attack_durability_tiers"],
     ["Stamina", "stamina", "stamina_tiers"],
     ["Range", "range", "range_tiers"],
     ["Intelligence", "intelligence", "intelligence_tiers"]
+  ];
+
+  const speedDefinitions = [
+    ["combat_speed", "combat speed"],
+    ["attack_speed", "attack speed"],
+    ["reaction_speed", "reactions"],
+    ["travel_speed", "movement speed"],
+    ["flight_speed", "flight speed"],
+    ["perception_speed", "perceptions"]
   ];
 
   const byId = (items, id) => items.find((item) => item.id === id);
@@ -91,9 +100,58 @@
     return formatStat(chosen, "attack_durability_tiers", "tier");
   }
 
-  function speedSuffix(key) {
-    const extraSpeedFields = ["attack_speed", "reaction_speed", "travel_speed", "flight_speed"];
-    return extraSpeedFields.some((field) => key[field]) ? " combat speed" : "";
+  function joinText(items) {
+    if (items.length <= 1) return items[0] || "";
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+
+    return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+  }
+
+  function joinSpeedGroups(items) {
+    return items.join(", ");
+  }
+
+  function speedLabel(stat, fallbackLabel) {
+    const normalized = normalizedStat(stat);
+    return normalized && Object.prototype.hasOwnProperty.call(normalized, "label") ? normalized.label : fallbackLabel;
+  }
+
+  function speedNote(stat) {
+    const normalized = normalizedStat(stat);
+    return normalized?.note ? ` (${normalized.note})` : "";
+  }
+
+  function formatSpeed(key) {
+    const entries = speedDefinitions
+      .filter(([field]) => key[field])
+      .map(([field, fallbackLabel]) => ({
+        field,
+        label: speedLabel(key[field], fallbackLabel),
+        note: speedNote(key[field]),
+        value: formatStat(key[field], "speed_tiers")
+      }))
+      .filter((entry) => entry.value);
+
+    if (entries.length === 0) return "";
+    if (entries.length === 1 && entries[0].field === "combat_speed") {
+      return `${entries[0].value}${entries[0].note}`;
+    }
+
+    const groups = [];
+    entries.forEach((entry) => {
+      const group = groups.find((candidate) => candidate.value === entry.value && candidate.note === entry.note);
+      if (group) {
+        group.labels.push(entry.label);
+      } else {
+        groups.push({ value: entry.value, note: entry.note, labels: [entry.label] });
+      }
+    });
+
+    return joinSpeedGroups(groups.map((group) => {
+      const labels = group.labels.filter((label) => label !== "");
+      const labelText = labels.length > 0 ? ` ${joinText(labels)}` : "";
+      return `${group.value}${labelText}${group.note}`;
+    }));
   }
 
   function characterKey(character, keyId = null) {
@@ -149,7 +207,9 @@
     const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
       const value = field === "tier"
         ? formatTier(key)
-        : `${formatStat(key[field], catalog)}${field === "combat_speed" ? speedSuffix(key) : suffix}`;
+        : field === "speed"
+          ? formatSpeed(key)
+          : `${formatStat(key[field], catalog)}${suffix}`;
 
       return `
         <li class="stat">

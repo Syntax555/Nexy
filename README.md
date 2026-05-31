@@ -41,6 +41,30 @@ images:
 
 The filename is the character entry id. Use lowercase letters, numbers, and hyphens.
 
+## Speed Notes
+
+`combat_speed` is the default speed. If it is the only speed set, the site displays only the tier, such as `Hypersonic`.
+
+When multiple speeds are set, equal tiers are grouped:
+
+```yaml
+combat_speed: hypersonic
+reaction_speed: hypersonic
+travel_speed:
+  value: subsonic
+  label: "running speed"
+```
+
+This displays as `Hypersonic combat speed and reactions, Subsonic running speed`.
+
+Use `note` for profile-specific details:
+
+```yaml
+reaction_speed:
+  value: relativistic
+  note: "with precognition"
+```
+
 ## Checks
 
 Run these before pushing changes:
