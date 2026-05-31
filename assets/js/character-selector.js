@@ -9,7 +9,7 @@
   const statDefinitions = [
     ["Tier", "tier"],
     ["Attack Potency", "attack_potency", "attack_durability_tiers"],
-    ["Speed", "combat_speed", "speed_tiers", " combat speed"],
+    ["Speed", "combat_speed", "speed_tiers"],
     ["Lifting Strength", "lifting_strength", "lifting_strength_tiers"],
     ["Striking Strength", "striking_strength", "striking_strength_tiers"],
     ["Durability", "durability", "attack_durability_tiers"],
@@ -91,6 +91,11 @@
     return formatStat(chosen, "attack_durability_tiers", "tier");
   }
 
+  function speedSuffix(key) {
+    const extraSpeedFields = ["attack_speed", "reaction_speed", "travel_speed", "flight_speed"];
+    return extraSpeedFields.some((field) => key[field]) ? " combat speed" : "";
+  }
+
   function characterKey(character, keyId = null) {
     const keys = list(character.keys);
     return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
@@ -142,7 +147,10 @@
     const image = list(key.images)[0];
     const names = list(key.names);
     const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
-      const value = field === "tier" ? formatTier(key) : `${formatStat(key[field], catalog)}${suffix}`;
+      const value = field === "tier"
+        ? formatTier(key)
+        : `${formatStat(key[field], catalog)}${field === "combat_speed" ? speedSuffix(key) : suffix}`;
+
       return `
         <li class="stat">
           <span class="stat-label">${escapeHtml(label)}</span>
