@@ -2,48 +2,6 @@
 layout: default
 title: Home
 ---
-{% assign character_data = site.data.characters %}
-{% assign character = character_data.characters.first %}
-{% assign key = character.keys.first %}
-{% assign image = key.images.first %}
-
-{% assign stat_modifiers = character_data.options.stat_modifiers %}
-{% assign attack_tier = character_data.options.attack_durability_tiers | where: "id", key.attack_potency.value | first %}
-{% assign attack_modifier = stat_modifiers | where: "id", key.attack_potency.modifier | first %}
-{% assign durability_tier = character_data.options.attack_durability_tiers | where: "id", key.durability.value | first %}
-{% assign durability_modifier = stat_modifiers | where: "id", key.durability.modifier | first %}
-{% assign striking_tier = character_data.options.striking_strength_tiers | where: "id", key.striking_strength.value | first %}
-{% assign striking_modifier = stat_modifiers | where: "id", key.striking_strength.modifier | first %}
-{% assign speed_tier = character_data.options.speed_tiers | where: "id", key.combat_speed.value | first %}
-{% assign speed_modifier = stat_modifiers | where: "id", key.combat_speed.modifier | first %}
-{% assign lifting_tier = character_data.options.lifting_strength_tiers | where: "id", key.lifting_strength.value | first %}
-{% assign lifting_modifier = stat_modifiers | where: "id", key.lifting_strength.modifier | first %}
-{% assign stamina_tier = character_data.options.stamina_tiers | where: "id", key.stamina.value | first %}
-{% assign stamina_modifier = stat_modifiers | where: "id", key.stamina.modifier | first %}
-{% assign range_tier = character_data.options.range_tiers | where: "id", key.range.value | first %}
-{% assign range_modifier = stat_modifiers | where: "id", key.range.modifier | first %}
-{% assign intelligence_tier = character_data.options.intelligence_tiers | where: "id", key.intelligence.value | first %}
-{% assign intelligence_modifier = stat_modifiers | where: "id", key.intelligence.modifier | first %}
-
-{% assign tier_source = attack_tier %}
-{% assign tier_modifier = attack_modifier %}
-{% if durability_tier.rank > attack_tier.rank %}
-  {% assign tier_source = durability_tier %}
-  {% assign tier_modifier = durability_modifier %}
-{% elsif durability_tier.rank == attack_tier.rank and durability_modifier.rank > attack_modifier.rank %}
-  {% assign tier_modifier = durability_modifier %}
-{% endif %}
-
-{% capture tier_label %}{% if tier_modifier.display_prefix != "" %}{{ tier_modifier.display_prefix }} {% endif %}{{ tier_source.tier }}{{ tier_modifier.display_suffix }}{% endcapture %}
-{% capture attack_label %}{% if attack_modifier.display_prefix != "" %}{{ attack_modifier.display_prefix }} {% endif %}{{ attack_tier.name }}{{ attack_modifier.display_suffix }}{% endcapture %}
-{% capture durability_label %}{% if durability_modifier.display_prefix != "" %}{{ durability_modifier.display_prefix }} {% endif %}{{ durability_tier.name }}{{ durability_modifier.display_suffix }}{% endcapture %}
-{% capture striking_label %}{% if striking_modifier.display_prefix != "" %}{{ striking_modifier.display_prefix }} {% endif %}{{ striking_tier.name }}{{ striking_modifier.display_suffix }}{% endcapture %}
-{% capture speed_label %}{% if speed_modifier.display_prefix != "" %}{{ speed_modifier.display_prefix }} {% endif %}{{ speed_tier.name }}{{ speed_modifier.display_suffix }}{% endcapture %}
-{% capture lifting_label %}{% if lifting_modifier.display_prefix != "" %}{{ lifting_modifier.display_prefix }} {% endif %}{{ lifting_tier.name }}{{ lifting_modifier.display_suffix }}{% endcapture %}
-{% capture stamina_label %}{% if stamina_modifier.display_prefix != "" %}{{ stamina_modifier.display_prefix }} {% endif %}{{ stamina_tier.name }}{{ stamina_modifier.display_suffix }}{% endcapture %}
-{% capture range_label %}{% if range_modifier.display_prefix != "" %}{{ range_modifier.display_prefix }} {% endif %}{{ range_tier.name }}{{ range_modifier.display_suffix }}{% endcapture %}
-{% capture intelligence_label %}{% if intelligence_modifier.display_prefix != "" %}{{ intelligence_modifier.display_prefix }} {% endif %}{{ intelligence_tier.name }}{{ intelligence_modifier.display_suffix }}{% endcapture %}
-
 <style>
   :root {
     color-scheme: light;
@@ -58,20 +16,29 @@ title: Home
 
   main {
     margin: 0 auto;
-    max-width: 1120px;
-    padding: 32px 20px;
+    max-width: 1280px;
+    padding: 28px 18px;
+  }
+
+  button {
+    font: inherit;
   }
 
   .page-title {
-    margin: 0 0 24px;
+    margin: 0 0 22px;
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1;
   }
 
-  .character-card {
+  .versus-grid {
     display: grid;
-    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .selector-panel {
+    display: grid;
+    grid-template-rows: auto 1fr;
     overflow: hidden;
     border: 1px solid #d8e0e4;
     border-radius: 8px;
@@ -79,36 +46,59 @@ title: Home
     box-shadow: 0 16px 40px rgba(21, 32, 41, 0.08);
   }
 
-  .character-image {
-    min-height: 100%;
-    background: #dce5e9;
+  .selector-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #e3e9ed;
+    padding: 14px;
   }
 
-  .character-image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 420px;
-    object-fit: contain;
-    object-position: center bottom;
-  }
-
-  .character-content {
-    padding: 24px 24px 24px 0;
-  }
-
-  .character-heading {
+  .side-title {
     margin: 0;
-    font-size: clamp(1.7rem, 3vw, 2.5rem);
-    line-height: 1.05;
-  }
-
-  .character-subtitle {
-    margin: 8px 0 18px;
-    color: #596875;
     font-size: 1rem;
+    line-height: 1.2;
   }
 
+  .back-button {
+    min-width: 38px;
+    height: 38px;
+    border: 1px solid #c8d3d9;
+    border-radius: 8px;
+    background: #f7fafb;
+    color: #23313d;
+    cursor: pointer;
+  }
+
+  .back-button:disabled {
+    cursor: default;
+    opacity: 0.42;
+  }
+
+  .selector-body {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+    min-height: 620px;
+  }
+
+  .choice-column {
+    border-right: 1px solid #e3e9ed;
+    background: #f8fbfc;
+    padding: 14px;
+  }
+
+  .choice-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #667480;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .choice-list,
   .meta-list,
   .stat-grid,
   .tag-list {
@@ -117,11 +107,87 @@ title: Home
     list-style: none;
   }
 
+  .choice-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .choice-button {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #d4dfe4;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #182631;
+    cursor: pointer;
+    padding: 9px 10px;
+    text-align: left;
+  }
+
+  .choice-button:hover,
+  .choice-button:focus-visible,
+  .choice-button.is-active {
+    border-color: #7892a1;
+    background: #edf4f7;
+    outline: none;
+  }
+
+  .character-card {
+    display: grid;
+    grid-template-rows: minmax(220px, 280px) 1fr;
+    min-width: 0;
+  }
+
+  .character-image {
+    display: grid;
+    min-height: 220px;
+    place-items: center;
+    background: #dce5e9;
+  }
+
+  .character-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .empty-image {
+    display: grid;
+    width: min(54%, 180px);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px dashed #aebdc5;
+    border-radius: 50%;
+    color: #667480;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 700;
+  }
+
+  .character-content {
+    padding: 18px;
+  }
+
+  .character-heading {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.05;
+  }
+
+  .character-subtitle {
+    min-height: 1.35em;
+    margin: 8px 0 16px;
+    color: #596875;
+    font-size: 0.95rem;
+  }
+
   .meta-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
 
   .meta-list li,
@@ -130,7 +196,7 @@ title: Home
     border-radius: 999px;
     padding: 6px 10px;
     background: #f6f9fa;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .stat-grid {
@@ -147,7 +213,7 @@ title: Home
   .stat-label {
     display: block;
     color: #667480;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0;
     text-transform: uppercase;
@@ -156,15 +222,16 @@ title: Home
   .stat-value {
     display: block;
     margin-top: 3px;
-    font-size: 1rem;
+    font-size: 0.96rem;
     font-weight: 700;
     line-height: 1.25;
+    overflow-wrap: anywhere;
   }
 
   .section-title {
-    margin: 24px 0 10px;
+    margin: 22px 0 10px;
     color: #31404d;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .tag-list {
@@ -173,22 +240,28 @@ title: Home
     gap: 8px;
   }
 
-  @media (max-width: 720px) {
-    main {
-      padding: 20px 14px;
-    }
-
-    .character-card {
+  @media (max-width: 1040px) {
+    .versus-grid {
       grid-template-columns: 1fr;
     }
 
-    .character-image img {
-      max-height: 360px;
-      min-height: 280px;
+    .selector-body {
+      min-height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    main {
+      padding: 20px 12px;
     }
 
-    .character-content {
-      padding: 0 18px 20px;
+    .selector-body {
+      grid-template-columns: 1fr;
+    }
+
+    .choice-column {
+      border-right: 0;
+      border-bottom: 1px solid #e3e9ed;
     }
 
     .stat-grid {
@@ -199,103 +272,309 @@ title: Home
 
 <h1 class="page-title">{{ site.title | escape }}</h1>
 
-{% if character %}
-  <article class="character-card">
-    <div class="character-image">
-      {% if image %}
-        <img src="{{ image.image | escape }}" alt="{{ image.name | escape }}">
-      {% endif %}
+<div class="versus-grid">
+  <section class="selector-panel" data-selector="left" aria-label="Left character">
+    <div class="selector-bar">
+      <h2 class="side-title">Left</h2>
+      <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
     </div>
-
-    <div class="character-content">
-      <h2 class="character-heading">{{ character.name | escape }}</h2>
-      <p class="character-subtitle">{{ key.names | join: " / " | escape }}</p>
-
-      <ul class="meta-list" aria-label="Classifications">
-        {% for classification_id in character.classification_ids %}
-          {% assign classification = character_data.options.classifications | where: "id", classification_id | first %}
-          {% if classification %}
-            <li>{{ classification.name | escape }}</li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-
-      <ul class="stat-grid">
-        <li class="stat">
-          <span class="stat-label">Tier</span>
-          <span class="stat-value">{{ tier_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Attack Potency</span>
-          <span class="stat-value">{{ attack_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Speed</span>
-          <span class="stat-value">{{ speed_label | strip | escape }} combat speed</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Lifting Strength</span>
-          <span class="stat-value">{{ lifting_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Striking Strength</span>
-          <span class="stat-value">{{ striking_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Durability</span>
-          <span class="stat-value">{{ durability_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Stamina</span>
-          <span class="stat-value">{{ stamina_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Range</span>
-          <span class="stat-value">{{ range_label | strip | escape }}</span>
-        </li>
-        <li class="stat">
-          <span class="stat-label">Intelligence</span>
-          <span class="stat-value">{{ intelligence_label | strip | escape }}</span>
-        </li>
-      </ul>
-
-      {% if key.power_refs.size > 0 %}
-        <h3 class="section-title">Powers</h3>
-        <ul class="tag-list">
-          {% for power_ref in key.power_refs %}
-            {% assign power = character_data.options.powers | where: "id", power_ref.id | first %}
-            {% assign martial_degree = false %}
-            {% if power_ref.martial_arts_degree_id %}
-              {% assign martial_degree = character_data.options.martial_arts_degrees | where: "id", power_ref.martial_arts_degree_id | first %}
-            {% endif %}
-            <li>
-              {% if martial_degree %}
-                {{ martial_degree.name | escape }}
-              {% elsif power_ref.type_ids and power_ref.type_ids.size > 0 %}
-                {{ power.name | escape }}:
-                {% for type_id in power_ref.type_ids %}
-                  {% assign power_type = character_data.options.power_types | where: "id", type_id | first %}
-                  {{ power_type.name | escape }}{% unless forloop.last %}, {% endunless %}
-                {% endfor %}
-              {% else %}
-                {{ power.name | escape }}
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-
-      {% if key.standard_equipment_ids.size > 0 %}
-        <h3 class="section-title">Standard Equipment</h3>
-        <ul class="tag-list">
-          {% for equipment_id in key.standard_equipment_ids %}
-            {% assign equipment = character_data.options.equipment | where: "id", equipment_id | first %}
-            {% if equipment %}
-              <li>{{ equipment.name | escape }}</li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      {% endif %}
+    <div class="selector-body">
+      <aside class="choice-column">
+        <span class="choice-label" data-choice-label></span>
+        <ul class="choice-list" data-choice-list></ul>
+      </aside>
+      <article class="character-card" data-character-card></article>
     </div>
-  </article>
-{% endif %}
+  </section>
+
+  <section class="selector-panel" data-selector="right" aria-label="Right character">
+    <div class="selector-bar">
+      <h2 class="side-title">Right</h2>
+      <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
+    </div>
+    <div class="selector-body">
+      <aside class="choice-column">
+        <span class="choice-label" data-choice-label></span>
+        <ul class="choice-list" data-choice-list></ul>
+      </aside>
+      <article class="character-card" data-character-card></article>
+    </div>
+  </section>
+</div>
+
+<script id="character-data" type="application/json">
+  {
+    "options": {
+      "media": {{ site.data.characters.options.media | jsonify }},
+      "origins": {{ site.data.characters.options.origins | jsonify }},
+      "verses": {{ site.data.characters.options.verses | jsonify }},
+      "classifications": {{ site.data.characters.options.classifications | jsonify }},
+      "powers": {{ site.data.characters.options.powers | jsonify }},
+      "power_types": {{ site.data.characters.options.power_types | jsonify }},
+      "martial_arts_degrees": {{ site.data.characters.options.martial_arts_degrees | jsonify }},
+      "equipment": {{ site.data.characters.options.equipment | jsonify }},
+      "stat_modifiers": {{ site.data.characters.options.stat_modifiers | jsonify }},
+      "attack_durability_tiers": {{ site.data.characters.options.attack_durability_tiers | jsonify }},
+      "speed_tiers": {{ site.data.characters.options.speed_tiers | jsonify }},
+      "lifting_strength_tiers": {{ site.data.characters.options.lifting_strength_tiers | jsonify }},
+      "striking_strength_tiers": {{ site.data.characters.options.striking_strength_tiers | jsonify }},
+      "stamina_tiers": {{ site.data.characters.options.stamina_tiers | jsonify }},
+      "range_tiers": {{ site.data.characters.options.range_tiers | jsonify }},
+      "intelligence_tiers": {{ site.data.characters.options.intelligence_tiers | jsonify }}
+    },
+    "empty_character": {{ site.data.characters.empty_character | jsonify }},
+    "characters": {{ site.data.characters.characters | jsonify }}
+  }
+</script>
+
+<script>
+  (() => {
+    const data = JSON.parse(document.getElementById("character-data").textContent);
+    const options = data.options;
+    const statModifiers = options.stat_modifiers;
+
+    const statDefinitions = [
+      ["Tier", "tier"],
+      ["Attack Potency", "attack_potency", "attack_durability_tiers"],
+      ["Speed", "combat_speed", "speed_tiers", " combat speed"],
+      ["Lifting Strength", "lifting_strength", "lifting_strength_tiers"],
+      ["Striking Strength", "striking_strength", "striking_strength_tiers"],
+      ["Durability", "durability", "attack_durability_tiers"],
+      ["Stamina", "stamina", "stamina_tiers"],
+      ["Range", "range", "range_tiers"],
+      ["Intelligence", "intelligence", "intelligence_tiers"]
+    ];
+
+    const byId = (items, id) => items.find((item) => item.id === id);
+    const title = (value) => value || "Empty Character";
+    const list = (value) => Array.isArray(value) ? value : [];
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#39;"
+    }[char]));
+
+    function modifier(stat) {
+      return byId(statModifiers, stat?.modifier || "normal") || byId(statModifiers, "normal");
+    }
+
+    function statEntry(stat, catalogName) {
+      return byId(options[catalogName], stat?.value);
+    }
+
+    function compositeRank(stat, catalogName) {
+      const entry = statEntry(stat, catalogName);
+      const mod = modifier(stat);
+      return entry ? ((entry.rank - 1) * 8) + mod.rank : 0;
+    }
+
+    function formatStat(stat, catalogName, valueField = "name") {
+      const entry = statEntry(stat, catalogName);
+      if (!entry) return "";
+
+      const mod = modifier(stat);
+      const prefix = mod.display_prefix ? `${mod.display_prefix} ` : "";
+      const suffix = mod.display_suffix || "";
+      return `${prefix}${entry[valueField]}${suffix}`;
+    }
+
+    function formatTier(key) {
+      const attack = key.attack_potency;
+      const durability = key.durability;
+      const attackRank = compositeRank(attack, "attack_durability_tiers");
+      const durabilityRank = compositeRank(durability, "attack_durability_tiers");
+      const chosen = durabilityRank > attackRank ? durability : attack;
+      return formatStat(chosen, "attack_durability_tiers", "tier");
+    }
+
+    function characterForDisplay(character) {
+      return character || data.empty_character;
+    }
+
+    function characterKey(character) {
+      return list(character.keys)[0] || list(data.empty_character.keys)[0];
+    }
+
+    function classifications(character) {
+      return list(character.classification_ids)
+        .map((id) => byId(options.classifications, id))
+        .filter(Boolean);
+    }
+
+    function powers(key) {
+      return list(key.power_refs).map((ref) => {
+        const power = byId(options.powers, ref.id);
+        if (!power) return null;
+
+        const martialDegree = ref.martial_arts_degree_id
+          ? byId(options.martial_arts_degrees, ref.martial_arts_degree_id)
+          : null;
+
+        if (martialDegree) return martialDegree.name;
+
+        const typeNames = list(ref.type_ids)
+          .map((id) => byId(options.power_types, id))
+          .filter(Boolean)
+          .map((type) => type.name);
+
+        return typeNames.length ? `${power.name}: ${typeNames.join(", ")}` : power.name;
+      }).filter(Boolean);
+    }
+
+    function equipment(key) {
+      return list(key.standard_equipment_ids)
+        .map((id) => byId(options.equipment, id))
+        .filter(Boolean)
+        .map((item) => item.name);
+    }
+
+    function renderCard(card, character) {
+      const displayCharacter = characterForDisplay(character);
+      const key = characterKey(displayCharacter);
+      const image = list(key.images)[0];
+      const names = list(key.names);
+      const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
+        const value = field === "tier" ? formatTier(key) : `${formatStat(key[field], catalog)}${suffix}`;
+        return `
+          <li class="stat">
+            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="stat-value">${escapeHtml(value)}</span>
+          </li>
+        `;
+      }).join("");
+
+      const classificationTags = classifications(displayCharacter)
+        .map((classification) => `<li>${escapeHtml(classification.name)}</li>`)
+        .join("");
+
+      const powerTags = powers(key).map((power) => `<li>${escapeHtml(power)}</li>`).join("");
+      const equipmentTags = equipment(key).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+
+      card.innerHTML = `
+        <div class="character-image">
+          ${image ? `<img src="${escapeHtml(image.image)}" alt="${escapeHtml(image.name)}">` : `<div class="empty-image">?</div>`}
+        </div>
+        <div class="character-content">
+          <h3 class="character-heading">${escapeHtml(title(displayCharacter.name))}</h3>
+          <p class="character-subtitle">${escapeHtml(names.join(" / "))}</p>
+          ${classificationTags ? `<ul class="meta-list" aria-label="Classifications">${classificationTags}</ul>` : ""}
+          <ul class="stat-grid">${statRows}</ul>
+          ${powerTags ? `<h4 class="section-title">Powers</h4><ul class="tag-list">${powerTags}</ul>` : ""}
+          ${equipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${equipmentTags}</ul>` : ""}
+        </div>
+      `;
+    }
+
+    function selector(root) {
+      const choiceLabel = root.querySelector("[data-choice-label]");
+      const choiceList = root.querySelector("[data-choice-list]");
+      const backButton = root.querySelector("[data-back]");
+      const card = root.querySelector("[data-character-card]");
+      const state = {
+        step: "media",
+        mediaId: null,
+        originId: null,
+        verseId: null,
+        characterName: null
+      };
+
+      function stepItems() {
+        if (state.step === "media") return options.media;
+        if (state.step === "origin") return options.origins.filter((origin) => origin.media_id === state.mediaId);
+        if (state.step === "verse") return options.verses.filter((verse) => verse.media_id === state.mediaId && verse.source_id === state.originId);
+        return data.characters.filter((character) => character.verse_id === state.verseId);
+      }
+
+      function selectedCharacter() {
+        return data.characters.find((character) => character.name === state.characterName) || null;
+      }
+
+      function choose(item) {
+        if (state.step === "media") {
+          state.mediaId = item.id;
+          state.originId = null;
+          state.verseId = null;
+          state.characterName = null;
+          state.step = "origin";
+        } else if (state.step === "origin") {
+          state.originId = item.id;
+          state.verseId = null;
+          state.characterName = null;
+          state.step = "verse";
+        } else if (state.step === "verse") {
+          state.verseId = item.id;
+          state.characterName = null;
+          state.step = "character";
+        } else {
+          state.characterName = item.name;
+        }
+
+        render();
+      }
+
+      function back() {
+        if (state.step === "media") return;
+        if (state.step === "origin") {
+          state.step = "media";
+          state.mediaId = null;
+        } else if (state.step === "verse") {
+          state.step = "origin";
+          state.originId = null;
+        } else {
+          state.step = "verse";
+          state.verseId = null;
+          state.characterName = null;
+        }
+
+        render();
+      }
+
+      function renderChoices() {
+        const items = stepItems();
+        const labels = {
+          media: "Media",
+          origin: "Origin",
+          verse: "Verse",
+          character: "Character"
+        };
+
+        choiceLabel.textContent = labels[state.step];
+        choiceList.innerHTML = "";
+
+        const choices = state.step === "character" && items.length === 0
+          ? [data.empty_character]
+          : items;
+
+        choices.forEach((item) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "choice-button";
+          button.textContent = title(item.name);
+          button.addEventListener("click", () => {
+            if (item === data.empty_character) {
+              state.characterName = null;
+              render();
+            } else {
+              choose(item);
+            }
+          });
+
+          choiceList.appendChild(document.createElement("li")).appendChild(button);
+        });
+      }
+
+      function render() {
+        backButton.disabled = state.step === "media";
+        renderChoices();
+        renderCard(card, selectedCharacter());
+      }
+
+      backButton.addEventListener("click", back);
+      render();
+    }
+
+    document.querySelectorAll("[data-selector]").forEach(selector);
+  })();
+</script>

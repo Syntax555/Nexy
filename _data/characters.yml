@@ -579,12 +579,6 @@ options:
       name: "Defender"
     - id: avatar-of-the-devil
       name: "Avatar of the Devil"
-    - id: human
-      name: "Human"
-    - id: symbiote-host
-      name: "Symbiote Host"
-    - id: soldier
-      name: "Soldier"
   power_types:
     - id: all-weapons
       power_id: weapon-mastery
@@ -1101,23 +1095,7 @@ options:
       power_refs: []
       resistance_refs: []
       effects: []
-  equipment:
-    - id: multi-gun
-      name: "Multi-Gun"
-      weapon_type_ids:
-        - firearm
-      required_power_refs:
-        - id: weapon-mastery
-          modifier: normal
-          type_ids:
-            - marksmanship
-          martial_arts_degree_id: null
-          acrobatics_degree_id: null
-          magic_level_id: null
-          magic_nature_ids: []
-          source_variant: null
-          condition: null
-      effects: []
+  equipment: []
   attacks: []
   attack_durability_tiers:
     - id: low-hypoverse
@@ -1908,78 +1886,4 @@ empty_character:
         modifier: normal
       attack_ids: []
 
-characters:
-  - name: "Agent Venom"
-    verse_id: marvel-mainstream
-    gender_id: male
-    age:
-      value: null
-      unknown: true
-    classification_ids:
-      - human
-      - symbiote-host
-      - soldier
-      - avenger
-    keys:
-      - key: "Agent Venom"
-        names:
-          - "Corporal Eugene Flash Thompson"
-          - "Agent Venom"
-        images:
-          - name: "Agent Venom"
-            image: "https://static.wikia.nocookie.net/vsbattles/images/5/56/Eugene_Thompson_%28Earth-12131%29.png/revision/latest?cb=20170306212749"
-        power_refs:
-          - id: weapon-mastery
-            modifier: normal
-            type_ids:
-              - marksmanship
-            martial_arts_degree_id: null
-            acrobatics_degree_id: null
-            magic_level_id: null
-            magic_nature_ids: []
-            source_variant: null
-            condition: null
-            effects: null
-          - id: martial-arts-mastery
-            modifier: normal
-            type_ids: []
-            martial_arts_degree_id: expert
-            acrobatics_degree_id: null
-            magic_level_id: null
-            magic_nature_ids: []
-            source_variant: null
-            condition: null
-            effects: null
-        resistance_refs: []
-        attack_potency:
-          value: large-building
-          modifier: plus
-        attack_speed: null
-        combat_speed:
-          value: hypersonic
-          modifier: normal
-        reaction_speed: null
-        travel_speed: null
-        flight_speed: null
-        lifting_strength:
-          value: class-m
-          modifier: normal
-        striking_strength:
-          value: large-building-level
-          modifier: plus
-        durability:
-          value: large-building
-          modifier: plus
-        stamina:
-          value: superhuman
-          modifier: normal
-        range:
-          value: tens-of-meters
-          modifier: normal
-        standard_equipment_ids:
-          - multi-gun
-        optional_equipment_ids: []
-        intelligence:
-          value: above-average
-          modifier: normal
-        attack_ids: []
+characters: []
