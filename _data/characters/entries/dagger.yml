@@ -1,4 +1,4 @@
-name: "Tandy Bowen"
+name: "Dagger"
 verse_id: marvel-mainstream
 gender_id: female
 age:
@@ -11,7 +11,7 @@ classification_ids:
 keys:
   - key: dagger
     names:
-      - "Dagger"
+      - "Tandy Bowen"
     images:
       - name: "Dagger"
         image: "assets/images/characters/dagger/dagger.png"
