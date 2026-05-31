@@ -22,12 +22,21 @@ schema:
       default_modifier: normal
       missing_modifier_rule: missing_or_null_modifier_uses_default_modifier
       shorthand_rule: plain_tier_id_expands_to_value_with_default_modifier
+      comparison_class_field: value.comparison_class
+      default_comparison_class: ordered
       composite_rank: "(value.rank - 1) * 8 + resolved_modifier.rank"
+      ordered_comparison_rule: compare_by_composite_rank
+      transcendent_comparison_rule: compares_above_ordered_values_but_is_not_a_numeric_increment
+      transcendent_modifier_rule: modifiers_do_not_adjust_transcendent_values
       examples:
         durability_value_only:
           value: city
           resolved_modifier: normal
         durability_shorthand: city
+        inapplicable_strength:
+          value: inapplicable
+          comparison_class: transcendent
+          resolved_modifier: normal
     key_identity:
       selector_field: key
       names_field: names
@@ -1484,6 +1493,9 @@ options:
     - id: inapplicable
       name: "Inapplicable"
       rank: 30
+      comparison_class: transcendent
+      modifier_behavior: locked_to_normal
+      description: "Characters existing beyond quantitative and qualitative distinction alike."
   striking_strength_tiers:
     - id: low-hypoverse-level
       name: "Low Hypoverse level"
@@ -1650,6 +1662,9 @@ options:
     - id: inapplicable
       name: "Inapplicable"
       rank: 55
+      comparison_class: transcendent
+      modifier_behavior: locked_to_normal
+      description: "Characters existing beyond quantitative and qualitative distinction alike."
   intelligence_tiers:
     - id: mindless
       name: "Mindless"
@@ -1821,6 +1836,9 @@ options:
     - id: inapplicable
       name: "Inapplicable"
       rank: 8
+      comparison_class: transcendent
+      modifier_behavior: locked_to_normal
+      description: "Characters existing beyond quantitative and qualitative distinction alike."
 
 empty_character:
   name: ""
