@@ -92,6 +92,54 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: mind-manipulation
+  name: "Mind Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: curse-manipulation
+  name: "Curse Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: madness-manipulation
+  name: "Madness Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: fear-manipulation
+  name: "Fear Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: power-nullification
   name: "Power Nullification"
   aliases:

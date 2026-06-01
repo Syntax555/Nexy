@@ -16,7 +16,11 @@ keys:
       - name: "Dagger"
         image: "assets/images/characters/dagger/dagger.png"
     power_refs: []
-    resistance_refs: []
+    resistance_refs:
+      - id: mind-manipulation-resistance
+      - id: curse-manipulation-resistance
+      - id: madness-manipulation-resistance
+      - id: fear-manipulation-resistance
     attack_potency:
       value: athlete
       modifier: normal
