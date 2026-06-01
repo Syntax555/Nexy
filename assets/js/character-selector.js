@@ -344,6 +344,61 @@
     return refs;
   }
 
+  function powerRefEffects(ref) {
+    const power = byId(options.powers, ref.id);
+    const variant = power ? powerVariant(power, ref) : null;
+    const includeBase = !variant || variant.inherits_base_grants !== false;
+
+    if (Array.isArray(ref.effects)) return ref.effects;
+
+    return [
+      ...(includeBase ? list(power?.effects) : []),
+      ...list(variant?.effects)
+    ];
+  }
+
+  function raiseStatModifier(stat, modifierId) {
+    const normalized = normalizedStat(stat);
+    const floor = byId(statModifiers, modifierId);
+    const current = modifier(normalized);
+
+    if (!normalized || !floor || current.rank >= floor.rank) return normalized;
+
+    return { ...normalized, modifier: floor.id };
+  }
+
+  function applyStatEffect(key, statName, stat) {
+    const catalog = statCatalogs[statName];
+    if (!catalog || stat == null) return key[statName];
+
+    const currentRank = compositeRank(key[statName], catalog);
+    const effectRank = compositeRank(stat, catalog);
+
+    return effectRank > currentRank ? normalizedStat(stat) : key[statName];
+  }
+
+  function effectiveKey(key) {
+    const result = { ...key };
+    const effects = powerRefs(key).flatMap(powerRefEffects);
+
+    effects.forEach((effect) => {
+      if (!effect) return;
+
+      Object.entries(effect.stat_effects || {}).forEach(([statName, stat]) => {
+        result[statName] = applyStatEffect(result, statName, stat);
+      });
+
+      list(effect.stat_modifier_floor_effects).forEach((modifierFloor) => {
+        const statName = modifierFloor.stat;
+        if (!statCatalogs[statName]) return;
+
+        result[statName] = raiseStatModifier(result[statName], modifierFloor.modifier);
+      });
+    });
+
+    return result;
+  }
+
   function grantTooltipLines(grants = {}) {
     const lines = [];
     const grantedPowers = list(grants.power_refs).map(powerRefLabel);
@@ -397,6 +452,22 @@
       const catalog = statCatalogs[statName];
       const value = catalog ? formatStat(stat, catalog) : "";
       if (value) lines.push(`Sets ${statLabel(statName)}: ${value}`);
+    });
+
+    const modifierFloorGroups = new Map();
+    list(effect.stat_modifier_floor_effects).forEach((modifierFloor) => {
+      const statName = modifierFloor.stat;
+      const modifierId = modifierFloor.modifier;
+      if (!statCatalogs[statName] || !modifierId) return;
+
+      const stats = modifierFloorGroups.get(modifierId) || [];
+      stats.push(statLabel(statName));
+      modifierFloorGroups.set(modifierId, stats);
+    });
+
+    modifierFloorGroups.forEach((stats, modifierId) => {
+      const modifierName = byId(statModifiers, modifierId)?.name || humanizeId(modifierId);
+      lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName} or better`);
     });
 
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
@@ -612,9 +683,10 @@
 
     card.hidden = false;
     const displayCharacter = character;
-    const key = characterKey(displayCharacter, keyId);
-    const image = list(key.images)[0];
-    const names = list(key.names);
+    const baseKey = characterKey(displayCharacter, keyId);
+    const key = effectiveKey(baseKey);
+    const image = list(baseKey.images)[0];
+    const names = list(baseKey.names);
     const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
       const value = field === "tier"
         ? formatTier(key)
@@ -635,10 +707,10 @@
       .join("");
 
     const powerTags = powerTagItems(key).map(tagItemHtml).join("");
-    const resistanceTags = resistanceTagItems(key).map(tagItemHtml).join("");
-    const standardEquipmentTags = equipmentTagItems(key.standard_equipment_ids).map(tagItemHtml).join("");
-    const optionalEquipmentTags = equipmentTagItems(key.optional_equipment_ids).map(tagItemHtml).join("");
-    const attackTags = attackTagItems(key).map(tagItemHtml).join("");
+    const resistanceTags = resistanceTagItems(baseKey).map(tagItemHtml).join("");
+    const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids).map(tagItemHtml).join("");
+    const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids).map(tagItemHtml).join("");
+    const attackTags = attackTagItems(baseKey).map(tagItemHtml).join("");
 
     card.innerHTML = `
       <div class="character-image">

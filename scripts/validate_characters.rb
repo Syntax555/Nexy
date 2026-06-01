@@ -191,6 +191,30 @@ def validate_stat_effects(context, stat_effects, sets)
   errors
 end
 
+def validate_stat_modifier_floor_effects(context, effects, sets)
+  return ["#{context} must be a list"] unless effects.is_a?(Array)
+
+  errors = []
+
+  effects.each_with_index do |effect, index|
+    effect_context = "#{context}[#{index}]"
+
+    unless effect.is_a?(Hash)
+      errors << "#{effect_context} must be a map"
+      next
+    end
+
+    stat = effect["stat"]
+    unless STAT_CATALOGS.key?(stat)
+      errors << "#{effect_context}.stat #{stat.inspect} is not a ranked stat field"
+    end
+
+    errors.concat(validate_refs("#{effect_context}.modifier", [effect["modifier"]], sets[:stat_modifiers], "stat modifier"))
+  end
+
+  errors
+end
+
 def validate_derived_power_rule(context, rule, sets)
   return ["#{context} must be a map"] unless rule.is_a?(Hash)
 
@@ -305,6 +329,17 @@ def validate_power_refs(context, refs, sets)
     errors.concat(validate_refs("#{ref_context}.acrobatics_degree_id", [ref["acrobatics_degree_id"]], sets[:acrobatics_degrees], "acrobatics degree"))
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
     errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
+
+    next if ref["effects"].nil?
+
+    unless ref["effects"].is_a?(Array)
+      errors << "#{ref_context}.effects must be a list when present"
+      next
+    end
+
+    ref["effects"].each_with_index do |effect, effect_index|
+      errors.concat(validate_effect("#{ref_context}.effects[#{effect_index}]", effect, sets))
+    end
   end
 
   errors
@@ -349,6 +384,10 @@ def validate_effect(context, effect, sets)
 
   if effect.key?("stat_effects")
     errors.concat(validate_stat_effects("#{context}.stat_effects", effect["stat_effects"], sets))
+  end
+
+  if effect.key?("stat_modifier_floor_effects")
+    errors.concat(validate_stat_modifier_floor_effects("#{context}.stat_modifier_floor_effects", effect["stat_modifier_floor_effects"], sets))
   end
 
   if effect["power_nullification"].is_a?(Hash)

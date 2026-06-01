@@ -304,6 +304,8 @@ derived:
   effects:
     activation_rule: requirements_met_and_not_nullified
     stat_rule: best_composite_rank_per_stat
+    stat_modifier_floor_rule: raises_only_the_stat_modifier_to_the_given_floor_or_keeps_a_stronger_modifier
+    stat_modifier_floor_value_rule: uses_current_base_stat_tier_instead_of_copying_a_fixed_tier
     source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
     nullification_rule: matching_resistance_disables_effect_when_immunity_or_sufficient_ability_modifier_coverage
     image_rule: active_image_update_changes_displayed_image_only_not_key_identity_or_stats
@@ -335,6 +337,9 @@ derived:
       stamina: ranked_stamina_or_null
       range: ranked_range_or_null
       intelligence: ranked_intelligence_or_null
+    stat_modifier_floor_effects:
+      - stat: ranked_stat_field
+        modifier: stat_modifier_id
     grants:
       power_refs: list
       resistance_refs: list
@@ -348,6 +353,7 @@ derived:
     examples:
       destined_one_suit: equipment_effect_updates_stats_powers_and_display_image
       ms_marvel_key_with_suit: same_key_different_active_image
+      dagger_berserk_mode: raises_attack_potency_striking_strength_and_durability_modifiers_to_higher_or_better
   selection_tooltips:
     display_rule: generated_from_structured_game_rules_only
     generated_for:

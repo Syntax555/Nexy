@@ -12,6 +12,19 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: berserk-mode
+  name: "Berserk Mode"
+  aliases: []
+  variants: []
+  tags:
+    - mode
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: weapon-mastery
   name: "Weapon Mastery"
   aliases: []

@@ -15,7 +15,16 @@ keys:
     images:
       - name: "Dagger"
         image: "assets/images/characters/dagger/dagger.png"
-    power_refs: []
+    power_refs:
+      - id: berserk-mode
+        effects:
+          - stat_modifier_floor_effects:
+              - stat: attack_potency
+                modifier: higher
+              - stat: striking_strength
+                modifier: higher
+              - stat: durability
+                modifier: higher
     resistance_refs:
       - id: mind-manipulation-resistance
       - id: curse-manipulation-resistance
