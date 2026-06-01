@@ -4,11 +4,9 @@
   requirements:
     - stat: combat_speed
       value: superhuman
-      modifier: normal
       comparison: at-least
     - stat: lifting_strength
       value: superhuman
-      modifier: normal
       comparison: at-least
     - stat: striking_strength
       value: street-level
