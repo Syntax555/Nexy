@@ -1,6 +1,6 @@
 - id: superhuman-physical-characteristics
   name: "Superhuman Physical Characteristics"
-  tooltip: "Automatically granted when a key meets at least 2 of 4 physical stat requirements: Combat Speed at least Superhuman, Lifting Strength at least Superhuman, Striking Strength at least Street level, and Durability at least Street."
+  tooltip: "Represents physical stats that are clearly beyond regular human limits."
   aliases: []
   variants: []
   tags:

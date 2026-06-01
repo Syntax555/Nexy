@@ -361,7 +361,8 @@ derived:
     optional_rule: omit_tooltip_when_no_written_text_is_needed
     tooltip_source_rule: written_tooltip_lines_display_before_generated_effect_lines
     source_rule: tooltip_uses_catalog_effects_unless_local_ref_effects_are_present
-    generated_lines_rule: stat_effects_grants_requirements_and_status_still_display_when_tooltip_is_missing_or_blank
+    generated_lines_rule: stat_effects_grants_and_requirements_still_display_when_tooltip_is_missing_or_blank
+    selector_scope_rule: selection_tooltips_show_static_information_only
     status_fields:
       - status
       - disabled
@@ -369,7 +370,7 @@ derived:
       - resisted
       - status_reason
     fallback_rule: show_no_game_effects_defined_when_no_effects_or_requirements_exist
-    future_status_rule: nullified_resisted_or_disabled_entries_remain_visible_but_marked_in_tooltip
+    future_status_rule: nullified_resisted_or_disabled_entries_belong_on_battle_screen_tooltips
   catalog_entries:
     power_type:
       id: string

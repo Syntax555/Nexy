@@ -256,31 +256,6 @@
       .map((item) => item.name);
   }
 
-  function statusValues(source = {}) {
-    const status = String(source.status || "").toLowerCase();
-    const values = [];
-
-    if (source.disabled || status === "disabled") values.push("Disabled");
-    if (source.nullified || status === "nullified") values.push("Nullified");
-    if (source.resisted || status === "resisted") values.push("Resisted");
-
-    return [...new Set(values)];
-  }
-
-  function statusClass(source = {}) {
-    const values = statusValues(source).map((value) => value.toLowerCase());
-    return values.map((value) => `is-${value}`).join(" ");
-  }
-
-  function statusTooltipLines(source = {}) {
-    const values = statusValues(source);
-    const lines = values.length ? [`Status: ${values.join(", ")}`] : ["Status: Active"];
-    const reason = source.status_reason || source.reason;
-
-    if (reason) lines.push(`Reason: ${reason}`);
-    return lines;
-  }
-
   function tooltipLines(value) {
     if (Array.isArray(value)) {
       return value
@@ -461,16 +436,11 @@
       `Automatic: ${metCount}/${requirements.length} stat requirements met; needs ${minMatches}.`
     ];
 
-    requirements.forEach((requirement) => {
-      const requirementText = formatStatRequirement(requirement);
-      if (requirementText) lines.push(`${meetsStatRequirement(key, requirement) ? "Met" : "Missing"}: ${requirementText}`);
-    });
-
     return lines;
   }
 
   function powerTooltipLines(key, ref, power) {
-    const lines = statusTooltipLines(ref);
+    const lines = [];
     let hasGameData = false;
     const writtenLines = [...tooltipLines(power.tooltip), ...tooltipLines(ref.tooltip)];
 
@@ -508,14 +478,13 @@
 
       return {
         label: powerRefLabel(ref),
-        tooltipLines: powerTooltipLines(key, ref, power),
-        statusClass: statusClass(ref)
+        tooltipLines: powerTooltipLines(key, ref, power)
       };
     }).filter(Boolean);
   }
 
   function equipmentTooltipLines(item) {
-    const lines = statusTooltipLines(item);
+    const lines = [];
     let hasGameData = false;
     const writtenLines = tooltipLines(item.tooltip);
 
@@ -543,14 +512,13 @@
       .filter(Boolean)
       .map((item) => ({
         label: item.name,
-        tooltipLines: equipmentTooltipLines(item),
-        statusClass: statusClass(item)
+        tooltipLines: equipmentTooltipLines(item)
       }));
   }
 
   function tagItemHtml(item) {
     const tooltipLines = list(item.tooltipLines).filter(Boolean);
-    const classNames = ["tag-item", item.statusClass].filter(Boolean);
+    const classNames = ["tag-item"];
 
     if (!tooltipLines.length) return `<li class="${classNames.join(" ")}">${escapeHtml(item.label)}</li>`;
 
