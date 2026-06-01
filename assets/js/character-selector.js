@@ -252,6 +252,14 @@
     return `${statLabel(requirement.stat)}: ${value}`;
   }
 
+  function powerNames(ids) {
+    return nameList(ids, "powers");
+  }
+
+  function resistanceNames(ids) {
+    return nameList(ids, "resistances");
+  }
+
   function characterKey(character, keyId = null) {
     const keys = list(character.keys);
     return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
@@ -349,6 +357,24 @@
     return lines;
   }
 
+  function typeTooltipLines(typeIds = [], label = "Types") {
+    const typeNames = nameList(typeIds, "power_types");
+    return typeNames.length ? [`${label}: ${joinText(typeNames)}`] : [];
+  }
+
+  function refScopeTooltipLines(ref = {}, variant = null) {
+    const lines = [];
+    const magicLevel = ref.magic_level_id ? byId(options.magic_levels, ref.magic_level_id) : null;
+    const magicNatures = nameList(ref.magic_nature_ids, "magic_natures");
+
+    if (magicLevel) lines.push(`Magic level: ${magicLevel.name}`);
+    if (magicNatures.length) lines.push(`Magic nature: ${joinText(magicNatures)}`);
+    if (variant || ref.source_variant) lines.push(`Variant: ${variant?.name || humanizeId(ref.source_variant)}`);
+    if (ref.condition) lines.push(`Condition: ${ref.condition}`);
+
+    return lines;
+  }
+
   function requirementTooltipLines(requirements = {}) {
     const lines = [];
     const statMinimums = list(requirements.stat_minimums)
@@ -378,13 +404,13 @@
     lines.push(...requirementTooltipLines(effect.requirements));
 
     if (effect.power_nullification) {
-      const targets = nameList(effect.power_nullification.target_power_ids, "powers");
+      const targets = powerNames(effect.power_nullification.target_power_ids);
       lines.push(targets.length ? `Nullifies: ${joinText(targets)}` : "Nullifies powers");
     }
 
     if (effect.resistance_negation) {
-      const resistanceTargets = nameList(effect.resistance_negation.target_resistance_ids, "resistances");
-      const immunityTargets = nameList(effect.resistance_negation.target_immunity_ids, "resistances");
+      const resistanceTargets = resistanceNames(effect.resistance_negation.target_resistance_ids);
+      const immunityTargets = resistanceNames(effect.resistance_negation.target_immunity_ids);
 
       lines.push(resistanceTargets.length ? `Negates resistances: ${joinText(resistanceTargets)}` : "Negates resistances");
       if (immunityTargets.length) lines.push(`Negates immunities: ${joinText(immunityTargets)}`);
@@ -397,6 +423,39 @@
 
       if (sources.length) lines.push(`Stopped by: ${joinText(sources)}`);
     }
+
+    return lines;
+  }
+
+  function catalogEffectTooltipLines(item = {}) {
+    const lines = [];
+
+    lines.push(...grantTooltipLines(item.grants));
+    lines.push(...list(item.effects).flatMap(effectTooltipLines));
+
+    return lines;
+  }
+
+  function powerVariant(power, ref) {
+    return ref.source_variant
+      ? list(power.variants).find((variant) => variant.id === ref.source_variant)
+      : null;
+  }
+
+  function powerCatalogTooltipLines(power, ref, variant) {
+    const lines = [];
+    const includeBase = !variant || variant.inherits_base_grants !== false;
+
+    if (includeBase) lines.push(...grantTooltipLines(power.grants));
+    if (variant) lines.push(...grantTooltipLines(variant.grants));
+
+    if (Array.isArray(ref.effects)) {
+      lines.push(...ref.effects.flatMap(effectTooltipLines));
+      return lines;
+    }
+
+    if (includeBase) lines.push(...list(power.effects).flatMap(effectTooltipLines));
+    if (variant) lines.push(...list(variant.effects).flatMap(effectTooltipLines));
 
     return lines;
   }
@@ -418,14 +477,17 @@
 
   function powerTooltipLines(key, ref, power) {
     const lines = [];
+    const variant = powerVariant(power, ref);
+
+    lines.push(...typeTooltipLines(ref.type_ids?.length ? ref.type_ids : power.type_ids));
+    lines.push(...refScopeTooltipLines(ref, variant));
 
     if (ref.derived_rule_id) {
       const rule = byId(options.derived_power_rules, ref.derived_rule_id);
       if (rule) lines.push(...derivedRuleTooltipLines(key, rule));
     }
 
-    const effects = Array.isArray(ref.effects) ? ref.effects : list(power.effects);
-    lines.push(...effects.flatMap(effectTooltipLines));
+    lines.push(...powerCatalogTooltipLines(power, ref, variant));
 
     return lines;
   }
@@ -442,25 +504,70 @@
     }).filter(Boolean);
   }
 
-  function equipmentTooltipLines(item) {
+  function resistanceTooltipLines(ref, resistance) {
     const lines = [];
-    const weaponTypes = nameList(item.weapon_type_ids, "power_types");
-    const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
+    const resistedPowers = powerNames(resistance.resists_power_ids);
+    const resistedEffects = list(resistance.resists_effect_ids).map(humanizeId);
 
-    if (weaponTypes.length) lines.push(`Weapon types: ${joinText(weaponTypes)}`);
-    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
-    lines.push(...list(item.effects).flatMap(effectTooltipLines));
+    lines.push(...typeTooltipLines(ref.type_ids));
+    lines.push(...refScopeTooltipLines(ref));
+    if (resistedPowers.length) lines.push(`Resists: ${joinText(resistedPowers)}`);
+    if (resistedEffects.length) lines.push(`Resists effects: ${joinText(resistedEffects)}`);
 
     return lines;
   }
 
-  function equipmentTagItems(key) {
-    return list(key.standard_equipment_ids)
+  function resistanceTagItems(key) {
+    return list(key.resistance_refs).map((ref) => {
+      const resistance = byId(options.resistances, ref.id);
+      if (!resistance) return null;
+
+      return {
+        label: resistanceRefLabel(ref),
+        tooltipLines: resistanceTooltipLines(ref, resistance)
+      };
+    }).filter(Boolean);
+  }
+
+  function equipmentTooltipLines(item) {
+    const lines = [];
+    const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
+
+    lines.push(...typeTooltipLines(item.weapon_type_ids, "Weapon types"));
+    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
+    lines.push(...catalogEffectTooltipLines(item));
+
+    return lines;
+  }
+
+  function equipmentTagItems(ids) {
+    return list(ids)
       .map((id) => byId(options.equipment, id))
       .filter(Boolean)
       .map((item) => ({
         label: item.name,
         tooltipLines: equipmentTooltipLines(item)
+      }));
+  }
+
+  function attackTooltipLines(item) {
+    const lines = [];
+    const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
+
+    lines.push(...typeTooltipLines(item.weapon_type_ids, "Weapon types"));
+    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
+    lines.push(...catalogEffectTooltipLines(item));
+
+    return lines;
+  }
+
+  function attackTagItems(key) {
+    return list(key.attack_ids)
+      .map((id) => byId(options.attacks, id))
+      .filter(Boolean)
+      .map((item) => ({
+        label: item.name,
+        tooltipLines: attackTooltipLines(item)
       }));
   }
 
@@ -511,7 +618,10 @@
       .join("");
 
     const powerTags = powerTagItems(key).map(tagItemHtml).join("");
-    const equipmentTags = equipmentTagItems(key).map(tagItemHtml).join("");
+    const resistanceTags = resistanceTagItems(key).map(tagItemHtml).join("");
+    const standardEquipmentTags = equipmentTagItems(key.standard_equipment_ids).map(tagItemHtml).join("");
+    const optionalEquipmentTags = equipmentTagItems(key.optional_equipment_ids).map(tagItemHtml).join("");
+    const attackTags = attackTagItems(key).map(tagItemHtml).join("");
 
     card.innerHTML = `
       <div class="character-image">
@@ -523,7 +633,10 @@
         ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
         <ul class="stat-grid">${statRows}</ul>
         ${powerTags ? `<h4 class="section-title">Powers</h4><ul class="tag-list">${powerTags}</ul>` : ""}
-        ${equipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${equipmentTags}</ul>` : ""}
+        ${resistanceTags ? `<h4 class="section-title">Resistances</h4><ul class="tag-list">${resistanceTags}</ul>` : ""}
+        ${standardEquipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${standardEquipmentTags}</ul>` : ""}
+        ${optionalEquipmentTags ? `<h4 class="section-title">Optional Equipment</h4><ul class="tag-list">${optionalEquipmentTags}</ul>` : ""}
+        ${attackTags ? `<h4 class="section-title">Attacks</h4><ul class="tag-list">${attackTags}</ul>` : ""}
       </div>
     `;
   }

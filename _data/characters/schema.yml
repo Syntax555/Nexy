@@ -350,8 +350,14 @@ derived:
       ms_marvel_key_with_suit: same_key_different_active_image
   selection_tooltips:
     display_rule: generated_from_structured_game_rules_only
+    generated_for:
+      - powers
+      - resistances
+      - standard_equipment
+      - optional_equipment
+      - attacks
     data_field_rule: no_freeform_tooltip_fields
-    content_rule: requirements_and_effects_only
+    content_rule: requirements_resistances_grants_stat_effects_image_effects_nullification_weapon_types_and_structured_ref_scope_only
     default_modifier_rule: normal_is_internal_and_not_displayed
   catalog_entries:
     power_type:
