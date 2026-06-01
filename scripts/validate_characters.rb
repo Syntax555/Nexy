@@ -172,21 +172,6 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
   errors
 end
 
-def validate_tooltip(context, value)
-  return [] if value.nil?
-  return [] if value.is_a?(String)
-
-  if value.is_a?(Array)
-    return value.each_with_index.filter_map do |line, index|
-      next if line.is_a?(String)
-
-      "#{context}.tooltip[#{index}] must be a string"
-    end
-  end
-
-  ["#{context}.tooltip must be a string or a list of strings"]
-end
-
 def validate_stat_effects(context, stat_effects, sets)
   return ["#{context} must be a map"] unless stat_effects.is_a?(Hash)
 
@@ -215,7 +200,6 @@ def validate_derived_power_rule(context, rule, sets)
 
   errors << "#{context} is missing id" if rule["id"].nil? || rule["id"].to_s.empty?
   errors.concat(validate_refs("#{context}.power_id", [rule["power_id"]], sets[:powers], "power"))
-  errors.concat(validate_tooltip(context, rule["tooltip"]))
 
   unless requirements.is_a?(Array) && requirements.any?
     errors << "#{context}.requirements must contain at least one requirement"
@@ -321,7 +305,6 @@ def validate_power_refs(context, refs, sets)
     errors.concat(validate_refs("#{ref_context}.acrobatics_degree_id", [ref["acrobatics_degree_id"]], sets[:acrobatics_degrees], "acrobatics degree"))
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
     errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
-    errors.concat(validate_tooltip(ref_context, ref["tooltip"]))
   end
 
   errors
@@ -348,7 +331,6 @@ def validate_resistance_refs(context, refs, sets)
     errors.concat(validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
     errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
-    errors.concat(validate_tooltip(ref_context, ref["tooltip"]))
   end
 
   errors
@@ -358,7 +340,6 @@ def validate_effect(context, effect, sets)
   return ["#{context} must be a map"] unless effect.is_a?(Hash)
 
   errors = []
-  errors.concat(validate_tooltip(context, effect["tooltip"]))
 
   if effect["grants"].is_a?(Hash)
     grants = effect["grants"]
@@ -391,7 +372,6 @@ def validate_catalog_entry(context, entry, sets, type)
   end
 
   errors << "#{context} is missing id" if entry["id"].nil? || entry["id"].to_s.empty?
-  errors.concat(validate_tooltip(context, entry["tooltip"]))
 
   case type
   when :power_type
@@ -402,9 +382,7 @@ def validate_catalog_entry(context, entry, sets, type)
     errors.concat(validate_refs("#{context}.degree_ids", entry["degree_ids"], sets[:martial_arts_degrees] | sets[:acrobatics_degrees], "degree"))
     Array(entry["variants"]).each_with_index do |variant, index|
       variant_context = "#{context}.variants[#{index}]"
-      if variant.is_a?(Hash)
-        errors.concat(validate_tooltip(variant_context, variant["tooltip"]))
-      else
+      unless variant.is_a?(Hash)
         errors << "#{variant_context} must be a map"
       end
     end

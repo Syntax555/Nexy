@@ -1,6 +1,5 @@
 - id: superhuman-physical-characteristics
   name: "Superhuman Physical Characteristics"
-  tooltip: "Represents physical stats that are clearly beyond regular human limits."
   aliases: []
   variants: []
   tags:
