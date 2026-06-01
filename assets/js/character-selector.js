@@ -41,6 +41,21 @@
     intelligence: "intelligence_tiers"
   };
 
+  const statLabels = {
+    attack_potency: "Attack Potency",
+    attack_speed: "Attack Speed",
+    combat_speed: "Speed",
+    reaction_speed: "Reaction Speed",
+    travel_speed: "Travel Speed",
+    flight_speed: "Flight Speed",
+    lifting_strength: "Lifting Strength",
+    striking_strength: "Striking Strength",
+    durability: "Durability",
+    stamina: "Stamina",
+    range: "Range",
+    intelligence: "Intelligence"
+  };
+
   const byId = (items, id) => (Array.isArray(items) ? items : []).find((item) => item.id === id);
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
@@ -206,6 +221,37 @@
     return formatAbilityLabel(label, ref);
   }
 
+  function resistanceRefLabel(ref) {
+    const resistance = byId(options.resistances, ref.id);
+    const label = resistance ? resistance.name : humanizeId(ref.id);
+    const level = byId(options.resistance_levels, ref.level || "resistant");
+    const levelLabel = level?.id === "immunity" ? `Immunity to ${label}` : label;
+
+    return formatAbilityLabel(levelLabel, ref);
+  }
+
+  function nameList(ids, catalogName) {
+    return list(ids)
+      .map((id) => byId(options[catalogName], id))
+      .filter(Boolean)
+      .map((item) => item.name);
+  }
+
+  function statLabel(statName) {
+    return statLabels[statName] || humanizeId(statName);
+  }
+
+  function formatStatRequirement(requirement) {
+    const catalog = statCatalogs[requirement.stat];
+    const value = catalog ? formatStat(requirementStat(requirement), catalog) : "";
+    if (!value) return "";
+
+    if (requirement.comparison === "at-most") return `${statLabel(requirement.stat)}: At most ${value}`;
+    if (requirement.comparison === "exact") return `${statLabel(requirement.stat)}: Exactly ${value}`;
+
+    return `${statLabel(requirement.stat)}: ${value}`;
+  }
+
   function characterKey(character, keyId = null) {
     const keys = list(character.keys);
     return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
@@ -290,15 +336,122 @@
     return refs;
   }
 
+  function grantTooltipLines(grants = {}) {
+    const lines = [];
+    const grantedPowers = list(grants.power_refs).map(powerRefLabel);
+    const grantedResistances = list(grants.resistance_refs).map(resistanceRefLabel);
+    const grantedMagicLevels = nameList(grants.magic_level_ids, "magic_levels");
+
+    if (grantedPowers.length) lines.push(`Grants: ${joinText(grantedPowers)}`);
+    if (grantedResistances.length) lines.push(`Grants resistances: ${joinText(grantedResistances)}`);
+    if (grantedMagicLevels.length) lines.push(`Grants magic: ${joinText(grantedMagicLevels)}`);
+
+    return lines;
+  }
+
+  function requirementTooltipLines(requirements = {}) {
+    const lines = [];
+    const statMinimums = list(requirements.stat_minimums)
+      .map(formatStatRequirement)
+      .filter(Boolean);
+    const requiredPowers = list(requirements.power_refs).map(powerRefLabel);
+    const requiredEquipment = nameList(requirements.equipment_ids, "equipment");
+
+    if (statMinimums.length) lines.push(`Requires stats: ${joinText(statMinimums)}`);
+    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
+    if (requiredEquipment.length) lines.push(`Requires equipment: ${joinText(requiredEquipment)}`);
+
+    return lines;
+  }
+
+  function effectTooltipLines(effect = {}) {
+    const lines = [];
+
+    Object.entries(effect.stat_effects || {}).forEach(([statName, stat]) => {
+      const catalog = statCatalogs[statName];
+      const value = catalog ? formatStat(stat, catalog) : "";
+      if (value) lines.push(`Sets ${statLabel(statName)}: ${value}`);
+    });
+
+    if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
+    lines.push(...grantTooltipLines(effect.grants));
+    lines.push(...requirementTooltipLines(effect.requirements));
+
+    if (effect.power_nullification) {
+      const targets = nameList(effect.power_nullification.target_power_ids, "powers");
+      lines.push(targets.length ? `Nullifies: ${joinText(targets)}` : "Nullifies powers");
+    }
+
+    if (effect.resistance_negation) {
+      const resistanceTargets = nameList(effect.resistance_negation.target_resistance_ids, "resistances");
+      const immunityTargets = nameList(effect.resistance_negation.target_immunity_ids, "resistances");
+
+      lines.push(resistanceTargets.length ? `Negates resistances: ${joinText(resistanceTargets)}` : "Negates resistances");
+      if (immunityTargets.length) lines.push(`Negates immunities: ${joinText(immunityTargets)}`);
+    }
+
+    if (effect.nullified_by) {
+      const nullifyingPowers = list(effect.nullified_by.power_refs).map(powerRefLabel);
+      const nullifyingResistances = list(effect.nullified_by.resistance_refs).map(resistanceRefLabel);
+      const sources = [...nullifyingPowers, ...nullifyingResistances];
+
+      if (sources.length) lines.push(`Stopped by: ${joinText(sources)}`);
+    }
+
+    return lines;
+  }
+
+  function derivedRuleTooltipLines(key, rule) {
+    const requirements = list(rule.requirements);
+    const minMatches = Number.isInteger(rule.min_matches) ? rule.min_matches : requirements.length;
+    const requirementTexts = requirements.map(formatStatRequirement).filter(Boolean);
+    const metStats = requirements
+      .filter((requirement) => meetsStatRequirement(key, requirement))
+      .map((requirement) => statLabel(requirement.stat));
+    const lines = [`Requires ${minMatches}/${requirements.length} stats`];
+
+    if (requirementTexts.length) lines.push(`Needed: ${joinText(requirementTexts)}`);
+    if (metStats.length) lines.push(`Met: ${joinText(metStats)}`);
+
+    return lines;
+  }
+
+  function powerTooltipLines(key, ref, power) {
+    const lines = [];
+
+    if (ref.derived_rule_id) {
+      const rule = byId(options.derived_power_rules, ref.derived_rule_id);
+      if (rule) lines.push(...derivedRuleTooltipLines(key, rule));
+    }
+
+    const effects = Array.isArray(ref.effects) ? ref.effects : list(power.effects);
+    lines.push(...effects.flatMap(effectTooltipLines));
+
+    return lines;
+  }
+
   function powerTagItems(key) {
     return powerRefs(key).map((ref) => {
       const power = byId(options.powers, ref.id);
       if (!power) return null;
 
       return {
-        label: powerRefLabel(ref)
+        label: powerRefLabel(ref),
+        tooltipLines: powerTooltipLines(key, ref, power)
       };
     }).filter(Boolean);
+  }
+
+  function equipmentTooltipLines(item) {
+    const lines = [];
+    const weaponTypes = nameList(item.weapon_type_ids, "power_types");
+    const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
+
+    if (weaponTypes.length) lines.push(`Weapon types: ${joinText(weaponTypes)}`);
+    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
+    lines.push(...list(item.effects).flatMap(effectTooltipLines));
+
+    return lines;
   }
 
   function equipmentTagItems(key) {
@@ -306,12 +459,24 @@
       .map((id) => byId(options.equipment, id))
       .filter(Boolean)
       .map((item) => ({
-        label: item.name
+        label: item.name,
+        tooltipLines: equipmentTooltipLines(item)
       }));
   }
 
   function tagItemHtml(item) {
-    return `<li class="tag-item">${escapeHtml(item.label)}</li>`;
+    const tooltipLines = list(item.tooltipLines).filter(Boolean);
+
+    if (!tooltipLines.length) return `<li class="tag-item">${escapeHtml(item.label)}</li>`;
+
+    return `
+      <li class="tag-item has-tooltip" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
+        <span class="tag-text">${escapeHtml(item.label)}</span>
+        <span class="tag-tooltip" role="tooltip">
+          ${tooltipLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}
+        </span>
+      </li>
+    `;
   }
 
   function renderCard(card, character, keyId = null) {
