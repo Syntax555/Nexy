@@ -440,14 +440,16 @@
   function derivedRuleTooltipLines(key, rule) {
     const requirements = list(rule.requirements);
     const minMatches = Number.isInteger(rule.min_matches) ? rule.min_matches : requirements.length;
-    const metCount = requirements.filter((requirement) => meetsStatRequirement(key, requirement)).length;
+    const metRequirements = requirements.filter((requirement) => meetsStatRequirement(key, requirement));
     const lines = [
       ...tooltipLines(rule.tooltip),
-      `Automatic: ${metCount}/${requirements.length} stat requirements met; needs ${minMatches}.`
+      `Automatic: ${minMatches}/${requirements.length} stat requirements needed.`
     ];
     const requirementTexts = requirements.map(formatStatRequirement).filter(Boolean);
+    const metRequirementTexts = metRequirements.map(formatStatRequirement).filter(Boolean);
 
-    if (requirementTexts.length) lines.push(`Requirements: ${joinText(requirementTexts)}`);
+    if (requirementTexts.length) lines.push(`Needed: ${joinText(requirementTexts)}`);
+    lines.push(`Met: ${metRequirementTexts.length ? joinText(metRequirementTexts) : "None"}`);
 
     return lines;
   }

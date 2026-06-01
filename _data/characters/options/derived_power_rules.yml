@@ -1,6 +1,5 @@
 - id: superhuman-physical-characteristics
   power_id: superhuman-physical-characteristics
-  tooltip: "Automatically granted from physical stats. Needs at least 2 of 4 requirements."
   min_matches: 2
   requirements:
     - stat: combat_speed
