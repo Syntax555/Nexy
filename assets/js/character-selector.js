@@ -576,11 +576,28 @@
 
     if (!tooltipLines.length) return `<li class="tag-item">${escapeHtml(item.label)}</li>`;
 
+    const tooltipHtml = tooltipLines.map((line) => {
+      const separatorIndex = line.indexOf(": ");
+      if (separatorIndex === -1) {
+        return `<span class="tooltip-summary">${escapeHtml(line)}</span>`;
+      }
+
+      const label = line.slice(0, separatorIndex);
+      const value = line.slice(separatorIndex + 2);
+
+      return `
+        <span class="tooltip-row">
+          <span class="tooltip-label">${escapeHtml(label)}</span>
+          <span class="tooltip-value">${escapeHtml(value)}</span>
+        </span>
+      `;
+    }).join("");
+
     return `
       <li class="tag-item has-tooltip" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
         <span class="tag-text">${escapeHtml(item.label)}</span>
         <span class="tag-tooltip" role="tooltip">
-          ${tooltipLines.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}
+          ${tooltipHtml}
         </span>
       </li>
     `;
