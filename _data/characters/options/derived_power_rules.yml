@@ -13,9 +13,9 @@
       comparison: at-least
     - stat: striking_strength
       value: street-level
-      modifier: normal
+      modifier: at-least
       comparison: at-least
     - stat: durability
       value: street
-      modifier: normal
+      modifier: at-least
       comparison: at-least

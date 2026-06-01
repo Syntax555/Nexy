@@ -138,8 +138,8 @@ derived:
         power_id: superhuman-physical-characteristics
         min_matches: 2
         requirements:
-          - combat_speed_at_least_superhuman
-          - lifting_strength_at_least_superhuman
+          - speed_superhuman_normal
+          - lifting_strength_superhuman_normal
           - striking_strength_at_least_street_level
           - durability_at_least_street
   power_nullification:

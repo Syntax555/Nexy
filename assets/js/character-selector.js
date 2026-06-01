@@ -199,6 +199,8 @@
   }
 
   function statLabel(statName) {
+    if (statName === "combat_speed") return "Speed";
+
     return statLabels[statName] || humanizeId(statName);
   }
 
@@ -213,8 +215,16 @@
     const catalog = statCatalogs[requirement.stat];
     if (!catalog) return "";
 
-    const value = formatStat(requirementStat(requirement), catalog);
-    return value ? `${statLabel(requirement.stat)} ${comparisonText(requirement.comparison)} ${value}` : "";
+    const stat = requirementStat(requirement);
+    const value = formatStat(stat, catalog);
+    if (!value) return "";
+
+    const mod = modifier(stat);
+    const displayValue = mod?.id === "normal" ? `${value} (Normal)` : value;
+    const comparison = requirement.comparison || "at-least";
+    const comparisonSuffix = comparison === "at-least" ? "" : ` (${comparisonText(comparison)})`;
+
+    return `${statLabel(requirement.stat)}: ${displayValue}${comparisonSuffix}`;
   }
 
   function powerRefLabel(ref) {
@@ -435,6 +445,9 @@
       ...tooltipLines(rule.tooltip),
       `Automatic: ${metCount}/${requirements.length} stat requirements met; needs ${minMatches}.`
     ];
+    const requirementTexts = requirements.map(formatStatRequirement).filter(Boolean);
+
+    if (requirementTexts.length) lines.push(`Requirements: ${joinText(requirementTexts)}`);
 
     return lines;
   }
