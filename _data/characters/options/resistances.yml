@@ -1,25 +1,25 @@
 - id: magic-resistance
-  name: "Magic Resistance"
+  name: "Magic"
   resists_power_ids:
     - magic
   resists_effect_ids: []
 - id: mind-manipulation-resistance
-  name: "Mind Manipulation Resistance"
+  name: "Mind Manipulation"
   resists_power_ids:
     - mind-manipulation
   resists_effect_ids: []
 - id: curse-manipulation-resistance
-  name: "Curse Manipulation Resistance"
+  name: "Curse Manipulation"
   resists_power_ids:
     - curse-manipulation
   resists_effect_ids: []
 - id: madness-manipulation-resistance
-  name: "Madness Manipulation Resistance"
+  name: "Madness Manipulation"
   resists_power_ids:
     - madness-manipulation
   resists_effect_ids: []
 - id: fear-manipulation-resistance
-  name: "Fear Manipulation Resistance"
+  name: "Fear Manipulation"
   resists_power_ids:
     - fear-manipulation
   resists_effect_ids: []
