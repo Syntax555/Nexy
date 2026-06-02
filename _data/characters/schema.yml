@@ -361,7 +361,7 @@ derived:
       - resistances
       - standard_equipment
       - optional_equipment
-      - attacks
+      - attacks_techniques
     data_field_rule: no_freeform_tooltip_fields
     content_rule: requirements_resistances_grants_stat_effects_image_effects_nullification_weapon_types_and_structured_ref_scope_only
     default_modifier_rule: normal_is_internal_and_not_displayed
@@ -433,7 +433,7 @@ derived:
           source_variant: string_or_null
           condition: string_or_null
       effects: list
-    attack:
+    attack_or_technique:
       id: string
       name: string
       weapon_type_ids: list

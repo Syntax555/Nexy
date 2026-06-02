@@ -799,7 +799,7 @@
         ${resistanceTags ? `<h4 class="section-title">Resistances</h4><ul class="tag-list">${resistanceTags}</ul>` : ""}
         ${standardEquipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${standardEquipmentTags}</ul>` : ""}
         ${optionalEquipmentTags ? `<h4 class="section-title">Optional Equipment</h4><ul class="tag-list">${optionalEquipmentTags}</ul>` : ""}
-        ${attackTags ? `<h4 class="section-title">Attacks</h4><ul class="tag-list">${attackTags}</ul>` : ""}
+        ${attackTags ? `<h4 class="section-title">Attacks/Techniques</h4><ul class="tag-list">${attackTags}</ul>` : ""}
       </div>
     `;
   }
