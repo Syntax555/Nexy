@@ -153,6 +153,42 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: poison-manipulation
+  name: "Poison Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: darkness-manipulation
+  name: "Darkness Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: radiation-manipulation
+  name: "Radiation Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: light-manipulation
   name: "Light Manipulation"
   aliases: []

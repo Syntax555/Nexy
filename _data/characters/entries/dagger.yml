@@ -25,6 +25,14 @@ keys:
                 modifier: higher
               - stat: durability
                 modifier: higher
+      - id: power-nullification
+        effects:
+          - power_nullification:
+              target_power_ids:
+                - poison-manipulation
+                - darkness-manipulation
+                - radiation-manipulation
+                - curse-manipulation
     resistance_refs:
       - id: mind-manipulation-resistance
       - id: curse-manipulation-resistance
