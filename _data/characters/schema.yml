@@ -200,8 +200,13 @@ derived:
     effect_field: effects.non_physical_interaction
     target_power_refs_field: target_power_refs
     target_rule: target_power_refs_define_which_non_physical_power_types_can_be_interacted_with_or_hurt
-    all_type_rule: a_target_ref_with_intangibility_all_covers_only_intangibility_types_not_other_non_physical_powers
-    incorporeality_rule: has_no_subtypes_so_targeting_incorporeality_with_empty_type_ids_covers_it
+    all_type_rule: all_type_ids_cover_all_subtypes_of_that_target_power_only_not_other_non_physical_powers
+    all_type_ids:
+      intangibility: intangibility-all
+      abstract_existence: abstract-existence-all
+      nonexistent_physiology: nonexistent-physiology-all
+    typeless_power_rule: powers_without_subtypes_are_fully_covered_by_targeting_the_power_with_empty_or_missing_type_ids
+    incorporeality_rule: incorporeality_has_no_subtypes_so_targeting_incorporeality_with_empty_type_ids_covers_all_incorporeality
     override_rule: local_power_ref_effects_narrow_or_expand_targets_for_specific_characters
     display_rule: show_target_power_and_type_names_as_can_affect
     examples:
@@ -213,6 +218,28 @@ derived:
                 - id: intangibility
                   type_ids:
                     - intangibility-all
+      all_abstract_existence_only:
+        id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_refs:
+                - id: abstract-existence
+                  type_ids:
+                    - abstract-existence-all
+      all_nonexistent_physiology_only:
+        id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_refs:
+                - id: nonexistent-physiology
+                  type_ids:
+                    - nonexistent-physiology-all
+      all_incorporeality_typeless:
+        id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_refs:
+                - id: incorporeality
       dagger_light_interaction:
         id: non-physical-interaction
         effects:
