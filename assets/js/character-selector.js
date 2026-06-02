@@ -110,6 +110,15 @@
     return entry ? ((entry.rank - 1) * 8) + mod.rank : 0;
   }
 
+  function statDisplayValue(entry, catalogName, valueField) {
+    const value = entry[valueField] || "";
+    if (catalogName !== "striking_strength_tiers" || valueField !== "name") return value;
+
+    return value
+      .replace(/ level\+$/i, "+")
+      .replace(/ level$/i, "");
+  }
+
   function formatStat(stat, catalogName, valueField = "name") {
     const entry = statEntry(stat, catalogName);
     if (!entry) return "";
@@ -117,7 +126,7 @@
     const mod = modifier(stat);
     const prefix = mod.display_prefix ? `${mod.display_prefix} ` : "";
     const suffix = mod.display_suffix || "";
-    return `${prefix}${entry[valueField]}${suffix}`;
+    return `${prefix}${statDisplayValue(entry, catalogName, valueField)}${suffix}`;
   }
 
   function formatTier(key) {

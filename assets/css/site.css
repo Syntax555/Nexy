@@ -11,8 +11,8 @@ body {
 
 main {
   margin: 0 auto;
-  max-width: 1280px;
-  padding: 28px 18px;
+  max-width: 1560px;
+  padding: 32px 22px;
 }
 
 button {
@@ -28,7 +28,7 @@ button {
 .versus-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 24px;
 }
 
 .selector-panel {
@@ -47,18 +47,18 @@ button {
   justify-content: space-between;
   gap: 12px;
   border-bottom: 1px solid #e3e9ed;
-  padding: 14px;
+  padding: 16px 18px;
 }
 
 .side-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.08rem;
   line-height: 1.2;
 }
 
 .back-button {
-  min-width: 38px;
-  height: 38px;
+  min-width: 42px;
+  height: 42px;
   border: 1px solid #c8d3d9;
   border-radius: 8px;
   background: #f7fafb;
@@ -73,14 +73,14 @@ button {
 
 .selector-body {
   display: grid;
-  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
-  min-height: 620px;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  min-height: 700px;
 }
 
 .choice-column {
   border-right: 1px solid #e3e9ed;
   background: #f8fbfc;
-  padding: 14px;
+  padding: 16px;
 }
 
 .choice-label {
@@ -104,18 +104,20 @@ button {
 
 .choice-list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .choice-button {
   width: 100%;
-  min-height: 42px;
+  min-height: 50px;
   border: 1px solid #d4dfe4;
   border-radius: 8px;
   background: #ffffff;
   color: #182631;
   cursor: pointer;
-  padding: 9px 10px;
+  padding: 11px 12px;
+  font-size: 0.96rem;
+  line-height: 1.25;
   text-align: left;
 }
 
@@ -129,13 +131,13 @@ button {
 
 .character-card {
   display: grid;
-  grid-template-rows: minmax(220px, 280px) 1fr;
+  grid-template-rows: minmax(260px, 340px) 1fr;
   min-width: 0;
 }
 
 .character-image {
   display: grid;
-  min-height: 220px;
+  min-height: 260px;
   place-items: center;
   background: #dce5e9;
 }
@@ -144,7 +146,7 @@ button {
   display: block;
   width: 100%;
   height: 100%;
-  max-height: 280px;
+  max-height: 340px;
   object-fit: contain;
   object-position: center bottom;
 }
@@ -162,7 +164,7 @@ button {
 }
 
 .character-content {
-  padding: 18px;
+  padding: 22px;
 }
 
 .character-heading {
@@ -221,20 +223,20 @@ button {
   left: 50%;
   z-index: 10;
   display: grid;
-  gap: 7px;
+  gap: 9px;
   width: max-content;
-  min-width: min(260px, calc(100vw - 40px));
-  max-width: min(380px, calc(100vw - 40px));
+  min-width: min(320px, calc(100vw - 32px));
+  max-width: min(520px, calc(100vw - 32px));
   border: 1px solid #314756;
   border-radius: 8px;
   background: #18242d;
-  box-shadow: 0 18px 34px rgba(21, 32, 41, 0.28);
+  box-shadow: 0 22px 48px rgba(21, 32, 41, 0.32);
   color: #ffffff;
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.45;
   opacity: 0;
-  padding: 10px 11px;
+  padding: 13px 14px;
   pointer-events: none;
   text-align: left;
   transform: translate(-50%, 6px);
@@ -271,14 +273,14 @@ button {
 
 .tooltip-row {
   display: grid;
-  grid-template-columns: minmax(76px, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: minmax(96px, 0.36fr) minmax(0, 1fr);
   align-items: start;
-  gap: 10px;
+  gap: 14px;
 }
 
 .tooltip-label {
   color: #aebfc9;
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1.45;
@@ -295,7 +297,7 @@ button {
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
 }
 
 .stat {
@@ -315,7 +317,7 @@ button {
 .stat-value {
   display: block;
   margin-top: 3px;
-  font-size: 0.96rem;
+  font-size: 1.02rem;
   font-weight: 700;
   line-height: 1.25;
   overflow-wrap: anywhere;
@@ -333,13 +335,17 @@ button {
   gap: 8px;
 }
 
-@media (max-width: 1040px) {
+@media (max-width: 1180px) {
   .versus-grid {
     grid-template-columns: 1fr;
   }
 
   .selector-body {
     min-height: auto;
+  }
+
+  .character-card {
+    grid-template-rows: minmax(240px, 320px) 1fr;
   }
 }
 
@@ -355,6 +361,11 @@ button {
   .choice-column {
     border-right: 0;
     border-bottom: 1px solid #e3e9ed;
+  }
+
+  .tag-tooltip {
+    min-width: min(280px, calc(100vw - 24px));
+    max-width: min(420px, calc(100vw - 24px));
   }
 
   .stat-grid {
