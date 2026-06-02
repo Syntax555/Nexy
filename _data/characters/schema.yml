@@ -304,6 +304,9 @@ derived:
   effects:
     activation_rule: requirements_met_and_not_nullified
     stat_rule: best_composite_rank_per_stat
+    stat_resistible_rule: stat_effects_resistible_false_are_not_stopped_by_matching_resistance_refs
+    stat_resistible_default_rule: missing_stat_effects_resistible_defaults_to_true
+    stat_negation_rule: power_or_source_negation_can_still_disable_non_resistible_stat_effects
     stat_modifier_floor_rule: raises_only_the_stat_modifier_to_the_given_floor_or_keeps_a_stronger_modifier
     stat_modifier_floor_value_rule: uses_current_base_stat_tier_instead_of_copying_a_fixed_tier
     source_rule: best_active_effect_wins_across_base_powers_equipment_attacks_requirements
@@ -337,6 +340,12 @@ derived:
       stamina: ranked_stamina_or_null
       range: ranked_range_or_null
       intelligence: ranked_intelligence_or_null
+    stat_effect_fields:
+      value: tier_id
+      modifier: stat_modifier_id_or_null_defaults_to_normal
+      resistible: boolean_or_null_defaults_to_true
+      label: string_or_null
+      note: string_or_null
     stat_modifier_floor_effects:
       - stat: ranked_stat_field
         modifier: stat_modifier_id

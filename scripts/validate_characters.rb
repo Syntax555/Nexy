@@ -163,6 +163,10 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
 
       errors << "#{context}.#{field} must be a string when present"
     end
+
+    unless stat["resistible"].nil? || [true, false].include?(stat["resistible"])
+      errors << "#{context}.resistible must be true or false when present"
+    end
   else
     return ["#{context} must be a ranked stat map or tier id string"]
   end

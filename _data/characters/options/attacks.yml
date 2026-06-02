@@ -1,5 +1,5 @@
-- id: light-dagger
-  name: "Light Dagger"
+- id: lightforce-energy
+  name: "Lightforce Energy"
   weapon_type_ids: []
   required_power_refs: []
   effects:

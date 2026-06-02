@@ -169,6 +169,10 @@
         attack_potency:
           value: multi-city-block
           modifier: at-least
+        combat_speed:
+          value: speed-of-light
+          modifier: normal
+          resistible: false
         striking_strength:
           value: multi-city-block-level
           modifier: at-least

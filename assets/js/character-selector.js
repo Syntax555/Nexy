@@ -497,6 +497,10 @@
       const value = catalog ? formatStat(stat, catalog) : "";
       if (!value) return;
 
+      const resistanceNote = normalizedStat(stat)?.resistible === false
+        ? " (not stopped by resistance)"
+        : "";
+
       if (key) {
         const currentRank = compositeRank(key[statName], catalog);
         const effectRank = compositeRank(stat, catalog);
@@ -504,12 +508,12 @@
         const label = statLabel(statName);
 
         lines.push(effectRank > currentRank || !currentValue
-          ? `Raises ${label}: ${value}`
+          ? `Raises ${label}: ${value}${resistanceNote}`
           : `${label} already: ${currentValue}`);
         return;
       }
 
-      lines.push(`Raises ${statLabel(statName)}: ${value}`);
+      lines.push(`Raises ${statLabel(statName)}: ${value}${resistanceNote}`);
     });
 
     const modifierFloorGroups = new Map();
