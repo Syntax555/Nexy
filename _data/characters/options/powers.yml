@@ -192,7 +192,23 @@
 - id: light-manipulation
   name: "Light Manipulation"
   aliases: []
-  variants: []
+  variants:
+    - id: dagger-lightforce
+      name: "Dagger Lightforce"
+      inherits_base_grants: true
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects:
+        - grants:
+            power_refs:
+              - id: durability-negation
+                effects:
+                  - power_nullification:
+                      target_power_ids:
+                        - forcefield-creation
+            resistance_refs: []
   tags: []
   type_ids: []
   degree_ids: []
@@ -218,6 +234,19 @@
         range:
           value: hundreds-of-kilometers
           modifier: normal
+- id: durability-negation
+  name: "Durability Negation"
+  aliases: []
+  variants: []
+  tags:
+    - negation
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: power-nullification
   name: "Power Nullification"
   aliases:

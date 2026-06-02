@@ -6,4 +6,5 @@
     - grants:
         power_refs:
           - id: light-manipulation
+            source_variant: dagger-lightforce
         resistance_refs: []
