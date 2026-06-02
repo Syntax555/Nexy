@@ -105,6 +105,58 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: intangibility
+  name: "Intangibility"
+  aliases: []
+  variants: []
+  tags:
+    - non-physical
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: incorporeality
+  name: "Incorporeality"
+  aliases: []
+  variants: []
+  tags:
+    - non-physical
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: abstract-existence
+  name: "Abstract Existence"
+  aliases: []
+  variants: []
+  tags:
+    - non-physical
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: nonexistent-physiology
+  name: "Nonexistent Physiology"
+  aliases: []
+  variants: []
+  tags:
+    - non-physical
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: mind-manipulation
   name: "Mind Manipulation"
   aliases: []
@@ -208,6 +260,7 @@
                   - power_nullification:
                       target_power_ids:
                         - forcefield-creation
+              - id: non-physical-interaction
             resistance_refs: []
   tags: []
   type_ids: []
@@ -247,6 +300,25 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: non-physical-interaction
+  name: "Non-Physical Interaction"
+  aliases: []
+  variants: []
+  tags:
+    - interaction
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects:
+    - non_physical_interaction:
+        target_power_ids:
+          - intangibility
+          - incorporeality
+          - abstract-existence
+          - nonexistent-physiology
 - id: power-nullification
   name: "Power Nullification"
   aliases:

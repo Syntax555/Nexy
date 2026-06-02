@@ -195,6 +195,23 @@ derived:
               target_resistance_ids: []
               target_immunity_ids:
                 - magic-resistance
+  non_physical_interaction:
+    power_id: non-physical-interaction
+    effect_field: effects.non_physical_interaction
+    target_power_ids_field: target_power_ids
+    target_rule: target_power_ids_define_which_non_physical_powers_can_be_interacted_with_or_hurt
+    override_rule: local_power_ref_effects_can_narrow_or_expand_targets_for_specific_characters
+    display_rule: show_target_power_names_as_can_affect
+    examples:
+      broad_non_physical_interaction:
+        id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_ids:
+                - intangibility
+                - incorporeality
+                - abstract-existence
+                - nonexistent-physiology
   magic_levels:
     power_id: magic
     level_field: magic_level_id
@@ -327,6 +344,8 @@ derived:
     resistance_negation:
       target_resistance_ids: list
       target_immunity_ids: list
+    non_physical_interaction:
+      target_power_ids: list
     stat_effects:
       attack_potency: ranked_attack_durability_or_null
       attack_speed: ranked_speed_or_null

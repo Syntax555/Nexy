@@ -574,6 +574,11 @@
       if (immunityTargets.length) lines.push(`Negates immunities: ${joinText(immunityTargets)}`);
     }
 
+    if (effect.non_physical_interaction) {
+      const targets = powerNames(effect.non_physical_interaction.target_power_ids);
+      lines.push(targets.length ? `Can affect: ${joinText(targets)}` : "Can affect non-physical targets");
+    }
+
     if (effect.nullified_by) {
       const nullifyingPowers = list(effect.nullified_by.power_refs).map(powerRefLabel);
       const nullifyingResistances = list(effect.nullified_by.resistance_refs).map(resistanceRefLabel);

@@ -404,6 +404,10 @@ def validate_effect(context, effect, sets)
     errors.concat(validate_refs("#{context}.resistance_negation.target_immunity_ids", negation["target_immunity_ids"], sets[:resistances], "resistance"))
   end
 
+  if effect["non_physical_interaction"].is_a?(Hash)
+    errors.concat(validate_refs("#{context}.non_physical_interaction.target_power_ids", effect["non_physical_interaction"]["target_power_ids"], sets[:powers], "power"))
+  end
+
   errors
 end
 
