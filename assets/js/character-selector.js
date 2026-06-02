@@ -507,7 +507,7 @@
       if (!value) return;
 
       const resistanceNote = normalizedStat(stat)?.resistible === false
-        ? " (not stopped by resistance)"
+        ? " (ignores resistance)"
         : "";
 
       if (key) {
@@ -517,12 +517,12 @@
         const label = statLabel(statName);
 
         lines.push(effectRank > currentRank || !currentValue
-          ? `Raises ${label}: ${value}${resistanceNote}`
-          : `${label} already: ${currentValue}`);
+          ? `${label}: ${value}${resistanceNote}`
+          : `${label}: Already ${currentValue}`);
         return;
       }
 
-      lines.push(`Raises ${statLabel(statName)}: ${value}${resistanceNote}`);
+      lines.push(`${statLabel(statName)}: ${value}${resistanceNote}`);
     });
 
     const modifierFloorGroups = new Map();
@@ -540,9 +540,9 @@
         const modifierName = floor?.name || humanizeId(modifierId);
 
         if (floor && current.rank >= floor.rank) {
-          lines.push(`${statLabel(statName)} modifier already: ${current.name}`);
+          lines.push(`${statLabel(statName)}: Modifier already ${current.name}`);
         } else {
-          lines.push(`Raises ${statLabel(statName)} modifier: ${modifierName}`);
+          lines.push(`${statLabel(statName)}: Modifier to ${modifierName}`);
         }
         return;
       }
@@ -554,7 +554,7 @@
 
     modifierFloorGroups.forEach((stats, modifierId) => {
       const modifierName = byId(statModifiers, modifierId)?.name || humanizeId(modifierId);
-      lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName}`);
+      lines.push(`Modifier floor: ${joinText(stats)} to ${modifierName}`);
     });
 
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
@@ -755,6 +755,7 @@
       <li class="tag-item has-tooltip" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
         <span class="tag-text">${escapeHtml(item.label)}</span>
         <span class="tag-tooltip" role="tooltip">
+          <span class="tooltip-title">${escapeHtml(item.label)}</span>
           ${tooltipHtml}
         </span>
       </li>
