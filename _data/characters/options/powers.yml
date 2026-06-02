@@ -261,6 +261,12 @@
                       target_power_ids:
                         - forcefield-creation
               - id: non-physical-interaction
+                effects:
+                  - non_physical_interaction:
+                      target_power_refs:
+                        - id: intangibility
+                          type_ids:
+                            - physical-intangibility-non-physical
             resistance_refs: []
   tags: []
   type_ids: []
@@ -312,13 +318,7 @@
     power_refs: []
     resistance_refs: []
     magic_level_ids: []
-  effects:
-    - non_physical_interaction:
-        target_power_ids:
-          - intangibility
-          - incorporeality
-          - abstract-existence
-          - nonexistent-physiology
+  effects: []
 - id: power-nullification
   name: "Power Nullification"
   aliases:

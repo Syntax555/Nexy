@@ -265,6 +265,14 @@
     return nameList(ids, "powers");
   }
 
+  function powerTargetRefLabel(ref) {
+    const power = byId(options.powers, ref.id);
+    const label = power ? power.name : humanizeId(ref.id);
+    const typeNames = nameList(ref.type_ids, "power_types");
+
+    return typeNames.length ? `${label}: ${typeNames.join(", ")}` : label;
+  }
+
   function resistanceNames(ids) {
     return nameList(ids, "resistances");
   }
@@ -575,7 +583,7 @@
     }
 
     if (effect.non_physical_interaction) {
-      const targets = powerNames(effect.non_physical_interaction.target_power_ids);
+      const targets = list(effect.non_physical_interaction.target_power_refs).map(powerTargetRefLabel);
       lines.push(targets.length ? `Can affect: ${joinText(targets)}` : "Can affect non-physical targets");
     }
 

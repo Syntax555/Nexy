@@ -94,3 +94,144 @@
   name: "Type 1"
   covers_all: false
   covers_type_ids: []
+- id: intangibility-all
+  power_id: intangibility
+  name: "Intangibility (All)"
+  covers_all: true
+  covers_type_ids:
+    - elemental-intangibility-type-1-solids
+    - elemental-intangibility-type-2-semi-solids-semi-liquids
+    - elemental-intangibility-type-3-liquids
+    - elemental-intangibility-type-4-aerosols
+    - elemental-intangibility-type-5-gas
+    - elemental-intangibility-type-6-plasma
+    - elemental-intangibility-type-7-quantum-particles
+    - elemental-intangibility-type-8-energy
+    - elemental-intangibility-type-9-non-physical
+    - physical-intangibility-non-physical
+    - molecular-intangibility
+    - dimensional-intangibility
+- id: elemental-intangibility-type-1-solids
+  power_id: intangibility
+  name: "Elemental Type 1 (Solids)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-2-semi-solids-semi-liquids
+  power_id: intangibility
+  name: "Elemental Type 2 (Semi-Solids/Semi-Liquids)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-3-liquids
+  power_id: intangibility
+  name: "Elemental Type 3 (Liquids)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-4-aerosols
+  power_id: intangibility
+  name: "Elemental Type 4 (Aerosols)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-5-gas
+  power_id: intangibility
+  name: "Elemental Type 5 (Gas)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-6-plasma
+  power_id: intangibility
+  name: "Elemental Type 6 (Plasma)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-7-quantum-particles
+  power_id: intangibility
+  name: "Elemental Type 7 (Quantum Particles)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-8-energy
+  power_id: intangibility
+  name: "Elemental Type 8 (Energy)"
+  covers_all: false
+  covers_type_ids: []
+- id: elemental-intangibility-type-9-non-physical
+  power_id: intangibility
+  name: "Elemental Type 9 (Non-Physical)"
+  covers_all: false
+  covers_type_ids: []
+- id: physical-intangibility-non-physical
+  power_id: intangibility
+  name: "Non-Physical"
+  covers_all: false
+  covers_type_ids: []
+- id: molecular-intangibility
+  power_id: intangibility
+  name: "Molecular"
+  covers_all: false
+  covers_type_ids: []
+- id: dimensional-intangibility
+  power_id: intangibility
+  name: "Dimensional"
+  covers_all: false
+  covers_type_ids: []
+- id: abstract-existence-all
+  power_id: abstract-existence
+  name: "Abstract Existence (All)"
+  covers_all: true
+  covers_type_ids:
+    - abstract-existence-type-1
+    - abstract-existence-type-2
+- id: abstract-existence-type-1
+  power_id: abstract-existence
+  name: "Type 1"
+  covers_all: false
+  covers_type_ids: []
+- id: abstract-existence-type-2
+  power_id: abstract-existence
+  name: "Type 2"
+  covers_all: false
+  covers_type_ids: []
+- id: nonexistent-physiology-all
+  power_id: nonexistent-physiology
+  name: "Nonexistent Physiology (All)"
+  covers_all: true
+  covers_type_ids:
+    - material-nonexistence
+    - idealistic-nonexistence
+    - paradoxical-nonexistence
+    - spiritual-nonexistence
+    - conceptual-nonexistence
+    - mental-nonexistence
+    - information-nonexistence
+- id: material-nonexistence
+  power_id: nonexistent-physiology
+  name: "Material Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: idealistic-nonexistence
+  power_id: nonexistent-physiology
+  name: "Idealistic Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: paradoxical-nonexistence
+  power_id: nonexistent-physiology
+  name: "Paradoxical Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: spiritual-nonexistence
+  power_id: nonexistent-physiology
+  name: "Spiritual Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: conceptual-nonexistence
+  power_id: nonexistent-physiology
+  name: "Conceptual Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: mental-nonexistence
+  power_id: nonexistent-physiology
+  name: "Mental Nonexistence"
+  covers_all: false
+  covers_type_ids: []
+- id: information-nonexistence
+  power_id: nonexistent-physiology
+  name: "Information Nonexistence"
+  covers_all: false
+  covers_type_ids: []

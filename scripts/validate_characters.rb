@@ -349,6 +349,32 @@ def validate_power_refs(context, refs, sets)
   errors
 end
 
+def validate_power_target_refs(context, refs, sets)
+  return ["#{context} must be a list"] unless refs.is_a?(Array)
+
+  refs.each_with_index.flat_map do |ref, index|
+    ref_context = "#{context}[#{index}]"
+
+    unless ref.is_a?(Hash)
+      next ["#{ref_context} must be a map"]
+    end
+
+    errors = validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power") +
+             validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type")
+
+    Array(ref["type_ids"]).each do |type_id|
+      power_id = sets[:power_type_power_ids][type_id]
+      next if power_id.nil? || ref["id"].nil?
+
+      unless power_id == ref["id"]
+        errors << "#{ref_context}.type_ids contains #{type_id.inspect}, which belongs to #{power_id.inspect}, not #{ref["id"].inspect}"
+      end
+    end
+
+    errors
+  end
+end
+
 def validate_resistance_refs(context, refs, sets)
   errors = []
 
@@ -405,7 +431,7 @@ def validate_effect(context, effect, sets)
   end
 
   if effect["non_physical_interaction"].is_a?(Hash)
-    errors.concat(validate_refs("#{context}.non_physical_interaction.target_power_ids", effect["non_physical_interaction"]["target_power_ids"], sets[:powers], "power"))
+    errors.concat(validate_power_target_refs("#{context}.non_physical_interaction.target_power_refs", effect["non_physical_interaction"]["target_power_refs"] || [], sets))
   end
 
   errors
@@ -595,6 +621,9 @@ end
 errors.concat(validate_unique_integer_field("ability_modifiers", options["ability_modifiers"], "coverage_rank"))
 
 sets = catalog_names.to_h { |name| [name.to_sym, id_set(options[name])] }
+sets[:power_type_power_ids] = Array(options["power_types"]).filter_map do |entry|
+  [entry["id"], entry["power_id"]] if entry.is_a?(Hash)
+end.to_h
 
 Array(options["verses"]).each_with_index do |verse, index|
   context = "options.verses[#{index}]"

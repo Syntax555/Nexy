@@ -198,20 +198,29 @@ derived:
   non_physical_interaction:
     power_id: non-physical-interaction
     effect_field: effects.non_physical_interaction
-    target_power_ids_field: target_power_ids
-    target_rule: target_power_ids_define_which_non_physical_powers_can_be_interacted_with_or_hurt
-    override_rule: local_power_ref_effects_can_narrow_or_expand_targets_for_specific_characters
-    display_rule: show_target_power_names_as_can_affect
+    target_power_refs_field: target_power_refs
+    target_rule: target_power_refs_define_which_non_physical_power_types_can_be_interacted_with_or_hurt
+    all_type_rule: a_target_ref_with_intangibility_all_covers_only_intangibility_types_not_other_non_physical_powers
+    incorporeality_rule: has_no_subtypes_so_targeting_incorporeality_with_empty_type_ids_covers_it
+    override_rule: local_power_ref_effects_narrow_or_expand_targets_for_specific_characters
+    display_rule: show_target_power_and_type_names_as_can_affect
     examples:
-      broad_non_physical_interaction:
+      all_intangibility_only:
         id: non-physical-interaction
         effects:
           - non_physical_interaction:
-              target_power_ids:
-                - intangibility
-                - incorporeality
-                - abstract-existence
-                - nonexistent-physiology
+              target_power_refs:
+                - id: intangibility
+                  type_ids:
+                    - intangibility-all
+      dagger_light_interaction:
+        id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_refs:
+                - id: intangibility
+                  type_ids:
+                    - physical-intangibility-non-physical
   magic_levels:
     power_id: magic
     level_field: magic_level_id
@@ -345,7 +354,7 @@ derived:
       target_resistance_ids: list
       target_immunity_ids: list
     non_physical_interaction:
-      target_power_ids: list
+      target_power_refs: list
     stat_effects:
       attack_potency: ranked_attack_durability_or_null
       attack_speed: ranked_speed_or_null
