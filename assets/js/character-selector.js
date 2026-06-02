@@ -445,7 +445,7 @@
     return lines;
   }
 
-  function effectTooltipLines(effect = {}) {
+  function effectTooltipLines(effect = {}, key = null) {
     const lines = [];
 
     Object.entries(effect.stat_effects || {}).forEach(([statName, stat]) => {
@@ -458,7 +458,15 @@
     list(effect.stat_modifier_floor_effects).forEach((modifierFloor) => {
       const statName = modifierFloor.stat;
       const modifierId = modifierFloor.modifier;
-      if (!statCatalogs[statName] || !modifierId) return;
+      const catalog = statCatalogs[statName];
+      if (!catalog || !modifierId) return;
+
+      if (key) {
+        const raisedStat = raiseStatModifier(key[statName], modifierId);
+        const value = formatStat(raisedStat, catalog);
+        if (value) lines.push(`Raises ${statLabel(statName)}: ${value}`);
+        return;
+      }
 
       const stats = modifierFloorGroups.get(modifierId) || [];
       stats.push(statLabel(statName));
@@ -467,7 +475,7 @@
 
     modifierFloorGroups.forEach((stats, modifierId) => {
       const modifierName = byId(statModifiers, modifierId)?.name || humanizeId(modifierId);
-      lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName} or better`);
+      lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName}`);
     });
 
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
@@ -498,11 +506,11 @@
     return lines;
   }
 
-  function catalogEffectTooltipLines(item = {}) {
+  function catalogEffectTooltipLines(item = {}, key = null) {
     const lines = [];
 
     lines.push(...grantTooltipLines(item.grants));
-    lines.push(...list(item.effects).flatMap(effectTooltipLines));
+    lines.push(...list(item.effects).flatMap((effect) => effectTooltipLines(effect, key)));
 
     return lines;
   }
@@ -513,7 +521,7 @@
       : null;
   }
 
-  function powerCatalogTooltipLines(power, ref, variant) {
+  function powerCatalogTooltipLines(power, ref, variant, key = null) {
     const lines = [];
     const includeBase = !variant || variant.inherits_base_grants !== false;
 
@@ -521,12 +529,12 @@
     if (variant) lines.push(...grantTooltipLines(variant.grants));
 
     if (Array.isArray(ref.effects)) {
-      lines.push(...ref.effects.flatMap(effectTooltipLines));
+      lines.push(...ref.effects.flatMap((effect) => effectTooltipLines(effect, key)));
       return lines;
     }
 
-    if (includeBase) lines.push(...list(power.effects).flatMap(effectTooltipLines));
-    if (variant) lines.push(...list(variant.effects).flatMap(effectTooltipLines));
+    if (includeBase) lines.push(...list(power.effects).flatMap((effect) => effectTooltipLines(effect, key)));
+    if (variant) lines.push(...list(variant.effects).flatMap((effect) => effectTooltipLines(effect, key)));
 
     return lines;
   }
@@ -558,7 +566,7 @@
       if (rule) lines.push(...derivedRuleTooltipLines(key, rule));
     }
 
-    lines.push(...powerCatalogTooltipLines(power, ref, variant));
+    lines.push(...powerCatalogTooltipLines(power, ref, variant, key));
 
     return lines;
   }
@@ -706,7 +714,7 @@
       .map((detail) => `<li>${escapeHtml(detail)}</li>`)
       .join("");
 
-    const powerTags = powerTagItems(key).map(tagItemHtml).join("");
+    const powerTags = powerTagItems(baseKey).map(tagItemHtml).join("");
     const resistanceTags = resistanceTagItems(baseKey).map(tagItemHtml).join("");
     const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids).map(tagItemHtml).join("");
     const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids).map(tagItemHtml).join("");
