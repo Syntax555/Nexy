@@ -334,12 +334,53 @@
     }));
   }
 
-  function powerRefs(key) {
-    const refs = [...list(key.power_refs)];
+  function activeItemEffects(key) {
+    const standardEquipmentEffects = list(key.standard_equipment_ids)
+      .map((id) => byId(options.equipment, id))
+      .filter(Boolean)
+      .flatMap((item) => list(item.effects));
+    const attackEffects = list(key.attack_ids)
+      .map((id) => byId(options.attacks, id))
+      .filter(Boolean)
+      .flatMap((item) => list(item.effects));
 
-    derivedPowerRefs(key).forEach((ref) => {
-      if (!refs.some((existingRef) => existingRef.id === ref.id)) refs.push(ref);
-    });
+    return [...standardEquipmentEffects, ...attackEffects];
+  }
+
+  function grantedPowerRefsFromEffects(effects) {
+    return list(effects).flatMap((effect) => list(effect?.grants?.power_refs));
+  }
+
+  function powerRefKey(ref) {
+    return [
+      ref.id,
+      ref.source_variant || "",
+      list(ref.type_ids).join(","),
+      ref.magic_level_id || "",
+      list(ref.magic_nature_ids).join(",")
+    ].join("|");
+  }
+
+  function powerRefs(key) {
+    const refs = [];
+    const seen = new Set();
+    const queue = [
+      ...list(key.power_refs),
+      ...derivedPowerRefs(key),
+      ...grantedPowerRefsFromEffects(activeItemEffects(key))
+    ];
+
+    while (queue.length) {
+      const ref = queue.shift();
+      if (!ref?.id) continue;
+
+      const refKey = powerRefKey(ref);
+      if (seen.has(refKey)) continue;
+
+      seen.add(refKey);
+      refs.push(ref);
+      queue.push(...grantedPowerRefsFromEffects(powerRefEffects(ref)));
+    }
 
     return refs;
   }
@@ -379,7 +420,10 @@
 
   function effectiveKey(key) {
     const result = { ...key };
-    const effects = powerRefs(key).flatMap(powerRefEffects);
+    const effects = [
+      ...activeItemEffects(key),
+      ...powerRefs(key).flatMap(powerRefEffects)
+    ];
 
     effects.forEach((effect) => {
       if (!effect) return;
@@ -451,7 +495,21 @@
     Object.entries(effect.stat_effects || {}).forEach(([statName, stat]) => {
       const catalog = statCatalogs[statName];
       const value = catalog ? formatStat(stat, catalog) : "";
-      if (value) lines.push(`Sets ${statLabel(statName)}: ${value}`);
+      if (!value) return;
+
+      if (key) {
+        const currentRank = compositeRank(key[statName], catalog);
+        const effectRank = compositeRank(stat, catalog);
+        const currentValue = formatStat(key[statName], catalog);
+        const label = statLabel(statName);
+
+        lines.push(effectRank > currentRank || !currentValue
+          ? `Raises ${label}: ${value}`
+          : `${label} already: ${currentValue}`);
+        return;
+      }
+
+      lines.push(`Raises ${statLabel(statName)}: ${value}`);
     });
 
     const modifierFloorGroups = new Map();
@@ -616,34 +674,34 @@
     }).filter(Boolean);
   }
 
-  function equipmentTooltipLines(item) {
+  function equipmentTooltipLines(item, key = null) {
     const lines = [];
     const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
 
     lines.push(...typeTooltipLines(item.weapon_type_ids, "Weapon types"));
     if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
-    lines.push(...catalogEffectTooltipLines(item));
+    lines.push(...catalogEffectTooltipLines(item, key));
 
     return lines;
   }
 
-  function equipmentTagItems(ids) {
+  function equipmentTagItems(ids, key = null) {
     return list(ids)
       .map((id) => byId(options.equipment, id))
       .filter(Boolean)
       .map((item) => ({
         label: item.name,
-        tooltipLines: equipmentTooltipLines(item)
+        tooltipLines: equipmentTooltipLines(item, key)
       }));
   }
 
-  function attackTooltipLines(item) {
+  function attackTooltipLines(item, key = null) {
     const lines = [];
     const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
 
     lines.push(...typeTooltipLines(item.weapon_type_ids, "Weapon types"));
     if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
-    lines.push(...catalogEffectTooltipLines(item));
+    lines.push(...catalogEffectTooltipLines(item, key));
 
     return lines;
   }
@@ -654,7 +712,7 @@
       .filter(Boolean)
       .map((item) => ({
         label: item.name,
-        tooltipLines: attackTooltipLines(item)
+        tooltipLines: attackTooltipLines(item, key)
       }));
   }
 
@@ -724,8 +782,8 @@
 
     const powerTags = powerTagItems(baseKey).map(tagItemHtml).join("");
     const resistanceTags = resistanceTagItems(baseKey).map(tagItemHtml).join("");
-    const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids).map(tagItemHtml).join("");
-    const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids).map(tagItemHtml).join("");
+    const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids, baseKey).map(tagItemHtml).join("");
+    const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids, baseKey).map(tagItemHtml).join("");
     const attackTags = attackTagItems(baseKey).map(tagItemHtml).join("");
 
     card.innerHTML = `

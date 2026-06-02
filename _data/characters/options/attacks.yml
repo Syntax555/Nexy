@@ -1,1 +1,9 @@
-[]
+- id: light-dagger
+  name: "Light Dagger"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: light-manipulation
+        resistance_refs: []

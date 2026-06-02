@@ -153,6 +153,31 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: light-manipulation
+  name: "Light Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: multi-city-block
+          modifier: at-least
+        striking_strength:
+          value: multi-city-block-level
+          modifier: at-least
+        durability:
+          value: multi-city-block
+          modifier: at-least
+        range:
+          value: hundreds-of-kilometers
+          modifier: normal
 - id: power-nullification
   name: "Power Nullification"
   aliases:

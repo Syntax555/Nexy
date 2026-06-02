@@ -60,4 +60,5 @@ keys:
     intelligence:
       value: average
       modifier: normal
-    attack_ids: []
+    attack_ids:
+      - light-dagger
