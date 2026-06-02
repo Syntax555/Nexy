@@ -462,9 +462,17 @@
       if (!catalog || !modifierId) return;
 
       if (key) {
-        const raisedStat = raiseStatModifier(key[statName], modifierId);
-        const value = formatStat(raisedStat, catalog);
-        if (value) lines.push(`Raises ${statLabel(statName)}: ${value}`);
+        if (!key[statName]) return;
+
+        const floor = byId(statModifiers, modifierId);
+        const current = modifier(key[statName]);
+        const modifierName = floor?.name || humanizeId(modifierId);
+
+        if (floor && current.rank >= floor.rank) {
+          lines.push(`${statLabel(statName)} modifier already: ${current.name}`);
+        } else {
+          lines.push(`Raises ${statLabel(statName)} modifier: ${modifierName}`);
+        }
         return;
       }
 
