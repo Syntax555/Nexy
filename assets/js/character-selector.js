@@ -10,7 +10,11 @@
   Object.values(options).forEach((items) => {
     if (!Array.isArray(items)) return;
 
-    optionMaps.set(items, new Map(items.map((item) => [item.id, item])));
+    optionMaps.set(items, new Map(
+      items
+        .filter((item) => item && item.id !== undefined)
+        .map((item) => [item.id, item])
+    ));
   });
 
   const statDefinitions = [
@@ -63,7 +67,11 @@
     intelligence: "Intelligence"
   };
 
-  const byId = (items, id) => optionMaps.get(items)?.get(id);
+  const byId = (items, id) => {
+    if (!items || typeof items !== "object") return undefined;
+
+    return optionMaps.get(items)?.get(id);
+  };
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
   const idListKey = (ids) => list(ids).slice().sort().join(",");
@@ -105,6 +113,35 @@
   function modifier(stat) {
     const normalized = normalizedStat(stat);
     return byId(statModifiers, normalized?.modifier || "normal") || byId(statModifiers, "normal");
+  }
+
+  function abilityModifier(ref = {}) {
+    return byId(options.ability_modifiers, ref.modifier || "normal") || byId(options.ability_modifiers, "normal");
+  }
+
+  function abilityModifierRank(ref = {}) {
+    return abilityModifier(ref)?.coverage_rank || 0;
+  }
+
+  function magicLevelRank(ref = {}) {
+    if (!ref.magic_level_id) return 0;
+
+    return byId(options.magic_levels, ref.magic_level_id)?.rank || 0;
+  }
+
+  function degreeRank(ref = {}) {
+    const martialRank = ref.martial_arts_degree_id
+      ? byId(options.martial_arts_degrees, ref.martial_arts_degree_id)?.rank || 0
+      : 0;
+    const acrobaticsRank = ref.acrobatics_degree_id
+      ? byId(options.acrobatics_degrees, ref.acrobatics_degree_id)?.rank || 0
+      : 0;
+
+    return Math.max(martialRank, acrobaticsRank);
+  }
+
+  function resistanceLevelRank(ref = {}) {
+    return byId(options.resistance_levels, ref.level || "resistant")?.rank || 0;
   }
 
   function statEntry(stat, catalogName) {
@@ -203,7 +240,7 @@
   }
 
   function formatAbilityLabel(label, ref = {}) {
-    const mod = byId(options.ability_modifiers, ref.modifier || "normal");
+    const mod = abilityModifier(ref);
     if (!mod || mod.id === "normal") return label;
 
     const prefix = mod.display_prefix ? `${mod.display_prefix} ` : "";
@@ -281,6 +318,50 @@
     const typeNames = nameList(ref.type_ids, "power_types");
 
     return typeNames.length ? `${label}: ${typeNames.join(", ")}` : label;
+  }
+
+  function powerTypeCovers(ownedTypeId, requiredTypeId, seen = new Set()) {
+    if (!requiredTypeId || ownedTypeId === requiredTypeId) return true;
+    if (!ownedTypeId || seen.has(ownedTypeId)) return false;
+
+    seen.add(ownedTypeId);
+    const ownedType = byId(options.power_types, ownedTypeId);
+    const requiredType = byId(options.power_types, requiredTypeId);
+
+    if (!ownedType || !requiredType || ownedType.power_id !== requiredType.power_id) return false;
+    if (ownedType.covers_all) return true;
+
+    return list(ownedType.covers_type_ids).some((coveredTypeId) => (
+      coveredTypeId === requiredTypeId || powerTypeCovers(coveredTypeId, requiredTypeId, seen)
+    ));
+  }
+
+  function powerTypesCover(ownedTypeIds, requiredTypeIds) {
+    const requiredTypes = list(requiredTypeIds);
+    if (!requiredTypes.length) return true;
+
+    const ownedTypes = list(ownedTypeIds);
+    if (!ownedTypes.length) return false;
+
+    return requiredTypes.every((requiredTypeId) => (
+      ownedTypes.some((ownedTypeId) => powerTypeCovers(ownedTypeId, requiredTypeId))
+    ));
+  }
+
+  function powerRefMeetsRequirement(ownedRef, requiredRef) {
+    if (!ownedRef || !requiredRef || ownedRef.id !== requiredRef.id) return false;
+    if (requiredRef.source_variant && ownedRef.source_variant !== requiredRef.source_variant) return false;
+    if (abilityModifierRank(ownedRef) < abilityModifierRank(requiredRef)) return false;
+    if (magicLevelRank(ownedRef) < magicLevelRank(requiredRef)) return false;
+    if (degreeRank(ownedRef) < degreeRank(requiredRef)) return false;
+
+    return powerTypesCover(ownedRef.type_ids, requiredRef.type_ids);
+  }
+
+  function powerRefsMeetRequirements(ownedRefs, requiredRefs) {
+    return list(requiredRefs).every((requiredRef) => (
+      list(ownedRefs).some((ownedRef) => powerRefMeetsRequirement(ownedRef, requiredRef))
+    ));
   }
 
   function resistanceNames(ids) {
@@ -362,20 +443,85 @@
   }
 
   function activeItemEffects(key) {
+    const ownedPowerRefs = powerRefs(key, []);
     const standardEquipmentEffects = list(key.standard_equipment_ids)
       .map((id) => byId(options.equipment, id))
       .filter(Boolean)
+      .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
       .flatMap((item) => list(item.effects));
     const attackEffects = list(key.attack_ids)
       .map((id) => byId(options.attacks, id))
       .filter(Boolean)
+      .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
       .flatMap((item) => list(item.effects));
 
     return [...standardEquipmentEffects, ...attackEffects];
   }
 
+  function magicLevelsFromIds(ids) {
+    const levels = [];
+    const seen = new Set();
+    const queue = list(ids);
+
+    for (let index = 0; index < queue.length; index += 1) {
+      const id = queue[index];
+      if (!id || seen.has(id)) continue;
+
+      const level = byId(options.magic_levels, id);
+      if (!level) continue;
+
+      seen.add(id);
+      levels.push(level);
+      queue.push(...list(level.inherits_level_ids));
+    }
+
+    return levels;
+  }
+
+  function magicNaturesFromIds(ids) {
+    const natures = [];
+    const seen = new Set();
+    const queue = list(ids);
+
+    for (let index = 0; index < queue.length; index += 1) {
+      const id = queue[index];
+      if (!id || seen.has(id)) continue;
+
+      const nature = byId(options.magic_natures, id);
+      if (!nature) continue;
+
+      seen.add(id);
+      natures.push(nature);
+      queue.push(...list(nature.inherits_nature_ids));
+    }
+
+    return natures;
+  }
+
+  function powerRefsFromGrants(grants = {}) {
+    const grantData = grants || {};
+
+    return [
+      ...list(grantData.power_refs),
+      ...magicLevelsFromIds(grantData.magic_level_ids).flatMap((level) => list(level.power_refs))
+    ];
+  }
+
+  function resistanceRefsFromGrants(grants = {}) {
+    const grantData = grants || {};
+
+    return [
+      ...list(grantData.resistance_refs),
+      ...magicLevelsFromIds(grantData.magic_level_ids).flatMap((level) => list(level.resistance_refs))
+    ];
+  }
+
   function grantedPowerRefsFromEffects(effects) {
-    return list(effects).flatMap((effect) => list(effect?.grants?.power_refs));
+    return list(effects).flatMap((effect) => powerRefsFromGrants(effect?.grants));
+  }
+
+  function grantedResistanceRefsFromEffects(effects) {
+    return list(effects).flatMap((effect) => resistanceRefsFromGrants(effect?.grants));
   }
 
   function powerRefContext(ref) {
@@ -391,10 +537,12 @@
 
   function grantedPowerRefsFromPowerRef(ref) {
     const { power, variant, includeBase } = powerRefContext(ref);
+    const magicNatures = magicNaturesFromIds(ref.magic_nature_ids);
 
     return [
-      ...(includeBase ? list(power?.grants?.power_refs) : []),
-      ...list(variant?.grants?.power_refs),
+      ...(includeBase ? powerRefsFromGrants(power?.grants) : []),
+      ...powerRefsFromGrants(variant?.grants),
+      ...magicNatures.flatMap((nature) => list(nature.power_refs)),
       ...grantedPowerRefsFromEffects(powerRefEffects(ref))
     ];
   }
@@ -404,29 +552,55 @@
       ref.id,
       ref.source_variant || "",
       idListKey(ref.type_ids),
-      ref.magic_level_id || "",
-      idListKey(ref.magic_nature_ids)
+      idListKey(ref.magic_nature_ids),
+      ref.condition || ""
     ].join("|");
+  }
+
+  function refStrength(ref) {
+    return [
+      magicLevelRank(ref),
+      abilityModifierRank(ref),
+      degreeRank(ref),
+      Array.isArray(ref.effects) ? ref.effects.length : 0
+    ];
+  }
+
+  function compareRefStrength(a, b) {
+    const left = refStrength(a);
+    const right = refStrength(b);
+
+    for (let index = 0; index < left.length; index += 1) {
+      if (left[index] !== right[index]) return left[index] - right[index];
+    }
+
+    return 0;
   }
 
   function powerRefs(key, itemEffects = activeItemEffects(key)) {
     const refs = [];
-    const seen = new Set();
+    const refIndexes = new Map();
     const queue = [
       ...list(key.power_refs),
       ...derivedPowerRefs(key),
       ...grantedPowerRefsFromEffects(itemEffects)
     ];
 
-    while (queue.length) {
-      const ref = queue.shift();
+    for (let index = 0; index < queue.length; index += 1) {
+      const ref = queue[index];
       if (!ref?.id) continue;
 
       const refKey = powerRefKey(ref);
-      if (seen.has(refKey)) continue;
+      const existingIndex = refIndexes.get(refKey);
+      if (existingIndex !== undefined) {
+        if (compareRefStrength(ref, refs[existingIndex]) <= 0) continue;
 
-      seen.add(refKey);
-      refs.push(ref);
+        refs[existingIndex] = ref;
+      } else {
+        refIndexes.set(refKey, refs.length);
+        refs.push(ref);
+      }
+
       queue.push(...grantedPowerRefsFromPowerRef(ref));
     }
 
@@ -435,13 +609,84 @@
 
   function powerRefEffects(ref) {
     const { power, variant, includeBase } = powerRefContext(ref);
+    const magicNatureEffects = magicNaturesFromIds(ref.magic_nature_ids).flatMap((nature) => list(nature.effects));
 
-    if (Array.isArray(ref.effects)) return ref.effects;
+    if (Array.isArray(ref.effects)) return [...ref.effects, ...magicNatureEffects];
 
     return [
       ...(includeBase ? list(power?.effects) : []),
-      ...list(variant?.effects)
+      ...list(variant?.effects),
+      ...magicNatureEffects
     ];
+  }
+
+  function grantedResistanceRefsFromPowerRef(ref) {
+    const { power, variant, includeBase } = powerRefContext(ref);
+    const magicNatures = magicNaturesFromIds(ref.magic_nature_ids);
+
+    return [
+      ...(includeBase ? resistanceRefsFromGrants(power?.grants) : []),
+      ...resistanceRefsFromGrants(variant?.grants),
+      ...magicNatures.flatMap((nature) => list(nature.resistance_refs)),
+      ...grantedResistanceRefsFromEffects(powerRefEffects(ref))
+    ];
+  }
+
+  function resistanceRefKey(ref) {
+    return [
+      ref.id,
+      ref.source_variant || "",
+      idListKey(ref.type_ids),
+      idListKey(ref.magic_nature_ids),
+      ref.condition || ""
+    ].join("|");
+  }
+
+  function resistanceRefStrength(ref) {
+    return [
+      resistanceLevelRank(ref),
+      magicLevelRank(ref),
+      abilityModifierRank(ref)
+    ];
+  }
+
+  function compareResistanceRefStrength(a, b) {
+    const left = resistanceRefStrength(a);
+    const right = resistanceRefStrength(b);
+
+    for (let index = 0; index < left.length; index += 1) {
+      if (left[index] !== right[index]) return left[index] - right[index];
+    }
+
+    return 0;
+  }
+
+  function resistanceRefs(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
+    const resolved = [];
+    const refIndexes = new Map();
+    const queue = [
+      ...list(key.resistance_refs),
+      ...grantedResistanceRefsFromEffects(itemEffects),
+      ...refs.flatMap(grantedResistanceRefsFromPowerRef)
+    ];
+
+    for (let index = 0; index < queue.length; index += 1) {
+      const ref = queue[index];
+      if (!ref?.id) continue;
+
+      const refKey = resistanceRefKey(ref);
+      const existingIndex = refIndexes.get(refKey);
+      if (existingIndex !== undefined) {
+        if (compareResistanceRefStrength(ref, resolved[existingIndex]) <= 0) continue;
+
+        resolved[existingIndex] = ref;
+      } else {
+        refIndexes.set(refKey, resolved.length);
+        resolved.push(ref);
+      }
+    }
+
+    return resolved;
   }
 
   function raiseStatModifier(stat, modifierId) {
@@ -464,12 +709,15 @@
     return effectRank > currentRank ? normalizedStat(stat) : key[statName];
   }
 
-  function effectiveKey(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
-    const result = { ...key };
-    const effects = [
+  function activeEffects(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
+    return [
       ...itemEffects,
       ...refs.flatMap(powerRefEffects)
     ];
+  }
+
+  function effectiveKey(key, refs = powerRefs(key), itemEffects = activeItemEffects(key), effects = activeEffects(key, refs, itemEffects)) {
+    const result = { ...key };
 
     effects.forEach((effect) => {
       if (!effect) return;
@@ -487,6 +735,25 @@
     });
 
     return result;
+  }
+
+  function activeImage(key, effects = []) {
+    const baseImage = list(key.images)[0];
+    const imageUpdates = effects
+      .map((effect, index) => ({ ...(effect?.image_update || {}), sourceIndex: index }))
+      .filter((image) => image.image);
+
+    if (!imageUpdates.length) return baseImage;
+
+    return imageUpdates.reduce((winner, image) => {
+      const winnerPriority = Number.isInteger(winner.priority) ? winner.priority : 0;
+      const imagePriority = Number.isInteger(image.priority) ? image.priority : 0;
+
+      if (imagePriority > winnerPriority) return image;
+      if (imagePriority === winnerPriority && image.sourceIndex > winner.sourceIndex) return image;
+
+      return winner;
+    });
   }
 
   function grantTooltipLines(grants = {}) {
@@ -577,9 +844,9 @@
         const modifierName = floor?.name || humanizeId(modifierId);
 
         if (floor && current.rank >= floor.rank) {
-          lines.push(`${statLabel(statName)}: Modifier already ${current.name}`);
+          lines.push(`${statLabel(statName)}: Already ${current.name}`);
         } else {
-          lines.push(`${statLabel(statName)}: Modifier to ${modifierName}`);
+          lines.push(`${statLabel(statName)}: Raises modifier to ${modifierName}`);
         }
         return;
       }
@@ -591,7 +858,7 @@
 
     modifierFloorGroups.forEach((stats, modifierId) => {
       const modifierName = byId(statModifiers, modifierId)?.name || humanizeId(modifierId);
-      lines.push(`Modifier floor: ${joinText(stats)} to ${modifierName}`);
+      lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName}`);
     });
 
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
@@ -645,17 +912,20 @@
   function powerCatalogTooltipLines(power, ref, variant, key = null) {
     const lines = [];
     const includeBase = !variant || variant.inherits_base_grants !== false;
+    const magicNatureEffects = magicNaturesFromIds(ref.magic_nature_ids).flatMap((nature) => list(nature.effects));
 
     if (includeBase) lines.push(...grantTooltipLines(power.grants));
     if (variant) lines.push(...grantTooltipLines(variant.grants));
 
     if (Array.isArray(ref.effects)) {
       lines.push(...ref.effects.flatMap((effect) => effectTooltipLines(effect, key)));
+      lines.push(...magicNatureEffects.flatMap((effect) => effectTooltipLines(effect, key)));
       return lines;
     }
 
     if (includeBase) lines.push(...list(power.effects).flatMap((effect) => effectTooltipLines(effect, key)));
     if (variant) lines.push(...list(variant.effects).flatMap((effect) => effectTooltipLines(effect, key)));
+    lines.push(...magicNatureEffects.flatMap((effect) => effectTooltipLines(effect, key)));
 
     return lines;
   }
@@ -717,8 +987,8 @@
     return lines;
   }
 
-  function resistanceTagItems(key) {
-    return list(key.resistance_refs).map((ref) => {
+  function resistanceTagItems(refs) {
+    return list(refs).map((ref) => {
       const resistance = byId(options.resistances, ref.id);
       if (!resistance) return null;
 
@@ -816,8 +1086,9 @@
     const baseKey = characterKey(displayCharacter, keyId);
     const itemEffects = activeItemEffects(baseKey);
     const resolvedPowerRefs = powerRefs(baseKey, itemEffects);
-    const key = effectiveKey(baseKey, resolvedPowerRefs, itemEffects);
-    const image = list(baseKey.images)[0];
+    const effects = activeEffects(baseKey, resolvedPowerRefs, itemEffects);
+    const key = effectiveKey(baseKey, resolvedPowerRefs, itemEffects, effects);
+    const image = activeImage(baseKey, effects);
     const names = list(baseKey.names);
     const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
       const value = field === "tier"
@@ -839,7 +1110,7 @@
       .join("");
 
     const powerTags = powerTagItems(baseKey, resolvedPowerRefs).map(tagItemHtml).join("");
-    const resistanceTags = resistanceTagItems(baseKey).map(tagItemHtml).join("");
+    const resistanceTags = resistanceTagItems(resistanceRefs(baseKey, resolvedPowerRefs, itemEffects)).map(tagItemHtml).join("");
     const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids, baseKey).map(tagItemHtml).join("");
     const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids, baseKey).map(tagItemHtml).join("");
     const attackTags = attackTagItems(baseKey).map(tagItemHtml).join("");

@@ -105,6 +105,14 @@ def id_set(entries)
   Array(entries).filter_map { |entry| entry["id"] if entry.is_a?(Hash) }.to_set
 end
 
+def power_variant_id_sets(powers)
+  Array(powers).each_with_object({}) do |power, memo|
+    next unless power.is_a?(Hash)
+
+    memo[power["id"]] = id_set(power["variants"])
+  end
+end
+
 def validate_unique_integer_field(name, entries, field, minimum_value: 1)
   errors = []
   seen = {}
@@ -334,6 +342,13 @@ def validate_power_refs(context, refs, sets)
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
     errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
 
+    if ref["source_variant"]
+      variant_ids = sets[:power_variant_ids_by_power_id][ref["id"]] || Set.new
+      errors.concat(validate_refs("#{ref_context}.source_variant", [ref["source_variant"]], variant_ids, "power variant"))
+    end
+
+    errors.concat(validate_power_type_ownership(ref_context, ref, sets))
+
     next if ref["effects"].nil?
 
     unless ref["effects"].is_a?(Array)
@@ -349,6 +364,16 @@ def validate_power_refs(context, refs, sets)
   errors
 end
 
+def validate_power_type_ownership(context, ref, sets)
+  Array(ref["type_ids"]).filter_map do |type_id|
+    power_id = sets[:power_type_power_ids][type_id]
+    next if power_id.nil? || ref["id"].nil?
+    next if power_id == ref["id"]
+
+    "#{context}.type_ids contains #{type_id.inspect}, which belongs to #{power_id.inspect}, not #{ref["id"].inspect}"
+  end
+end
+
 def validate_power_target_refs(context, refs, sets)
   return ["#{context} must be a list"] unless refs.is_a?(Array)
 
@@ -360,16 +385,8 @@ def validate_power_target_refs(context, refs, sets)
     end
 
     errors = validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power") +
-             validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type")
-
-    Array(ref["type_ids"]).each do |type_id|
-      power_id = sets[:power_type_power_ids][type_id]
-      next if power_id.nil? || ref["id"].nil?
-
-      unless power_id == ref["id"]
-        errors << "#{ref_context}.type_ids contains #{type_id.inspect}, which belongs to #{power_id.inspect}, not #{ref["id"].inspect}"
-      end
-    end
+             validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type") +
+             validate_power_type_ownership(ref_context, ref, sets)
 
     errors
   end
@@ -417,7 +434,11 @@ def validate_effect(context, effect, sets)
 
   errors = []
 
-  if effect["grants"].is_a?(Hash)
+  if effect.key?("grants")
+    unless effect["grants"].is_a?(Hash)
+      errors << "#{context}.grants must be a map"
+    end
+
     errors.concat(validate_grants("#{context}.grants", effect["grants"], sets))
   end
 
@@ -443,6 +464,40 @@ def validate_effect(context, effect, sets)
     errors.concat(validate_power_target_refs("#{context}.non_physical_interaction.target_power_refs", effect["non_physical_interaction"]["target_power_refs"] || [], sets))
   end
 
+  if effect.key?("image_update")
+    errors.concat(validate_image_update("#{context}.image_update", effect["image_update"]))
+  end
+
+  if effect.key?("nullified_by")
+    nullified_by = effect["nullified_by"]
+
+    unless nullified_by.is_a?(Hash)
+      errors << "#{context}.nullified_by must be a map"
+    else
+      errors.concat(validate_power_refs("#{context}.nullified_by.power_refs", nullified_by["power_refs"] || [], sets))
+      errors.concat(validate_resistance_refs("#{context}.nullified_by.resistance_refs", nullified_by["resistance_refs"] || [], sets))
+    end
+  end
+
+  errors
+end
+
+def validate_image_update(context, image_update)
+  return ["#{context} must be a map"] unless image_update.is_a?(Hash)
+
+  errors = []
+
+  errors << "#{context}.name must be present" if image_update["name"].nil? || image_update["name"].to_s.empty?
+  errors << "#{context}.image must be present" if image_update["image"].nil? || image_update["image"].to_s.empty?
+
+  unless image_update["priority"].nil? || image_update["priority"].is_a?(Integer)
+    errors << "#{context}.priority must be an integer when present"
+  end
+
+  unless image_update["condition"].nil? || image_update["condition"].is_a?(String)
+    errors << "#{context}.condition must be a string when present"
+  end
+
   errors
 end
 
@@ -462,11 +517,25 @@ def validate_catalog_entry(context, entry, sets, type)
   when :power
     errors.concat(validate_refs("#{context}.type_ids", entry["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_refs("#{context}.degree_ids", entry["degree_ids"], sets[:martial_arts_degrees] | sets[:acrobatics_degrees], "degree"))
+    seen_variant_ids = {}
     Array(entry["variants"]).each_with_index do |variant, index|
       variant_context = "#{context}.variants[#{index}]"
       unless variant.is_a?(Hash)
         errors << "#{variant_context} must be a map"
         next
+      end
+
+      variant_id = variant["id"]
+      if variant_id.nil? || variant_id.to_s.empty?
+        errors << "#{variant_context}.id must be present"
+      elsif seen_variant_ids.key?(variant_id)
+        errors << "#{context}.variants has duplicate id #{variant_id.inspect}"
+      else
+        seen_variant_ids[variant_id] = true
+      end
+
+      unless variant["inherits_base_grants"].nil? || [true, false].include?(variant["inherits_base_grants"])
+        errors << "#{variant_context}.inherits_base_grants must be true or false when present"
       end
 
       errors.concat(validate_grants("#{variant_context}.grants", variant["grants"], sets))
@@ -622,6 +691,7 @@ end
 errors.concat(validate_unique_integer_field("ability_modifiers", options["ability_modifiers"], "coverage_rank"))
 
 sets = catalog_names.to_h { |name| [name.to_sym, id_set(options[name])] }
+sets[:power_variant_ids_by_power_id] = power_variant_id_sets(options["powers"])
 sets[:power_type_power_ids] = Array(options["power_types"]).filter_map do |entry|
   [entry["id"], entry["power_id"]] if entry.is_a?(Hash)
 end.to_h
