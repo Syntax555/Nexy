@@ -135,7 +135,9 @@
     const attackRank = compositeRank(attack, "attack_durability_tiers");
     const durabilityRank = compositeRank(durability, "attack_durability_tiers");
     const chosen = durabilityRank > attackRank ? durability : attack;
-    return formatStat(chosen, "attack_durability_tiers", "tier");
+    const entry = statEntry(chosen, "attack_durability_tiers");
+
+    return entry ? statDisplayValue(entry, "attack_durability_tiers", "tier") : "";
   }
 
   function joinText(items) {

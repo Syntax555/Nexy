@@ -22,8 +22,7 @@ derived:
     rule: highest_composite_rank
     display:
       value: attack_durability_tiers.tier
-      modifier_prefix: stat_modifiers.display_prefix
-      modifier_suffix: stat_modifiers.display_suffix
+      modifier_display_rule: modifiers_are_used_for_comparison_but_not_shown_on_tier
   ranked_stat:
     value: tier_id
     modifier: stat_modifier_id_or_null
