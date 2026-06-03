@@ -66,6 +66,7 @@
   const byId = (items, id) => optionMaps.get(items)?.get(id);
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
+  const idListKey = (ids) => list(ids).slice().sort().join(",");
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -402,19 +403,19 @@
     return [
       ref.id,
       ref.source_variant || "",
-      list(ref.type_ids).join(","),
+      idListKey(ref.type_ids),
       ref.magic_level_id || "",
-      list(ref.magic_nature_ids).join(",")
+      idListKey(ref.magic_nature_ids)
     ].join("|");
   }
 
-  function powerRefs(key) {
+  function powerRefs(key, itemEffects = activeItemEffects(key)) {
     const refs = [];
     const seen = new Set();
     const queue = [
       ...list(key.power_refs),
       ...derivedPowerRefs(key),
-      ...grantedPowerRefsFromEffects(activeItemEffects(key))
+      ...grantedPowerRefsFromEffects(itemEffects)
     ];
 
     while (queue.length) {
@@ -463,11 +464,11 @@
     return effectRank > currentRank ? normalizedStat(stat) : key[statName];
   }
 
-  function effectiveKey(key) {
+  function effectiveKey(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
     const result = { ...key };
     const effects = [
-      ...activeItemEffects(key),
-      ...powerRefs(key).flatMap(powerRefEffects)
+      ...itemEffects,
+      ...refs.flatMap(powerRefEffects)
     ];
 
     effects.forEach((effect) => {
@@ -691,8 +692,8 @@
     return lines;
   }
 
-  function powerTagItems(key) {
-    return powerRefs(key).map((ref) => {
+  function powerTagItems(key, refs = powerRefs(key)) {
+    return refs.map((ref) => {
       const power = byId(options.powers, ref.id);
       if (!power) return null;
 
@@ -813,7 +814,9 @@
     card.hidden = false;
     const displayCharacter = character;
     const baseKey = characterKey(displayCharacter, keyId);
-    const key = effectiveKey(baseKey);
+    const itemEffects = activeItemEffects(baseKey);
+    const resolvedPowerRefs = powerRefs(baseKey, itemEffects);
+    const key = effectiveKey(baseKey, resolvedPowerRefs, itemEffects);
     const image = list(baseKey.images)[0];
     const names = list(baseKey.names);
     const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
@@ -835,7 +838,7 @@
       .map((detail) => `<li>${escapeHtml(detail)}</li>`)
       .join("");
 
-    const powerTags = powerTagItems(baseKey).map(tagItemHtml).join("");
+    const powerTags = powerTagItems(baseKey, resolvedPowerRefs).map(tagItemHtml).join("");
     const resistanceTags = resistanceTagItems(baseKey).map(tagItemHtml).join("");
     const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids, baseKey).map(tagItemHtml).join("");
     const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids, baseKey).map(tagItemHtml).join("");
