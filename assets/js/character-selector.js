@@ -5,6 +5,13 @@
 
   const options = data.options;
   const statModifiers = options.stat_modifiers;
+  const optionMaps = new WeakMap();
+
+  Object.values(options).forEach((items) => {
+    if (!Array.isArray(items)) return;
+
+    optionMaps.set(items, new Map(items.map((item) => [item.id, item])));
+  });
 
   const statDefinitions = [
     ["Tier", "tier"],
@@ -56,7 +63,7 @@
     intelligence: "Intelligence"
   };
 
-  const byId = (items, id) => (Array.isArray(items) ? items : []).find((item) => item.id === id);
+  const byId = (items, id) => optionMaps.get(items)?.get(id);
   const title = (value) => value || "Empty Character";
   const list = (value) => Array.isArray(value) ? value : [];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -370,6 +377,27 @@
     return list(effects).flatMap((effect) => list(effect?.grants?.power_refs));
   }
 
+  function powerRefContext(ref) {
+    const power = byId(options.powers, ref.id);
+    const variant = power ? powerVariant(power, ref) : null;
+
+    return {
+      power,
+      variant,
+      includeBase: !variant || variant.inherits_base_grants !== false
+    };
+  }
+
+  function grantedPowerRefsFromPowerRef(ref) {
+    const { power, variant, includeBase } = powerRefContext(ref);
+
+    return [
+      ...(includeBase ? list(power?.grants?.power_refs) : []),
+      ...list(variant?.grants?.power_refs),
+      ...grantedPowerRefsFromEffects(powerRefEffects(ref))
+    ];
+  }
+
   function powerRefKey(ref) {
     return [
       ref.id,
@@ -398,16 +426,14 @@
 
       seen.add(refKey);
       refs.push(ref);
-      queue.push(...grantedPowerRefsFromEffects(powerRefEffects(ref)));
+      queue.push(...grantedPowerRefsFromPowerRef(ref));
     }
 
     return refs;
   }
 
   function powerRefEffects(ref) {
-    const power = byId(options.powers, ref.id);
-    const variant = power ? powerVariant(power, ref) : null;
-    const includeBase = !variant || variant.inherits_base_grants !== false;
+    const { power, variant, includeBase } = powerRefContext(ref);
 
     if (Array.isArray(ref.effects)) return ref.effects;
 

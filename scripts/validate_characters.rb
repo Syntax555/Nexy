@@ -375,6 +375,17 @@ def validate_power_target_refs(context, refs, sets)
   end
 end
 
+def validate_grants(context, grants, sets)
+  errors = []
+
+  return errors unless grants.is_a?(Hash)
+
+  errors.concat(validate_power_refs("#{context}.power_refs", grants["power_refs"] || [], sets))
+  errors.concat(validate_resistance_refs("#{context}.resistance_refs", grants["resistance_refs"] || [], sets))
+  errors.concat(validate_refs("#{context}.magic_level_ids", grants["magic_level_ids"], sets[:magic_levels], "magic level"))
+  errors
+end
+
 def validate_resistance_refs(context, refs, sets)
   errors = []
 
@@ -407,9 +418,7 @@ def validate_effect(context, effect, sets)
   errors = []
 
   if effect["grants"].is_a?(Hash)
-    grants = effect["grants"]
-    errors.concat(validate_power_refs("#{context}.grants.power_refs", grants["power_refs"] || [], sets))
-    errors.concat(validate_resistance_refs("#{context}.grants.resistance_refs", grants["resistance_refs"] || [], sets))
+    errors.concat(validate_grants("#{context}.grants", effect["grants"], sets))
   end
 
   if effect.key?("stat_effects")
@@ -460,22 +469,14 @@ def validate_catalog_entry(context, entry, sets, type)
         next
       end
 
-      if variant["grants"].is_a?(Hash)
-        grants = variant["grants"]
-        errors.concat(validate_power_refs("#{variant_context}.grants.power_refs", grants["power_refs"] || [], sets))
-        errors.concat(validate_resistance_refs("#{variant_context}.grants.resistance_refs", grants["resistance_refs"] || [], sets))
-        errors.concat(validate_refs("#{variant_context}.grants.magic_level_ids", grants["magic_level_ids"], sets[:magic_levels], "magic level"))
-      end
+      errors.concat(validate_grants("#{variant_context}.grants", variant["grants"], sets))
 
       Array(variant["effects"]).each_with_index do |effect, effect_index|
         errors.concat(validate_effect("#{variant_context}.effects[#{effect_index}]", effect, sets))
       end
     end
     if entry["grants"].is_a?(Hash)
-      grants = entry["grants"]
-      errors.concat(validate_power_refs("#{context}.grants.power_refs", grants["power_refs"] || [], sets))
-      errors.concat(validate_resistance_refs("#{context}.grants.resistance_refs", grants["resistance_refs"] || [], sets))
-      errors.concat(validate_refs("#{context}.grants.magic_level_ids", grants["magic_level_ids"], sets[:magic_levels], "magic level"))
+      errors.concat(validate_grants("#{context}.grants", entry["grants"], sets))
     end
   when :resistance
     errors.concat(validate_refs("#{context}.resists_power_ids", entry["resists_power_ids"], sets[:powers], "power"))
