@@ -563,6 +563,10 @@ def validate_power_variant(context, variant, seen_variant_ids, sets)
     errors << "#{context}.inherits_base_grants must be true or false when present"
   end
 
+  unless variant["display_as_power_name"].nil? || [true, false].include?(variant["display_as_power_name"])
+    errors << "#{context}.display_as_power_name must be true or false when present"
+  end
+
   errors.concat(validate_grants("#{context}.grants", variant["grants"], sets))
   validate_effect_list("#{context}.effects", variant["effects"], sets, errors)
   errors

@@ -210,6 +210,9 @@
       if (targetName) return formatAbilityLabel(`${targetName} Absorption`, ref);
     }
 
+    const variant = powerVariant(power, ref);
+    if (variant?.display_as_power_name) return formatAbilityLabel(variant.name, ref);
+
     const typeNames = list(ref.type_ids)
       .map((id) => byId(options.power_types, id))
       .filter(Boolean)
@@ -696,6 +699,8 @@
         result[statName] = raiseStatModifier(result[statName], modifierFloor.modifier);
       });
     });
+
+    if (!refs.some((ref) => ref.id === "flight")) result.flight_speed = null;
 
     return result;
   }

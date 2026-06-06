@@ -138,6 +138,29 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: flight
+  name: "Flight"
+  aliases:
+    - "Gliding"
+  variants:
+    - id: gliding
+      name: "Gliding"
+      display_as_power_name: true
+      inherits_base_grants: true
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects: []
+  tags:
+    - movement
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: intangibility
   name: "Intangibility"
   aliases: []

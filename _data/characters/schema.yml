@@ -386,6 +386,18 @@ derived:
       flight_speed: "flight speed"
     label_override_rule: ranked_speed_stat_label_overrides_default_display_label
     note_rule: ranked_speed_stat_note_displays_after_its_speed_group
+    flight_speed_requires_power_id: flight
+    flight_speed_rule: flight_speed_is_ignored_unless_the_active_power_refs_include_flight
+  flight_or_gliding:
+    power_id: flight
+    alias_rule: gliding_is_the_same_power_id_as_flight
+    variant_display_rule: source_variant_gliding_displays_as_gliding_without_changing_power_identity
+    examples:
+      flight:
+        id: flight
+      gliding:
+        id: flight
+        source_variant: gliding
   effects:
     activation_rule: requirements_met_and_not_nullified
     battle_item_activation_rule: equipment_and_attack_effects_require_battle_active_required_powers
@@ -477,7 +489,13 @@ derived:
       id: string
       name: string
       aliases: list
-      variants: list
+      variants:
+        - id: string
+          name: string
+          display_as_power_name: boolean_or_null
+          inherits_base_grants: boolean_or_null_defaults_to_true
+          grants: map
+          effects: list
       tags: list
       type_ids: list
       degree_ids: list
