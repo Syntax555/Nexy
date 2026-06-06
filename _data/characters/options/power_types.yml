@@ -89,6 +89,11 @@
   name: "Thrown Weapon"
   covers_all: false
   covers_type_ids: []
+- id: planes
+  power_id: vehicular-mastery
+  name: "Planes"
+  covers_all: false
+  covers_type_ids: []
 - id: absorption-all
   power_id: absorption
   name: "Absorption (All)"

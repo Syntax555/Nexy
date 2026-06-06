@@ -13,7 +13,15 @@ keys:
     images:
       - name: "Modern"
         image: "assets/images/characters/us-agent/modern.webp"
-    power_refs: []
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+      - id: acrobatics
+      - id: vehicular-mastery
+        type_ids:
+          - planes
     resistance_refs: []
     attack_potency:
       value: small-building

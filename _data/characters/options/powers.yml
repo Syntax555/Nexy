@@ -66,6 +66,20 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: vehicular-mastery
+  name: "Vehicular Mastery"
+  aliases: []
+  variants: []
+  tags:
+    - mastery
+  type_ids:
+    - planes
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: martial-arts-mastery
   name: "Martial Arts Mastery"
   aliases: []
