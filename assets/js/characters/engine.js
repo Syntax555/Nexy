@@ -450,12 +450,16 @@
     return refsFromGrants(grants, "resistance_refs", "resistance_refs");
   }
 
-  function grantedPowerRefsFromEffects(effects) {
-    return list(effects).flatMap((effect) => powerRefsFromGrants(effect?.grants));
+  function grantedPowerRefsFromEffects(effects, includeEffect = () => true) {
+    return list(effects)
+      .filter(includeEffect)
+      .flatMap((effect) => powerRefsFromGrants(effect?.grants));
   }
 
-  function grantedResistanceRefsFromEffects(effects) {
-    return list(effects).flatMap((effect) => resistanceRefsFromGrants(effect?.grants));
+  function grantedResistanceRefsFromEffects(effects, includeEffect = () => true) {
+    return list(effects)
+      .filter(includeEffect)
+      .flatMap((effect) => resistanceRefsFromGrants(effect?.grants));
   }
 
   function powerRefContext(ref) {
@@ -469,7 +473,7 @@
     };
   }
 
-  function grantedPowerRefsFromPowerRef(ref) {
+  function grantedPowerRefsFromPowerRef(ref, includeEffect = () => true) {
     const { power, variant, includeBase } = powerRefContext(ref);
     const magicNatures = magicNaturesFromIds(ref.magic_nature_ids);
 
@@ -477,7 +481,7 @@
       ...(includeBase ? powerRefsFromGrants(power?.grants) : []),
       ...powerRefsFromGrants(variant?.grants),
       ...magicNatures.flatMap((nature) => list(nature.power_refs)),
-      ...grantedPowerRefsFromEffects(powerRefEffects(ref))
+      ...grantedPowerRefsFromEffects(powerRefEffects(ref), includeEffect)
     ];
   }
 
@@ -515,13 +519,13 @@
     return compareRankTuples(a, b, refStrength);
   }
 
-  function powerRefs(key, itemEffects = activeItemEffects(key), includeRef = () => true) {
+  function powerRefs(key, itemEffects = activeItemEffects(key), includeRef = () => true, includeEffect = () => true) {
     const refs = [];
     const refIndexes = new Map();
     const queue = [
       ...list(key.power_refs),
       ...derivedPowerRefs(key),
-      ...grantedPowerRefsFromEffects(itemEffects)
+      ...grantedPowerRefsFromEffects(itemEffects, includeEffect)
     ];
 
     for (let index = 0; index < queue.length; index += 1) {
@@ -540,7 +544,7 @@
         refs.push(ref);
       }
 
-      queue.push(...grantedPowerRefsFromPowerRef(ref));
+      queue.push(...grantedPowerRefsFromPowerRef(ref, includeEffect));
     }
 
     return refs;
@@ -559,7 +563,7 @@
     ];
   }
 
-  function grantedResistanceRefsFromPowerRef(ref) {
+  function grantedResistanceRefsFromPowerRef(ref, includeEffect = () => true) {
     const { power, variant, includeBase } = powerRefContext(ref);
     const magicNatures = magicNaturesFromIds(ref.magic_nature_ids);
 
@@ -567,7 +571,7 @@
       ...(includeBase ? resistanceRefsFromGrants(power?.grants) : []),
       ...resistanceRefsFromGrants(variant?.grants),
       ...magicNatures.flatMap((nature) => list(nature.resistance_refs)),
-      ...grantedResistanceRefsFromEffects(powerRefEffects(ref))
+      ...grantedResistanceRefsFromEffects(powerRefEffects(ref), includeEffect)
     ];
   }
 
@@ -593,13 +597,13 @@
     return compareRankTuples(a, b, resistanceRefStrength);
   }
 
-  function resistanceRefs(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
+  function resistanceRefs(key, refs = powerRefs(key), itemEffects = activeItemEffects(key), includeEffect = () => true) {
     const resolved = [];
     const refIndexes = new Map();
     const queue = [
       ...list(key.resistance_refs),
-      ...grantedResistanceRefsFromEffects(itemEffects),
-      ...refs.flatMap(grantedResistanceRefsFromPowerRef)
+      ...grantedResistanceRefsFromEffects(itemEffects, includeEffect),
+      ...refs.flatMap((ref) => grantedResistanceRefsFromPowerRef(ref, includeEffect))
     ];
 
     for (let index = 0; index < queue.length; index += 1) {
@@ -641,11 +645,11 @@
     return effectRank > currentRank ? normalizedStat(stat) : key[statName];
   }
 
-  function activeEffects(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
+  function activeEffects(key, refs = powerRefs(key), itemEffects = activeItemEffects(key), includeEffect = () => true) {
     return [
       ...itemEffects,
       ...refs.flatMap(powerRefEffects)
-    ];
+    ].filter(includeEffect);
   }
 
   function effectiveKey(key, refs = powerRefs(key), itemEffects = activeItemEffects(key), effects = activeEffects(key, refs, itemEffects)) {
@@ -1173,6 +1177,16 @@
     return level?.id === "immunity" || abilityModifierRank(resistanceRef) >= abilityModifierRank(powerRef);
   }
 
+  function resistanceRefMeetsRequirement(ownedRef, requiredRef) {
+    if (!ownedRef || !requiredRef || ownedRef.id !== requiredRef.id) return false;
+    if (requiredRef.source_variant && ownedRef.source_variant !== requiredRef.source_variant) return false;
+    if (resistanceLevelRank(ownedRef) < resistanceLevelRank(requiredRef)) return false;
+    if (abilityModifierRank(ownedRef) < abilityModifierRank(requiredRef)) return false;
+    if (magicLevelRank(ownedRef) < magicLevelRank(requiredRef)) return false;
+
+    return powerTypesCover(ownedRef.type_ids, requiredRef.type_ids);
+  }
+
   function powerResistedBy(ref, ownerView, opponentView) {
     const resistingRef = effectiveResistanceRefsFor(opponentView, ownerView)
       .find((opponentResistanceRef) => resistanceBlocksPower(ref, opponentResistanceRef));
@@ -1180,6 +1194,41 @@
     if (!resistingRef) return null;
 
     return status("resisted", `${resistanceRefLabel(resistingRef)} blocks this power`);
+  }
+
+  function effectBlockedBy(effect, ownerView, opponentView) {
+    const rules = effect?.nullified_by;
+    if (!rules) return null;
+
+    const blockingResistance = effectiveResistanceRefsFor(opponentView, ownerView)
+      .find((opponentResistanceRef) => (
+        list(rules.resistance_refs).some((requiredRef) => (
+          resistanceRefMeetsRequirement(opponentResistanceRef, requiredRef)
+        ))
+      ));
+
+    if (blockingResistance) {
+      return status("resisted", `${resistanceRefLabel(blockingResistance)} stops this effect`);
+    }
+
+    const blockingPower = list(opponentView.powerRefs).find((opponentPowerRef) => (
+      list(rules.power_refs).some((requiredRef) => powerRefMeetsRequirement(opponentPowerRef, requiredRef))
+    ));
+
+    if (blockingPower) {
+      return status("nullified", `${powerRefLabel(blockingPower)} stops this effect`);
+    }
+
+    return null;
+  }
+
+  function powerEffectsBlockedBy(ref, ownerView, opponentView) {
+    const effects = powerRefEffects(ref);
+    const blockedEffects = effects
+      .map((effect) => effectBlockedBy(effect, ownerView, opponentView))
+      .filter(Boolean);
+
+    return effects.length > 0 && blockedEffects.length === effects.length ? blockedEffects[0] : null;
   }
 
   function hasMatchingPowerRef(ref, refs) {
@@ -1200,6 +1249,7 @@
     if (item.kind === "power") {
       return powerNullifiedBy(item.ref, opponentView)
         || powerResistedBy(item.ref, ownerView, opponentView)
+        || powerEffectsBlockedBy(item.ref, ownerView, opponentView)
         || (hasMatchingPowerRef(item.ref, ownerBattleView.powerRefs) ? null : status("disabled", "Source power is inactive in this battle"))
         || status("active");
     }
@@ -1225,19 +1275,21 @@
   }
 
   function battleEffectiveView(view, opponentView) {
+    const includeEffect = (effect) => !effectBlockedBy(effect, view, opponentView);
     const resolvedPowerRefs = powerRefs(
       view.key,
       view.itemEffects,
-      (ref) => !powerBlockedInBattle(ref, view, opponentView)
+      (ref) => !powerBlockedInBattle(ref, view, opponentView),
+      includeEffect
     );
-    const effects = activeEffects(view.key, resolvedPowerRefs, view.itemEffects);
+    const effects = activeEffects(view.key, resolvedPowerRefs, view.itemEffects, includeEffect);
     const key = effectiveKey(view.key, resolvedPowerRefs, view.itemEffects, effects);
 
     return {
       ...view,
       effectiveKey: key,
       powerRefs: resolvedPowerRefs,
-      resistanceRefs: resistanceRefs(view.key, resolvedPowerRefs, view.itemEffects),
+      resistanceRefs: resistanceRefs(view.key, resolvedPowerRefs, view.itemEffects, includeEffect),
       effects,
       stats: statsForKey(key)
     };

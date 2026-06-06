@@ -16,6 +16,10 @@ keys:
       - name: "Dagger"
         image: "assets/images/characters/dagger/dagger.png"
     power_refs:
+      - id: acrobatics
+        acrobatics_degree_id: expert
+      - id: martial-arts-mastery
+        martial_arts_degree_id: expert
       - id: berserk-mode
         effects:
           - stat_modifier_floor_effects:

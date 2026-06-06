@@ -205,6 +205,18 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: soul-manipulation
+  name: "Soul Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: poison-manipulation
   name: "Poison Manipulation"
   aliases: []
@@ -260,6 +272,7 @@
                   - power_nullification:
                       target_power_ids:
                         - forcefield-creation
+              - id: soul-manipulation
               - id: non-physical-interaction
                 effects:
                   - non_physical_interaction:
@@ -267,6 +280,9 @@
                         - id: intangibility
                           type_ids:
                             - physical-intangibility-non-physical
+                    nullified_by:
+                      resistance_refs:
+                        - id: soul-manipulation-resistance
             resistance_refs: []
   tags: []
   type_ids: []

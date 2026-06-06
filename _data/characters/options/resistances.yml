@@ -23,3 +23,8 @@
   resists_power_ids:
     - fear-manipulation
   resists_effect_ids: []
+- id: soul-manipulation-resistance
+  name: "Soul Manipulation"
+  resists_power_ids:
+    - soul-manipulation
+  resists_effect_ids: []
