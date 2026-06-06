@@ -36,14 +36,19 @@ def score_case(test_case)
       raise "#{test_case["id"]}.#{stat["label"]} expected rank gap #{expected_rank_gap}, got #{rank_gap}"
     end
 
-    winner
+    {
+      "left_rank" => stat.fetch("left_rank"),
+      "right_rank" => stat.fetch("right_rank"),
+      "winner" => winner
+    }
   end
 
-  left_score = rows.count("left")
-  right_score = rows.count("right")
+  left_score = rows.sum { |row| row["left_rank"] }
+  right_score = rows.sum { |row| row["right_rank"] }
   {
     "left_score" => left_score,
     "right_score" => right_score,
+    "score_gap" => (left_score - right_score).abs,
     "winner" => winner_for(left_score, right_score)
   }
 end

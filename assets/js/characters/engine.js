@@ -1438,13 +1438,12 @@
           leftRank,
           rightRank,
           rankGap: Math.abs(leftRank - rightRank),
-          points: winner === "tie" ? 0 : 1,
           winner
         };
       });
 
-    const leftScore = rows.filter((row) => row.winner === "left").length;
-    const rightScore = rows.filter((row) => row.winner === "right").length;
+    const leftScore = rows.reduce((total, row) => total + row.leftRank, 0);
+    const rightScore = rows.reduce((total, row) => total + row.rightRank, 0);
     const scoreGap = Math.abs(leftScore - rightScore);
 
     return {
@@ -1452,7 +1451,7 @@
       leftScore,
       rightScore,
       scoreGap,
-      maxScore: rows.length,
+      statCount: rows.length,
       winner: leftScore > rightScore
         ? "left"
         : rightScore > leftScore
@@ -1479,23 +1478,24 @@
         : row.winner === "right"
           ? rightName
           : "Same";
-      const pointText = row.points === 1 ? "+1 point" : "0 points";
-      const gapText = row.rankGap === 0 ? "Same rank" : `Rank difference ${row.rankGap}`;
+      const gapText = row.rankGap === 0
+        ? "No point gap"
+        : `${row.rankGap} point gap`;
 
       return `
         <li class="battle-point-row is-${row.winner}">
           <span class="battle-point-label">${escapeHtml(row.label)}</span>
           <span class="battle-point-value">
             <strong>${escapeHtml(row.leftValue)}</strong>
-            <small>Rank ${row.leftRank}</small>
+            <small>${row.leftRank} point${row.leftRank === 1 ? "" : "s"}</small>
           </span>
           <span class="battle-point-result">
             <strong>${escapeHtml(resultText)}</strong>
-            <small>${escapeHtml(pointText)} - ${escapeHtml(gapText)}</small>
+            <small>${escapeHtml(gapText)}</small>
           </span>
           <span class="battle-point-value">
             <strong>${escapeHtml(row.rightValue)}</strong>
-            <small>Rank ${row.rightRank}</small>
+            <small>${row.rightRank} point${row.rightRank === 1 ? "" : "s"}</small>
           </span>
         </li>
       `;
@@ -1507,17 +1507,17 @@
           <div class="battle-score-side">
             <span class="battle-score-name">${escapeHtml(leftName)}</span>
             <strong>${score.leftScore}</strong>
-            <small>of ${score.maxScore}</small>
+            <small>points</small>
           </div>
           <div class="battle-score-summary">
             <span>${escapeHtml(winnerText)}</span>
             <strong>${escapeHtml(scoreDetail)}</strong>
-            <small>${score.maxScore} stats compared, Tier excluded</small>
+            <small>${score.statCount} stats compared, Tier excluded</small>
           </div>
           <div class="battle-score-side">
             <span class="battle-score-name">${escapeHtml(rightName)}</span>
             <strong>${score.rightScore}</strong>
-            <small>of ${score.maxScore}</small>
+            <small>points</small>
           </div>
         </div>
         <ul class="battle-point-list">${rows}</ul>

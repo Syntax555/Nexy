@@ -18,11 +18,12 @@ score_cases:
         expected_winner: right
         expected_rank_gap: 40
     expected:
-      left_score: 1
-      right_score: 1
-      winner: tie
+      left_score: 110
+      right_score: 80
+      score_gap: 30
+      winner: left
 
-  - id: equal-ranks-do-not-score
+  - id: equal-ranks-do-not-create-point-gap
     stats:
       - label: Attack Potency
         left_rank: 42
@@ -37,8 +38,9 @@ score_cases:
         expected_winner: left
         expected_rank_gap: 2
     expected:
-      left_score: 1
-      right_score: 0
+      left_score: 86
+      right_score: 84
+      score_gap: 2
       winner: left
 
   - id: blocked-power-removes-stat-advantage
@@ -57,8 +59,9 @@ score_cases:
         expected_winner: tie
         expected_rank_gap: 0
     expected:
-      left_score: 0
-      right_score: 1
+      left_score: 25
+      right_score: 35
+      score_gap: 10
       winner: right
 
 status_cases:
