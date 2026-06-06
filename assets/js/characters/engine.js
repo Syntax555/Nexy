@@ -1296,20 +1296,32 @@
   function battleScore(leftView, rightView) {
     const rows = battleStatPairs(leftView, rightView)
       .filter((row) => !battleScoreExcludedLabels.has(row.label))
-      .map((row) => ({
-        label: row.label,
-        leftValue: row.left?.value || "",
-        rightValue: row.right?.value || "",
-        winner: battleWinner(rankValue(row.left), rankValue(row.right))
-      }));
+      .map((row) => {
+        const leftRank = rankValue(row.left);
+        const rightRank = rankValue(row.right);
+        const winner = battleWinner(leftRank, rightRank);
+
+        return {
+          label: row.label,
+          leftValue: row.left?.value || "",
+          rightValue: row.right?.value || "",
+          leftRank,
+          rightRank,
+          rankGap: Math.abs(leftRank - rightRank),
+          points: winner === "tie" ? 0 : 1,
+          winner
+        };
+      });
 
     const leftScore = rows.filter((row) => row.winner === "left").length;
     const rightScore = rows.filter((row) => row.winner === "right").length;
+    const scoreGap = Math.abs(leftScore - rightScore);
 
     return {
       rows,
       leftScore,
       rightScore,
+      scoreGap,
       maxScore: rows.length,
       winner: leftScore > rightScore
         ? "left"
@@ -1328,19 +1340,33 @@
       : score.winner === "right"
         ? `${rightName} wins`
         : "Draw";
+    const scoreDetail = score.winner === "tie"
+      ? "No score gap"
+      : `Wins by ${score.scoreGap} point${score.scoreGap === 1 ? "" : "s"}`;
     const rows = score.rows.map((row) => {
       const resultText = row.winner === "left"
         ? leftName
         : row.winner === "right"
           ? rightName
           : "Tie";
+      const pointText = row.points === 1 ? "+1 point" : "0 points";
+      const gapText = `Rank gap ${row.rankGap}`;
 
       return `
         <li class="battle-point-row is-${row.winner}">
           <span class="battle-point-label">${escapeHtml(row.label)}</span>
-          <span class="battle-point-value">${escapeHtml(row.leftValue)}</span>
-          <span class="battle-point-result">${escapeHtml(resultText)}</span>
-          <span class="battle-point-value">${escapeHtml(row.rightValue)}</span>
+          <span class="battle-point-value">
+            <strong>${escapeHtml(row.leftValue)}</strong>
+            <small>Rank ${row.leftRank}</small>
+          </span>
+          <span class="battle-point-result">
+            <strong>${escapeHtml(resultText)}</strong>
+            <small>${escapeHtml(pointText)} · ${escapeHtml(gapText)}</small>
+          </span>
+          <span class="battle-point-value">
+            <strong>${escapeHtml(row.rightValue)}</strong>
+            <small>Rank ${row.rightRank}</small>
+          </span>
         </li>
       `;
     }).join("");
@@ -1354,6 +1380,7 @@
           </div>
           <div class="battle-score-summary">
             <span>${escapeHtml(winnerText)}</span>
+            <strong>${escapeHtml(scoreDetail)}</strong>
             <small>${score.maxScore} stats compared, Tier excluded</small>
           </div>
           <div class="battle-score-side">

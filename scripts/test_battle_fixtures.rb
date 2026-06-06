@@ -25,9 +25,15 @@ def score_case(test_case)
 
     winner = winner_for(stat.fetch("left_rank"), stat.fetch("right_rank"))
     expected_winner = stat["expected_winner"]
+    rank_gap = (stat.fetch("left_rank") - stat.fetch("right_rank")).abs
+    expected_rank_gap = stat["expected_rank_gap"]
 
     if expected_winner && winner != expected_winner
       raise "#{test_case["id"]}.#{stat["label"]} expected #{expected_winner}, got #{winner}"
+    end
+
+    if expected_rank_gap && rank_gap != expected_rank_gap
+      raise "#{test_case["id"]}.#{stat["label"]} expected rank gap #{expected_rank_gap}, got #{rank_gap}"
     end
 
     winner

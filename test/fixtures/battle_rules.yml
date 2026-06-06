@@ -10,11 +10,13 @@ score_cases:
         right_rank: 10
         scored: true
         expected_winner: left
+        expected_rank_gap: 70
       - label: Speed
         left_rank: 30
         right_rank: 70
         scored: true
         expected_winner: right
+        expected_rank_gap: 40
     expected:
       left_score: 1
       right_score: 1
@@ -27,11 +29,13 @@ score_cases:
         right_rank: 42
         scored: true
         expected_winner: tie
+        expected_rank_gap: 0
       - label: Durability
         left_rank: 44
         right_rank: 42
         scored: true
         expected_winner: left
+        expected_rank_gap: 2
     expected:
       left_score: 1
       right_score: 0
@@ -45,11 +49,13 @@ score_cases:
         right_rank: 20
         scored: true
         expected_winner: right
+        expected_rank_gap: 10
       - label: Speed
         left_rank: 15
         right_rank: 15
         scored: true
         expected_winner: tie
+        expected_rank_gap: 0
     expected:
       left_score: 0
       right_score: 1
