@@ -16,3 +16,10 @@
       value: street
       modifier: at-least
       comparison: at-least
+- id: genius-intelligence
+  power_id: genius-intelligence
+  min_matches: 1
+  requirements:
+    - stat: intelligence
+      value: genius
+      comparison: at-least

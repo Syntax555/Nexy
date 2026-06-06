@@ -12,6 +12,20 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: genius-intelligence
+  name: "Genius Intelligence"
+  aliases: []
+  variants: []
+  tags:
+    - mental
+    - derived
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: berserk-mode
   name: "Berserk Mode"
   aliases: []

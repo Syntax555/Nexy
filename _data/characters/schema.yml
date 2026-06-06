@@ -141,6 +141,11 @@ derived:
           - lifting_strength_superhuman
           - striking_strength_at_least_street_level
           - durability_at_least_street
+      genius_intelligence:
+        power_id: genius-intelligence
+        min_matches: 1
+        requirements:
+          - intelligence_at_least_genius
   power_nullification:
     power_id: power-nullification
     aliases:
