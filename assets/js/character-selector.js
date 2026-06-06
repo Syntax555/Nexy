@@ -312,10 +312,14 @@
     return formatAbilityLabel(levelLabel, ref);
   }
 
-  function nameList(ids, catalogName) {
+  function catalogItems(ids, catalogName) {
     return list(ids)
       .map((id) => byId(options[catalogName], id))
-      .filter(Boolean)
+      .filter(Boolean);
+  }
+
+  function nameList(ids, catalogName) {
+    return catalogItems(ids, catalogName)
       .map((item) => item.name);
   }
 
@@ -474,20 +478,19 @@
     }));
   }
 
+  function usableItemEffects(ids, catalogName, ownedPowerRefs) {
+    return catalogItems(ids, catalogName)
+      .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
+      .flatMap((item) => list(item.effects));
+  }
+
   function activeItemEffects(key) {
     const ownedPowerRefs = powerRefs(key, []);
-    const standardEquipmentEffects = list(key.standard_equipment_ids)
-      .map((id) => byId(options.equipment, id))
-      .filter(Boolean)
-      .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
-      .flatMap((item) => list(item.effects));
-    const attackEffects = list(key.attack_ids)
-      .map((id) => byId(options.attacks, id))
-      .filter(Boolean)
-      .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
-      .flatMap((item) => list(item.effects));
 
-    return [...standardEquipmentEffects, ...attackEffects];
+    return [
+      ...usableItemEffects(key.standard_equipment_ids, "equipment", ownedPowerRefs),
+      ...usableItemEffects(key.attack_ids, "attacks", ownedPowerRefs)
+    ];
   }
 
   function itemStatus(item, key) {
@@ -500,8 +503,8 @@
     return status("disabled", `Missing ${joinText(requiredRefs.map(powerRefLabel))}`);
   }
 
-  function magicLevelsFromIds(ids) {
-    const levels = [];
+  function inheritedCatalogEntries(ids, catalogName, inheritsField) {
+    const entries = [];
     const seen = new Set();
     const queue = list(ids);
 
@@ -509,53 +512,40 @@
       const id = queue[index];
       if (!id || seen.has(id)) continue;
 
-      const level = byId(options.magic_levels, id);
-      if (!level) continue;
+      const entry = byId(options[catalogName], id);
+      if (!entry) continue;
 
       seen.add(id);
-      levels.push(level);
-      queue.push(...list(level.inherits_level_ids));
+      entries.push(entry);
+      queue.push(...list(entry[inheritsField]));
     }
 
-    return levels;
+    return entries;
+  }
+
+  function magicLevelsFromIds(ids) {
+    return inheritedCatalogEntries(ids, "magic_levels", "inherits_level_ids");
   }
 
   function magicNaturesFromIds(ids) {
-    const natures = [];
-    const seen = new Set();
-    const queue = list(ids);
+    return inheritedCatalogEntries(ids, "magic_natures", "inherits_nature_ids");
+  }
 
-    for (let index = 0; index < queue.length; index += 1) {
-      const id = queue[index];
-      if (!id || seen.has(id)) continue;
+  function refsFromGrants(grants = {}, directField, magicLevelField) {
+    const grantData = grants || {};
 
-      const nature = byId(options.magic_natures, id);
-      if (!nature) continue;
-
-      seen.add(id);
-      natures.push(nature);
-      queue.push(...list(nature.inherits_nature_ids));
-    }
-
-    return natures;
+    return [
+      ...list(grantData[directField]),
+      ...magicLevelsFromIds(grantData.magic_level_ids).flatMap((level) => list(level[magicLevelField]))
+    ];
   }
 
   function powerRefsFromGrants(grants = {}) {
-    const grantData = grants || {};
-
-    return [
-      ...list(grantData.power_refs),
-      ...magicLevelsFromIds(grantData.magic_level_ids).flatMap((level) => list(level.power_refs))
-    ];
+    return refsFromGrants(grants, "power_refs", "power_refs");
   }
 
   function resistanceRefsFromGrants(grants = {}) {
-    const grantData = grants || {};
-
-    return [
-      ...list(grantData.resistance_refs),
-      ...magicLevelsFromIds(grantData.magic_level_ids).flatMap((level) => list(level.resistance_refs))
-    ];
+    return refsFromGrants(grants, "resistance_refs", "resistance_refs");
   }
 
   function grantedPowerRefsFromEffects(effects) {
@@ -608,15 +598,19 @@
     ];
   }
 
-  function compareRefStrength(a, b) {
-    const left = refStrength(a);
-    const right = refStrength(b);
+  function compareRankTuples(a, b, ranker) {
+    const left = ranker(a);
+    const right = ranker(b);
 
     for (let index = 0; index < left.length; index += 1) {
       if (left[index] !== right[index]) return left[index] - right[index];
     }
 
     return 0;
+  }
+
+  function compareRefStrength(a, b) {
+    return compareRankTuples(a, b, refStrength);
   }
 
   function powerRefs(key, itemEffects = activeItemEffects(key), includeRef = () => true) {
@@ -694,14 +688,7 @@
   }
 
   function compareResistanceRefStrength(a, b) {
-    const left = resistanceRefStrength(a);
-    const right = resistanceRefStrength(b);
-
-    for (let index = 0; index < left.length; index += 1) {
-      if (left[index] !== right[index]) return left[index] - right[index];
-    }
-
-    return 0;
+    return compareRankTuples(a, b, resistanceRefStrength);
   }
 
   function resistanceRefs(key, refs = powerRefs(key), itemEffects = activeItemEffects(key)) {
@@ -1048,7 +1035,7 @@
     }).filter(Boolean);
   }
 
-  function equipmentTooltipLines(item, key = null) {
+  function itemTooltipLines(item, key = null) {
     const lines = [];
     const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
 
@@ -1059,41 +1046,23 @@
     return lines;
   }
 
-  function equipmentTagItems(ids, key = null) {
-    return list(ids)
-      .map((id) => byId(options.equipment, id))
-      .filter(Boolean)
+  function catalogTagItems(ids, catalogName, kind, key = null) {
+    return catalogItems(ids, catalogName)
       .map((item) => ({
-        kind: "equipment",
+        kind,
         id: item.id,
         label: item.name,
         status: key ? itemStatus(item, key) : null,
-        tooltipLines: equipmentTooltipLines(item, key)
+        tooltipLines: itemTooltipLines(item, key)
       }));
   }
 
-  function attackTooltipLines(item, key = null) {
-    const lines = [];
-    const requiredPowers = list(item.required_power_refs).map(powerRefLabel);
-
-    lines.push(...typeTooltipLines(item.weapon_type_ids, "Weapon types"));
-    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
-    lines.push(...catalogEffectTooltipLines(item, key));
-
-    return lines;
+  function equipmentTagItems(ids, key = null) {
+    return catalogTagItems(ids, "equipment", "equipment", key);
   }
 
   function attackTagItems(key) {
-    return list(key.attack_ids)
-      .map((id) => byId(options.attacks, id))
-      .filter(Boolean)
-      .map((item) => ({
-        kind: "attack",
-        id: item.id,
-        label: item.name,
-        status: itemStatus(item, key),
-        tooltipLines: attackTooltipLines(item, key)
-      }));
+    return catalogTagItems(key.attack_ids, "attacks", "attack", key);
   }
 
   function statsForKey(key) {

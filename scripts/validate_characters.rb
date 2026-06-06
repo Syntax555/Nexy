@@ -364,16 +364,7 @@ def validate_power_refs(context, refs, sets)
 
     errors.concat(validate_power_type_ownership(ref_context, ref, sets))
 
-    next if ref["effects"].nil?
-
-    unless ref["effects"].is_a?(Array)
-      errors << "#{ref_context}.effects must be a list when present"
-      next
-    end
-
-    ref["effects"].each_with_index do |effect, effect_index|
-      errors.concat(validate_effect("#{ref_context}.effects[#{effect_index}]", effect, sets))
-    end
+    validate_effect_list("#{ref_context}.effects", ref["effects"], sets, errors)
   end
 
   errors
@@ -511,6 +502,12 @@ def validate_effect(context, effect, sets)
   errors
 end
 
+def validate_effect_list(context, effects, sets, errors)
+  array_field(context, effects, errors).each_with_index do |effect, index|
+    errors.concat(validate_effect("#{context}[#{index}]", effect, sets))
+  end
+end
+
 def validate_image_update(context, image_update)
   return ["#{context} must be a map"] unless image_update.is_a?(Hash)
 
@@ -527,6 +524,32 @@ def validate_image_update(context, image_update)
     errors << "#{context}.condition must be a string when present"
   end
 
+  errors
+end
+
+def validate_power_variant(context, variant, seen_variant_ids, sets)
+  errors = []
+
+  unless variant.is_a?(Hash)
+    return ["#{context} must be a map"]
+  end
+
+  variant_id = variant["id"]
+  if variant_id.nil? || variant_id.to_s.empty?
+    errors << "#{context}.id must be present"
+  elsif seen_variant_ids.key?(variant_id)
+    variants_context = context.sub(/\.variants\[\d+\]\z/, ".variants")
+    errors << "#{variants_context} has duplicate id #{variant_id.inspect}"
+  else
+    seen_variant_ids[variant_id] = true
+  end
+
+  unless variant["inherits_base_grants"].nil? || [true, false].include?(variant["inherits_base_grants"])
+    errors << "#{context}.inherits_base_grants must be true or false when present"
+  end
+
+  errors.concat(validate_grants("#{context}.grants", variant["grants"], sets))
+  validate_effect_list("#{context}.effects", variant["effects"], sets, errors)
   errors
 end
 
@@ -549,30 +572,7 @@ def validate_catalog_entry(context, entry, sets, type)
     seen_variant_ids = {}
 
     array_field("#{context}.variants", entry["variants"], errors).each_with_index do |variant, index|
-      variant_context = "#{context}.variants[#{index}]"
-      unless variant.is_a?(Hash)
-        errors << "#{variant_context} must be a map"
-        next
-      end
-
-      variant_id = variant["id"]
-      if variant_id.nil? || variant_id.to_s.empty?
-        errors << "#{variant_context}.id must be present"
-      elsif seen_variant_ids.key?(variant_id)
-        errors << "#{context}.variants has duplicate id #{variant_id.inspect}"
-      else
-        seen_variant_ids[variant_id] = true
-      end
-
-      unless variant["inherits_base_grants"].nil? || [true, false].include?(variant["inherits_base_grants"])
-        errors << "#{variant_context}.inherits_base_grants must be true or false when present"
-      end
-
-      errors.concat(validate_grants("#{variant_context}.grants", variant["grants"], sets))
-
-      array_field("#{variant_context}.effects", variant["effects"], errors).each_with_index do |effect, effect_index|
-        errors.concat(validate_effect("#{variant_context}.effects[#{effect_index}]", effect, sets))
-      end
+      errors.concat(validate_power_variant("#{context}.variants[#{index}]", variant, seen_variant_ids, sets))
     end
     if entry.key?("grants")
       errors.concat(validate_grants("#{context}.grants", entry["grants"], sets))
@@ -592,9 +592,7 @@ def validate_catalog_entry(context, entry, sets, type)
     errors.concat(validate_power_refs("#{context}.required_power_refs", entry["required_power_refs"] || [], sets))
   end
 
-  array_field("#{context}.effects", entry["effects"], errors).each_with_index do |effect, index|
-    errors.concat(validate_effect("#{context}.effects[#{index}]", effect, sets))
-  end
+  validate_effect_list("#{context}.effects", entry["effects"], sets, errors)
 
   errors
 end
