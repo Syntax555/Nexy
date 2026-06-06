@@ -1348,9 +1348,9 @@
         ? leftName
         : row.winner === "right"
           ? rightName
-          : "Tie";
+          : "Same";
       const pointText = row.points === 1 ? "+1 point" : "0 points";
-      const gapText = `Rank gap ${row.rankGap}`;
+      const gapText = row.rankGap === 0 ? "Same rank" : `Rank difference ${row.rankGap}`;
 
       return `
         <li class="battle-point-row is-${row.winner}">
@@ -1361,7 +1361,7 @@
           </span>
           <span class="battle-point-result">
             <strong>${escapeHtml(resultText)}</strong>
-            <small>${escapeHtml(pointText)} · ${escapeHtml(gapText)}</small>
+            <small>${escapeHtml(pointText)} - ${escapeHtml(gapText)}</small>
           </span>
           <span class="battle-point-value">
             <strong>${escapeHtml(row.rightValue)}</strong>
@@ -1377,6 +1377,7 @@
           <div class="battle-score-side">
             <span class="battle-score-name">${escapeHtml(leftName)}</span>
             <strong>${score.leftScore}</strong>
+            <small>of ${score.maxScore}</small>
           </div>
           <div class="battle-score-summary">
             <span>${escapeHtml(winnerText)}</span>
@@ -1386,6 +1387,7 @@
           <div class="battle-score-side">
             <span class="battle-score-name">${escapeHtml(rightName)}</span>
             <strong>${score.rightScore}</strong>
+            <small>of ${score.maxScore}</small>
           </div>
         </div>
         <ul class="battle-point-list">${rows}</ul>
