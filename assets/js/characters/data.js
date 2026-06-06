@@ -70,6 +70,7 @@
   const statusDefinitions = {
     active: { id: "active", label: "Active" },
     disabled: { id: "disabled", label: "Disabled" },
+    absorbed: { id: "absorbed", label: "Absorbed" },
     negated: { id: "negated", label: "Negated" },
     nullified: { id: "nullified", label: "Nullified" },
     resisted: { id: "resisted", label: "Resisted" }

@@ -182,6 +182,16 @@
       .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
+  function absorptionTargetName(ref) {
+    const targets = list(ref.effects)
+      .flatMap((effect) => list(effect.absorption?.target_power_refs))
+      .map(powerTargetRefLabel);
+
+    if (targets.length !== 1) return "";
+
+    return targets[0].replace(/ Manipulation$/i, "");
+  }
+
   function powerRefLabel(ref) {
     const power = byId(options.powers, ref.id);
     if (!power) return humanizeId(ref.id);
@@ -195,6 +205,10 @@
 
     if (martialDegree) return formatAbilityLabel(martialDegree.name, ref);
     if (acrobaticsDegree) return formatAbilityLabel(acrobaticsDegree.name, ref);
+    if (power.id === "absorption") {
+      const targetName = absorptionTargetName(ref);
+      if (targetName) return formatAbilityLabel(`${targetName} Absorption`, ref);
+    }
 
     const typeNames = list(ref.type_ids)
       .map((id) => byId(options.power_types, id))
@@ -250,6 +264,14 @@
     const typeNames = nameList(ref.type_ids, "power_types");
 
     return typeNames.length ? `${label}: ${typeNames.join(", ")}` : label;
+  }
+
+  function powerTargetRefMatches(powerRef, targetRef) {
+    if (!powerRef || !targetRef || powerRef.id !== targetRef.id) return false;
+    if (targetRef.source_variant && powerRef.source_variant !== targetRef.source_variant) return false;
+    if (magicLevelRank(powerRef) < magicLevelRank(targetRef)) return false;
+
+    return powerTypesCover(powerRef.type_ids, targetRef.type_ids);
   }
 
   function powerTypeCovers(ownedTypeId, requiredTypeId, seen = new Set()) {
@@ -806,6 +828,11 @@
       lines.push(targets.length ? `Nullifies: ${joinText(targets)}` : "Nullifies powers");
     }
 
+    if (effect.absorption) {
+      const targets = list(effect.absorption.target_power_refs).map(powerTargetRefLabel);
+      if (targets.length) lines.push(`Absorbs: ${joinText(targets)}`);
+    }
+
     if (effect.resistance_negation) {
       const resistanceTargets = resistanceNames(effect.resistance_negation.target_resistance_ids);
       const immunityTargets = resistanceNames(effect.resistance_negation.target_immunity_ids);
@@ -1114,11 +1141,26 @@
     card.innerHTML = characterProfileHtml(view);
   }
 
-  function effectTargetsPower(effect, powerId) {
+  function effectNullifiesPower(effect, ref) {
     if (!effect?.power_nullification) return false;
 
     const targetIds = list(effect.power_nullification.target_power_ids);
-    return targetIds.length === 0 || targetIds.includes(powerId);
+    return targetIds.length === 0 || targetIds.includes(ref.id);
+  }
+
+  function effectAbsorbsPower(effect, ref, sourceRef = {}) {
+    if (!effect?.absorption) return false;
+
+    const targets = list(effect.absorption.target_power_refs);
+    return targets.some((targetRef) => powerTargetRefMatches(ref, targetRef))
+      && abilityModifierRank(sourceRef) >= abilityModifierRank(ref);
+  }
+
+  function effectPowerBlockStatus(effect, ref, sourceRef = {}) {
+    if (effectNullifiesPower(effect, ref)) return status("nullified");
+    if (effectAbsorbsPower(effect, ref, sourceRef)) return status("absorbed");
+
+    return null;
   }
 
   function effectNegatesResistance(effect, ref) {
@@ -1135,15 +1177,26 @@
 
   function powerNullifiedBy(ref, opponentView) {
     const nullifyingPower = opponentView.powerRefs.find((opponentRef) => (
-      powerRefEffects(opponentRef).some((effect) => effectTargetsPower(effect, ref.id))
+      powerRefEffects(opponentRef).some((effect) => effectPowerBlockStatus(effect, ref, opponentRef))
     ));
 
     if (nullifyingPower) {
-      return status("nullified", `${powerRefLabel(nullifyingPower)} targets this power`);
+      const blockStatus = powerRefEffects(nullifyingPower)
+        .map((effect) => effectPowerBlockStatus(effect, ref, nullifyingPower))
+        .find(Boolean);
+      const verb = blockStatus?.id === "absorbed" ? "absorbs" : "blocks";
+
+      return status(blockStatus?.id || "nullified", `${powerRefLabel(nullifyingPower)} ${verb} this power`);
     }
 
-    if (opponentView.itemEffects.some((effect) => effectTargetsPower(effect, ref.id))) {
-      return status("nullified", "Opponent equipment or attack targets this power");
+    const itemBlockStatus = opponentView.itemEffects
+      .map((effect) => effectPowerBlockStatus(effect, ref))
+      .find(Boolean);
+
+    if (itemBlockStatus) {
+      const verb = itemBlockStatus.id === "absorbed" ? "absorbs" : "targets";
+
+      return status(itemBlockStatus.id, `Opponent equipment or attack ${verb} this power`);
     }
 
     return null;

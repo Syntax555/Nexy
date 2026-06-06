@@ -89,6 +89,41 @@
   name: "Thrown Weapon"
   covers_all: false
   covers_type_ids: []
+- id: absorption-all
+  power_id: absorption
+  name: "Absorption (All)"
+  covers_all: true
+  covers_type_ids:
+    - biological-absorption
+    - energy-absorption
+    - power-absorption
+    - soul-absorption
+    - life-force-absorption
+- id: biological-absorption
+  power_id: absorption
+  name: "Biological Absorption"
+  covers_all: false
+  covers_type_ids: []
+- id: energy-absorption
+  power_id: absorption
+  name: "Energy Absorption"
+  covers_all: false
+  covers_type_ids: []
+- id: power-absorption
+  power_id: absorption
+  name: "Power Absorption"
+  covers_all: false
+  covers_type_ids: []
+- id: soul-absorption
+  power_id: absorption
+  name: "Soul Absorption"
+  covers_all: false
+  covers_type_ids: []
+- id: life-force-absorption
+  power_id: absorption
+  name: "Life Force Absorption"
+  covers_all: false
+  covers_type_ids: []
 - id: conceptual-manipulation-type-1
   power_id: conceptual-manipulation
   name: "Type 1"

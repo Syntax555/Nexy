@@ -105,6 +105,25 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: absorption
+  name: "Absorption"
+  aliases: []
+  variants: []
+  tags:
+    - absorption
+  type_ids:
+    - absorption-all
+    - biological-absorption
+    - energy-absorption
+    - power-absorption
+    - soul-absorption
+    - life-force-absorption
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: intangibility
   name: "Intangibility"
   aliases: []
@@ -207,6 +226,18 @@
   effects: []
 - id: soul-manipulation
   name: "Soul Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: electricity-manipulation
+  name: "Electricity Manipulation"
   aliases: []
   variants: []
   tags: []

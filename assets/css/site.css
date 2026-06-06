@@ -306,6 +306,16 @@ button {
   box-shadow: 0 0 0 2px rgba(185, 54, 54, 0.16);
 }
 
+.tag-list .tag-status-absorbed {
+  border-color: #99c7dc;
+  background: #edf8fd;
+}
+
+.tag-list .tag-status-absorbed .status-icon {
+  background: #197da3;
+  box-shadow: 0 0 0 2px rgba(25, 125, 163, 0.16);
+}
+
 .tag-list .tag-status-disabled {
   border-color: #c7d0d5;
   background: #eef2f4;
@@ -335,6 +345,12 @@ button {
 .tag-list .tag-status-negated:focus-visible {
   border-color: #ca6969;
   background: #ffe4e4;
+}
+
+.tag-list .tag-status-absorbed:hover,
+.tag-list .tag-status-absorbed:focus-visible {
+  border-color: #65a8c3;
+  background: #ddf2fb;
 }
 
 .tag-list .tag-status-disabled:hover,

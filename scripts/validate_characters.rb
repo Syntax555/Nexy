@@ -463,6 +463,21 @@ def validate_effect(context, effect, sets)
     end
   end
 
+  if effect.key?("absorption")
+    absorption = effect["absorption"]
+
+    unless absorption.is_a?(Hash)
+      errors << "#{context}.absorption must be a map"
+    else
+      target_refs = absorption["target_power_refs"]
+      if !target_refs.is_a?(Array) || target_refs.empty?
+        errors << "#{context}.absorption.target_power_refs must list at least one target power"
+      else
+        errors.concat(validate_power_target_refs("#{context}.absorption.target_power_refs", target_refs, sets))
+      end
+    end
+  end
+
   if effect.key?("resistance_negation")
     negation = effect["resistance_negation"]
 

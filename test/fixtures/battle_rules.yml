@@ -71,3 +71,8 @@ status_cases:
     kind: power
     status: resisted
     detail: "A matching resistance blocks this power"
+
+  - id: absorbed-power-is-not-active
+    kind: power
+    status: absorbed
+    detail: "A matching absorption effect absorbs this power"

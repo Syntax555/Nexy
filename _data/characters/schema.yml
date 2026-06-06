@@ -163,6 +163,34 @@ derived:
           - power_nullification:
               target_power_ids:
                 - regeneration
+  absorption:
+    power_id: absorption
+    type_field: power_refs.type_ids
+    target_effect_field: effects.absorption
+    target_power_refs_field: target_power_refs
+    target_rule: target_power_refs_define_which_powers_or_manipulations_can_be_absorbed
+    empty_target_rule: absorption_effects_must_name_target_power_refs
+    battle_rule: targeted_absorption_disables_matching_opponent_powers_like_a_resistance
+    coverage_rule: absorber_ability_modifier_rank_must_cover_target_power_modifier_rank
+    no_steal_rule: power_absorption_does_not_copy_or_grant_stolen_powers_yet
+    display_rule: targeted_absorption_can_display_as_target_power_name_absorption
+    examples:
+      electricity_absorption:
+        id: absorption
+        type_ids:
+          - energy-absorption
+        effects:
+          - absorption:
+              target_power_refs:
+                - id: electricity-manipulation
+      power_absorption_without_stealing:
+        id: absorption
+        type_ids:
+          - power-absorption
+        effects:
+          - absorption:
+              target_power_refs:
+                - id: magic
   resistance_negation:
     power_id: resistance-negation
     effect_field: effects.resistance_negation
@@ -378,6 +406,8 @@ derived:
       condition: string_or_null
     power_nullification:
       target_power_ids: list
+    absorption:
+      target_power_refs: list
     resistance_negation:
       target_resistance_ids: list
       target_immunity_ids: list
