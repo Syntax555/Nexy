@@ -1,0 +1,48 @@
+name: "U.S. Agent"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human-mutate
+keys:
+  - key: modern
+    names:
+      - "John Walker"
+    images:
+      - name: "Modern"
+        image: "assets/images/characters/us-agent/modern.webp"
+    power_refs: []
+    resistance_refs: []
+    attack_potency:
+      value: small-building
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-25
+      modifier: normal
+    striking_strength:
+      value: small-building-level
+      modifier: normal
+    durability:
+      value: small-building
+      modifier: normal
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids: []
