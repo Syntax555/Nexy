@@ -16,13 +16,12 @@ age:
 classification_ids: list
 derived:
   key_tier:
-    from:
-      - attack_potency
-      - durability
-    rule: highest_composite_rank
+    from: attack_potency
+    rule: attack_potency_tier_only
     display:
       value: attack_durability_tiers.tier
       modifier_display_rule: modifiers_are_used_for_comparison_but_not_shown_on_tier
+    durability_rule: durability_is_displayed_and_compared_as_its_own_stat_but_does_not_raise_tier
   ranked_stat:
     value: tier_id
     modifier: stat_modifier_id_or_null

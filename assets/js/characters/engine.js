@@ -66,10 +66,7 @@
   }
 
   function tierRank(key) {
-    return Math.max(
-      compositeRank(key.attack_potency, "attack_durability_tiers"),
-      compositeRank(key.durability, "attack_durability_tiers")
-    );
+    return compositeRank(key.attack_potency, "attack_durability_tiers");
   }
 
   function speedRank(key) {
@@ -103,12 +100,7 @@
   }
 
   function formatTier(key) {
-    const attack = key.attack_potency;
-    const durability = key.durability;
-    const attackRank = compositeRank(attack, "attack_durability_tiers");
-    const durabilityRank = compositeRank(durability, "attack_durability_tiers");
-    const chosen = durabilityRank > attackRank ? durability : attack;
-    const entry = statEntry(chosen, "attack_durability_tiers");
+    const entry = statEntry(key.attack_potency, "attack_durability_tiers");
 
     return entry ? statDisplayValue(entry, "attack_durability_tiers", "tier") : "";
   }
