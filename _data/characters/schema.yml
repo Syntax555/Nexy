@@ -324,25 +324,21 @@ derived:
     all_type_id: all-weapons
     all_rule: all_weapons_satisfies_any_weapon_mastery_type_requirement
     empty_type_rule: empty_weapon_mastery_type_ids_means_unspecified_not_all
-    close_combat_rule: weapon_mastery_without_marksmanship_is_for_close_combat_weapons
-    marksmanship_rule: marksmanship_is_weapon_mastery_for_firearms_and_projectile_weapons
+    category_rule: weapon_mastery_categories_are_added_only_when_needed_by_current_equipment_or_attacks
     skill_degree_rule: degree_of_skill_is_descriptive_not_a_separate_mastery_type
     coverage_rule: owned_type_satisfies_required_type_when_same_or_when_required_type_is_directly_or_transitively_in_owned_covers_type_ids
     equipment_type_rule: weapon_type_ids_describe_equipment_but_required_power_refs_enforce_mastery
     resistance_rule: weapon_effects_are_resisted_by_granted_power_or_effect_refs_not_weapon_type
     examples:
-      sword_equipment_requirement:
-        id: weapon-mastery
-        type_ids:
-          - sword
-      sword_mastery_uses_sword_equipment: allowed
-      marksmanship_uses_rifle_or_pistol_equipment: allowed
-      sword_mastery_uses_rifle_equipment: not_allowed
       all_weapons_mastery_uses_any_weapon_equipment: allowed
       gunpowder_handguns_equipment_requirement:
         id: weapon-mastery
         type_ids:
           - gunpowder-handguns
+      shield_equipment_requirement:
+        id: weapon-mastery
+        type_ids:
+          - shields
   vehicular_mastery:
     power_id: vehicular-mastery
     form_field: power_refs.type_ids

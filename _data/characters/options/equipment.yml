@@ -17,3 +17,19 @@
         range:
           value: tens-of-meters
           modifier: normal
+- id: vibranium-shield
+  name: "Vibranium Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: small-building
+          modifier: higher
+        durability:
+          value: galaxy
+          modifier: normal

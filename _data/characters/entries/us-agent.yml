@@ -50,6 +50,7 @@ keys:
       modifier: normal
     standard_equipment_ids:
       - glock-pistol
+      - vibranium-shield
     optional_equipment_ids: []
     intelligence:
       value: gifted

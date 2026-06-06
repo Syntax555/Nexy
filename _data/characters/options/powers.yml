@@ -47,20 +47,8 @@
     - mastery
   type_ids:
     - all-weapons
-    - close-combat-weapon
-    - sword
-    - spear
-    - knife
-    - marksmanship
-    - projectile-weapon
-    - firearm
-    - rifle
-    - pistol
     - gunpowder-handguns
-    - shotgun
-    - bow
-    - crossbow
-    - thrown-weapon
+    - shields
   degree_ids: []
   grants:
     power_refs: []
