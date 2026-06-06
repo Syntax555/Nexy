@@ -59,6 +59,7 @@
     - rifle
     - pistol
     - shotgun
+    - gunpowder-handguns
 - id: rifle
   power_id: weapon-mastery
   name: "Rifle"
@@ -67,6 +68,12 @@
 - id: pistol
   power_id: weapon-mastery
   name: "Pistol"
+  covers_all: false
+  covers_type_ids:
+    - gunpowder-handguns
+- id: gunpowder-handguns
+  power_id: weapon-mastery
+  name: "Gunpowder Handguns"
   covers_all: false
   covers_type_ids: []
 - id: shotgun

@@ -339,6 +339,10 @@ derived:
       marksmanship_uses_rifle_or_pistol_equipment: allowed
       sword_mastery_uses_rifle_equipment: not_allowed
       all_weapons_mastery_uses_any_weapon_equipment: allowed
+      gunpowder_handguns_equipment_requirement:
+        id: weapon-mastery
+        type_ids:
+          - gunpowder-handguns
   vehicular_mastery:
     power_id: vehicular-mastery
     form_field: power_refs.type_ids

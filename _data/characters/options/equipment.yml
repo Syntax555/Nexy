@@ -1,1 +1,19 @@
-[]
+- id: glock-pistol
+  name: "Glock Pistol"
+  weapon_type_ids:
+    - gunpowder-handguns
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - gunpowder-handguns
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: transonic
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal

@@ -48,7 +48,8 @@ keys:
     range:
       value: standard-melee-range
       modifier: normal
-    standard_equipment_ids: []
+    standard_equipment_ids:
+      - glock-pistol
     optional_equipment_ids: []
     intelligence:
       value: gifted
