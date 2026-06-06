@@ -383,6 +383,7 @@ derived:
     note_rule: ranked_speed_stat_note_displays_after_its_speed_group
   effects:
     activation_rule: requirements_met_and_not_nullified
+    battle_item_activation_rule: equipment_and_attack_effects_require_battle_active_required_powers
     stat_rule: best_composite_rank_per_stat
     stat_resistible_rule: stat_effects_resistible_false_are_not_stopped_by_matching_resistance_refs
     stat_resistible_default_rule: missing_stat_effects_resistible_defaults_to_true

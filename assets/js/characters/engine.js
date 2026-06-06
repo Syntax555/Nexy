@@ -183,7 +183,7 @@
   }
 
   function absorptionTargetName(ref) {
-    const targets = list(ref.effects)
+    const targets = powerRefEffects(ref)
       .flatMap((effect) => list(effect.absorption?.target_power_refs))
       .map(powerTargetRefLabel);
 
@@ -408,23 +408,28 @@
       .flatMap((item) => list(item.effects));
   }
 
-  function activeItemEffects(key) {
-    const ownedPowerRefs = powerRefs(key, []);
-
+  function activeItemEffectsForPowerRefs(key, ownedPowerRefs) {
     return [
       ...usableItemEffects(key.standard_equipment_ids, "equipment", ownedPowerRefs),
       ...usableItemEffects(key.attack_ids, "attacks", ownedPowerRefs)
     ];
   }
 
-  function itemStatus(item, key) {
+  function activeItemEffects(key) {
+    return activeItemEffectsForPowerRefs(key, powerRefs(key, []));
+  }
+
+  function itemStatusForPowerRefs(item, ownedPowerRefs, detail = null) {
     const requiredRefs = list(item.required_power_refs);
     if (!requiredRefs.length) return null;
 
-    const ownedPowerRefs = powerRefs(key, []);
     if (powerRefsMeetRequirements(ownedPowerRefs, requiredRefs)) return null;
 
-    return status("disabled", `Missing ${joinText(requiredRefs.map(powerRefLabel))}`);
+    return status("disabled", detail || `Missing ${joinText(requiredRefs.map(powerRefLabel))}`);
+  }
+
+  function itemStatus(item, key) {
+    return itemStatusForPowerRefs(item, powerRefs(key, []));
   }
 
   function inheritedCatalogEntries(ids, catalogName, inheritsField) {
@@ -985,6 +990,7 @@
         kind,
         id: item.id,
         label: item.name,
+        catalogItem: item,
         status: key ? itemStatus(item, key) : null,
         tooltipLines: itemTooltipLines(item, key)
       }));
@@ -1313,6 +1319,12 @@
         || status("active");
     }
 
+    if ((item.kind === "equipment" || item.kind === "attack") && item.catalogItem) {
+      return itemStatusForPowerRefs(item.catalogItem, ownerBattleView.powerRefs, "Required power is inactive in this battle")
+        || item.status
+        || status("active");
+    }
+
     return item.status || status("active");
   }
 
@@ -1329,20 +1341,28 @@
 
   function battleEffectiveView(view, opponentView) {
     const includeEffect = (effect) => !effectBlockedBy(effect, view, opponentView);
-    const resolvedPowerRefs = powerRefs(
+    const requirementPowerRefs = powerRefs(
       view.key,
-      view.itemEffects,
+      [],
       (ref) => !powerBlockedInBattle(ref, view, opponentView),
       includeEffect
     );
-    const effects = activeEffects(view.key, resolvedPowerRefs, view.itemEffects, includeEffect);
-    const key = effectiveKey(view.key, resolvedPowerRefs, view.itemEffects, effects);
+    const itemEffects = activeItemEffectsForPowerRefs(view.key, requirementPowerRefs);
+    const resolvedPowerRefs = powerRefs(
+      view.key,
+      itemEffects,
+      (ref) => !powerBlockedInBattle(ref, view, opponentView),
+      includeEffect
+    );
+    const effects = activeEffects(view.key, resolvedPowerRefs, itemEffects, includeEffect);
+    const key = effectiveKey(view.key, resolvedPowerRefs, itemEffects, effects);
 
     return {
       ...view,
       effectiveKey: key,
       powerRefs: resolvedPowerRefs,
-      resistanceRefs: resistanceRefs(view.key, resolvedPowerRefs, view.itemEffects, includeEffect),
+      resistanceRefs: resistanceRefs(view.key, resolvedPowerRefs, itemEffects, includeEffect),
+      itemEffects,
       effects,
       stats: statsForKey(key)
     };
