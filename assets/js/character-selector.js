@@ -1348,6 +1348,90 @@
     }).join("");
   }
 
+  function battleScore(leftView, rightView) {
+    const rows = leftView.stats
+      .filter((leftStat) => leftStat.label !== "Tier")
+      .map((leftStat) => {
+        const rightStat = rightView.stats.find((stat) => stat.label === leftStat.label);
+        const leftRank = leftStat.rank || 0;
+        const rightRank = rightStat?.rank || 0;
+        const winner = leftRank > rightRank
+          ? "left"
+          : rightRank > leftRank
+            ? "right"
+            : "tie";
+
+        return {
+          label: leftStat.label,
+          leftValue: leftStat.value,
+          rightValue: rightStat?.value || "",
+          winner
+        };
+      });
+
+    const leftScore = rows.filter((row) => row.winner === "left").length;
+    const rightScore = rows.filter((row) => row.winner === "right").length;
+
+    return {
+      rows,
+      leftScore,
+      rightScore,
+      maxScore: rows.length,
+      winner: leftScore > rightScore
+        ? "left"
+        : rightScore > leftScore
+          ? "right"
+          : "tie"
+    };
+  }
+
+  function battleResultHtml(leftView, rightView) {
+    const score = battleScore(leftView, rightView);
+    const leftName = title(leftView.character.name);
+    const rightName = title(rightView.character.name);
+    const winnerText = score.winner === "left"
+      ? `${leftName} wins`
+      : score.winner === "right"
+        ? `${rightName} wins`
+        : "Draw";
+    const rows = score.rows.map((row) => {
+      const resultText = row.winner === "left"
+        ? leftName
+        : row.winner === "right"
+          ? rightName
+          : "Tie";
+
+      return `
+        <li class="battle-point-row is-${row.winner}">
+          <span class="battle-point-label">${escapeHtml(row.label)}</span>
+          <span class="battle-point-value">${escapeHtml(row.leftValue)}</span>
+          <span class="battle-point-result">${escapeHtml(resultText)}</span>
+          <span class="battle-point-value">${escapeHtml(row.rightValue)}</span>
+        </li>
+      `;
+    }).join("");
+
+    return `
+      <section class="battle-result" aria-live="polite">
+        <div class="battle-score">
+          <div class="battle-score-side">
+            <span class="battle-score-name">${escapeHtml(leftName)}</span>
+            <strong>${score.leftScore}</strong>
+          </div>
+          <div class="battle-score-summary">
+            <span>${escapeHtml(winnerText)}</span>
+            <small>${score.maxScore} stats compared, Tier excluded</small>
+          </div>
+          <div class="battle-score-side">
+            <span class="battle-score-name">${escapeHtml(rightName)}</span>
+            <strong>${score.rightScore}</strong>
+          </div>
+        </div>
+        <ul class="battle-point-list">${rows}</ul>
+      </section>
+    `;
+  }
+
   function battleSectionRowsHtml(leftView, rightView) {
     return leftView.sections.map(([sectionTitle, leftItems], index) => {
       const rightItems = rightView.sections[index]?.[1] || [];
@@ -1386,8 +1470,11 @@
       <section class="battle-comparison" aria-label="Stat comparison">
         <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
       </section>
+      <div data-battle-result hidden></div>
       ${battleSectionRowsHtml(leftView, rightView)}
     `;
+
+    return { left: leftView, right: rightView };
   }
 
   function selector(root, onSelectionChange = () => {}) {
@@ -1572,16 +1659,20 @@
   const selectionScreen = document.querySelector("[data-selection-screen]");
   const battleScreen = document.querySelector("[data-battle-screen]");
   const battleContent = document.querySelector("[data-battle-content]");
+  const startBattleButton = document.querySelector("[data-start-battle]");
   const editSelectionButton = document.querySelector("[data-edit-selection]");
   let selectors = [];
+  let currentBattleViews = null;
 
   function showSelectionScreen() {
     selectionScreen.hidden = false;
     battleScreen.hidden = true;
+    currentBattleViews = null;
   }
 
   function showBattleScreen(leftSelection, rightSelection) {
-    renderBattle(battleContent, leftSelection, rightSelection);
+    currentBattleViews = renderBattle(battleContent, leftSelection, rightSelection);
+    if (startBattleButton) startBattleButton.disabled = false;
     selectionScreen.hidden = true;
     battleScreen.hidden = false;
   }
@@ -1595,7 +1686,19 @@
 
   editSelectionButton?.addEventListener("click", () => {
     selectors.forEach((item) => item.unconfirm());
+    if (startBattleButton) startBattleButton.disabled = true;
     showSelectionScreen();
+  });
+
+  startBattleButton?.addEventListener("click", () => {
+    if (!currentBattleViews) return;
+
+    const result = battleContent.querySelector("[data-battle-result]");
+    if (!result) return;
+
+    result.hidden = false;
+    result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right);
+    startBattleButton.disabled = true;
   });
 
   selectors = Array.from(document.querySelectorAll("[data-selector]"))
