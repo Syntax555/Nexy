@@ -248,7 +248,19 @@ button {
 }
 
 .tag-list .tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   position: relative;
+}
+
+.status-icon {
+  width: 0.58rem;
+  height: 0.58rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #8fa1ad;
+  box-shadow: 0 0 0 2px rgba(143, 161, 173, 0.18);
 }
 
 .tag-list .has-tooltip {
@@ -260,6 +272,75 @@ button {
 .tag-list .has-tooltip:hover {
   border-color: #8da7b5;
   background: #e7f0f4;
+}
+
+.tag-list .tag-status-active {
+  border-color: #acd4b8;
+  background: #edf8f0;
+}
+
+.tag-list .tag-status-active .status-icon {
+  background: #23844b;
+  box-shadow: 0 0 0 2px rgba(35, 132, 75, 0.16);
+}
+
+.tag-list .tag-status-resisted {
+  border-color: #dfc070;
+  background: #fff8e6;
+}
+
+.tag-list .tag-status-resisted .status-icon {
+  background: #a96f00;
+  box-shadow: 0 0 0 2px rgba(169, 111, 0, 0.16);
+}
+
+.tag-list .tag-status-nullified,
+.tag-list .tag-status-negated {
+  border-color: #e4a1a1;
+  background: #fff0f0;
+}
+
+.tag-list .tag-status-nullified .status-icon,
+.tag-list .tag-status-negated .status-icon {
+  background: #b93636;
+  box-shadow: 0 0 0 2px rgba(185, 54, 54, 0.16);
+}
+
+.tag-list .tag-status-disabled {
+  border-color: #c7d0d5;
+  background: #eef2f4;
+  color: #697884;
+}
+
+.tag-list .tag-status-disabled .status-icon {
+  background: #748490;
+  box-shadow: 0 0 0 2px rgba(116, 132, 144, 0.16);
+}
+
+.tag-list .tag-status-active:hover,
+.tag-list .tag-status-active:focus-visible {
+  border-color: #76ad86;
+  background: #e2f3e6;
+}
+
+.tag-list .tag-status-resisted:hover,
+.tag-list .tag-status-resisted:focus-visible {
+  border-color: #c79b36;
+  background: #fff1ce;
+}
+
+.tag-list .tag-status-nullified:hover,
+.tag-list .tag-status-nullified:focus-visible,
+.tag-list .tag-status-negated:hover,
+.tag-list .tag-status-negated:focus-visible {
+  border-color: #ca6969;
+  background: #ffe4e4;
+}
+
+.tag-list .tag-status-disabled:hover,
+.tag-list .tag-status-disabled:focus-visible {
+  border-color: #9facb4;
+  background: #e5ebee;
 }
 
 .tag-list .has-tooltip:focus-visible {
@@ -464,6 +545,29 @@ button {
   border-radius: 8px;
   background: #f8fbfc;
   padding: 12px;
+}
+
+.battle-stat-cell.is-higher {
+  border-color: #9fc9ad;
+  background: #eef8f1;
+}
+
+.battle-stat-cell.is-higher .stat-value {
+  color: #146c36;
+}
+
+.battle-stat-cell.is-lower {
+  border-color: #e2a3a3;
+  background: #fff0f0;
+}
+
+.battle-stat-cell.is-lower .stat-value {
+  color: #a92f2f;
+}
+
+.battle-stat-cell.is-same {
+  border-color: #cbd8de;
+  background: #f7fafb;
 }
 
 .battle-section {

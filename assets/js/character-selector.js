@@ -66,6 +66,13 @@
     range: "Range",
     intelligence: "Intelligence"
   };
+  const statusDefinitions = {
+    active: { id: "active", label: "Active" },
+    disabled: { id: "disabled", label: "Disabled" },
+    negated: { id: "negated", label: "Negated" },
+    nullified: { id: "nullified", label: "Nullified" },
+    resisted: { id: "resisted", label: "Resisted" }
+  };
 
   const byId = (items, id) => {
     if (!items || typeof items !== "object") return undefined;
@@ -153,6 +160,24 @@
     const entry = statEntry(stat, catalogName);
     const mod = modifier(stat);
     return entry ? ((entry.rank - 1) * 8) + mod.rank : 0;
+  }
+
+  function tierRank(key) {
+    return Math.max(
+      compositeRank(key.attack_potency, "attack_durability_tiers"),
+      compositeRank(key.durability, "attack_durability_tiers")
+    );
+  }
+
+  function speedRank(key) {
+    return Math.max(...speedDefinitions.map(([field]) => compositeRank(key[field], "speed_tiers")));
+  }
+
+  function statRank(key, field, catalogName) {
+    if (field === "tier") return tierRank(key);
+    if (field === "speed") return speedRank(key);
+
+    return compositeRank(key[field], catalogName);
   }
 
   function statDisplayValue(entry, catalogName, valueField) {
@@ -364,6 +389,10 @@
     ));
   }
 
+  function status(id, detail = "") {
+    return { ...statusDefinitions[id], detail };
+  }
+
   function resistanceNames(ids) {
     return nameList(ids, "resistances");
   }
@@ -456,6 +485,16 @@
       .flatMap((item) => list(item.effects));
 
     return [...standardEquipmentEffects, ...attackEffects];
+  }
+
+  function itemStatus(item, key) {
+    const requiredRefs = list(item.required_power_refs);
+    if (!requiredRefs.length) return null;
+
+    const ownedPowerRefs = powerRefs(key, []);
+    if (powerRefsMeetRequirements(ownedPowerRefs, requiredRefs)) return null;
+
+    return status("disabled", `Missing ${joinText(requiredRefs.map(powerRefLabel))}`);
   }
 
   function magicLevelsFromIds(ids) {
@@ -968,7 +1007,10 @@
       if (!power) return null;
 
       return {
+        kind: "power",
+        id: ref.id,
         label: powerRefLabel(ref),
+        ref,
         tooltipLines: powerTooltipLines(key, ref, power)
       };
     }).filter(Boolean);
@@ -993,7 +1035,10 @@
       if (!resistance) return null;
 
       return {
+        kind: "resistance",
+        id: ref.id,
         label: resistanceRefLabel(ref),
+        ref,
         tooltipLines: resistanceTooltipLines(ref, resistance)
       };
     }).filter(Boolean);
@@ -1015,7 +1060,10 @@
       .map((id) => byId(options.equipment, id))
       .filter(Boolean)
       .map((item) => ({
+        kind: "equipment",
+        id: item.id,
         label: item.name,
+        status: key ? itemStatus(item, key) : null,
         tooltipLines: equipmentTooltipLines(item, key)
       }));
   }
@@ -1036,15 +1084,26 @@
       .map((id) => byId(options.attacks, id))
       .filter(Boolean)
       .map((item) => ({
+        kind: "attack",
+        id: item.id,
         label: item.name,
+        status: itemStatus(item, key),
         tooltipLines: attackTooltipLines(item, key)
       }));
   }
 
   function tagItemHtml(item) {
-    const tooltipLines = list(item.tooltipLines).filter(Boolean);
+    const statusLine = item.status
+      ? `Status: ${item.status.label}${item.status.detail ? ` - ${item.status.detail}` : ""}`
+      : "";
+    const tooltipLines = [statusLine, ...list(item.tooltipLines)].filter(Boolean);
+    const statusClass = item.status ? ` tag-status-${item.status.id}` : "";
+    const tooltipClass = tooltipLines.length ? " has-tooltip" : "";
+    const statusIcon = item.status
+      ? `<span class="status-icon" aria-hidden="true"></span>`
+      : "";
 
-    if (!tooltipLines.length) return `<li class="tag-item">${escapeHtml(item.label)}</li>`;
+    if (!tooltipLines.length) return `<li class="tag-item${statusClass}">${escapeHtml(item.label)}</li>`;
 
     const tooltipHtml = tooltipLines.map((line) => {
       const separatorIndex = line.indexOf(": ");
@@ -1064,8 +1123,8 @@
     }).join("");
 
     return `
-      <li class="tag-item has-tooltip" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
-        <span class="tag-text">${escapeHtml(item.label)}</span>
+      <li class="tag-item${tooltipClass}${statusClass}" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
+        ${statusIcon}<span class="tag-text">${escapeHtml(item.label)}</span>
         <span class="tag-tooltip" role="tooltip">
           <span class="tooltip-title">${escapeHtml(item.label)}</span>
           ${tooltipHtml}
@@ -1083,6 +1142,7 @@
     const resolvedPowerRefs = powerRefs(baseKey, itemEffects);
     const effects = activeEffects(baseKey, resolvedPowerRefs, itemEffects);
     const key = effectiveKey(baseKey, resolvedPowerRefs, itemEffects, effects);
+    const resolvedResistanceRefs = resistanceRefs(baseKey, resolvedPowerRefs, itemEffects);
     const image = activeImage(baseKey, effects);
     const names = list(baseKey.names);
     const stats = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
@@ -1092,19 +1152,28 @@
           ? formatSpeed(key)
           : `${formatStat(key[field], catalog)}${suffix}`;
 
-      return { label, value };
+      return {
+        label,
+        value,
+        rank: statRank(key, field, catalog)
+      };
     });
 
     return {
       character: displayCharacter,
       key: baseKey,
+      effectiveKey: key,
+      itemEffects,
+      powerRefs: resolvedPowerRefs,
+      resistanceRefs: resolvedResistanceRefs,
+      effects,
       image,
       names,
       details: characterDetails(displayCharacter),
       stats,
       sections: [
         ["Powers", powerTagItems(baseKey, resolvedPowerRefs)],
-        ["Resistances", resistanceTagItems(resistanceRefs(baseKey, resolvedPowerRefs, itemEffects))],
+        ["Resistances", resistanceTagItems(resolvedResistanceRefs)],
         ["Standard Equipment", equipmentTagItems(baseKey.standard_equipment_ids, baseKey)],
         ["Optional Equipment", equipmentTagItems(baseKey.optional_equipment_ids, baseKey)],
         ["Attacks/Techniques", attackTagItems(baseKey)]
@@ -1163,18 +1232,114 @@
     card.innerHTML = characterProfileHtml(view);
   }
 
+  function effectTargetsPower(effect, powerId) {
+    if (!effect?.power_nullification) return false;
+
+    const targetIds = list(effect.power_nullification.target_power_ids);
+    return targetIds.length === 0 || targetIds.includes(powerId);
+  }
+
+  function effectNegatesResistance(effect, ref) {
+    if (!effect?.resistance_negation) return false;
+
+    const level = byId(options.resistance_levels, ref.level || "resistant");
+    const targetIds = list(effect.resistance_negation.target_resistance_ids);
+    const immunityTargetIds = list(effect.resistance_negation.target_immunity_ids);
+
+    if (level?.id === "immunity") return immunityTargetIds.includes(ref.id);
+
+    return targetIds.length === 0 || targetIds.includes(ref.id);
+  }
+
+  function powerNullifiedBy(ref, opponentView) {
+    const nullifyingPower = opponentView.powerRefs.find((opponentRef) => (
+      powerRefEffects(opponentRef).some((effect) => effectTargetsPower(effect, ref.id))
+    ));
+
+    if (nullifyingPower) {
+      return status("nullified", `${powerRefLabel(nullifyingPower)} targets this power`);
+    }
+
+    if (opponentView.itemEffects.some((effect) => effectTargetsPower(effect, ref.id))) {
+      return status("nullified", "Opponent equipment or attack targets this power");
+    }
+
+    return null;
+  }
+
+  function resistanceNegatedBy(ref, opponentView) {
+    const negatingPower = opponentView.powerRefs.find((opponentRef) => (
+      powerRefEffects(opponentRef).some((effect) => effectNegatesResistance(effect, ref))
+    ));
+
+    if (negatingPower) {
+      return status("negated", `${powerRefLabel(negatingPower)} targets this resistance`);
+    }
+
+    if (opponentView.itemEffects.some((effect) => effectNegatesResistance(effect, ref))) {
+      return status("negated", "Opponent equipment or attack targets this resistance");
+    }
+
+    return null;
+  }
+
+  function effectiveResistanceRefsFor(view, opponentView) {
+    return view.resistanceRefs.filter((ref) => !resistanceNegatedBy(ref, opponentView));
+  }
+
+  function resistanceBlocksPower(powerRef, resistanceRef) {
+    const resistance = byId(options.resistances, resistanceRef.id);
+    if (!list(resistance?.resists_power_ids).includes(powerRef.id)) return false;
+
+    const level = byId(options.resistance_levels, resistanceRef.level || "resistant");
+    return level?.id === "immunity" || abilityModifierRank(resistanceRef) >= abilityModifierRank(powerRef);
+  }
+
+  function powerResistedBy(ref, ownerView, opponentView) {
+    const resistingRef = effectiveResistanceRefsFor(opponentView, ownerView)
+      .find((opponentResistanceRef) => resistanceBlocksPower(ref, opponentResistanceRef));
+
+    if (!resistingRef) return null;
+
+    return status("resisted", `${resistanceRefLabel(resistingRef)} blocks this power`);
+  }
+
+  function battleTagStatus(item, ownerView, opponentView) {
+    if (item.status?.id === "disabled") return item.status;
+    if (item.kind === "power") return powerNullifiedBy(item.ref, opponentView) || powerResistedBy(item.ref, ownerView, opponentView) || status("active");
+    if (item.kind === "resistance") return resistanceNegatedBy(item.ref, opponentView) || status("active");
+
+    return item.status || status("active");
+  }
+
+  function battleTagItem(item, ownerView, opponentView) {
+    return {
+      ...item,
+      status: battleTagStatus(item, ownerView, opponentView)
+    };
+  }
+
+  function statComparisonClass(rank, otherRank) {
+    if (rank > otherRank) return "higher";
+    if (rank < otherRank) return "lower";
+
+    return "same";
+  }
+
   function battleStatRowsHtml(leftView, rightView) {
     return statDefinitions.map(([label]) => {
       const leftStat = leftView.stats.find((stat) => stat.label === label);
       const rightStat = rightView.stats.find((stat) => stat.label === label);
+      const leftClass = statComparisonClass(leftStat?.rank || 0, rightStat?.rank || 0);
+      const rightClass = statComparisonClass(rightStat?.rank || 0, leftStat?.rank || 0);
 
       return `
         <li class="battle-stat-row">
-          <div class="battle-stat-cell">
+          <div class="battle-stat-cell is-${leftClass}">
             <span class="stat-label">${escapeHtml(label)}</span>
             <span class="stat-value">${escapeHtml(leftStat?.value || "")}</span>
           </div>
-          <div class="battle-stat-cell">
+          <div class="battle-stat-cell is-${rightClass}">
             <span class="stat-label">${escapeHtml(label)}</span>
             <span class="stat-value">${escapeHtml(rightStat?.value || "")}</span>
           </div>
@@ -1186,8 +1351,14 @@
   function battleSectionRowsHtml(leftView, rightView) {
     return leftView.sections.map(([sectionTitle, leftItems], index) => {
       const rightItems = rightView.sections[index]?.[1] || [];
-      const leftTags = list(leftItems).map(tagItemHtml).join("");
-      const rightTags = list(rightItems).map(tagItemHtml).join("");
+      const leftTags = list(leftItems)
+        .map((item) => battleTagItem(item, leftView, rightView))
+        .map(tagItemHtml)
+        .join("");
+      const rightTags = list(rightItems)
+        .map((item) => battleTagItem(item, rightView, leftView))
+        .map(tagItemHtml)
+        .join("");
 
       if (!leftTags && !rightTags) return "";
 
