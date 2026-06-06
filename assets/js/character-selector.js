@@ -28,6 +28,7 @@
     ["Range", "range", "range_tiers"],
     ["Intelligence", "intelligence", "intelligence_tiers"]
   ];
+  const battleScoreExcludedLabels = new Set(["Tier"]);
 
   const speedDefinitions = [
     ["combat_speed", "combat speed"],
@@ -390,7 +391,9 @@
   }
 
   function status(id, detail = "") {
-    return { ...statusDefinitions[id], detail };
+    const definition = statusDefinitions[id] || statusDefinitions.active;
+
+    return { ...definition, detail };
   }
 
   function resistanceNames(ids) {
@@ -616,7 +619,7 @@
     return 0;
   }
 
-  function powerRefs(key, itemEffects = activeItemEffects(key)) {
+  function powerRefs(key, itemEffects = activeItemEffects(key), includeRef = () => true) {
     const refs = [];
     const refIndexes = new Map();
     const queue = [
@@ -628,6 +631,7 @@
     for (let index = 0; index < queue.length; index += 1) {
       const ref = queue[index];
       if (!ref?.id) continue;
+      if (!includeRef(ref)) continue;
 
       const refKey = powerRefKey(ref);
       const existingIndex = refIndexes.get(refKey);
@@ -1092,6 +1096,22 @@
       }));
   }
 
+  function statsForKey(key) {
+    return statDefinitions.map(([label, field, catalog, suffix = ""]) => {
+      const value = field === "tier"
+        ? formatTier(key)
+        : field === "speed"
+          ? formatSpeed(key)
+          : `${formatStat(key[field], catalog)}${suffix}`;
+
+      return {
+        label,
+        value,
+        rank: statRank(key, field, catalog)
+      };
+    });
+  }
+
   function tagItemHtml(item) {
     const statusLine = item.status
       ? `Status: ${item.status.label}${item.status.detail ? ` - ${item.status.detail}` : ""}`
@@ -1145,19 +1165,6 @@
     const resolvedResistanceRefs = resistanceRefs(baseKey, resolvedPowerRefs, itemEffects);
     const image = activeImage(baseKey, effects);
     const names = list(baseKey.names);
-    const stats = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
-      const value = field === "tier"
-        ? formatTier(key)
-        : field === "speed"
-          ? formatSpeed(key)
-          : `${formatStat(key[field], catalog)}${suffix}`;
-
-      return {
-        label,
-        value,
-        rank: statRank(key, field, catalog)
-      };
-    });
 
     return {
       character: displayCharacter,
@@ -1170,7 +1177,7 @@
       image,
       names,
       details: characterDetails(displayCharacter),
-      stats,
+      stats: statsForKey(key),
       sections: [
         ["Powers", powerTagItems(baseKey, resolvedPowerRefs)],
         ["Resistances", resistanceTagItems(resolvedResistanceRefs)],
@@ -1304,18 +1311,64 @@
     return status("resisted", `${resistanceRefLabel(resistingRef)} blocks this power`);
   }
 
-  function battleTagStatus(item, ownerView, opponentView) {
+  function hasMatchingPowerRef(ref, refs) {
+    const refKey = powerRefKey(ref);
+
+    return list(refs).some((candidate) => powerRefKey(candidate) === refKey);
+  }
+
+  function hasMatchingResistanceRef(ref, refs) {
+    const refKey = resistanceRefKey(ref);
+
+    return list(refs).some((candidate) => resistanceRefKey(candidate) === refKey);
+  }
+
+  function battleTagStatus(item, ownerView, opponentView, ownerBattleView = ownerView) {
     if (item.status?.id === "disabled") return item.status;
-    if (item.kind === "power") return powerNullifiedBy(item.ref, opponentView) || powerResistedBy(item.ref, ownerView, opponentView) || status("active");
-    if (item.kind === "resistance") return resistanceNegatedBy(item.ref, opponentView) || status("active");
+
+    if (item.kind === "power") {
+      return powerNullifiedBy(item.ref, opponentView)
+        || powerResistedBy(item.ref, ownerView, opponentView)
+        || (hasMatchingPowerRef(item.ref, ownerBattleView.powerRefs) ? null : status("disabled", "Source power is inactive in this battle"))
+        || status("active");
+    }
+
+    if (item.kind === "resistance") {
+      return resistanceNegatedBy(item.ref, opponentView)
+        || (hasMatchingResistanceRef(item.ref, ownerBattleView.resistanceRefs) ? null : status("disabled", "Source power is inactive in this battle"))
+        || status("active");
+    }
 
     return item.status || status("active");
   }
 
-  function battleTagItem(item, ownerView, opponentView) {
+  function battleTagItem(item, ownerView, opponentView, ownerBattleView = ownerView) {
     return {
       ...item,
-      status: battleTagStatus(item, ownerView, opponentView)
+      status: battleTagStatus(item, ownerView, opponentView, ownerBattleView)
+    };
+  }
+
+  function powerBlockedInBattle(ref, ownerView, opponentView) {
+    return powerNullifiedBy(ref, opponentView) || powerResistedBy(ref, ownerView, opponentView);
+  }
+
+  function battleEffectiveView(view, opponentView) {
+    const resolvedPowerRefs = powerRefs(
+      view.key,
+      view.itemEffects,
+      (ref) => !powerBlockedInBattle(ref, view, opponentView)
+    );
+    const effects = activeEffects(view.key, resolvedPowerRefs, view.itemEffects);
+    const key = effectiveKey(view.key, resolvedPowerRefs, view.itemEffects, effects);
+
+    return {
+      ...view,
+      effectiveKey: key,
+      powerRefs: resolvedPowerRefs,
+      resistanceRefs: resistanceRefs(view.key, resolvedPowerRefs, view.itemEffects),
+      effects,
+      stats: statsForKey(key)
     };
   }
 
@@ -1326,22 +1379,43 @@
     return "same";
   }
 
-  function battleStatRowsHtml(leftView, rightView) {
+  function rankValue(stat) {
+    return stat?.rank || 0;
+  }
+
+  function battleStatPairs(leftView, rightView) {
     return statDefinitions.map(([label]) => {
       const leftStat = leftView.stats.find((stat) => stat.label === label);
       const rightStat = rightView.stats.find((stat) => stat.label === label);
-      const leftClass = statComparisonClass(leftStat?.rank || 0, rightStat?.rank || 0);
-      const rightClass = statComparisonClass(rightStat?.rank || 0, leftStat?.rank || 0);
 
+      return {
+        label,
+        left: leftStat,
+        right: rightStat,
+        leftClass: statComparisonClass(rankValue(leftStat), rankValue(rightStat)),
+        rightClass: statComparisonClass(rankValue(rightStat), rankValue(leftStat))
+      };
+    });
+  }
+
+  function battleWinner(leftRank, rightRank) {
+    if (leftRank > rightRank) return "left";
+    if (rightRank > leftRank) return "right";
+
+    return "tie";
+  }
+
+  function battleStatRowsHtml(leftView, rightView) {
+    return battleStatPairs(leftView, rightView).map(({ label, left, right, leftClass, rightClass }) => {
       return `
         <li class="battle-stat-row">
           <div class="battle-stat-cell is-${leftClass}">
             <span class="stat-label">${escapeHtml(label)}</span>
-            <span class="stat-value">${escapeHtml(leftStat?.value || "")}</span>
+            <span class="stat-value">${escapeHtml(left?.value || "")}</span>
           </div>
           <div class="battle-stat-cell is-${rightClass}">
             <span class="stat-label">${escapeHtml(label)}</span>
-            <span class="stat-value">${escapeHtml(rightStat?.value || "")}</span>
+            <span class="stat-value">${escapeHtml(right?.value || "")}</span>
           </div>
         </li>
       `;
@@ -1349,25 +1423,14 @@
   }
 
   function battleScore(leftView, rightView) {
-    const rows = leftView.stats
-      .filter((leftStat) => leftStat.label !== "Tier")
-      .map((leftStat) => {
-        const rightStat = rightView.stats.find((stat) => stat.label === leftStat.label);
-        const leftRank = leftStat.rank || 0;
-        const rightRank = rightStat?.rank || 0;
-        const winner = leftRank > rightRank
-          ? "left"
-          : rightRank > leftRank
-            ? "right"
-            : "tie";
-
-        return {
-          label: leftStat.label,
-          leftValue: leftStat.value,
-          rightValue: rightStat?.value || "",
-          winner
-        };
-      });
+    const rows = battleStatPairs(leftView, rightView)
+      .filter((row) => !battleScoreExcludedLabels.has(row.label))
+      .map((row) => ({
+        label: row.label,
+        leftValue: row.left?.value || "",
+        rightValue: row.right?.value || "",
+        winner: battleWinner(rankValue(row.left), rankValue(row.right))
+      }));
 
     const leftScore = rows.filter((row) => row.winner === "left").length;
     const rightScore = rows.filter((row) => row.winner === "right").length;
@@ -1432,15 +1495,15 @@
     `;
   }
 
-  function battleSectionRowsHtml(leftView, rightView) {
+  function battleSectionRowsHtml(leftView, rightView, leftBattleView = leftView, rightBattleView = rightView) {
     return leftView.sections.map(([sectionTitle, leftItems], index) => {
       const rightItems = rightView.sections[index]?.[1] || [];
       const leftTags = list(leftItems)
-        .map((item) => battleTagItem(item, leftView, rightView))
+        .map((item) => battleTagItem(item, leftView, rightView, leftBattleView))
         .map(tagItemHtml)
         .join("");
       const rightTags = list(rightItems)
-        .map((item) => battleTagItem(item, rightView, leftView))
+        .map((item) => battleTagItem(item, rightView, leftView, rightBattleView))
         .map(tagItemHtml)
         .join("");
 
@@ -1459,19 +1522,21 @@
   }
 
   function renderBattle(content, leftSelection, rightSelection) {
-    const leftView = characterView(leftSelection.character, leftSelection.keyId);
-    const rightView = characterView(rightSelection.character, rightSelection.keyId);
+    const baseLeftView = characterView(leftSelection.character, leftSelection.keyId);
+    const baseRightView = characterView(rightSelection.character, rightSelection.keyId);
+    const leftView = battleEffectiveView(baseLeftView, baseRightView);
+    const rightView = battleEffectiveView(baseRightView, baseLeftView);
 
     content.innerHTML = `
       <div class="battle-combatants">
-        <article class="battle-character-card">${characterProfileHtml(leftView, { includeStats: false, includeSections: false })}</article>
-        <article class="battle-character-card">${characterProfileHtml(rightView, { includeStats: false, includeSections: false })}</article>
+        <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false })}</article>
+        <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false })}</article>
       </div>
       <section class="battle-comparison" aria-label="Stat comparison">
         <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
       </section>
       <div data-battle-result hidden></div>
-      ${battleSectionRowsHtml(leftView, rightView)}
+      ${battleSectionRowsHtml(baseLeftView, baseRightView, leftView, rightView)}
     `;
 
     return { left: leftView, right: rightView };

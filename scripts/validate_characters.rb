@@ -153,6 +153,21 @@ def validate_refs(context, values, allowed, label, allow_blank: false)
   end
 end
 
+def validate_ref_list(context, values, allowed, label, allow_blank: false)
+  return [] if values.nil?
+  return ["#{context} must be a list"] unless values.is_a?(Array)
+
+  validate_refs(context, values, allowed, label, allow_blank: allow_blank)
+end
+
+def array_field(context, value, errors)
+  return [] if value.nil?
+  return value if value.is_a?(Array)
+
+  errors << "#{context} must be a list"
+  []
+end
+
 def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
   return [] if allow_null && stat.nil?
 
@@ -336,11 +351,11 @@ def validate_power_refs(context, refs, sets)
 
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power"))
     errors.concat(validate_refs("#{ref_context}.modifier", [ref["modifier"] || "normal"], sets[:ability_modifiers], "ability modifier"))
-    errors.concat(validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
+    errors.concat(validate_ref_list("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_refs("#{ref_context}.martial_arts_degree_id", [ref["martial_arts_degree_id"]], sets[:martial_arts_degrees], "martial arts degree"))
     errors.concat(validate_refs("#{ref_context}.acrobatics_degree_id", [ref["acrobatics_degree_id"]], sets[:acrobatics_degrees], "acrobatics degree"))
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
-    errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
+    errors.concat(validate_ref_list("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
 
     if ref["source_variant"]
       variant_ids = sets[:power_variant_ids_by_power_id][ref["id"]] || Set.new
@@ -385,7 +400,7 @@ def validate_power_target_refs(context, refs, sets)
     end
 
     errors = validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power") +
-             validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type") +
+             validate_ref_list("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type") +
              validate_power_type_ownership(ref_context, ref, sets)
 
     errors
@@ -393,13 +408,14 @@ def validate_power_target_refs(context, refs, sets)
 end
 
 def validate_grants(context, grants, sets)
-  errors = []
+  return [] if grants.nil?
+  return ["#{context} must be a map"] unless grants.is_a?(Hash)
 
-  return errors unless grants.is_a?(Hash)
+  errors = []
 
   errors.concat(validate_power_refs("#{context}.power_refs", grants["power_refs"] || [], sets))
   errors.concat(validate_resistance_refs("#{context}.resistance_refs", grants["resistance_refs"] || [], sets))
-  errors.concat(validate_refs("#{context}.magic_level_ids", grants["magic_level_ids"], sets[:magic_levels], "magic level"))
+  errors.concat(validate_ref_list("#{context}.magic_level_ids", grants["magic_level_ids"], sets[:magic_levels], "magic level"))
   errors
 end
 
@@ -421,9 +437,9 @@ def validate_resistance_refs(context, refs, sets)
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:resistances], "resistance"))
     errors.concat(validate_refs("#{ref_context}.level", [ref["level"] || "resistant"], sets[:resistance_levels], "resistance level"))
     errors.concat(validate_refs("#{ref_context}.modifier", [ref["modifier"] || "normal"], sets[:ability_modifiers], "ability modifier"))
-    errors.concat(validate_refs("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
+    errors.concat(validate_ref_list("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_refs("#{ref_context}.magic_level_id", [ref["magic_level_id"]], sets[:magic_levels], "magic level"))
-    errors.concat(validate_refs("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
+    errors.concat(validate_ref_list("#{ref_context}.magic_nature_ids", ref["magic_nature_ids"], sets[:magic_natures], "magic nature"))
   end
 
   errors
@@ -435,10 +451,6 @@ def validate_effect(context, effect, sets)
   errors = []
 
   if effect.key?("grants")
-    unless effect["grants"].is_a?(Hash)
-      errors << "#{context}.grants must be a map"
-    end
-
     errors.concat(validate_grants("#{context}.grants", effect["grants"], sets))
   end
 
@@ -450,18 +462,35 @@ def validate_effect(context, effect, sets)
     errors.concat(validate_stat_modifier_floor_effects("#{context}.stat_modifier_floor_effects", effect["stat_modifier_floor_effects"], sets))
   end
 
-  if effect["power_nullification"].is_a?(Hash)
-    errors.concat(validate_refs("#{context}.power_nullification.target_power_ids", effect["power_nullification"]["target_power_ids"], sets[:powers], "power"))
+  if effect.key?("power_nullification")
+    nullification = effect["power_nullification"]
+
+    unless nullification.is_a?(Hash)
+      errors << "#{context}.power_nullification must be a map"
+    else
+      errors.concat(validate_ref_list("#{context}.power_nullification.target_power_ids", nullification["target_power_ids"], sets[:powers], "power"))
+    end
   end
 
-  if effect["resistance_negation"].is_a?(Hash)
+  if effect.key?("resistance_negation")
     negation = effect["resistance_negation"]
-    errors.concat(validate_refs("#{context}.resistance_negation.target_resistance_ids", negation["target_resistance_ids"], sets[:resistances], "resistance"))
-    errors.concat(validate_refs("#{context}.resistance_negation.target_immunity_ids", negation["target_immunity_ids"], sets[:resistances], "resistance"))
+
+    unless negation.is_a?(Hash)
+      errors << "#{context}.resistance_negation must be a map"
+    else
+      errors.concat(validate_ref_list("#{context}.resistance_negation.target_resistance_ids", negation["target_resistance_ids"], sets[:resistances], "resistance"))
+      errors.concat(validate_ref_list("#{context}.resistance_negation.target_immunity_ids", negation["target_immunity_ids"], sets[:resistances], "resistance"))
+    end
   end
 
-  if effect["non_physical_interaction"].is_a?(Hash)
-    errors.concat(validate_power_target_refs("#{context}.non_physical_interaction.target_power_refs", effect["non_physical_interaction"]["target_power_refs"] || [], sets))
+  if effect.key?("non_physical_interaction")
+    interaction = effect["non_physical_interaction"]
+
+    unless interaction.is_a?(Hash)
+      errors << "#{context}.non_physical_interaction must be a map"
+    else
+      errors.concat(validate_power_target_refs("#{context}.non_physical_interaction.target_power_refs", interaction["target_power_refs"] || [], sets))
+    end
   end
 
   if effect.key?("image_update")
@@ -513,12 +542,13 @@ def validate_catalog_entry(context, entry, sets, type)
   case type
   when :power_type
     errors.concat(validate_refs("#{context}.power_id", [entry["power_id"]], sets[:powers], "power"))
-    errors.concat(validate_refs("#{context}.covers_type_ids", entry["covers_type_ids"], sets[:power_types], "power type"))
+    errors.concat(validate_ref_list("#{context}.covers_type_ids", entry["covers_type_ids"], sets[:power_types], "power type"))
   when :power
-    errors.concat(validate_refs("#{context}.type_ids", entry["type_ids"], sets[:power_types], "power type"))
-    errors.concat(validate_refs("#{context}.degree_ids", entry["degree_ids"], sets[:martial_arts_degrees] | sets[:acrobatics_degrees], "degree"))
+    errors.concat(validate_ref_list("#{context}.type_ids", entry["type_ids"], sets[:power_types], "power type"))
+    errors.concat(validate_ref_list("#{context}.degree_ids", entry["degree_ids"], sets[:martial_arts_degrees] | sets[:acrobatics_degrees], "degree"))
     seen_variant_ids = {}
-    Array(entry["variants"]).each_with_index do |variant, index|
+
+    array_field("#{context}.variants", entry["variants"], errors).each_with_index do |variant, index|
       variant_context = "#{context}.variants[#{index}]"
       unless variant.is_a?(Hash)
         errors << "#{variant_context} must be a map"
@@ -540,29 +570,29 @@ def validate_catalog_entry(context, entry, sets, type)
 
       errors.concat(validate_grants("#{variant_context}.grants", variant["grants"], sets))
 
-      Array(variant["effects"]).each_with_index do |effect, effect_index|
+      array_field("#{variant_context}.effects", variant["effects"], errors).each_with_index do |effect, effect_index|
         errors.concat(validate_effect("#{variant_context}.effects[#{effect_index}]", effect, sets))
       end
     end
-    if entry["grants"].is_a?(Hash)
+    if entry.key?("grants")
       errors.concat(validate_grants("#{context}.grants", entry["grants"], sets))
     end
   when :resistance
-    errors.concat(validate_refs("#{context}.resists_power_ids", entry["resists_power_ids"], sets[:powers], "power"))
+    errors.concat(validate_ref_list("#{context}.resists_power_ids", entry["resists_power_ids"], sets[:powers], "power"))
   when :magic_level
-    errors.concat(validate_refs("#{context}.inherits_level_ids", entry["inherits_level_ids"], sets[:magic_levels], "magic level"))
+    errors.concat(validate_ref_list("#{context}.inherits_level_ids", entry["inherits_level_ids"], sets[:magic_levels], "magic level"))
     errors.concat(validate_power_refs("#{context}.power_refs", entry["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{context}.resistance_refs", entry["resistance_refs"] || [], sets))
   when :magic_nature
-    errors.concat(validate_refs("#{context}.inherits_nature_ids", entry["inherits_nature_ids"], sets[:magic_natures], "magic nature"))
+    errors.concat(validate_ref_list("#{context}.inherits_nature_ids", entry["inherits_nature_ids"], sets[:magic_natures], "magic nature"))
     errors.concat(validate_power_refs("#{context}.power_refs", entry["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{context}.resistance_refs", entry["resistance_refs"] || [], sets))
   when :equipment, :attack
-    errors.concat(validate_refs("#{context}.weapon_type_ids", entry["weapon_type_ids"], sets[:power_types], "power type"))
+    errors.concat(validate_ref_list("#{context}.weapon_type_ids", entry["weapon_type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_power_refs("#{context}.required_power_refs", entry["required_power_refs"] || [], sets))
   end
 
-  Array(entry["effects"]).each_with_index do |effect, index|
+  array_field("#{context}.effects", entry["effects"], errors).each_with_index do |effect, index|
     errors.concat(validate_effect("#{context}.effects[#{index}]", effect, sets))
   end
 
@@ -581,7 +611,7 @@ def validate_character(context, character, sets, entry_id: nil)
 
   errors.concat(validate_refs("#{context}.verse_id", [character["verse_id"]], sets[:verses], "verse", allow_blank: true))
   errors.concat(validate_refs("#{context}.gender_id", [character["gender_id"]], sets[:genders], "gender"))
-  errors.concat(validate_refs("#{context}.classification_ids", character["classification_ids"], sets[:classifications], "classification"))
+  errors.concat(validate_ref_list("#{context}.classification_ids", character["classification_ids"], sets[:classifications], "classification"))
 
   unless keys.is_a?(Array) && keys.any?
     errors << "#{context}.keys must contain at least one key"
@@ -610,9 +640,9 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_images("#{key_context}.images", key["images"] || [], entry_id: entry_id))
     errors.concat(validate_power_refs("#{key_context}.power_refs", key["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{key_context}.resistance_refs", key["resistance_refs"] || [], sets))
-    errors.concat(validate_refs("#{key_context}.standard_equipment_ids", key["standard_equipment_ids"], sets[:equipment], "equipment"))
-    errors.concat(validate_refs("#{key_context}.optional_equipment_ids", key["optional_equipment_ids"], sets[:equipment], "equipment"))
-    errors.concat(validate_refs("#{key_context}.attack_ids", key["attack_ids"], sets[:attacks], "attack"))
+    errors.concat(validate_ref_list("#{key_context}.standard_equipment_ids", key["standard_equipment_ids"], sets[:equipment], "equipment"))
+    errors.concat(validate_ref_list("#{key_context}.optional_equipment_ids", key["optional_equipment_ids"], sets[:equipment], "equipment"))
+    errors.concat(validate_ref_list("#{key_context}.attack_ids", key["attack_ids"], sets[:attacks], "attack"))
 
     errors.concat(validate_ranked_stat("#{key_context}.attack_potency", key["attack_potency"], sets[:attack_durability_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.attack_speed", key["attack_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
