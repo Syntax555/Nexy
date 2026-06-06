@@ -3,12 +3,22 @@ layout: default
 title: Home
 ---
 
-<h1 class="page-title">{{ site.title | escape }}</h1>
+<section class="selection-screen" data-selection-screen>
+  <h1 class="page-title">{{ site.title | escape }}</h1>
 
-<div class="versus-grid">
-  {% include character-selector-panel.html side="left" title="Left" aria_label="Left character" %}
-  {% include character-selector-panel.html side="right" title="Right" aria_label="Right character" %}
-</div>
+  <div class="versus-grid">
+    {% include character-selector-panel.html side="left" title="Left" aria_label="Left character" %}
+    {% include character-selector-panel.html side="right" title="Right" aria_label="Right character" %}
+  </div>
+</section>
+
+<section class="battle-screen" data-battle-screen hidden>
+  <div class="battle-bar">
+    <h1 class="page-title">Battle</h1>
+    <button class="secondary-button" type="button" data-edit-selection>Change Characters</button>
+  </div>
+  <div data-battle-content></div>
+</section>
 
 {% include character-data.html %}
 <script src="{{ '/assets/js/character-selector.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

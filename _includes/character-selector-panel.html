@@ -1,7 +1,10 @@
 <section class="selector-panel" data-selector="{{ include.side }}" aria-label="{{ include.aria_label | escape }}">
   <div class="selector-bar">
     <h2 class="side-title">{{ include.title | escape }}</h2>
-    <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
+    <div class="selector-actions">
+      <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
+      <button class="confirm-button" type="button" data-confirm disabled>Confirm</button>
+    </div>
   </div>
   <div class="selector-body">
     <aside class="choice-column">

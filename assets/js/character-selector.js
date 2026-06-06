@@ -1074,69 +1074,156 @@
     `;
   }
 
-  function renderCard(card, character, keyId = null) {
-    if (!character) {
-      card.hidden = true;
-      card.innerHTML = "";
-      return;
-    }
+  function characterView(character, keyId = null) {
+    if (!character) return null;
 
-    card.hidden = false;
     const displayCharacter = character;
-    const baseKey = characterKey(displayCharacter, keyId);
+    const baseKey = characterKey(character, keyId);
     const itemEffects = activeItemEffects(baseKey);
     const resolvedPowerRefs = powerRefs(baseKey, itemEffects);
     const effects = activeEffects(baseKey, resolvedPowerRefs, itemEffects);
     const key = effectiveKey(baseKey, resolvedPowerRefs, itemEffects, effects);
     const image = activeImage(baseKey, effects);
     const names = list(baseKey.names);
-    const statRows = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
+    const stats = statDefinitions.map(([label, field, catalog, suffix = ""]) => {
       const value = field === "tier"
         ? formatTier(key)
         : field === "speed"
           ? formatSpeed(key)
           : `${formatStat(key[field], catalog)}${suffix}`;
 
-      return `
-        <li class="stat">
-          <span class="stat-label">${escapeHtml(label)}</span>
-          <span class="stat-value">${escapeHtml(value)}</span>
-        </li>
-      `;
-    }).join("");
+      return { label, value };
+    });
 
-    const detailTags = characterDetails(displayCharacter)
+    return {
+      character: displayCharacter,
+      key: baseKey,
+      image,
+      names,
+      details: characterDetails(displayCharacter),
+      stats,
+      sections: [
+        ["Powers", powerTagItems(baseKey, resolvedPowerRefs)],
+        ["Resistances", resistanceTagItems(resistanceRefs(baseKey, resolvedPowerRefs, itemEffects))],
+        ["Standard Equipment", equipmentTagItems(baseKey.standard_equipment_ids, baseKey)],
+        ["Optional Equipment", equipmentTagItems(baseKey.optional_equipment_ids, baseKey)],
+        ["Attacks/Techniques", attackTagItems(baseKey)]
+      ]
+    };
+  }
+
+  function statGridHtml(stats) {
+    return list(stats).map((stat) => `
+      <li class="stat">
+        <span class="stat-label">${escapeHtml(stat.label)}</span>
+        <span class="stat-value">${escapeHtml(stat.value)}</span>
+      </li>
+    `).join("");
+  }
+
+  function tagSectionHtml(titleText, items) {
+    const tags = list(items).map(tagItemHtml).join("");
+    if (!tags) return "";
+
+    return `<h4 class="section-title">${escapeHtml(titleText)}</h4><ul class="tag-list">${tags}</ul>`;
+  }
+
+  function characterProfileHtml(view, { includeStats = true, includeSections = true } = {}) {
+    const detailTags = view.details
       .map((detail) => `<li>${escapeHtml(detail)}</li>`)
       .join("");
+    const sectionHtml = view.sections
+      .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
+      .join("");
 
-    const powerTags = powerTagItems(baseKey, resolvedPowerRefs).map(tagItemHtml).join("");
-    const resistanceTags = resistanceTagItems(resistanceRefs(baseKey, resolvedPowerRefs, itemEffects)).map(tagItemHtml).join("");
-    const standardEquipmentTags = equipmentTagItems(baseKey.standard_equipment_ids, baseKey).map(tagItemHtml).join("");
-    const optionalEquipmentTags = equipmentTagItems(baseKey.optional_equipment_ids, baseKey).map(tagItemHtml).join("");
-    const attackTags = attackTagItems(baseKey).map(tagItemHtml).join("");
-
-    card.innerHTML = `
+    return `
       <div class="character-image">
-        ${image ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="${escapeHtml(image.name)}">` : `<div class="empty-image">?</div>`}
+        ${view.image ? `<img src="${escapeHtml(assetUrl(view.image.image))}" alt="${escapeHtml(view.image.name)}">` : `<div class="empty-image">?</div>`}
       </div>
       <div class="character-content">
-        <h3 class="character-heading">${escapeHtml(title(displayCharacter.name))}</h3>
-        <p class="character-subtitle">${escapeHtml(names.join(" / "))}</p>
+        <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
+        <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
         ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
-        <ul class="stat-grid">${statRows}</ul>
-        ${powerTags ? `<h4 class="section-title">Powers</h4><ul class="tag-list">${powerTags}</ul>` : ""}
-        ${resistanceTags ? `<h4 class="section-title">Resistances</h4><ul class="tag-list">${resistanceTags}</ul>` : ""}
-        ${standardEquipmentTags ? `<h4 class="section-title">Standard Equipment</h4><ul class="tag-list">${standardEquipmentTags}</ul>` : ""}
-        ${optionalEquipmentTags ? `<h4 class="section-title">Optional Equipment</h4><ul class="tag-list">${optionalEquipmentTags}</ul>` : ""}
-        ${attackTags ? `<h4 class="section-title">Attacks/Techniques</h4><ul class="tag-list">${attackTags}</ul>` : ""}
+        ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
+        ${includeSections ? sectionHtml : ""}
       </div>
     `;
   }
 
-  function selector(root) {
+  function renderCard(card, character, keyId = null) {
+    const view = characterView(character, keyId);
+
+    if (!view) {
+      card.hidden = true;
+      card.innerHTML = "";
+      return;
+    }
+
+    card.hidden = false;
+    card.innerHTML = characterProfileHtml(view);
+  }
+
+  function battleStatRowsHtml(leftView, rightView) {
+    return statDefinitions.map(([label]) => {
+      const leftStat = leftView.stats.find((stat) => stat.label === label);
+      const rightStat = rightView.stats.find((stat) => stat.label === label);
+
+      return `
+        <li class="battle-stat-row">
+          <div class="battle-stat-cell">
+            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="stat-value">${escapeHtml(leftStat?.value || "")}</span>
+          </div>
+          <div class="battle-stat-cell">
+            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="stat-value">${escapeHtml(rightStat?.value || "")}</span>
+          </div>
+        </li>
+      `;
+    }).join("");
+  }
+
+  function battleSectionRowsHtml(leftView, rightView) {
+    return leftView.sections.map(([sectionTitle, leftItems], index) => {
+      const rightItems = rightView.sections[index]?.[1] || [];
+      const leftTags = list(leftItems).map(tagItemHtml).join("");
+      const rightTags = list(rightItems).map(tagItemHtml).join("");
+
+      if (!leftTags && !rightTags) return "";
+
+      return `
+        <section class="battle-section">
+          <h2 class="section-title">${escapeHtml(sectionTitle)}</h2>
+          <div class="battle-section-grid">
+            <ul class="tag-list">${leftTags}</ul>
+            <ul class="tag-list">${rightTags}</ul>
+          </div>
+        </section>
+      `;
+    }).join("");
+  }
+
+  function renderBattle(content, leftSelection, rightSelection) {
+    const leftView = characterView(leftSelection.character, leftSelection.keyId);
+    const rightView = characterView(rightSelection.character, rightSelection.keyId);
+
+    content.innerHTML = `
+      <div class="battle-combatants">
+        <article class="battle-character-card">${characterProfileHtml(leftView, { includeStats: false, includeSections: false })}</article>
+        <article class="battle-character-card">${characterProfileHtml(rightView, { includeStats: false, includeSections: false })}</article>
+      </div>
+      <section class="battle-comparison" aria-label="Stat comparison">
+        <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
+      </section>
+      ${battleSectionRowsHtml(leftView, rightView)}
+    `;
+  }
+
+  function selector(root, onSelectionChange = () => {}) {
     const choiceLabel = root.querySelector("[data-choice-label]");
     const choiceList = root.querySelector("[data-choice-list]");
     const backButton = root.querySelector("[data-back]");
+    const confirmButton = root.querySelector("[data-confirm]");
     const card = root.querySelector("[data-character-card]");
     const state = {
       step: "media",
@@ -1145,13 +1232,15 @@
       verseId: null,
       characterId: null,
       keyId: null,
-      emptySelected: false
+      emptySelected: false,
+      confirmed: false
     };
 
     function clearSelection() {
       state.characterId = null;
       state.keyId = null;
       state.emptySelected = false;
+      state.confirmed = false;
     }
 
     function stepItems() {
@@ -1179,6 +1268,8 @@
     }
 
     function choose(item) {
+      state.confirmed = false;
+
       if (state.step === "media") {
         state.mediaId = item.id;
         state.originId = null;
@@ -1217,6 +1308,8 @@
 
     function back() {
       if (state.step === "media") return;
+      state.confirmed = false;
+
       if (state.step === "origin") {
         state.step = "media";
         state.mediaId = null;
@@ -1266,14 +1359,74 @@
     }
 
     function render() {
+      const currentCharacter = displayCharacter();
       backButton.disabled = state.step === "media";
+      confirmButton.disabled = !currentCharacter || state.confirmed;
+      confirmButton.textContent = state.confirmed ? "Confirmed" : "Confirm";
       renderChoices();
-      renderCard(card, displayCharacter(), state.keyId);
+      renderCard(card, currentCharacter, state.keyId);
+      onSelectionChange();
     }
 
+    function confirmedSelection() {
+      const character = displayCharacter();
+      if (!state.confirmed || !character) return null;
+
+      return {
+        character,
+        keyId: state.keyId
+      };
+    }
+
+    function unconfirm() {
+      state.confirmed = false;
+      render();
+    }
+
+    confirmButton.addEventListener("click", () => {
+      if (!displayCharacter()) return;
+
+      state.confirmed = true;
+      render();
+    });
     backButton.addEventListener("click", back);
     render();
+
+    return {
+      confirmedSelection,
+      unconfirm
+    };
   }
 
-  document.querySelectorAll("[data-selector]").forEach(selector);
+  const selectionScreen = document.querySelector("[data-selection-screen]");
+  const battleScreen = document.querySelector("[data-battle-screen]");
+  const battleContent = document.querySelector("[data-battle-content]");
+  const editSelectionButton = document.querySelector("[data-edit-selection]");
+  let selectors = [];
+
+  function showSelectionScreen() {
+    selectionScreen.hidden = false;
+    battleScreen.hidden = true;
+  }
+
+  function showBattleScreen(leftSelection, rightSelection) {
+    renderBattle(battleContent, leftSelection, rightSelection);
+    selectionScreen.hidden = true;
+    battleScreen.hidden = false;
+  }
+
+  function maybeShowBattleScreen() {
+    if (selectors.length < 2) return;
+
+    const selections = selectors.map((item) => item.confirmedSelection());
+    if (selections.every(Boolean)) showBattleScreen(selections[0], selections[1]);
+  }
+
+  editSelectionButton?.addEventListener("click", () => {
+    selectors.forEach((item) => item.unconfirm());
+    showSelectionScreen();
+  });
+
+  selectors = Array.from(document.querySelectorAll("[data-selector]"))
+    .map((root) => selector(root, maybeShowBattleScreen));
 })();
