@@ -9,13 +9,18 @@ Nexy is a GitHub Pages/Jekyll site for selecting and comparing character profile
 - `_includes/character-selector-panel.html` contains the reusable left/right selector panel markup.
 - `_includes/character-data.html` renders the Jekyll data payload for the browser.
 - `assets/css/site.css` contains site styling.
-- `assets/js/character-selector.js` contains the selector behavior.
+- `assets/js/characters/data.js` prepares the browser data payload and shared catalogs.
+- `assets/js/characters/engine.js` resolves stats, powers, effects, tooltips, and battle comparisons.
+- `assets/js/characters/ui.js` contains selector and battle-screen DOM behavior.
 - `_data/characters/entries/*.yml` contains one character profile per file.
 - `_data/characters/entries/empty.yml` contains the safe fallback character.
 - `_data/characters/schema.yml` documents the character data shape and rules.
 - `_data/characters/options/*.yml` contains predefined catalogs such as tiers, powers, media, and classifications.
 - `assets/images/characters/<character-id>/` contains local images for that character.
 - `scripts/validate_characters.rb` validates character data before building.
+- `scripts/test_battle_fixtures.rb` checks small battle-rule fixtures.
+- `test/fixtures/battle_rules.yml` contains battle scoring/status fixture cases.
+- `.github/workflows/ci.yml` runs validation, fixture tests, JS syntax checks, and the production Jekyll build on GitHub.
 
 ## Adding Characters
 
@@ -40,6 +45,18 @@ images:
 ```
 
 The filename is the character entry id. Use lowercase letters, numbers, and hyphens.
+
+## Adding Powers, Equipment, And Attacks
+
+Add reusable options under `_data/characters/options/` first, then reference those option ids from character entry files.
+
+- Use `powers.yml` for reusable powers and per-power variants.
+- Use `resistances.yml` for resistance definitions that point at resisted power ids.
+- Use `equipment.yml` and `attacks.yml` for usable items or attacks/techniques.
+- Use local `effects` on a character key only when that character uses the same catalog power differently.
+- Use `derived_power_rules.yml` for powers granted automatically from stats.
+
+This keeps character files focused on selection identity, key stats, owned powers/resistances, and chosen equipment or attacks.
 
 ## Speed Notes
 
@@ -71,5 +88,11 @@ Run these before pushing changes:
 
 ```bash
 ruby scripts/validate_characters.rb
+ruby scripts/test_battle_fixtures.rb
+node --check assets/js/characters/data.js
+node --check assets/js/characters/engine.js
+node --check assets/js/characters/ui.js
 JEKYLL_ENV=production bundle exec jekyll build
 ```
+
+The same checks run in GitHub Actions on every push and pull request.

@@ -1,0 +1,67 @@
+score_cases:
+  - id: tier-is-excluded-from-score
+    stats:
+      - label: Tier
+        left_rank: 500
+        right_rank: 1
+        scored: false
+      - label: Attack Potency
+        left_rank: 80
+        right_rank: 10
+        scored: true
+        expected_winner: left
+      - label: Speed
+        left_rank: 30
+        right_rank: 70
+        scored: true
+        expected_winner: right
+    expected:
+      left_score: 1
+      right_score: 1
+      winner: tie
+
+  - id: equal-ranks-do-not-score
+    stats:
+      - label: Attack Potency
+        left_rank: 42
+        right_rank: 42
+        scored: true
+        expected_winner: tie
+      - label: Durability
+        left_rank: 44
+        right_rank: 42
+        scored: true
+        expected_winner: left
+    expected:
+      left_score: 1
+      right_score: 0
+      winner: left
+
+  - id: blocked-power-removes-stat-advantage
+    note: "Effective ranks represent the battle state after resisted/nullified powers are removed."
+    stats:
+      - label: Attack Potency
+        left_rank: 10
+        right_rank: 20
+        scored: true
+        expected_winner: right
+      - label: Speed
+        left_rank: 15
+        right_rank: 15
+        scored: true
+        expected_winner: tie
+    expected:
+      left_score: 0
+      right_score: 1
+      winner: right
+
+status_cases:
+  - id: source-power-disabled
+    kind: power
+    status: disabled
+    detail: "Source power is inactive in this battle"
+
+  - id: resisted-power-is-not-active
+    kind: power
+    status: resisted
+    detail: "A matching resistance blocks this power"
