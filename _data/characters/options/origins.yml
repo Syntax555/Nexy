@@ -1,3 +1,6 @@
 - id: marvel-comics
   name: "Marvel Comics"
   media_id: comics
+- id: dc-comics
+  name: "DC Comics"
+  media_id: comics

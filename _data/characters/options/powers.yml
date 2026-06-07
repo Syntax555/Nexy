@@ -380,6 +380,33 @@
         range:
           value: hundreds-of-kilometers
           modifier: normal
+- id: sound-manipulation
+  name: "Sound Manipulation"
+  aliases: []
+  variants:
+    - id: black-canary-canary-cry
+      name: "Canary Cry"
+      inherits_base_grants: true
+      grants:
+        power_refs: []
+        resistance_refs: []
+        magic_level_ids: []
+      effects:
+        - stat_effects:
+            attack_potency:
+              value: small-building
+              modifier: higher
+            range:
+              value: hundreds-of-meters
+              modifier: normal
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: durability-negation
   name: "Durability Negation"
   aliases: []

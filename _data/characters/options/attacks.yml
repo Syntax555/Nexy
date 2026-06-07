@@ -8,3 +8,13 @@
           - id: light-manipulation
             source_variant: dagger-lightforce
         resistance_refs: []
+- id: canary-cry
+  name: "Canary Cry"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: sound-manipulation
+            source_variant: black-canary-canary-cry
+        resistance_refs: []

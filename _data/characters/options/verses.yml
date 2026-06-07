@@ -6,3 +6,7 @@
   name: "Maestro"
   media_id: comics
   source_id: marvel-comics
+- id: dc-post-crisis
+  name: "Post-Crisis"
+  media_id: comics
+  source_id: dc-comics

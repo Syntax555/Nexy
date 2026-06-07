@@ -1,0 +1,56 @@
+name: "Black Canary"
+verse_id: dc-post-crisis
+gender_id: female
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - justice-league-member
+  - vigilante
+keys:
+  - key: post-crisis
+    names:
+      - "Dinah Laurel Drake-Lance"
+    images:
+      - name: "Post-Crisis"
+        image: "assets/images/characters/black-canary/black-canary.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+      - id: acrobatics
+    resistance_refs:
+      - id: mind-manipulation-resistance
+    attack_potency:
+      value: small-building
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic-plus
+      modifier: possibly
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: peak-human
+      modifier: normal
+    striking_strength:
+      value: small-building-level
+      modifier: plus
+    durability:
+      value: small-building
+      modifier: plus
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids:
+      - canary-cry
