@@ -13,9 +13,28 @@
   name: "Shields"
   covers_all: false
   covers_type_ids: []
-- id: planes
+- id: land-vehicles
   power_id: vehicular-mastery
-  name: "Planes"
+  name: "Land Vehicles"
+  description: "The ability to have mastered transport whilst driving on roads, rough terrain, and in vehicles such as cars, bikes, trucks, and tanks."
+  covers_all: false
+  covers_type_ids: []
+- id: air-vehicles
+  power_id: vehicular-mastery
+  name: "Air Vehicles"
+  description: "The ability to pilot aircraft and push them to their limits, including planes and helicopters."
+  covers_all: false
+  covers_type_ids: []
+- id: seaborne-vehicles
+  power_id: vehicular-mastery
+  name: "Seaborne Vehicles"
+  description: "The ability to drive boats, submarines, and ships with little difficulty."
+  covers_all: false
+  covers_type_ids: []
+- id: space-vehicles
+  power_id: vehicular-mastery
+  name: "Space Vehicles"
+  description: "The ability to fly and maneuver ships or shuttles through dangerous hazards and difficult situations."
   covers_all: false
   covers_type_ids: []
 - id: absorption-all

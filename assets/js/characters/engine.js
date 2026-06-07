@@ -730,8 +730,17 @@
   }
 
   function typeTooltipLines(typeIds = [], label = "Types") {
-    const typeNames = nameList(typeIds, "power_types");
-    return typeNames.length ? [`${label}: ${joinText(typeNames)}`] : [];
+    const types = list(typeIds)
+      .map((id) => byId(options.power_types, id))
+      .filter(Boolean);
+    const typeNames = types.map((type) => type.name);
+
+    return [
+      ...(typeNames.length ? [`${label}: ${joinText(typeNames)}`] : []),
+      ...types
+        .filter((type) => type.description)
+        .map((type) => `${type.name}: ${type.description}`)
+    ];
   }
 
   function refScopeTooltipLines(ref = {}, variant = null) {

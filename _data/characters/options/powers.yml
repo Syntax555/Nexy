@@ -62,7 +62,10 @@
   tags:
     - mastery
   type_ids:
-    - planes
+    - land-vehicles
+    - air-vehicles
+    - seaborne-vehicles
+    - space-vehicles
   degree_ids: []
   grants:
     power_refs: []

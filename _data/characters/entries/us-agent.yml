@@ -21,7 +21,7 @@ keys:
       - id: acrobatics
       - id: vehicular-mastery
         type_ids:
-          - planes
+          - air-vehicles
     resistance_refs: []
     attack_potency:
       value: small-building

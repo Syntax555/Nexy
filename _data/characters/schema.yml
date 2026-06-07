@@ -343,12 +343,15 @@ derived:
     vehicle_type_rule: type_ids_describe_which_vehicle_classes_can_be_used
     equipment_or_attack_requirement_rule: use_required_power_refs_with_matching_vehicle_type_ids
     current_vehicle_type_ids:
-      - planes
+      - land-vehicles
+      - air-vehicles
+      - seaborne-vehicles
+      - space-vehicles
     examples:
-      plane_mastery:
+      air_vehicle_mastery:
         id: vehicular-mastery
         type_ids:
-          - planes
+          - air-vehicles
   martial_arts_mastery:
     power_id: martial-arts-mastery
     degree_field: power_refs.martial_arts_degree_id
