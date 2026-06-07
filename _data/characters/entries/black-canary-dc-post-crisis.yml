@@ -1,58 +1,56 @@
-name: "U.S. Agent"
-verse_id: marvel-mainstream
-gender_id: male
+name: "Black Canary"
+verse_id: dc-post-crisis
+gender_id: female
 age:
   value: null
   unknown: true
 classification_ids:
-  - human-mutate
+  - justice-league
+  - vigilante
 keys:
-  - key: modern
+  - key: post-crisis
     names:
-      - "John Walker"
+      - "Dinah Laurel Drake-Lance"
     images:
-      - name: "Modern"
-        image: "assets/images/characters/us-agent/modern.webp"
+      - name: "Post-Crisis"
+        image: "assets/images/characters/black-canary-dc-post-crisis/black-canary.webp"
     power_refs:
       - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
           - all-weapons
       - id: acrobatics
-      - id: vehicular-mastery
-        type_ids:
-          - air-vehicles
-    resistance_refs: []
+    resistance_refs:
+      - id: mind-manipulation-resistance
     attack_potency:
       value: small-building
-      modifier: normal
+      modifier: plus
     attack_speed: null
     combat_speed:
-      value: hypersonic
-      modifier: normal
+      value: hypersonic-plus
+      modifier: possibly
     reaction_speed: null
     travel_speed: null
     flight_speed: null
     lifting_strength:
-      value: class-25
+      value: peak-human
       modifier: normal
     striking_strength:
       value: small-building-level
-      modifier: normal
+      modifier: plus
     durability:
       value: small-building
-      modifier: normal
+      modifier: plus
     stamina:
       value: superhuman
       modifier: normal
     range:
       value: standard-melee-range
       modifier: normal
-    standard_equipment_ids:
-      - glock-pistol
-      - vibranium-shield
+    standard_equipment_ids: []
     optional_equipment_ids: []
     intelligence:
       value: gifted
       modifier: normal
-    attack_ids: []
+    attack_ids:
+      - canary-cry

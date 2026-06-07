@@ -1,45 +1,46 @@
-name: "Black Canary"
-verse_id: dc-post-crisis
-gender_id: female
+name: "Agent Venom"
+verse_id: marvel-mainstream
+gender_id: male
 age:
   value: null
   unknown: true
+  display: "Likely mid-20's"
 classification_ids:
-  - justice-league
-  - vigilante
+  - human-with-symbiote
 keys:
-  - key: post-crisis
+  - key: agent-venom
     names:
-      - "Dinah Laurel Drake-Lance"
+      - "Eugene \"Flash\" Thompson"
     images:
-      - name: "Post-Crisis"
-        image: "assets/images/characters/black-canary/black-canary.webp"
+      - name: "Agent Venom"
+        image: "assets/images/characters/agent-venom-marvel-mainstream/agent-venom.webp"
     power_refs:
-      - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
           - all-weapons
-      - id: acrobatics
+      - id: martial-arts-mastery
     resistance_refs:
-      - id: mind-manipulation-resistance
+      - id: precognition-resistance
+      - id: soul-manipulation-resistance
+      - id: poison-manipulation-resistance
     attack_potency:
-      value: small-building
+      value: large-building
       modifier: plus
     attack_speed: null
     combat_speed:
-      value: hypersonic-plus
-      modifier: possibly
+      value: hypersonic
+      modifier: normal
     reaction_speed: null
     travel_speed: null
     flight_speed: null
     lifting_strength:
-      value: peak-human
+      value: class-m
       modifier: normal
     striking_strength:
-      value: small-building-level
+      value: large-building-level
       modifier: plus
     durability:
-      value: small-building
+      value: large-building
       modifier: plus
     stamina:
       value: superhuman
@@ -47,10 +48,10 @@ keys:
     range:
       value: standard-melee-range
       modifier: normal
-    standard_equipment_ids: []
+    standard_equipment_ids:
+      - m1911
     optional_equipment_ids: []
     intelligence:
       value: gifted
       modifier: normal
-    attack_ids:
-      - canary-cry
+    attack_ids: []

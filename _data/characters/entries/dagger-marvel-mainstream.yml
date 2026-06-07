@@ -14,7 +14,7 @@ keys:
       - "Tandy Bowen"
     images:
       - name: "Dagger"
-        image: "assets/images/characters/dagger/dagger.png"
+        image: "assets/images/characters/dagger-marvel-mainstream/dagger.png"
     power_refs:
       - id: acrobatics
         acrobatics_degree_id: expert

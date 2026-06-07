@@ -2,7 +2,7 @@ storage:
   character_entry_files: "_data/characters/entries/<entry_id>.yml"
   character_entry_id_rule: filename_without_extension
   image_files: "assets/images/characters/<entry_id>/<image-name>.<ext>"
-  image_reference_rule: "Use relative asset paths such as assets/images/characters/ms-marvel/original-costume.webp"
+  image_reference_rule: "Use relative asset paths such as assets/images/characters/ms-marvel-marvel-mainstream/original-costume.webp"
   local_image_validation_rule: local_character_images_must_live_under_the_matching_entry_id_folder
 
 name: string

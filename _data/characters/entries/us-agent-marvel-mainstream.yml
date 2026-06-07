@@ -1,31 +1,31 @@
-name: "Agent Venom"
+name: "U.S. Agent"
 verse_id: marvel-mainstream
 gender_id: male
 age:
   value: null
   unknown: true
-  display: "Likely mid-20's"
 classification_ids:
-  - human-with-symbiote
+  - human-mutate
 keys:
-  - key: agent-venom
+  - key: modern
     names:
-      - "Eugene \"Flash\" Thompson"
+      - "John Walker"
     images:
-      - name: "Agent Venom"
-        image: "assets/images/characters/agent-venom/agent-venom.webp"
+      - name: "Modern"
+        image: "assets/images/characters/us-agent-marvel-mainstream/modern.webp"
     power_refs:
+      - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
           - all-weapons
-      - id: martial-arts-mastery
-    resistance_refs:
-      - id: precognition-resistance
-      - id: soul-manipulation-resistance
-      - id: poison-manipulation-resistance
+      - id: acrobatics
+      - id: vehicular-mastery
+        type_ids:
+          - air-vehicles
+    resistance_refs: []
     attack_potency:
-      value: large-building
-      modifier: plus
+      value: small-building
+      modifier: normal
     attack_speed: null
     combat_speed:
       value: hypersonic
@@ -34,14 +34,14 @@ keys:
     travel_speed: null
     flight_speed: null
     lifting_strength:
-      value: class-m
+      value: class-25
       modifier: normal
     striking_strength:
-      value: large-building-level
-      modifier: plus
+      value: small-building-level
+      modifier: normal
     durability:
-      value: large-building
-      modifier: plus
+      value: small-building
+      modifier: normal
     stamina:
       value: superhuman
       modifier: normal
@@ -49,7 +49,8 @@ keys:
       value: standard-melee-range
       modifier: normal
     standard_equipment_ids:
-      - m1911
+      - glock-pistol
+      - vibranium-shield
     optional_equipment_ids: []
     intelligence:
       value: gifted
