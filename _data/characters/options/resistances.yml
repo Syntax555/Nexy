@@ -28,3 +28,13 @@
   resists_power_ids:
     - soul-manipulation
   resists_effect_ids: []
+- id: precognition-resistance
+  name: "Precognition"
+  resists_power_ids:
+    - precognition
+  resists_effect_ids: []
+- id: poison-manipulation-resistance
+  name: "Poison Manipulation"
+  resists_power_ids:
+    - poison-manipulation
+  resists_effect_ids: []

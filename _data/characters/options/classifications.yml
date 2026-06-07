@@ -2,6 +2,8 @@
   name: "Human"
 - id: human-mutate
   name: "Human Mutate"
+- id: human-with-symbiote
+  name: "Human with a Symbiote"
 - id: justice-league
   name: "Justice League"
 - id: vigilante

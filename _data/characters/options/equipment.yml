@@ -17,6 +17,28 @@
         range:
           value: tens-of-meters
           modifier: normal
+- id: m1911
+  name: "M1911"
+  weapon_type_ids:
+    - gunpowder-handguns
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - gunpowder-handguns
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: subsonic-plus
+          modifier: normal
+        durability:
+          value: street
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal
 - id: vibranium-shield
   name: "Vibranium Shield"
   weapon_type_ids:

@@ -279,6 +279,18 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: precognition
+  name: "Precognition"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: electricity-manipulation
   name: "Electricity Manipulation"
   aliases: []
