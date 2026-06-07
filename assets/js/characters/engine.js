@@ -325,7 +325,7 @@
 
   function characterKey(character, keyId = null) {
     const keys = list(character.keys);
-    return keys.find((key) => key.key === keyId) || keys[0] || list(data.empty_character.keys)[0];
+    return keys.find((key) => key.key === keyId) || keys[0] || {};
   }
 
   function classifications(character) {

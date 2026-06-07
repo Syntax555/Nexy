@@ -21,14 +21,12 @@
       verseId: null,
       characterId: null,
       keyId: null,
-      emptySelected: false,
       confirmed: false
     };
 
     function clearSelection() {
       state.characterId = null;
       state.keyId = null;
-      state.emptySelected = false;
       state.confirmed = false;
     }
 
@@ -43,8 +41,6 @@
     }
 
     function selectedCharacter() {
-      if (state.emptySelected) return data.empty_character;
-
       return data.characters.find((character) => character.entry_id === state.characterId) || null;
     }
 
@@ -76,13 +72,6 @@
         state.step = "character";
       } else if (state.step === "character") {
         clearSelection();
-
-        if (item === data.empty_character) {
-          state.emptySelected = true;
-          state.keyId = list(item.keys)[0]?.key || null;
-          render();
-          return;
-        }
 
         const keys = list(item.keys);
         state.characterId = item.entry_id;
@@ -132,11 +121,15 @@
       choiceLabel.textContent = labels[state.step];
       choiceList.innerHTML = "";
 
-      const choices = state.step === "character" && items.length === 0
-        ? [data.empty_character]
-        : items;
+      if (state.step === "character" && items.length === 0) {
+        const emptyItem = document.createElement("li");
+        emptyItem.className = "choice-empty";
+        emptyItem.textContent = "No characters";
+        choiceList.appendChild(emptyItem);
+        return;
+      }
 
-      choices.forEach((item) => {
+      items.forEach((item) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "choice-button";

@@ -1,7 +1,6 @@
 storage:
   character_entry_files: "_data/characters/entries/<entry_id>.yml"
   character_entry_id_rule: filename_without_extension
-  fallback_entry_id: empty
   image_files: "assets/images/characters/<entry_id>/<image-name>.<ext>"
   image_reference_rule: "Use relative asset paths such as assets/images/characters/ms-marvel/original-costume.webp"
   local_image_validation_rule: local_character_images_must_live_under_the_matching_entry_id_folder
@@ -53,7 +52,7 @@ derived:
     field: images
     rule: base_key_image_choices_are_cosmetic
     effect_override_rule: active_image_effect_can_replace_displayed_key_image_without_changing_key
-    fallback_rule: selected_key_image_then_first_key_image_then_empty
+    fallback_rule: selected_key_image_then_first_key_image_then_no_image
     items:
       name: string
       image: relative_asset_path_or_external_url

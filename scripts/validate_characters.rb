@@ -30,15 +30,12 @@ end
 
 def load_characters_data
   character_entries = load_character_entries
-  empty_character = character_entries.fetch("empty")
   characters = character_entries
-               .reject { |entry_id, _character| entry_id == "empty" }
                .map { |entry_id, character| character.merge("entry_id" => entry_id) }
 
   {
     "schema" => load_yaml(File.join(CHARACTERS_DIR, "schema.yml")),
     "options" => load_options_data,
-    "empty_character" => empty_character.merge("entry_id" => "empty"),
     "characters" => characters
   }
 end
@@ -647,7 +644,7 @@ def validate_character(context, character, sets, entry_id: nil)
 
     key_id = key["key"]
     if key_id.nil? || key_id.to_s.empty?
-      errors << "#{key_context}.key must be present" unless context == "empty_character"
+      errors << "#{key_context}.key must be present"
     elsif seen_keys.key?(key_id)
       errors << "#{context}.keys has duplicate key #{key_id.inspect}"
     else
@@ -780,8 +777,6 @@ end
 Array(options["attacks"]).each_with_index do |entry, index|
   errors.concat(validate_catalog_entry("options.attacks[#{index}]", entry, sets, :attack))
 end
-
-errors.concat(validate_character("empty_character", data["empty_character"], sets, entry_id: "empty"))
 
 characters = data["characters"]
 

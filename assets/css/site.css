@@ -158,6 +158,16 @@ button {
   gap: 10px;
 }
 
+.choice-empty {
+  border: 1px dashed #c7d2d8;
+  border-radius: 8px;
+  color: #667480;
+  padding: 14px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .choice-button {
   width: 100%;
   min-height: 50px;

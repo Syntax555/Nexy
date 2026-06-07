@@ -13,7 +13,6 @@ Nexy is a GitHub Pages/Jekyll site for selecting and comparing character profile
 - `assets/js/characters/engine.js` resolves stats, powers, effects, tooltips, and battle comparisons.
 - `assets/js/characters/ui.js` contains selector and battle-screen DOM behavior.
 - `_data/characters/entries/*.yml` contains one character profile per file.
-- `_data/characters/entries/empty.yml` contains the safe fallback character.
 - `_data/characters/schema.yml` documents the character data shape and rules.
 - `_data/characters/options/*.yml` contains predefined catalogs such as tiers, powers, media, and classifications.
 - `assets/images/characters/<character-id>/` contains local images for that character.

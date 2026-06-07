@@ -1,6 +1,5 @@
 (() => {
   const data = JSON.parse(document.getElementById("character-data").textContent);
-  data.empty_character = normalizeCharacterEntry("empty", data.empty_character);
   data.characters = normalizeCharacterEntries(data.characters);
 
   const options = data.options;
@@ -81,7 +80,7 @@
 
     return optionMaps.get(items)?.get(id);
   };
-  const title = (value) => value || "Empty Character";
+  const title = (value) => value || "";
   const list = (value) => Array.isArray(value) ? value : [];
   const idListKey = (ids) => list(ids).slice().sort().join(",");
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -100,7 +99,6 @@
     if (Array.isArray(entries)) return entries;
 
     return Object.entries(entries || {})
-      .filter(([entryId]) => entryId !== "empty")
       .map(([entryId, character]) => normalizeCharacterEntry(entryId, character));
   }
 
