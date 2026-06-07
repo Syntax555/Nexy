@@ -182,6 +182,25 @@ button {
   text-align: left;
 }
 
+.choice-title,
+.choice-subtitle {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.choice-title {
+  color: #182631;
+  font-weight: 700;
+}
+
+.choice-subtitle {
+  margin-top: 4px;
+  color: #667480;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
 .choice-button:hover,
 .choice-button:focus-visible,
 .choice-button.is-active {

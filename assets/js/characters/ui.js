@@ -6,6 +6,7 @@
     options,
     renderBattle,
     renderCard,
+    escapeHtml,
     title
   } = window.NexyCharacters;
   function selector(root, onSelectionChange = () => {}) {
@@ -50,6 +51,30 @@
       if (state.step === "key" && !state.keyId) return null;
 
       return character;
+    }
+
+    function uniqueNames(names) {
+      return Array.from(new Set(
+        list(names)
+          .map((name) => String(name || "").trim())
+          .filter(Boolean)
+      ));
+    }
+
+    function choiceSubtitle(item) {
+      if (state.step === "character") {
+        return uniqueNames(list(item.keys).flatMap((key) => list(key.names))).join(" / ");
+      }
+
+      if (state.step === "key") {
+        return uniqueNames(item.names).join(" / ");
+      }
+
+      return "";
+    }
+
+    function choiceTitle(item) {
+      return state.step === "key" ? title(item.key) : title(item.name);
     }
 
     function choose(item) {
@@ -131,9 +156,13 @@
 
       items.forEach((item) => {
         const button = document.createElement("button");
+        const subtitle = choiceSubtitle(item);
         button.type = "button";
         button.className = "choice-button";
-        button.textContent = state.step === "key" ? title(item.key) : title(item.name);
+        button.innerHTML = `
+          <span class="choice-title">${escapeHtml(choiceTitle(item))}</span>
+          ${subtitle ? `<span class="choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+        `;
         button.addEventListener("click", () => choose(item));
 
         choiceList.appendChild(document.createElement("li")).appendChild(button);
