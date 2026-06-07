@@ -1,0 +1,50 @@
+name: "Quicksilver"
+verse_id: marvel-ultimate
+gender_id: male
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human
+  - superhero
+keys:
+  - key: quicksilver
+    names:
+      - "Pietro Lensherr"
+    images:
+      - name: "Quicksilver"
+        image: "assets/images/characters/quicksilver-marvel-ultimate/quicksilver.webp"
+    power_refs:
+      - id: acrobatics
+    resistance_refs: []
+    attack_potency:
+      value: street
+      modifier: at-least
+    attack_speed: null
+    combat_speed:
+      value: massively-hypersonic-plus
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: street-level
+      modifier: at-least
+    durability:
+      value: street
+      modifier: at-least
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []
