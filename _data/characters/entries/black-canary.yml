@@ -5,7 +5,7 @@ age:
   value: null
   unknown: true
 classification_ids:
-  - justice-league-member
+  - justice-league
   - vigilante
 keys:
   - key: post-crisis
