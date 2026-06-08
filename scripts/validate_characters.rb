@@ -433,6 +433,27 @@ def validate_resistance_refs(context, refs, sets)
   errors
 end
 
+def validate_equipment_refs(context, refs, sets)
+  return [] if refs.nil?
+  return ["#{context} must be a list"] unless refs.is_a?(Array)
+
+  errors = []
+
+  refs.each_with_index do |ref, index|
+    ref_context = "#{context}[#{index}]"
+
+    unless ref.is_a?(Hash)
+      errors << "#{ref_context} must be a map"
+      next
+    end
+
+    errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:equipment], "equipment"))
+    validate_effect_list("#{ref_context}.effects", ref["effects"], sets, errors)
+  end
+
+  errors
+end
+
 def validate_effect(context, effect, sets)
   return ["#{context} must be a map"] unless effect.is_a?(Hash)
 
@@ -655,7 +676,9 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_power_refs("#{key_context}.power_refs", key["power_refs"] || [], sets))
     errors.concat(validate_resistance_refs("#{key_context}.resistance_refs", key["resistance_refs"] || [], sets))
     errors.concat(validate_ref_list("#{key_context}.standard_equipment_ids", key["standard_equipment_ids"], sets[:equipment], "equipment"))
+    errors.concat(validate_equipment_refs("#{key_context}.standard_equipment_refs", key["standard_equipment_refs"], sets))
     errors.concat(validate_ref_list("#{key_context}.optional_equipment_ids", key["optional_equipment_ids"], sets[:equipment], "equipment"))
+    errors.concat(validate_equipment_refs("#{key_context}.optional_equipment_refs", key["optional_equipment_refs"], sets))
     errors.concat(validate_ref_list("#{key_context}.attack_ids", key["attack_ids"], sets[:attacks], "attack"))
 
     errors.concat(validate_ranked_stat("#{key_context}.attack_potency", key["attack_potency"], sets[:attack_durability_tiers], sets[:stat_modifiers]))

@@ -397,16 +397,40 @@
     }));
   }
 
-  function usableItemEffects(ids, catalogName, ownedPowerRefs) {
-    return catalogItems(ids, catalogName)
+  function itemRefs(ids = [], refs = []) {
+    return [
+      ...list(ids).map((id) => ({ id })),
+      ...list(refs)
+    ].filter((ref) => ref?.id);
+  }
+
+  function catalogItemFromRef(ref, catalogName) {
+    const item = byId(options[catalogName], ref.id);
+    if (!item) return null;
+
+    return {
+      ...item,
+      effects: Array.isArray(ref.effects) ? ref.effects : item.effects,
+      ref
+    };
+  }
+
+  function catalogItemsFromRefs(refs, catalogName) {
+    return list(refs)
+      .map((ref) => catalogItemFromRef(ref, catalogName))
+      .filter(Boolean);
+  }
+
+  function usableItemEffects(ids, refs, catalogName, ownedPowerRefs) {
+    return catalogItemsFromRefs(itemRefs(ids, refs), catalogName)
       .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
       .flatMap((item) => list(item.effects));
   }
 
   function activeItemEffectsForPowerRefs(key, ownedPowerRefs) {
     return [
-      ...usableItemEffects(key.standard_equipment_ids, "equipment", ownedPowerRefs),
-      ...usableItemEffects(key.attack_ids, "attacks", ownedPowerRefs)
+      ...usableItemEffects(key.standard_equipment_ids, key.standard_equipment_refs, "equipment", ownedPowerRefs),
+      ...usableItemEffects(key.attack_ids, [], "attacks", ownedPowerRefs)
     ];
   }
 
@@ -990,8 +1014,8 @@
     return lines;
   }
 
-  function catalogTagItems(ids, catalogName, kind, key = null) {
-    return catalogItems(ids, catalogName)
+  function catalogTagItems(ids, refs, catalogName, kind, key = null) {
+    return catalogItemsFromRefs(itemRefs(ids, refs), catalogName)
       .map((item) => ({
         kind,
         id: item.id,
@@ -1002,12 +1026,12 @@
       }));
   }
 
-  function equipmentTagItems(ids, key = null) {
-    return catalogTagItems(ids, "equipment", "equipment", key);
+  function equipmentTagItems(ids, refs, key = null) {
+    return catalogTagItems(ids, refs, "equipment", "equipment", key);
   }
 
   function attackTagItems(key) {
-    return catalogTagItems(key.attack_ids, "attacks", "attack", key);
+    return catalogTagItems(key.attack_ids, [], "attacks", "attack", key);
   }
 
   function statsForKey(key) {
@@ -1095,8 +1119,8 @@
       sections: [
         ["Powers", powerTagItems(baseKey, resolvedPowerRefs)],
         ["Resistances", resistanceTagItems(resolvedResistanceRefs)],
-        ["Standard Equipment", equipmentTagItems(baseKey.standard_equipment_ids, baseKey)],
-        ["Optional Equipment", equipmentTagItems(baseKey.optional_equipment_ids, baseKey)],
+        ["Standard Equipment", equipmentTagItems(baseKey.standard_equipment_ids, baseKey.standard_equipment_refs, baseKey)],
+        ["Optional Equipment", equipmentTagItems(baseKey.optional_equipment_ids, baseKey.optional_equipment_refs, baseKey)],
         ["Attacks/Techniques", attackTagItems(baseKey)]
       ]
     };

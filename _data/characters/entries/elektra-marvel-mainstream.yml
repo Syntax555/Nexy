@@ -1,0 +1,75 @@
+name: "Elektra"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+  display: "In her late 20s or early 30s"
+classification_ids:
+  - mercenary
+keys:
+  - key: elektra
+    names:
+      - "Elektra Natchios"
+    images:
+      - name: "Elektra"
+        image: "assets/images/characters/elektra-marvel-mainstream/elektra.webp"
+    power_refs:
+      - id: martial-arts-mastery
+        martial_arts_degree_id: master
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+      - id: acrobatics
+      - id: vehicular-mastery
+        type_ids:
+          - land-vehicles
+    resistance_refs:
+      - id: mind-manipulation-resistance
+    attack_potency:
+      value: wall
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-k
+      modifier: at-most
+    striking_strength:
+      value: wall-level
+      modifier: plus
+    durability:
+      value: wall
+      modifier: plus
+    stamina:
+      value: peak-human
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    standard_equipment_refs:
+      - id: sai
+        effects:
+          - stat_effects:
+              attack_potency:
+                value: street
+                modifier: higher
+              combat_speed:
+                value: average-human
+                modifier: normal
+              durability:
+                value: street
+                modifier: normal
+              range:
+                value: tens-of-meters
+                modifier: normal
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: at-least
+    attack_ids: []

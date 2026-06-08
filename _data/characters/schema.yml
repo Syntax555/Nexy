@@ -313,6 +313,18 @@ derived:
     rule: empty_required_power_refs_means_usable
     power_match_rule: same_power_id_and_owned_coverage_rank_gte_required_coverage_rank
     type_match_rule: owned_power_type_ids_must_cover_required_power_type_ids
+  equipment_refs:
+    id_list_fields:
+      - standard_equipment_ids
+      - optional_equipment_ids
+    local_ref_fields:
+      - standard_equipment_refs
+      - optional_equipment_refs
+    ref_rule: equipment_refs_can_override_catalog_effects_for_a_specific_character_key
+    display_rule: equipment_refs_display_as_the_catalog_equipment_name
+    examples:
+      sai_standard_catalog_range: extended_melee_range
+      elektra_sai_ref_range: tens_of_meters
   weapon_mastery:
     power_id: weapon-mastery
     form_field: power_refs.type_ids
@@ -329,10 +341,16 @@ derived:
     resistance_rule: weapon_effects_are_resisted_by_granted_power_or_effect_refs_not_weapon_type
     examples:
       all_weapons_mastery_uses_any_weapon_equipment: allowed
+      firearms_mastery_uses_gunpowder_handguns: allowed
+      melee_weapons_mastery_uses_sharp_weapons: allowed
       gunpowder_handguns_equipment_requirement:
         id: weapon-mastery
         type_ids:
           - gunpowder-handguns
+      sharp_weapons_equipment_requirement:
+        id: weapon-mastery
+        type_ids:
+          - sharp-weapons
       shield_equipment_requirement:
         id: weapon-mastery
         type_ids:
@@ -565,6 +583,9 @@ derived:
           source_variant: string_or_null
           condition: string_or_null
       effects: list
+    equipment_ref:
+      id: equipment_id
+      effects: list_or_null
     attack_or_technique:
       id: string
       name: string
@@ -632,7 +653,13 @@ keys:
       value: range_tier_id
       modifier: stat_modifier_id_or_null_defaults_to_normal
     standard_equipment_ids: list
+    standard_equipment_refs:
+      - id: equipment_id
+        effects: list_or_null
     optional_equipment_ids: list
+    optional_equipment_refs:
+      - id: equipment_id
+        effects: list_or_null
     intelligence:
       value: intelligence_tier_id
       modifier: stat_modifier_id_or_null_defaults_to_normal

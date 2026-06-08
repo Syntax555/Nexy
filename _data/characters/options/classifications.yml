@@ -6,6 +6,8 @@
   name: "Human with a Symbiote"
 - id: superhero
   name: "Superhero"
+- id: mercenary
+  name: "Mercenary"
 - id: justice-league
   name: "Justice League"
 - id: vigilante

@@ -39,6 +39,28 @@
         range:
           value: tens-of-meters
           modifier: normal
+- id: sai
+  name: "Sai"
+  weapon_type_ids:
+    - sharp-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - sharp-weapons
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: average-human
+          modifier: normal
+        durability:
+          value: street
+          modifier: normal
+        range:
+          value: extended-melee-range
+          modifier: normal
 - id: vibranium-shield
   name: "Vibranium Shield"
   weapon_type_ids:

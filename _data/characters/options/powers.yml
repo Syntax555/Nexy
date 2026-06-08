@@ -47,8 +47,13 @@
     - mastery
   type_ids:
     - all-weapons
+    - firearms
     - gunpowder-handguns
+    - melee-weapons
+    - blunt-weapons
+    - sharp-weapons
     - shields
+    - armour
   degree_ids: []
   grants:
     power_refs: []

@@ -3,14 +3,44 @@
   name: "All Weapons"
   covers_all: true
   covers_type_ids: []
+- id: firearms
+  power_id: weapon-mastery
+  name: "Firearms"
+  covers_all: false
+  covers_type_ids:
+    - gunpowder-handguns
 - id: gunpowder-handguns
   power_id: weapon-mastery
   name: "Gunpowder Handguns"
   covers_all: false
   covers_type_ids: []
+- id: melee-weapons
+  power_id: weapon-mastery
+  name: "Melee Weapons"
+  covers_all: false
+  covers_type_ids:
+    - blunt-weapons
+    - sharp-weapons
+    - shields
+    - armour
+- id: blunt-weapons
+  power_id: weapon-mastery
+  name: "Blunt Weapons"
+  covers_all: false
+  covers_type_ids: []
+- id: sharp-weapons
+  power_id: weapon-mastery
+  name: "Sharp Weapons"
+  covers_all: false
+  covers_type_ids: []
 - id: shields
   power_id: weapon-mastery
   name: "Shields"
+  covers_all: false
+  covers_type_ids: []
+- id: armour
+  power_id: weapon-mastery
+  name: "Armour"
   covers_all: false
   covers_type_ids: []
 - id: land-vehicles
