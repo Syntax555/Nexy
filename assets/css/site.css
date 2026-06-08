@@ -148,6 +148,7 @@ button {
   display: grid;
   gap: 8px;
   margin-bottom: 12px;
+  position: relative;
 }
 
 .choice-search-label {
@@ -167,6 +168,35 @@ button {
 .choice-filter-grid {
   display: grid;
   gap: 8px;
+}
+
+.choice-filter-popover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: 12px;
+  border: 1px solid #c8d3d9;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(21, 32, 41, 0.18);
+  padding: 12px;
+}
+
+.choice-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.choice-filter-header span {
+  color: #203342;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .choice-filter-field {
@@ -231,10 +261,34 @@ button {
 }
 
 .filter-button:hover,
-.filter-button:focus-visible {
+.filter-button:focus-visible,
+.filter-button.is-active {
   border-color: #7892a1;
   background: #edf4f7;
   outline: none;
+}
+
+.filter-clear-button {
+  border: 0;
+  background: transparent;
+  color: #31556c;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0;
+}
+
+.filter-clear-button:hover,
+.filter-clear-button:focus-visible {
+  color: #162029;
+  outline: none;
+  text-decoration: underline;
+}
+
+.filter-clear-button:disabled {
+  color: #96a3ad;
+  cursor: default;
+  text-decoration: none;
 }
 
 .choice-list,

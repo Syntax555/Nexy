@@ -15,6 +15,9 @@
     const choiceList = root.querySelector("[data-choice-list]");
     const searchShell = root.querySelector("[data-choice-search-shell]");
     const searchInput = root.querySelector("[data-choice-search]");
+    const filterButton = root.querySelector("[data-choice-filter]");
+    const filterPopover = root.querySelector("[data-filter-popover]");
+    const filterClearButton = root.querySelector("[data-filter-clear]");
     const filterControls = {
       gender: root.querySelector("[data-filter-gender]"),
       age: root.querySelector("[data-filter-age]"),
@@ -34,6 +37,7 @@
       genderFilterId: "",
       ageFilter: "",
       classificationFilterId: "",
+      filtersOpen: false,
       confirmed: false
     };
 
@@ -48,6 +52,7 @@
       state.genderFilterId = "";
       state.ageFilter = "";
       state.classificationFilterId = "";
+      state.filtersOpen = false;
     }
 
     function stepItems() {
@@ -126,6 +131,14 @@
       );
     }
 
+    function activeMetadataFilterCount() {
+      return [
+        state.genderFilterId,
+        state.ageFilter,
+        state.classificationFilterId
+      ].filter(Boolean).length;
+    }
+
     function choiceSubtitle(item) {
       if (state.step === "character") {
         return uniqueNames(list(item.keys).flatMap((key) => list(key.names))).join(" / ");
@@ -165,6 +178,7 @@
         state.step = "character";
       } else if (state.step === "character") {
         clearSelection();
+        state.filtersOpen = false;
 
         const keys = list(item.keys);
         state.characterId = item.entry_id;
@@ -216,6 +230,7 @@
 
       if (searchShell) searchShell.hidden = state.step !== "character";
       renderFilters();
+      renderFilterPopover();
       if (searchInput && searchInput.value !== state.characterQuery) {
         searchInput.value = state.characterQuery;
       }
@@ -279,7 +294,10 @@
     }
 
     function renderFilters() {
-      if (state.step !== "character") return;
+      if (state.step !== "character") {
+        state.filtersOpen = false;
+        return;
+      }
 
       const characters = verseCharacters();
       state.genderFilterId = populateSelect(
@@ -303,6 +321,24 @@
         ),
         state.classificationFilterId
       );
+    }
+
+    function renderFilterPopover() {
+      const filterCount = activeMetadataFilterCount();
+
+      if (filterButton) {
+        filterButton.textContent = filterCount ? `Filter (${filterCount})` : "Filter";
+        filterButton.classList.toggle("is-active", filterCount > 0);
+        filterButton.setAttribute("aria-expanded", state.filtersOpen ? "true" : "false");
+      }
+
+      if (filterPopover) {
+        filterPopover.hidden = state.step !== "character" || !state.filtersOpen;
+      }
+
+      if (filterClearButton) {
+        filterClearButton.disabled = filterCount === 0;
+      }
     }
 
     function render() {
@@ -337,6 +373,15 @@
       render();
     });
     backButton.addEventListener("click", back);
+
+    function clearMetadataFilters() {
+      state.genderFilterId = "";
+      state.ageFilter = "";
+      state.classificationFilterId = "";
+      state.confirmed = false;
+      render();
+    }
+
     function applyCharacterFilters() {
       state.characterQuery = searchInput?.value || "";
       state.genderFilterId = filterControls.gender?.value || "";
@@ -349,6 +394,11 @@
 
       render();
     }
+    filterButton?.addEventListener("click", () => {
+      state.filtersOpen = !state.filtersOpen;
+      renderFilterPopover();
+    });
+    filterClearButton?.addEventListener("click", clearMetadataFilters);
     searchShell?.addEventListener("submit", (event) => {
       event.preventDefault();
       applyCharacterFilters();
@@ -356,6 +406,19 @@
     });
     searchInput?.addEventListener("input", applyCharacterFilters);
     Object.values(filterControls).forEach((control) => control?.addEventListener("change", applyCharacterFilters));
+    document.addEventListener("click", (event) => {
+      if (!state.filtersOpen || root.contains(event.target)) return;
+
+      state.filtersOpen = false;
+      renderFilterPopover();
+    });
+    root.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !state.filtersOpen) return;
+
+      state.filtersOpen = false;
+      renderFilterPopover();
+      filterButton?.focus();
+    });
     render();
 
     return {
