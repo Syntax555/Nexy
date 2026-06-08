@@ -1,6 +1,7 @@
 (() => {
   const {
     battleResultHtml,
+    byId,
     data,
     list,
     options,
@@ -14,6 +15,11 @@
     const choiceList = root.querySelector("[data-choice-list]");
     const searchShell = root.querySelector("[data-choice-search-shell]");
     const searchInput = root.querySelector("[data-choice-search]");
+    const filterControls = {
+      gender: root.querySelector("[data-filter-gender]"),
+      age: root.querySelector("[data-filter-age]"),
+      classification: root.querySelector("[data-filter-classification]")
+    };
     const backButton = root.querySelector("[data-back]");
     const confirmButton = root.querySelector("[data-confirm]");
     const card = root.querySelector("[data-character-card]");
@@ -25,6 +31,9 @@
       characterId: null,
       keyId: null,
       characterQuery: "",
+      genderFilterId: "",
+      ageFilter: "",
+      classificationFilterId: "",
       confirmed: false
     };
 
@@ -32,6 +41,13 @@
       state.characterId = null;
       state.keyId = null;
       state.confirmed = false;
+    }
+
+    function clearCharacterFilters() {
+      state.characterQuery = "";
+      state.genderFilterId = "";
+      state.ageFilter = "";
+      state.classificationFilterId = "";
     }
 
     function stepItems() {
@@ -76,12 +92,38 @@
       ].map(normalizedSearchText).join(" ");
     }
 
-    function filteredCharacters() {
-      const query = normalizedSearchText(state.characterQuery);
-      const characters = data.characters.filter((character) => character.verse_id === state.verseId);
+    function ageLabel(character) {
+      const age = character.age || {};
+      if (age.display) return String(age.display);
+      if (age.value !== undefined && age.value !== null && age.value !== "") return String(age.value);
+      return "Unknown";
+    }
 
-      if (!query) return characters;
-      return characters.filter((character) => characterSearchText(character).includes(query));
+    function verseCharacters() {
+      return data.characters.filter((character) => character.verse_id === state.verseId);
+    }
+
+    function characterMatchesFilters(character) {
+      const query = normalizedSearchText(state.characterQuery);
+      if (query && !characterSearchText(character).includes(query)) return false;
+      if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
+      if (state.ageFilter && ageLabel(character) !== state.ageFilter) return false;
+      if (state.classificationFilterId && !list(character.classification_ids).includes(state.classificationFilterId)) return false;
+
+      return true;
+    }
+
+    function filteredCharacters() {
+      return verseCharacters().filter(characterMatchesFilters);
+    }
+
+    function hasActiveCharacterFilter() {
+      return Boolean(
+        normalizedSearchText(state.characterQuery) ||
+        state.genderFilterId ||
+        state.ageFilter ||
+        state.classificationFilterId
+      );
     }
 
     function choiceSubtitle(item) {
@@ -107,18 +149,18 @@
         state.mediaId = item.id;
         state.originId = null;
         state.verseId = null;
-        state.characterQuery = "";
+        clearCharacterFilters();
         clearSelection();
         state.step = "origin";
       } else if (state.step === "origin") {
         state.originId = item.id;
         state.verseId = null;
-        state.characterQuery = "";
+        clearCharacterFilters();
         clearSelection();
         state.step = "verse";
       } else if (state.step === "verse") {
         state.verseId = item.id;
-        state.characterQuery = "";
+        clearCharacterFilters();
         clearSelection();
         state.step = "character";
       } else if (state.step === "character") {
@@ -150,7 +192,7 @@
       } else if (state.step === "character") {
         state.step = "verse";
         state.verseId = null;
-        state.characterQuery = "";
+        clearCharacterFilters();
         clearSelection();
       } else {
         state.step = "character";
@@ -161,7 +203,6 @@
     }
 
     function renderChoices() {
-      const items = stepItems();
       const labels = {
         media: "Media",
         origin: "Origin",
@@ -174,14 +215,17 @@
       choiceList.innerHTML = "";
 
       if (searchShell) searchShell.hidden = state.step !== "character";
+      renderFilters();
       if (searchInput && searchInput.value !== state.characterQuery) {
         searchInput.value = state.characterQuery;
       }
 
+      const items = stepItems();
+
       if (state.step === "character" && items.length === 0) {
         const emptyItem = document.createElement("li");
         emptyItem.className = "choice-empty";
-        emptyItem.textContent = normalizedSearchText(state.characterQuery) ? "No matching characters" : "No characters";
+        emptyItem.textContent = hasActiveCharacterFilter() ? "No matching characters" : "No characters";
         choiceList.appendChild(emptyItem);
         return;
       }
@@ -199,6 +243,66 @@
 
         choiceList.appendChild(document.createElement("li")).appendChild(button);
       });
+    }
+
+    function optionLabel(itemsById, id) {
+      return byId(itemsById, id)?.name || title(id);
+    }
+
+    function populateSelect(select, defaultLabel, choices, selectedValue) {
+      if (!select) return "";
+
+      const validValues = new Set(choices.map((choice) => choice.value));
+      const value = validValues.has(selectedValue) ? selectedValue : "";
+
+      select.innerHTML = "";
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = defaultLabel;
+      select.appendChild(defaultOption);
+
+      choices.forEach((choice) => {
+        const option = document.createElement("option");
+        option.value = choice.value;
+        option.textContent = choice.label;
+        select.appendChild(option);
+      });
+
+      select.value = value;
+      return value;
+    }
+
+    function uniqueSortedChoices(values, labelForValue) {
+      return Array.from(new Set(values.filter(Boolean)))
+        .map((value) => ({ value, label: labelForValue(value) }))
+        .sort((left, right) => left.label.localeCompare(right.label));
+    }
+
+    function renderFilters() {
+      if (state.step !== "character") return;
+
+      const characters = verseCharacters();
+      state.genderFilterId = populateSelect(
+        filterControls.gender,
+        "All genders",
+        uniqueSortedChoices(characters.map((character) => character.gender_id), (id) => optionLabel(options.genders, id)),
+        state.genderFilterId
+      );
+      state.ageFilter = populateSelect(
+        filterControls.age,
+        "All ages",
+        uniqueSortedChoices(characters.map(ageLabel), (age) => age),
+        state.ageFilter
+      );
+      state.classificationFilterId = populateSelect(
+        filterControls.classification,
+        "All classifications",
+        uniqueSortedChoices(
+          characters.flatMap((character) => list(character.classification_ids)),
+          (id) => optionLabel(options.classifications, id)
+        ),
+        state.classificationFilterId
+      );
     }
 
     function render() {
@@ -233,16 +337,25 @@
       render();
     });
     backButton.addEventListener("click", back);
+    function applyCharacterFilters() {
+      state.characterQuery = searchInput?.value || "";
+      state.genderFilterId = filterControls.gender?.value || "";
+      state.ageFilter = filterControls.age?.value || "";
+      state.classificationFilterId = filterControls.classification?.value || "";
+      state.confirmed = false;
+
+      const character = selectedCharacter();
+      if (character && !characterMatchesFilters(character)) clearSelection();
+
+      render();
+    }
     searchShell?.addEventListener("submit", (event) => {
       event.preventDefault();
-      state.characterQuery = searchInput?.value || "";
-      renderChoices();
+      applyCharacterFilters();
       searchInput?.focus();
     });
-    searchInput?.addEventListener("input", () => {
-      state.characterQuery = searchInput.value;
-      renderChoices();
-    });
+    searchInput?.addEventListener("input", applyCharacterFilters);
+    Object.values(filterControls).forEach((control) => control?.addEventListener("change", applyCharacterFilters));
     render();
 
     return {
