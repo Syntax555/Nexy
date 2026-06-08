@@ -93,15 +93,17 @@
       return [
         character.name,
         character.entry_id,
+        ...ageFilterValues(character),
         ...list(character.keys).flatMap((key) => [key.key, ...list(key.names)])
       ].map(normalizedSearchText).join(" ");
     }
 
-    function ageLabel(character) {
-      const age = character.age || {};
-      if (age.display) return String(age.display);
-      if (age.value !== undefined && age.value !== null && age.value !== "") return String(age.value);
-      return "Unknown";
+    function ageFilterValues(character) {
+      return list(character.age_filter_values).map((value) => String(value));
+    }
+
+    function ageFilterLabel(value) {
+      return value === "unknown" ? "Unknown" : value;
     }
 
     function verseCharacters() {
@@ -112,7 +114,7 @@
       const query = normalizedSearchText(state.characterQuery);
       if (query && !characterSearchText(character).includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
-      if (state.ageFilter && ageLabel(character) !== state.ageFilter) return false;
+      if (state.ageFilter && !ageFilterValues(character).includes(state.ageFilter)) return false;
       if (state.classificationFilterId && !list(character.classification_ids).includes(state.classificationFilterId)) return false;
 
       return true;
@@ -293,6 +295,17 @@
         .sort((left, right) => left.label.localeCompare(right.label));
     }
 
+    function ageChoices(characters) {
+      return Array.from(new Set(characters.flatMap(ageFilterValues).filter(Boolean)))
+        .sort((left, right) => {
+          if (left === "unknown") return 1;
+          if (right === "unknown") return -1;
+
+          return Number(left) - Number(right);
+        })
+        .map((value) => ({ value, label: ageFilterLabel(value) }));
+    }
+
     function renderFilters() {
       if (state.step !== "character") {
         state.filtersOpen = false;
@@ -309,7 +322,7 @@
       state.ageFilter = populateSelect(
         filterControls.age,
         "All ages",
-        uniqueSortedChoices(characters.map(ageLabel), (age) => age),
+        ageChoices(characters),
         state.ageFilter
       );
       state.classificationFilterId = populateSelect(

@@ -91,8 +91,61 @@
     "'": "&#39;"
   }[char]));
 
+  function integerFrom(value) {
+    if (value === null || value === undefined || value === "") return null;
+
+    const number = Number(value);
+    return Number.isInteger(number) && number >= 0 ? number : null;
+  }
+
+  function addAgeRange(values, start, end) {
+    for (let age = start; age <= end; age += 1) values.add(age);
+  }
+
+  function addDecadeAgeRange(values, decade, qualifier) {
+    if (!Number.isInteger(decade) || decade < 0) return;
+
+    if (qualifier === "early") {
+      addAgeRange(values, decade, decade + 3);
+    } else if (qualifier === "mid" || qualifier === "middle") {
+      addAgeRange(values, decade + 4, decade + 6);
+    } else if (qualifier === "late") {
+      addAgeRange(values, decade + 7, decade + 9);
+    } else {
+      addAgeRange(values, decade, decade + 9);
+    }
+  }
+
+  function ageFilterValues(age = {}) {
+    const source = age || {};
+    const values = new Set();
+    const exactValue = integerFrom(source.value);
+
+    if (exactValue !== null) values.add(exactValue);
+
+    const text = String(source.display || "").toLowerCase();
+    const decadePattern = /\b(early|mid|middle|late)?\s*-?\s*(\d{1,3})\s*'?\s*s\b/g;
+    const exactPattern = /\b(\d{1,3})(?!\s*'?\s*s)\b/g;
+
+    for (const match of text.matchAll(decadePattern)) {
+      addDecadeAgeRange(values, Number(match[2]), match[1] || "");
+    }
+
+    for (const match of text.matchAll(exactPattern)) {
+      const exactAge = integerFrom(match[1]);
+      if (exactAge !== null) values.add(exactAge);
+    }
+
+    if (values.size > 0) return Array.from(values).sort((left, right) => left - right);
+    return source.unknown ? ["unknown"] : [];
+  }
+
   function normalizeCharacterEntry(entryId, character) {
-    return { ...character, entry_id: entryId };
+    return {
+      ...character,
+      entry_id: entryId,
+      age_filter_values: ageFilterValues(character.age)
+    };
   }
 
   function normalizeCharacterEntries(entries) {
