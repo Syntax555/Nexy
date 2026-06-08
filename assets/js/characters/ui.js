@@ -12,6 +12,8 @@
   function selector(root, onSelectionChange = () => {}) {
     const choiceLabel = root.querySelector("[data-choice-label]");
     const choiceList = root.querySelector("[data-choice-list]");
+    const searchShell = root.querySelector("[data-choice-search-shell]");
+    const searchInput = root.querySelector("[data-choice-search]");
     const backButton = root.querySelector("[data-back]");
     const confirmButton = root.querySelector("[data-confirm]");
     const card = root.querySelector("[data-character-card]");
@@ -22,6 +24,7 @@
       verseId: null,
       characterId: null,
       keyId: null,
+      characterQuery: "",
       confirmed: false
     };
 
@@ -35,7 +38,7 @@
       if (state.step === "media") return options.media;
       if (state.step === "origin") return options.origins.filter((origin) => origin.media_id === state.mediaId);
       if (state.step === "verse") return options.verses.filter((verse) => verse.media_id === state.mediaId && verse.source_id === state.originId);
-      if (state.step === "character") return data.characters.filter((character) => character.verse_id === state.verseId);
+      if (state.step === "character") return filteredCharacters();
 
       const character = selectedCharacter();
       return character ? list(character.keys) : [];
@@ -61,6 +64,26 @@
       ));
     }
 
+    function normalizedSearchText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function characterSearchText(character) {
+      return [
+        character.name,
+        character.entry_id,
+        ...list(character.keys).flatMap((key) => [key.key, ...list(key.names)])
+      ].map(normalizedSearchText).join(" ");
+    }
+
+    function filteredCharacters() {
+      const query = normalizedSearchText(state.characterQuery);
+      const characters = data.characters.filter((character) => character.verse_id === state.verseId);
+
+      if (!query) return characters;
+      return characters.filter((character) => characterSearchText(character).includes(query));
+    }
+
     function choiceSubtitle(item) {
       if (state.step === "character") {
         return uniqueNames(list(item.keys).flatMap((key) => list(key.names))).join(" / ");
@@ -84,15 +107,18 @@
         state.mediaId = item.id;
         state.originId = null;
         state.verseId = null;
+        state.characterQuery = "";
         clearSelection();
         state.step = "origin";
       } else if (state.step === "origin") {
         state.originId = item.id;
         state.verseId = null;
+        state.characterQuery = "";
         clearSelection();
         state.step = "verse";
       } else if (state.step === "verse") {
         state.verseId = item.id;
+        state.characterQuery = "";
         clearSelection();
         state.step = "character";
       } else if (state.step === "character") {
@@ -124,6 +150,7 @@
       } else if (state.step === "character") {
         state.step = "verse";
         state.verseId = null;
+        state.characterQuery = "";
         clearSelection();
       } else {
         state.step = "character";
@@ -146,10 +173,15 @@
       choiceLabel.textContent = labels[state.step];
       choiceList.innerHTML = "";
 
+      if (searchShell) searchShell.hidden = state.step !== "character";
+      if (searchInput && searchInput.value !== state.characterQuery) {
+        searchInput.value = state.characterQuery;
+      }
+
       if (state.step === "character" && items.length === 0) {
         const emptyItem = document.createElement("li");
         emptyItem.className = "choice-empty";
-        emptyItem.textContent = "No characters";
+        emptyItem.textContent = normalizedSearchText(state.characterQuery) ? "No matching characters" : "No characters";
         choiceList.appendChild(emptyItem);
         return;
       }
@@ -201,6 +233,16 @@
       render();
     });
     backButton.addEventListener("click", back);
+    searchShell?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      state.characterQuery = searchInput?.value || "";
+      renderChoices();
+      searchInput?.focus();
+    });
+    searchInput?.addEventListener("input", () => {
+      state.characterQuery = searchInput.value;
+      renderChoices();
+    });
     render();
 
     return {

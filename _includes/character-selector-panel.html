@@ -9,6 +9,20 @@
   <div class="selector-body">
     <aside class="choice-column">
       <span class="choice-label" data-choice-label></span>
+      <form class="choice-search" data-choice-search-shell hidden>
+        <label class="choice-search-label" for="character-search-{{ include.side }}">Search</label>
+        <div class="choice-search-row">
+          <input
+            class="choice-search-input"
+            id="character-search-{{ include.side }}"
+            type="search"
+            placeholder="Character"
+            autocomplete="off"
+            data-choice-search
+          >
+          <button class="filter-button" type="submit" data-choice-filter>Filter</button>
+        </div>
+      </form>
       <ul class="choice-list" data-choice-list></ul>
     </aside>
     <article class="character-card" data-character-card></article>
