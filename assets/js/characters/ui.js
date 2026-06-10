@@ -41,6 +41,15 @@
       filtersOpen: false,
       confirmed: false
     };
+    const ageFilterGroups = [
+      { value: "under-13", label: "Under 13", min: 0, max: 12 },
+      { value: "teen", label: "Teen", min: 13, max: 19 },
+      { value: "20s", label: "20s", min: 20, max: 29 },
+      { value: "30s", label: "30s", min: 30, max: 39 },
+      { value: "40s", label: "40s", min: 40, max: 49 },
+      { value: "50-plus", label: "50+", min: 50 },
+      { value: "unknown", label: "Unknown" }
+    ];
 
     function clearSelection() {
       state.characterId = null;
@@ -101,8 +110,20 @@
       return list(character.age_filter_values).map((value) => String(value));
     }
 
-    function ageFilterLabel(value) {
-      return value === "unknown" ? "Unknown" : value;
+    function ageValueMatchesGroup(value, group) {
+      if (group.value === "unknown") return value === "unknown";
+      if (value === "unknown") return false;
+
+      const age = Number(value);
+      if (!Number.isFinite(age)) return false;
+      if (age < group.min) return false;
+
+      return group.max === undefined || age <= group.max;
+    }
+
+    function ageValuesMatchFilter(values, filterValue) {
+      const group = ageFilterGroups.find((item) => item.value === filterValue);
+      return group ? values.some((value) => ageValueMatchesGroup(value, group)) : true;
     }
 
     function verseCharacters() {
@@ -113,7 +134,7 @@
       const query = normalizedSearchText(state.characterQuery);
       if (query && !characterSearchText(character).includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
-      if (state.ageFilter && !ageFilterValues(character).includes(state.ageFilter)) return false;
+      if (state.ageFilter && !ageValuesMatchFilter(ageFilterValues(character), state.ageFilter)) return false;
       if (state.classificationFilterId && !list(character.classification_ids).includes(state.classificationFilterId)) return false;
 
       return true;
@@ -380,6 +401,29 @@
       return value;
     }
 
+    function populateAgeFilter(container, choices, selectedValue) {
+      if (!container) return "";
+
+      const validValues = new Set(choices.map((choice) => choice.value));
+      const value = validValues.has(selectedValue) ? selectedValue : "";
+      const allChoices = [{ value: "", label: "All" }, ...choices];
+
+      container.innerHTML = "";
+      container.dataset.value = value;
+      allChoices.forEach((choice) => {
+        const selected = choice.value === value;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `age-filter-chip${selected ? " is-active" : ""}`;
+        button.dataset.ageFilterValue = choice.value;
+        button.setAttribute("aria-pressed", selected ? "true" : "false");
+        button.textContent = choice.label;
+        container.appendChild(button);
+      });
+
+      return value;
+    }
+
     function uniqueSortedChoices(values, labelForValue) {
       return Array.from(new Set(values.filter(Boolean)))
         .map((value) => ({ value, label: labelForValue(value) }))
@@ -387,14 +431,9 @@
     }
 
     function ageChoices(characters) {
-      return Array.from(new Set(characters.flatMap(ageFilterValues).filter(Boolean)))
-        .sort((left, right) => {
-          if (left === "unknown") return 1;
-          if (right === "unknown") return -1;
+      const values = characters.flatMap(ageFilterValues).filter(Boolean);
 
-          return Number(left) - Number(right);
-        })
-        .map((value) => ({ value, label: ageFilterLabel(value) }));
+      return ageFilterGroups.filter((group) => values.some((value) => ageValueMatchesGroup(value, group)));
     }
 
     function renderFilters() {
@@ -410,9 +449,8 @@
         uniqueSortedChoices(characters.map((character) => character.gender_id), (id) => optionLabel(options.genders, id)),
         state.genderFilterId
       );
-      state.ageFilter = populateSelect(
+      state.ageFilter = populateAgeFilter(
         filterControls.age,
-        "All ages",
         ageChoices(characters),
         state.ageFilter
       );
@@ -490,7 +528,7 @@
     function applyCharacterFilters() {
       state.characterQuery = searchInput?.value || "";
       state.genderFilterId = filterControls.gender?.value || "";
-      state.ageFilter = filterControls.age?.value || "";
+      state.ageFilter = filterControls.age?.dataset.value || "";
       state.classificationFilterId = filterControls.classification?.value || "";
       state.confirmed = false;
 
@@ -510,7 +548,15 @@
       searchInput?.focus();
     });
     searchInput?.addEventListener("input", applyCharacterFilters);
-    Object.values(filterControls).forEach((control) => control?.addEventListener("change", applyCharacterFilters));
+    [filterControls.gender, filterControls.classification]
+      .forEach((control) => control?.addEventListener("change", applyCharacterFilters));
+    filterControls.age?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-age-filter-value]");
+      if (!button || !filterControls.age.contains(button)) return;
+
+      filterControls.age.dataset.value = button.dataset.ageFilterValue || "";
+      applyCharacterFilters();
+    });
     document.addEventListener("click", (event) => {
       if (!state.filtersOpen || root.contains(event.target)) return;
 

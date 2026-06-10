@@ -38,10 +38,10 @@
               <span>Gender</span>
               <select data-filter-gender></select>
             </label>
-            <label class="choice-filter-field">
-              <span>Age</span>
-              <select data-filter-age></select>
-            </label>
+            <div class="choice-filter-field choice-filter-field--age">
+              <span id="age-filter-{{ include.side }}">Age</span>
+              <div class="age-filter-chips" role="group" aria-labelledby="age-filter-{{ include.side }}" data-filter-age></div>
+            </div>
             <label class="choice-filter-field">
               <span>Classification</span>
               <select data-filter-classification></select>
