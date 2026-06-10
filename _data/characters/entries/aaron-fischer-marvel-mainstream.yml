@@ -1,4 +1,4 @@
-name: "Aaron Fischer"
+name: "Captain America"
 verse_id: marvel-mainstream
 gender_id: male
 age:
@@ -12,7 +12,7 @@ classification_ids:
   - vigilante
 keys:
   - key: original
-    name: "Original"
+    name: "Base"
     names:
       - "Aaron Fischer"
     images:

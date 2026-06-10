@@ -356,6 +356,100 @@ button {
   outline: none;
 }
 
+.key-choice-list {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 16px;
+}
+
+.key-choice-button {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #182631;
+  cursor: pointer;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.key-choice-button:focus-visible {
+  outline: none;
+}
+
+.key-choice-orb {
+  position: relative;
+  display: grid;
+  width: 86px;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid #d7e0e5;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 32, 41, 0.08);
+  color: #667480;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.key-choice-orb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.key-choice-button:hover .key-choice-orb,
+.key-choice-button:focus-visible .key-choice-orb,
+.key-choice-button.is-selected .key-choice-orb {
+  border-color: #3d86f5;
+  box-shadow: 0 10px 24px rgba(61, 134, 245, 0.18);
+}
+
+.key-choice-check {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  display: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #3d86f5;
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 20px;
+  text-align: center;
+}
+
+.key-choice-button.is-selected .key-choice-check {
+  display: block;
+}
+
+.key-choice-title,
+.key-choice-subtitle {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.key-choice-title {
+  color: #182631;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.key-choice-subtitle {
+  color: #667480;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .character-card {
   display: grid;
   grid-template-rows: minmax(260px, 340px) 1fr;

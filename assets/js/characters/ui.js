@@ -5,6 +5,7 @@
     data,
     list,
     options,
+    assetUrl,
     renderBattle,
     renderCard,
     escapeHtml,
@@ -72,7 +73,6 @@
     function displayCharacter() {
       const character = selectedCharacter();
       if (!character) return null;
-      if (state.step === "key" && !state.keyId) return null;
 
       return character;
     }
@@ -192,7 +192,7 @@
 
         const keys = list(item.keys);
         state.characterId = item.entry_id;
-        state.keyId = keys.length > 1 ? null : keys[0]?.key || null;
+        state.keyId = keys[0]?.key || null;
         state.step = keys.length > 1 ? "key" : "character";
       } else {
         state.keyId = item.key;
@@ -246,6 +246,7 @@
       }
 
       const items = stepItems();
+      choiceList.classList.toggle("key-choice-list", state.step === "key");
 
       if (state.step === "character" && items.length === 0) {
         const emptyItem = document.createElement("li");
@@ -256,18 +257,51 @@
       }
 
       items.forEach((item) => {
-        const button = document.createElement("button");
-        const subtitle = choiceSubtitle(item);
-        button.type = "button";
-        button.className = "choice-button";
-        button.innerHTML = `
-          <span class="choice-title">${escapeHtml(choiceTitle(item))}</span>
-          ${subtitle ? `<span class="choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
-        `;
+        const button = state.step === "key" ? keyChoiceButton(item) : choiceButton(item);
         button.addEventListener("click", () => choose(item));
 
         choiceList.appendChild(document.createElement("li")).appendChild(button);
       });
+    }
+
+    function choiceButton(item) {
+      const button = document.createElement("button");
+      const subtitle = choiceSubtitle(item);
+      button.type = "button";
+      button.className = "choice-button";
+      button.innerHTML = `
+        <span class="choice-title">${escapeHtml(choiceTitle(item))}</span>
+        ${subtitle ? `<span class="choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+      `;
+
+      return button;
+    }
+
+    function keyChoiceButton(key) {
+      const button = document.createElement("button");
+      const subtitle = choiceSubtitle(key);
+      const image = list(key.images)[0];
+      const selected = key.key === state.keyId;
+      button.type = "button";
+      button.className = `key-choice-button${selected ? " is-selected" : ""}`;
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+      button.innerHTML = `
+        <span class="key-choice-orb">
+          ${image?.image
+            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
+            : `<span>${escapeHtml(keyInitials(key))}</span>`}
+          <span class="key-choice-check" aria-hidden="true">&#10003;</span>
+        </span>
+        <span class="key-choice-title">${escapeHtml(choiceTitle(key))}</span>
+        ${subtitle ? `<span class="key-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+      `;
+
+      return button;
+    }
+
+    function keyInitials(key) {
+      const words = choiceTitle(key).match(/[a-z0-9]+/gi) || [];
+      return words.slice(0, 2).map((word) => word[0].toUpperCase()).join("") || "?";
     }
 
     function optionLabel(itemsById, id) {
