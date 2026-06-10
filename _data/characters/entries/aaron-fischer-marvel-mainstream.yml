@@ -12,6 +12,7 @@ classification_ids:
   - vigilante
 keys:
   - key: original
+    name: "Original"
     names:
       - "Aaron Fischer"
     images:
@@ -57,6 +58,7 @@ keys:
       modifier: normal
     attack_ids: []
   - key: post-alchemax-enhancement
+    name: "Post-Alchemax Enhancement"
     names:
       - "Aaron Fischer"
     images:

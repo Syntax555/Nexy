@@ -94,7 +94,7 @@
         character.name,
         character.entry_id,
         ...ageFilterValues(character),
-        ...list(character.keys).flatMap((key) => [key.key, ...list(key.names)])
+        ...list(character.keys).flatMap((key) => [key.key, key.name, ...list(key.names)])
       ].map(normalizedSearchText).join(" ");
     }
 
@@ -154,7 +154,15 @@
     }
 
     function choiceTitle(item) {
-      return state.step === "key" ? title(item.key) : title(item.name);
+      return state.step === "key" ? keyTitle(item) : title(item.name);
+    }
+
+    function keyTitle(key) {
+      if (key.name) return key.name;
+
+      return String(key.key || "")
+        .replace(/[_-]/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
     function choose(item) {

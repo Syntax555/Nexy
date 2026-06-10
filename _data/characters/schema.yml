@@ -619,6 +619,7 @@ derived:
       effects: list
 keys:
   - key: string
+    name: string_or_null_display_label
     names: list
     images:
       - name: string
