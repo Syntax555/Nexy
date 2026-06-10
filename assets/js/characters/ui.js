@@ -62,8 +62,7 @@
       if (state.step === "verse") return options.verses.filter((verse) => verse.media_id === state.mediaId && verse.source_id === state.originId);
       if (state.step === "character") return filteredCharacters();
 
-      const character = selectedCharacter();
-      return character ? list(character.keys) : [];
+      return [];
     }
 
     function selectedCharacter() {
@@ -193,7 +192,7 @@
         const keys = list(item.keys);
         state.characterId = item.entry_id;
         state.keyId = keys[0]?.key || null;
-        state.step = keys.length > 1 ? "key" : "character";
+        state.step = "character";
       } else {
         state.keyId = item.key;
       }
@@ -246,7 +245,7 @@
       }
 
       const items = stepItems();
-      choiceList.classList.toggle("key-choice-list", state.step === "key");
+      choiceList.classList.toggle("character-choice-list", state.step === "character");
 
       if (state.step === "character" && items.length === 0) {
         const emptyItem = document.createElement("li");
@@ -257,7 +256,7 @@
       }
 
       items.forEach((item) => {
-        const button = state.step === "key" ? keyChoiceButton(item) : choiceButton(item);
+        const button = state.step === "character" ? characterChoiceButton(item) : choiceButton(item);
         button.addEventListener("click", () => choose(item));
 
         choiceList.appendChild(document.createElement("li")).appendChild(button);
@@ -277,31 +276,83 @@
       return button;
     }
 
-    function keyChoiceButton(key) {
+    function characterChoiceButton(character) {
       const button = document.createElement("button");
-      const subtitle = choiceSubtitle(key);
-      const image = list(key.images)[0];
-      const selected = key.key === state.keyId;
+      const subtitle = choiceSubtitle(character);
+      const image = list(list(character.keys)[0]?.images)[0];
+      const selected = character.entry_id === state.characterId;
       button.type = "button";
-      button.className = `key-choice-button${selected ? " is-selected" : ""}`;
+      button.className = `character-choice-button${selected ? " is-selected" : ""}`;
       button.setAttribute("aria-pressed", selected ? "true" : "false");
       button.innerHTML = `
-        <span class="key-choice-orb">
+        <span class="character-choice-orb">
           ${image?.image
             ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
-            : `<span>${escapeHtml(keyInitials(key))}</span>`}
-          <span class="key-choice-check" aria-hidden="true">&#10003;</span>
+            : `<span>${escapeHtml(choiceInitials(character.name))}</span>`}
+          <span class="character-choice-check" aria-hidden="true">&#10003;</span>
         </span>
-        <span class="key-choice-title">${escapeHtml(choiceTitle(key))}</span>
-        ${subtitle ? `<span class="key-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+        <span class="character-choice-title">${escapeHtml(choiceTitle(character))}</span>
+        ${subtitle ? `<span class="character-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
       `;
 
       return button;
     }
 
-    function keyInitials(key) {
-      const words = choiceTitle(key).match(/[a-z0-9]+/gi) || [];
+    function keyChoiceButton(key, compact = false) {
+      const button = document.createElement("button");
+      const subtitle = choiceSubtitle(key);
+      const image = list(key.images)[0];
+      const selected = key.key === state.keyId;
+      const label = keyTitle(key);
+      button.type = "button";
+      button.className = `${compact ? "card-key-button" : "key-choice-button"}${selected ? " is-selected" : ""}`;
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+      button.title = label;
+      button.innerHTML = `
+        <span class="${compact ? "card-key-orb" : "key-choice-orb"}">
+          ${image?.image
+            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
+            : `<span>${escapeHtml(keyInitials(key))}</span>`}
+          <span class="${compact ? "card-key-check" : "key-choice-check"}" aria-hidden="true">&#10003;</span>
+        </span>
+        <span class="${compact ? "card-key-label" : "key-choice-title"}">${escapeHtml(label)}</span>
+        ${!compact && subtitle ? `<span class="key-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+      `;
+
+      return button;
+    }
+
+    function choiceInitials(value) {
+      const words = String(value || "").match(/[a-z0-9]+/gi) || [];
       return words.slice(0, 2).map((word) => word[0].toUpperCase()).join("") || "?";
+    }
+
+    function keyInitials(key) {
+      return choiceInitials(keyTitle(key));
+    }
+
+    function renderCardKeySwitcher(character) {
+      const keys = list(character?.keys);
+      if (keys.length <= 1) return;
+
+      const imageArea = card.querySelector(".character-image");
+      if (!imageArea) return;
+
+      const switcher = document.createElement("div");
+      switcher.className = "card-key-switcher";
+      switcher.setAttribute("aria-label", "Character keys");
+
+      keys.forEach((key) => {
+        const button = keyChoiceButton(key, true);
+        button.addEventListener("click", () => {
+          state.keyId = key.key;
+          state.confirmed = false;
+          render();
+        });
+        switcher.appendChild(button);
+      });
+
+      imageArea.appendChild(switcher);
     }
 
     function optionLabel(itemsById, id) {
@@ -403,6 +454,7 @@
       confirmButton.textContent = state.confirmed ? "Confirmed" : "Confirm";
       renderChoices();
       renderCard(card, currentCharacter, state.keyId);
+      renderCardKeySwitcher(currentCharacter);
       onSelectionChange();
     }
 
