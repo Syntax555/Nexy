@@ -145,15 +145,11 @@
         return uniqueNames(list(item.keys).flatMap((key) => list(key.names))).join(" / ");
       }
 
-      if (state.step === "key") {
-        return uniqueNames(item.names).join(" / ");
-      }
-
       return "";
     }
 
     function choiceTitle(item) {
-      return state.step === "key" ? keyTitle(item) : title(item.name);
+      return title(item.name);
     }
 
     function keyTitle(key) {
@@ -193,8 +189,6 @@
         state.characterId = item.entry_id;
         state.keyId = keys[0]?.key || null;
         state.step = "character";
-      } else {
-        state.keyId = item.key;
       }
 
       render();
@@ -217,9 +211,6 @@
         state.verseId = null;
         clearCharacterFilters();
         clearSelection();
-      } else {
-        state.step = "character";
-        clearSelection();
       }
 
       render();
@@ -230,8 +221,7 @@
         media: "Media",
         origin: "Origin",
         verse: "Verse",
-        character: "Character",
-        key: "Key"
+        character: "Character"
       };
 
       choiceLabel.textContent = labels[state.step];
@@ -276,50 +266,58 @@
       return button;
     }
 
-    function characterChoiceButton(character) {
+    function circleChoiceButton({ className, size = "large", label, subtitle = "", image, initials, selected = false, titleText = "" }) {
       const button = document.createElement("button");
-      const subtitle = choiceSubtitle(character);
-      const image = list(list(character.keys)[0]?.images)[0];
-      const selected = character.entry_id === state.characterId;
       button.type = "button";
-      button.className = `character-choice-button${selected ? " is-selected" : ""}`;
+      button.className = [
+        "circle-choice-button",
+        `circle-choice-button--${size}`,
+        className,
+        selected ? "is-selected" : ""
+      ].filter(Boolean).join(" ");
       button.setAttribute("aria-pressed", selected ? "true" : "false");
+      if (titleText) button.title = titleText;
       button.innerHTML = `
-        <span class="character-choice-orb">
+        <span class="circle-choice-orb circle-choice-orb--${size}">
           ${image?.image
             ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
-            : `<span>${escapeHtml(choiceInitials(character.name))}</span>`}
-          <span class="character-choice-check" aria-hidden="true">&#10003;</span>
+            : `<span>${escapeHtml(initials)}</span>`}
+          <span class="circle-choice-check" aria-hidden="true">&#10003;</span>
         </span>
-        <span class="character-choice-title">${escapeHtml(choiceTitle(character))}</span>
-        ${subtitle ? `<span class="character-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
+        <span class="circle-choice-title">${escapeHtml(label)}</span>
+        ${subtitle ? `<span class="circle-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
       `;
 
       return button;
     }
 
-    function keyChoiceButton(key, compact = false) {
-      const button = document.createElement("button");
-      const subtitle = choiceSubtitle(key);
+    function characterChoiceButton(character) {
+      const image = list(list(character.keys)[0]?.images)[0];
+
+      return circleChoiceButton({
+        className: "character-choice-button",
+        label: choiceTitle(character),
+        subtitle: choiceSubtitle(character),
+        image,
+        initials: choiceInitials(character.name),
+        selected: character.entry_id === state.characterId
+      });
+    }
+
+    function keyChoiceButton(key) {
       const image = list(key.images)[0];
       const selected = key.key === state.keyId;
       const label = keyTitle(key);
-      button.type = "button";
-      button.className = `${compact ? "card-key-button" : "key-choice-button"}${selected ? " is-selected" : ""}`;
-      button.setAttribute("aria-pressed", selected ? "true" : "false");
-      button.title = label;
-      button.innerHTML = `
-        <span class="${compact ? "card-key-orb" : "key-choice-orb"}">
-          ${image?.image
-            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
-            : `<span>${escapeHtml(keyInitials(key))}</span>`}
-          <span class="${compact ? "card-key-check" : "key-choice-check"}" aria-hidden="true">&#10003;</span>
-        </span>
-        <span class="${compact ? "card-key-label" : "key-choice-title"}">${escapeHtml(label)}</span>
-        ${!compact && subtitle ? `<span class="key-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
-      `;
 
-      return button;
+      return circleChoiceButton({
+        className: "card-key-button",
+        size: "compact",
+        label,
+        image,
+        initials: keyInitials(key),
+        selected,
+        titleText: label
+      });
     }
 
     function choiceInitials(value) {
@@ -343,7 +341,7 @@
       switcher.setAttribute("aria-label", "Character keys");
 
       keys.forEach((key) => {
-        const button = keyChoiceButton(key, true);
+        const button = keyChoiceButton(key);
         button.addEventListener("click", () => {
           state.keyId = key.key;
           state.confirmed = false;

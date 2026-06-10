@@ -361,7 +361,7 @@ button {
   gap: 16px;
 }
 
-.character-choice-button {
+.circle-choice-button {
   display: grid;
   justify-items: center;
   gap: 9px;
@@ -374,28 +374,41 @@ button {
   text-align: center;
 }
 
-.character-choice-button:focus-visible {
+.circle-choice-button--compact {
+  width: auto;
+  gap: 5px;
+  padding: 0;
+}
+
+.circle-choice-button:focus-visible {
   outline: none;
 }
 
-.character-choice-orb {
+.circle-choice-orb {
   position: relative;
   display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid #d7e0e5;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 32, 41, 0.08);
+  color: #667480;
+  font-weight: 800;
+}
+
+.circle-choice-orb--large {
   width: 84px;
-  aspect-ratio: 1;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid #d7e0e5;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(21, 32, 41, 0.08);
-  color: #667480;
   font-size: 1rem;
-  font-weight: 800;
 }
 
-.character-choice-orb img,
-.card-key-orb img {
+.circle-choice-orb--compact {
+  width: 54px;
+  font-size: 0.78rem;
+}
+
+.circle-choice-orb img {
   display: block;
   width: 100%;
   height: 100%;
@@ -403,146 +416,77 @@ button {
   object-position: center top;
 }
 
-.character-choice-button:hover .character-choice-orb,
-.character-choice-button:focus-visible .character-choice-orb,
-.character-choice-button.is-selected .character-choice-orb {
+.circle-choice-button:hover .circle-choice-orb,
+.circle-choice-button:focus-visible .circle-choice-orb,
+.circle-choice-button.is-selected .circle-choice-orb {
   border-color: #3d86f5;
   box-shadow: 0 10px 24px rgba(61, 134, 245, 0.18);
 }
 
-.character-choice-check {
+.circle-choice-button--compact:hover .circle-choice-orb,
+.circle-choice-button--compact:focus-visible .circle-choice-orb,
+.circle-choice-button--compact.is-selected .circle-choice-orb {
+  box-shadow: 0 8px 18px rgba(61, 134, 245, 0.2);
+}
+
+.circle-choice-check {
   position: absolute;
-  top: 1px;
-  right: 1px;
   display: none;
-  width: 24px;
-  height: 24px;
   border: 2px solid #ffffff;
   border-radius: 50%;
   background: #3d86f5;
   color: #ffffff;
-  font-size: 0.76rem;
   font-weight: 900;
-  line-height: 20px;
   text-align: center;
 }
 
-.character-choice-button.is-selected .character-choice-check {
+.circle-choice-button--large .circle-choice-check {
+  top: 1px;
+  right: 1px;
+  width: 24px;
+  height: 24px;
+  font-size: 0.76rem;
+  line-height: 20px;
+}
+
+.circle-choice-button--compact .circle-choice-check {
+  top: -1px;
+  right: -1px;
+  width: 18px;
+  height: 18px;
+  font-size: 0.58rem;
+  line-height: 14px;
+}
+
+.circle-choice-button.is-selected .circle-choice-check {
   display: block;
 }
 
-.character-choice-title,
-.character-choice-subtitle {
+.circle-choice-title,
+.circle-choice-subtitle {
   display: block;
   overflow-wrap: anywhere;
 }
 
-.character-choice-title {
+.circle-choice-title {
   color: #182631;
   font-size: 0.82rem;
   font-weight: 800;
   line-height: 1.2;
 }
 
-.character-choice-subtitle {
+.circle-choice-subtitle {
   color: #667480;
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1.2;
 }
 
-.key-choice-list {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
-  gap: 16px;
-}
-
-.key-choice-button {
-  display: grid;
-  justify-items: center;
-  gap: 9px;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: #182631;
-  cursor: pointer;
-  padding: 6px 4px;
-  text-align: center;
-}
-
-.key-choice-button:focus-visible {
-  outline: none;
-}
-
-.key-choice-orb {
-  position: relative;
-  display: grid;
-  width: 86px;
-  aspect-ratio: 1;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid #d7e0e5;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(21, 32, 41, 0.08);
-  color: #667480;
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.key-choice-orb img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-}
-
-.key-choice-button:hover .key-choice-orb,
-.key-choice-button:focus-visible .key-choice-orb,
-.key-choice-button.is-selected .key-choice-orb {
-  border-color: #3d86f5;
-  box-shadow: 0 10px 24px rgba(61, 134, 245, 0.18);
-}
-
-.key-choice-check {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  display: none;
-  width: 24px;
-  height: 24px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: #3d86f5;
-  color: #ffffff;
-  font-size: 0.76rem;
-  font-weight: 900;
-  line-height: 20px;
-  text-align: center;
-}
-
-.key-choice-button.is-selected .key-choice-check {
-  display: block;
-}
-
-.key-choice-title,
-.key-choice-subtitle {
-  display: block;
-  overflow-wrap: anywhere;
-}
-
-.key-choice-title {
-  color: #182631;
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.key-choice-subtitle {
-  color: #667480;
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1.2;
+.circle-choice-button--compact .circle-choice-title {
+  max-width: 86px;
+  color: #31404d;
+  font-size: 0.68rem;
+  line-height: 1.15;
 }
 
 .character-card {
@@ -583,74 +527,6 @@ button {
   background: rgba(248, 251, 252, 0.84);
   box-shadow: 0 14px 30px rgba(21, 32, 41, 0.16);
   padding: 10px;
-}
-
-.card-key-button {
-  display: grid;
-  justify-items: center;
-  gap: 5px;
-  border: 0;
-  background: transparent;
-  color: #182631;
-  cursor: pointer;
-  padding: 0;
-  text-align: center;
-}
-
-.card-key-button:focus-visible {
-  outline: none;
-}
-
-.card-key-orb {
-  position: relative;
-  display: grid;
-  width: 54px;
-  aspect-ratio: 1;
-  place-items: center;
-  overflow: hidden;
-  border: 2px solid #d7e0e5;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #667480;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.card-key-button:hover .card-key-orb,
-.card-key-button:focus-visible .card-key-orb,
-.card-key-button.is-selected .card-key-orb {
-  border-color: #3d86f5;
-  box-shadow: 0 8px 18px rgba(61, 134, 245, 0.2);
-}
-
-.card-key-check {
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  display: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: #3d86f5;
-  color: #ffffff;
-  font-size: 0.58rem;
-  font-weight: 900;
-  line-height: 14px;
-  text-align: center;
-}
-
-.card-key-button.is-selected .card-key-check {
-  display: block;
-}
-
-.card-key-label {
-  max-width: 86px;
-  color: #31404d;
-  font-size: 0.68rem;
-  font-weight: 800;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
 }
 
 .empty-image {
