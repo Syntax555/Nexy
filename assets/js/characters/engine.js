@@ -1432,15 +1432,19 @@
   }
 
   function battleStatRowsHtml(leftView, rightView) {
+    const leftName = title(leftView.character.name);
+    const rightName = title(rightView.character.name);
+
     return battleStatPairs(leftView, rightView).map(({ label, left, right, leftClass, rightClass }) => {
       return `
         <li class="battle-stat-row">
           <div class="battle-stat-cell is-${leftClass}">
-            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="battle-side-label">${escapeHtml(leftName)}</span>
             <span class="stat-value">${escapeHtml(left?.value || "")}</span>
           </div>
+          <span class="battle-stat-label">${escapeHtml(label)}</span>
           <div class="battle-stat-cell is-${rightClass}">
-            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="battle-side-label">${escapeHtml(rightName)}</span>
             <span class="stat-value">${escapeHtml(right?.value || "")}</span>
           </div>
         </li>
@@ -1583,6 +1587,11 @@
     const rightView = battleEffectiveView(baseRightView, baseLeftView);
 
     content.innerHTML = `
+      <div class="battle-stage">
+        <span>${escapeHtml(title(baseLeftView.character.name))}</span>
+        <strong>VS</strong>
+        <span>${escapeHtml(title(baseRightView.character.name))}</span>
+      </div>
       <div class="battle-combatants">
         <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false })}</article>
         <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false })}</article>
