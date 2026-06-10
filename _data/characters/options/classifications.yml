@@ -6,6 +6,10 @@
   name: "Human with a Symbiote"
 - id: superhero
   name: "Superhero"
+- id: avengers-academy
+  name: "Avengers Academy"
+- id: captains-network
+  name: "Captains Network"
 - id: mercenary
   name: "Mercenary"
 - id: justice-league

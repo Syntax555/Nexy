@@ -8,6 +8,11 @@
   resists_power_ids:
     - mind-manipulation
   resists_effect_ids: []
+- id: biological-manipulation-resistance
+  name: "Biological Manipulation"
+  resists_power_ids:
+    - biological-manipulation
+  resists_effect_ids: []
 - id: curse-manipulation-resistance
   name: "Curse Manipulation"
   resists_power_ids:

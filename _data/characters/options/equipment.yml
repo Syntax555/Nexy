@@ -61,6 +61,55 @@
         range:
           value: extended-melee-range
           modifier: normal
+- id: makeshift-shield
+  name: "Makeshift Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        range:
+          value: tens-of-meters
+          modifier: normal
+- id: lunellum-shield
+  name: "Lunellum Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        striking_strength:
+          value: wall-level
+          modifier: plus
+        range:
+          value: tens-of-meters
+          modifier: normal
+    - grants:
+        power_refs:
+          - id: energy-manipulation
+            effects:
+              - stat_effects:
+                  attack_potency:
+                    value: wall
+                    modifier: plus
+                  striking_strength:
+                    value: wall-level
+                    modifier: plus
+              - grants:
+                  power_refs:
+                    - id: forcefield-creation
+                      effects:
+                        - stat_effects:
+                            durability:
+                              value: wall
+                              modifier: plus
+        resistance_refs: []
 - id: vibranium-shield
   name: "Vibranium Shield"
   weapon_type_ids:

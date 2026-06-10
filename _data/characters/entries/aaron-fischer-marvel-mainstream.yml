@@ -1,0 +1,103 @@
+name: "Aaron Fischer"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: 19
+  unknown: false
+classification_ids:
+  - human-mutate
+  - superhero
+  - avengers-academy
+  - captains-network
+  - vigilante
+keys:
+  - key: original
+    names:
+      - "Aaron Fischer"
+    images:
+      - name: "Original"
+        image: "assets/images/characters/aaron-fischer-marvel-mainstream/original.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - melee-weapons
+    resistance_refs:
+      - id: biological-manipulation-resistance
+    attack_potency:
+      value: street
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: street-level
+      modifier: normal
+    durability:
+      value: street
+      modifier: normal
+    stamina:
+      value: peak-human
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - makeshift-shield
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []
+  - key: post-alchemax-enhancement
+    names:
+      - "Aaron Fischer"
+    images:
+      - name: "Post-Alchemax Enhancement"
+        image: "assets/images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - melee-weapons
+    resistance_refs:
+      - id: biological-manipulation-resistance
+    attack_potency:
+      value: street
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: street-level
+      modifier: normal
+    durability:
+      value: street
+      modifier: normal
+    stamina:
+      value: peak-human
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - lunellum-shield
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []
