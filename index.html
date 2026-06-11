@@ -23,6 +23,14 @@ title: Home
   <div class="battle-content" data-battle-content></div>
 </section>
 
+<div class="image-lightbox" data-image-lightbox hidden role="dialog" aria-modal="true" aria-label="Character image preview">
+  <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Close image preview">Close</button>
+  <figure class="image-lightbox-frame">
+    <img data-image-lightbox-image alt="">
+    <figcaption data-image-lightbox-title></figcaption>
+  </figure>
+</div>
+
 {% include character-data.html %}
 <script src="{{ '/assets/js/characters/data.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 <script src="{{ '/assets/js/characters/engine.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

@@ -666,8 +666,37 @@
   const battleContent = document.querySelector("[data-battle-content]");
   const startBattleButton = document.querySelector("[data-start-battle]");
   const editSelectionButton = document.querySelector("[data-edit-selection]");
+  const imageLightbox = document.querySelector("[data-image-lightbox]");
+  const imageLightboxImage = imageLightbox?.querySelector("[data-image-lightbox-image]");
+  const imageLightboxTitle = imageLightbox?.querySelector("[data-image-lightbox-title]");
+  const imageLightboxClose = imageLightbox?.querySelector("[data-image-lightbox-close]");
   let selectors = [];
   let currentBattleViews = null;
+
+  function closeImageLightbox() {
+    if (!imageLightbox) return;
+
+    imageLightbox.hidden = true;
+    if (imageLightboxImage) {
+      imageLightboxImage.removeAttribute("src");
+      imageLightboxImage.alt = "";
+    }
+    if (imageLightboxTitle) imageLightboxTitle.textContent = "";
+  }
+
+  function openImageLightbox(button) {
+    if (!imageLightbox || !imageLightboxImage) return;
+
+    const src = button.dataset.imageSrc;
+    const title = button.dataset.imageTitle || "Character image";
+    if (!src) return;
+
+    imageLightboxImage.src = src;
+    imageLightboxImage.alt = title;
+    if (imageLightboxTitle) imageLightboxTitle.textContent = title;
+    imageLightbox.hidden = false;
+    imageLightboxClose?.focus();
+  }
 
   function showSelectionScreen() {
     selectionScreen.hidden = false;
@@ -704,6 +733,24 @@
     result.hidden = false;
     result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right);
     startBattleButton.disabled = true;
+  });
+
+  document.addEventListener("click", (event) => {
+    const expandButton = event.target.closest("[data-image-expand]");
+    if (expandButton) {
+      openImageLightbox(expandButton);
+      return;
+    }
+
+    if (event.target === imageLightbox || event.target.closest("[data-image-lightbox-close]")) {
+      closeImageLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !imageLightbox || imageLightbox.hidden) return;
+
+    closeImageLightbox();
   });
 
   selectors = Array.from(document.querySelectorAll("[data-selector]"))

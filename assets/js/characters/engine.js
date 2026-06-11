@@ -1162,7 +1162,17 @@
 
     return `
       <div class="character-image">
-        ${view.image ? `<img src="${escapeHtml(assetUrl(view.image.image))}" alt="${escapeHtml(view.image.name)}">` : `<div class="empty-image">?</div>`}
+        ${view.image ? `
+          <img src="${escapeHtml(assetUrl(view.image.image))}" alt="${escapeHtml(view.image.name)}">
+          <button
+            class="image-expand-button"
+            type="button"
+            data-image-expand
+            data-image-src="${escapeHtml(assetUrl(view.image.image))}"
+            data-image-title="${escapeHtml(`${title(view.character.name)} - ${view.image.name}`)}"
+            aria-label="Expand ${escapeHtml(title(view.character.name))} image"
+          >Expand</button>
+        ` : `<div class="empty-image">?</div>`}
       </div>
       <div class="character-content">
         <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
