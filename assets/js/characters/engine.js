@@ -1455,13 +1455,18 @@
   function speedBattlePairs(leftView, rightView) {
     const leftKey = leftView.effectiveKey;
     const rightKey = rightView.effectiveKey;
-    const rows = speedDefinitions
-      .filter(([field]) => field === "combat_speed" || (leftKey?.[field] && rightKey?.[field]))
+    const comparableSpeedDefinitions = speedDefinitions
+      .filter(([field]) => field === "combat_speed" || (leftKey?.[field] && rightKey?.[field]));
+    const useSpecificCombatLabel = comparableSpeedDefinitions.length > 1;
+    const rows = comparableSpeedDefinitions
       .map(([field, fallbackLabel]) => {
         const leftStat = speedBattleStat(leftKey, field, fallbackLabel);
         const rightStat = speedBattleStat(rightKey, field, fallbackLabel);
+        const label = field === "combat_speed" && !useSpecificCombatLabel
+          ? "Speed"
+          : speedComparisonLabel(field, fallbackLabel);
 
-        return comparisonPair(speedComparisonLabel(field, fallbackLabel), leftStat, rightStat);
+        return comparisonPair(label, leftStat, rightStat);
       });
 
     const leftNotes = unpairedSpeedNotes(leftKey, rightKey);
