@@ -6,6 +6,7 @@
     list,
     options,
     assetUrl,
+    characterView,
     renderBattle,
     renderCard,
     escapeHtml,
@@ -22,6 +23,7 @@
     const filterControls = {
       gender: root.querySelector("[data-filter-gender]"),
       age: root.querySelector("[data-filter-age]"),
+      tier: root.querySelector("[data-filter-tier]"),
       classification: root.querySelector("[data-filter-classification]")
     };
     const backButton = root.querySelector("[data-back]");
@@ -37,6 +39,7 @@
       characterQuery: "",
       genderFilterId: "",
       ageFilter: "",
+      tierFilter: "",
       classificationFilterId: "",
       filtersOpen: false,
       confirmed: false
@@ -61,6 +64,7 @@
       state.characterQuery = "";
       state.genderFilterId = "";
       state.ageFilter = "";
+      state.tierFilter = "";
       state.classificationFilterId = "";
       state.filtersOpen = false;
     }
@@ -102,6 +106,7 @@
         character.name,
         character.entry_id,
         ...ageFilterValues(character),
+        ...tierFilterValues(character),
         ...classificationSearchValues(character),
         ...list(character.keys).flatMap((key) => [key.key, key.name, ...list(key.names)])
       ].map(normalizedSearchText).join(" ");
@@ -153,6 +158,35 @@
         .flatMap((id) => [id, optionLabel(options.classifications, id)]);
     }
 
+    function keyTierRecord(character, key) {
+      const tierStat = characterView(character, key.key)?.stats.find((stat) => stat.label === "Tier");
+      if (!tierStat?.value) return null;
+
+      return {
+        value: tierStat.value,
+        label: tierStat.value,
+        rank: tierStat.rank || 0
+      };
+    }
+
+    function tierRecords(character) {
+      const recordsByValue = new Map();
+
+      list(character.keys).forEach((key) => {
+        const record = keyTierRecord(character, key);
+        if (!record) return;
+
+        const existing = recordsByValue.get(record.value);
+        if (!existing || record.rank < existing.rank) recordsByValue.set(record.value, record);
+      });
+
+      return Array.from(recordsByValue.values());
+    }
+
+    function tierFilterValues(character) {
+      return tierRecords(character).map((record) => record.value);
+    }
+
     function verseCharacters() {
       return data.characters.filter((character) => character.verse_id === state.verseId);
     }
@@ -162,6 +196,7 @@
       if (query && !characterSearchText(character).includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
       if (state.ageFilter && !ageValuesMatchFilter(ageFilterValues(character), state.ageFilter)) return false;
+      if (state.tierFilter && !tierFilterValues(character).includes(state.tierFilter)) return false;
       if (state.classificationFilterId && !classificationFilterIds(character).includes(state.classificationFilterId)) return false;
 
       return true;
@@ -176,6 +211,7 @@
         normalizedSearchText(state.characterQuery) ||
         state.genderFilterId ||
         state.ageFilter ||
+        state.tierFilter ||
         state.classificationFilterId
       );
     }
@@ -184,6 +220,7 @@
       return [
         state.genderFilterId,
         state.ageFilter,
+        state.tierFilter,
         state.classificationFilterId
       ].filter(Boolean).length;
     }
@@ -428,7 +465,7 @@
       return value;
     }
 
-    function populateAgeFilter(container, choices, selectedValue) {
+    function populateChipFilter(container, choices, selectedValue) {
       if (!container) return "";
 
       const validValues = new Set(choices.map((choice) => choice.value));
@@ -441,8 +478,8 @@
         const selected = choice.value === value;
         const button = document.createElement("button");
         button.type = "button";
-        button.className = `age-filter-chip${selected ? " is-active" : ""}`;
-        button.dataset.ageFilterValue = choice.value;
+        button.className = `filter-chip${selected ? " is-active" : ""}`;
+        button.dataset.filterValue = choice.value;
         button.setAttribute("aria-pressed", selected ? "true" : "false");
         button.textContent = choice.label;
         container.appendChild(button);
@@ -463,6 +500,18 @@
       return ageFilterGroups.filter((group) => values.some((value) => ageValueMatchesGroup(value, group)));
     }
 
+    function tierChoices(characters) {
+      const recordsByValue = new Map();
+
+      characters.flatMap(tierRecords).forEach((record) => {
+        const existing = recordsByValue.get(record.value);
+        if (!existing || record.rank < existing.rank) recordsByValue.set(record.value, record);
+      });
+
+      return Array.from(recordsByValue.values())
+        .sort((left, right) => left.rank - right.rank || left.label.localeCompare(right.label));
+    }
+
     function renderFilters() {
       if (state.step !== "character") {
         state.filtersOpen = false;
@@ -476,10 +525,15 @@
         uniqueSortedChoices(characters.map((character) => character.gender_id), (id) => optionLabel(options.genders, id)),
         state.genderFilterId
       );
-      state.ageFilter = populateAgeFilter(
+      state.ageFilter = populateChipFilter(
         filterControls.age,
         ageChoices(characters),
         state.ageFilter
+      );
+      state.tierFilter = populateChipFilter(
+        filterControls.tier,
+        tierChoices(characters),
+        state.tierFilter
       );
       state.classificationFilterId = populateSelect(
         filterControls.classification,
@@ -547,6 +601,7 @@
     function clearMetadataFilters() {
       state.genderFilterId = "";
       state.ageFilter = "";
+      state.tierFilter = "";
       state.classificationFilterId = "";
       state.confirmed = false;
       render();
@@ -556,6 +611,7 @@
       state.characterQuery = searchInput?.value || "";
       state.genderFilterId = filterControls.gender?.value || "";
       state.ageFilter = filterControls.age?.dataset.value || "";
+      state.tierFilter = filterControls.tier?.dataset.value || "";
       state.classificationFilterId = filterControls.classification?.value || "";
       state.confirmed = false;
 
@@ -577,13 +633,13 @@
     searchInput?.addEventListener("input", applyCharacterFilters);
     [filterControls.gender, filterControls.classification]
       .forEach((control) => control?.addEventListener("change", applyCharacterFilters));
-    filterControls.age?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-age-filter-value]");
-      if (!button || !filterControls.age.contains(button)) return;
+    [filterControls.age, filterControls.tier].forEach((container) => container?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-filter-value]");
+      if (!button || !container.contains(button)) return;
 
-      filterControls.age.dataset.value = button.dataset.ageFilterValue || "";
+      container.dataset.value = button.dataset.filterValue || "";
       applyCharacterFilters();
-    });
+    }));
     document.addEventListener("click", (event) => {
       if (!state.filtersOpen || root.contains(event.target)) return;
 

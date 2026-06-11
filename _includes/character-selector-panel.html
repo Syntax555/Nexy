@@ -38,9 +38,13 @@
               <span>Gender</span>
               <select data-filter-gender></select>
             </label>
-            <div class="choice-filter-field choice-filter-field--age">
+            <div class="choice-filter-field choice-filter-field--chips">
               <span id="age-filter-{{ include.side }}">Age</span>
-              <div class="age-filter-chips" role="group" aria-labelledby="age-filter-{{ include.side }}" data-filter-age></div>
+              <div class="filter-chips" role="group" aria-labelledby="age-filter-{{ include.side }}" data-filter-age></div>
+            </div>
+            <div class="choice-filter-field choice-filter-field--chips">
+              <span id="tier-filter-{{ include.side }}">Tier</span>
+              <div class="filter-chips" role="group" aria-labelledby="tier-filter-{{ include.side }}" data-filter-tier></div>
             </div>
             <label class="choice-filter-field">
               <span>Classification</span>
