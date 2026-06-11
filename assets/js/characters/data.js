@@ -32,8 +32,8 @@
   const speedDefinitions = [
     ["combat_speed", "combat speed"],
     ["attack_speed", "attack speed"],
-    ["reaction_speed", "reactions"],
-    ["travel_speed", "movement speed"],
+    ["reaction_speed", "reaction speed"],
+    ["travel_speed", "travel speed"],
     ["flight_speed", "flight speed"]
   ];
 

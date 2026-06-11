@@ -1004,6 +1004,15 @@ button {
   overflow-wrap: anywhere;
 }
 
+.battle-stat-note {
+  display: block;
+  color: #667480;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
 .battle-stat-cell.is-higher {
   border-color: #9fc9ad;
   background: #eef8f1;

@@ -113,12 +113,35 @@
   }
 
   function joinSpeedGroups(items) {
-    return items.join(", ");
+    return items.join("; ");
   }
 
   function speedLabel(stat, fallbackLabel) {
     const normalized = normalizedStat(stat);
     return normalized && Object.prototype.hasOwnProperty.call(normalized, "label") ? normalized.label : fallbackLabel;
+  }
+
+  function speedShortLabel(field, label) {
+    const normalizedLabel = String(label || "").replace(/\s*speed$/i, "").trim();
+    if (normalizedLabel) return normalizedLabel.replace(/\b\w/g, (char) => char.toUpperCase());
+
+    if (field === "combat_speed") return "Combat";
+    if (field === "attack_speed") return "Attack";
+    if (field === "reaction_speed") return "Reaction";
+    if (field === "travel_speed") return "Travel";
+    if (field === "flight_speed") return "Flight";
+
+    return "Speed";
+  }
+
+  function speedComparisonLabel(field, fallbackLabel) {
+    if (field === "combat_speed") return "Combat Speed";
+    if (field === "attack_speed") return "Attack Speed";
+    if (field === "reaction_speed") return "Reaction Speed";
+    if (field === "travel_speed") return "Travel Speed";
+    if (field === "flight_speed") return "Flight Speed";
+
+    return humanizeId(fallbackLabel || field);
   }
 
   function speedNote(stat) {
@@ -142,20 +165,8 @@
       return `${entries[0].value}${entries[0].note}`;
     }
 
-    const groups = [];
-    entries.forEach((entry) => {
-      const group = groups.find((candidate) => candidate.value === entry.value && candidate.note === entry.note);
-      if (group) {
-        group.labels.push(entry.label);
-      } else {
-        groups.push({ value: entry.value, note: entry.note, labels: [entry.label] });
-      }
-    });
-
-    return joinSpeedGroups(groups.map((group) => {
-      const labels = group.labels.filter((label) => label !== "");
-      const labelText = labels.length > 0 ? ` ${joinText(labels)}` : "";
-      return `${group.value}${labelText}${group.note}`;
+    return joinSpeedGroups(entries.map((entry) => {
+      return `${speedShortLabel(entry.field, entry.label)}: ${entry.value}${entry.note}`;
     }));
   }
 
@@ -1409,18 +1420,68 @@
     return stat?.rank || 0;
   }
 
+  function comparisonPair(label, leftStat, rightStat) {
+    const leftRank = rankValue(leftStat);
+    const rightRank = rankValue(rightStat);
+
+    return {
+      label,
+      left: leftStat,
+      right: rightStat,
+      leftClass: statComparisonClass(leftRank, rightRank),
+      rightClass: statComparisonClass(rightRank, leftRank)
+    };
+  }
+
+  function speedBattleStat(key, field, fallbackLabel) {
+    if (!key?.[field]) return null;
+
+    return {
+      label: speedComparisonLabel(field, fallbackLabel),
+      value: formatStat(key[field], "speed_tiers"),
+      rank: compositeRank(key[field], "speed_tiers")
+    };
+  }
+
+  function unpairedSpeedNotes(key, opponentKey) {
+    return speedDefinitions
+      .filter(([field]) => field !== "combat_speed" && key?.[field] && !opponentKey?.[field])
+      .map(([field, fallbackLabel]) => {
+        const label = speedShortLabel(field, speedLabel(key[field], fallbackLabel));
+        return `${label} - ${formatStat(key[field], "speed_tiers")}${speedNote(key[field])}`;
+      });
+  }
+
+  function speedBattlePairs(leftView, rightView) {
+    const leftKey = leftView.effectiveKey;
+    const rightKey = rightView.effectiveKey;
+    const rows = speedDefinitions
+      .filter(([field]) => field === "combat_speed" || (leftKey?.[field] && rightKey?.[field]))
+      .map(([field, fallbackLabel]) => {
+        const leftStat = speedBattleStat(leftKey, field, fallbackLabel);
+        const rightStat = speedBattleStat(rightKey, field, fallbackLabel);
+
+        return comparisonPair(speedComparisonLabel(field, fallbackLabel), leftStat, rightStat);
+      });
+
+    const leftNotes = unpairedSpeedNotes(leftKey, rightKey);
+    const rightNotes = unpairedSpeedNotes(rightKey, leftKey);
+    if (rows[0]) {
+      if (leftNotes.length && rows[0].left) rows[0].left.note = `Shown only here: ${joinText(leftNotes)}`;
+      if (rightNotes.length && rows[0].right) rows[0].right.note = `Shown only here: ${joinText(rightNotes)}`;
+    }
+
+    return rows;
+  }
+
   function battleStatPairs(leftView, rightView) {
-    return statDefinitions.map(([label]) => {
+    return statDefinitions.flatMap(([label, field]) => {
+      if (field === "speed") return speedBattlePairs(leftView, rightView);
+
       const leftStat = leftView.stats.find((stat) => stat.label === label);
       const rightStat = rightView.stats.find((stat) => stat.label === label);
 
-      return {
-        label,
-        left: leftStat,
-        right: rightStat,
-        leftClass: statComparisonClass(rankValue(leftStat), rankValue(rightStat)),
-        rightClass: statComparisonClass(rankValue(rightStat), rankValue(leftStat))
-      };
+      return comparisonPair(label, leftStat, rightStat);
     });
   }
 
@@ -1441,11 +1502,13 @@
           <div class="battle-stat-cell is-${leftClass}">
             <span class="battle-side-label">${escapeHtml(leftName)}</span>
             <span class="stat-value">${escapeHtml(left?.value || "")}</span>
+            ${left?.note ? `<small class="battle-stat-note">${escapeHtml(left.note)}</small>` : ""}
           </div>
           <span class="battle-stat-label">${escapeHtml(label)}</span>
           <div class="battle-stat-cell is-${rightClass}">
             <span class="battle-side-label">${escapeHtml(rightName)}</span>
             <span class="stat-value">${escapeHtml(right?.value || "")}</span>
+            ${right?.note ? `<small class="battle-stat-note">${escapeHtml(right.note)}</small>` : ""}
           </div>
         </li>
       `;
