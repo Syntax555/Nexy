@@ -1,0 +1,61 @@
+name: "Luke Cage"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: null
+  unknown: true
+  display: "In his 30s or 40s"
+classification_ids:
+  - human-mutate
+  - vigilante
+keys:
+  - key: luke-cage
+    names:
+      - "Carl Lucas"
+    images:
+      - name: "Luke Cage"
+        image: "assets/images/characters/luke-cage-marvel-mainstream/luke-cage.webp"
+    power_refs:
+      - id: martial-arts-mastery
+        martial_arts_degree_id: expert
+    resistance_refs:
+      - id: biological-manipulation-resistance
+      - id: ice-manipulation-resistance
+      - id: electricity-manipulation-resistance
+      - id: mind-manipulation-resistance
+      - id: fire-manipulation-resistance
+      - id: acid-manipulation-resistance
+      - id: poison-manipulation-resistance
+    attack_potency:
+      value: large-building
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed:
+      value: subsonic
+      modifier: likely
+    flight_speed: null
+    lifting_strength:
+      value: class-m
+      modifier: at-least
+    striking_strength:
+      value: large-building-level
+      modifier: plus
+    durability:
+      value: small-town
+      modifier: at-most
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: tens-of-meters
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []

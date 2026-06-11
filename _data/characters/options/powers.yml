@@ -332,8 +332,44 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: ice-manipulation
+  name: "Ice Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: poison-manipulation
   name: "Poison Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: fire-manipulation
+  name: "Fire Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: acid-manipulation
+  name: "Acid Manipulation"
   aliases: []
   variants: []
   tags: []

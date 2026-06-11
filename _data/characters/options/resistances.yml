@@ -13,6 +13,16 @@
   resists_power_ids:
     - biological-manipulation
   resists_effect_ids: []
+- id: ice-manipulation-resistance
+  name: "Ice Manipulation"
+  resists_power_ids:
+    - ice-manipulation
+  resists_effect_ids: []
+- id: electricity-manipulation-resistance
+  name: "Electricity Manipulation"
+  resists_power_ids:
+    - electricity-manipulation
+  resists_effect_ids: []
 - id: curse-manipulation-resistance
   name: "Curse Manipulation"
   resists_power_ids:
@@ -27,6 +37,16 @@
   name: "Fear Manipulation"
   resists_power_ids:
     - fear-manipulation
+  resists_effect_ids: []
+- id: fire-manipulation-resistance
+  name: "Fire Manipulation"
+  resists_power_ids:
+    - fire-manipulation
+  resists_effect_ids: []
+- id: acid-manipulation-resistance
+  name: "Acid Manipulation"
+  resists_power_ids:
+    - acid-manipulation
   resists_effect_ids: []
 - id: soul-manipulation-resistance
   name: "Soul Manipulation"
