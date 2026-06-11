@@ -1598,26 +1598,32 @@
     }).join("");
 
     return `
-      <section class="battle-result" aria-live="polite">
-        <div class="battle-score">
-          <div class="battle-score-side">
-            <span class="battle-score-name">${escapeHtml(leftName)}</span>
-            <strong>${score.leftScore}</strong>
-            <small>points</small>
+      <details class="battle-fold" open>
+        <summary class="battle-fold-summary">
+          <span>Result</span>
+          <small>${escapeHtml(winnerText)}</small>
+        </summary>
+        <section class="battle-result" aria-live="polite">
+          <div class="battle-score">
+            <div class="battle-score-side">
+              <span class="battle-score-name">${escapeHtml(leftName)}</span>
+              <strong>${score.leftScore}</strong>
+              <small>points</small>
+            </div>
+            <div class="battle-score-summary">
+              <span>${escapeHtml(winnerText)}</span>
+              <strong>${escapeHtml(scoreDetail)}</strong>
+              <small>${score.statCount} stats compared, Tier excluded</small>
+            </div>
+            <div class="battle-score-side">
+              <span class="battle-score-name">${escapeHtml(rightName)}</span>
+              <strong>${score.rightScore}</strong>
+              <small>points</small>
+            </div>
           </div>
-          <div class="battle-score-summary">
-            <span>${escapeHtml(winnerText)}</span>
-            <strong>${escapeHtml(scoreDetail)}</strong>
-            <small>${score.statCount} stats compared, Tier excluded</small>
-          </div>
-          <div class="battle-score-side">
-            <span class="battle-score-name">${escapeHtml(rightName)}</span>
-            <strong>${score.rightScore}</strong>
-            <small>points</small>
-          </div>
-        </div>
-        <ul class="battle-point-list">${rows}</ul>
-      </section>
+          <ul class="battle-point-list">${rows}</ul>
+        </section>
+      </details>
     `;
   }
 
@@ -1636,13 +1642,18 @@
       if (!leftTags && !rightTags) return "";
 
       return `
-        <section class="battle-section">
-          <h2 class="section-title">${escapeHtml(sectionTitle)}</h2>
-          <div class="battle-section-grid">
-            <ul class="tag-list">${leftTags}</ul>
-            <ul class="tag-list">${rightTags}</ul>
-          </div>
-        </section>
+        <details class="battle-fold" open>
+          <summary class="battle-fold-summary">
+            <span>${escapeHtml(sectionTitle)}</span>
+            <small>Battle status</small>
+          </summary>
+          <section class="battle-section">
+            <div class="battle-section-grid">
+              <ul class="tag-list">${leftTags}</ul>
+              <ul class="tag-list">${rightTags}</ul>
+            </div>
+          </section>
+        </details>
       `;
     }).join("");
   }
@@ -1659,13 +1670,25 @@
         <strong>VS</strong>
         <span>${escapeHtml(title(baseRightView.character.name))}</span>
       </div>
-      <div class="battle-combatants">
-        <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false })}</article>
-        <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false })}</article>
-      </div>
-      <section class="battle-comparison" aria-label="Stat comparison">
-        <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
-      </section>
+      <details class="battle-fold" open>
+        <summary class="battle-fold-summary">
+          <span>Combatants</span>
+          <small>${escapeHtml(title(baseLeftView.character.name))} vs ${escapeHtml(title(baseRightView.character.name))}</small>
+        </summary>
+        <div class="battle-combatants">
+          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false })}</article>
+        </div>
+      </details>
+      <details class="battle-fold" open>
+        <summary class="battle-fold-summary">
+          <span>Stats</span>
+          <small>Tier excluded from points</small>
+        </summary>
+        <section class="battle-comparison" aria-label="Stat comparison">
+          <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
+        </section>
+      </details>
       <div data-battle-result hidden></div>
       ${battleSectionRowsHtml(baseLeftView, baseRightView, leftView, rightView)}
     `;
