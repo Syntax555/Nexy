@@ -1392,15 +1392,16 @@ button {
   display: grid;
   align-content: center;
   gap: 3px;
+  justify-items: center;
+  min-width: 0;
   font-size: 0.92rem;
   overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .battle-point-result {
   grid-column: 3;
   color: #31404d;
-  justify-items: center;
-  text-align: center;
 }
 
 .battle-point-row > .battle-point-value:nth-child(2) {
@@ -1492,16 +1493,13 @@ button {
 
   .battle-point-row > .battle-point-value:nth-child(4) {
     grid-column: 2;
-    text-align: right;
   }
 
   .battle-point-result {
     grid-column: 1 / -1;
     grid-row: 3;
-    justify-items: start;
     border-top: 1px solid #e3e9ed;
     padding-top: 8px;
-    text-align: left;
   }
 }
 
@@ -1605,7 +1603,7 @@ button {
   }
 
   .battle-point-row > .battle-point-value:nth-child(4) {
-    text-align: left;
+    text-align: center;
   }
 
   .battle-score-summary {
@@ -1613,7 +1611,7 @@ button {
   }
 
   .battle-point-result {
-    justify-items: start;
-    text-align: left;
+    justify-items: center;
+    text-align: center;
   }
 }
