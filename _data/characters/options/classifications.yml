@@ -2,8 +2,18 @@
   name: "Human"
 - id: human-mutate
   name: "Human Mutate"
+  parent_ids:
+    - human
 - id: human-with-symbiote
   name: "Human with a Symbiote"
+  parent_ids:
+    - human
+- id: half-human
+  name: "Half Human"
+  parent_ids:
+    - human
+- id: half-falcon
+  name: "Half Falcon"
 - id: superhero
   name: "Superhero"
 - id: avengers-academy

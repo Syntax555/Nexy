@@ -1,0 +1,52 @@
+name: "Falcon"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: 17
+  unknown: false
+classification_ids:
+  - half-human
+  - half-falcon
+  - superhero
+keys:
+  - key: falcon
+    names:
+      - "Joaquín Torres"
+    images:
+      - name: "Falcon"
+        image: "assets/images/characters/falcon-marvel-mainstream/falcon.webp"
+    power_refs:
+      - id: flight
+      - id: martial-arts-mastery
+    resistance_refs: []
+    attack_potency:
+      value: wall
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-5
+      modifier: normal
+    striking_strength:
+      value: wall-level
+      modifier: plus
+    durability:
+      value: wall
+      modifier: plus
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []

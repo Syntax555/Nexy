@@ -102,6 +102,7 @@
         character.name,
         character.entry_id,
         ...ageFilterValues(character),
+        ...classificationSearchValues(character),
         ...list(character.keys).flatMap((key) => [key.key, key.name, ...list(key.names)])
       ].map(normalizedSearchText).join(" ");
     }
@@ -126,6 +127,32 @@
       return group ? values.some((value) => ageValueMatchesGroup(value, group)) : true;
     }
 
+    function classificationWithParents(classificationId, seen = new Set()) {
+      if (!classificationId || seen.has(classificationId)) return [];
+
+      seen.add(classificationId);
+      const classification = byId(options.classifications, classificationId);
+
+      return [
+        classificationId,
+        ...list(classification?.parent_ids).flatMap((parentId) => classificationWithParents(parentId, seen))
+      ];
+    }
+
+    function classificationFilterIds(character) {
+      const ids = new Set();
+      list(character.classification_ids)
+        .flatMap((id) => classificationWithParents(id))
+        .forEach((id) => ids.add(id));
+
+      return Array.from(ids);
+    }
+
+    function classificationSearchValues(character) {
+      return classificationFilterIds(character)
+        .flatMap((id) => [id, optionLabel(options.classifications, id)]);
+    }
+
     function verseCharacters() {
       return data.characters.filter((character) => character.verse_id === state.verseId);
     }
@@ -135,7 +162,7 @@
       if (query && !characterSearchText(character).includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
       if (state.ageFilter && !ageValuesMatchFilter(ageFilterValues(character), state.ageFilter)) return false;
-      if (state.classificationFilterId && !list(character.classification_ids).includes(state.classificationFilterId)) return false;
+      if (state.classificationFilterId && !classificationFilterIds(character).includes(state.classificationFilterId)) return false;
 
       return true;
     }
@@ -458,7 +485,7 @@
         filterControls.classification,
         "All classifications",
         uniqueSortedChoices(
-          characters.flatMap((character) => list(character.classification_ids)),
+          characters.flatMap(classificationFilterIds),
           (id) => optionLabel(options.classifications, id)
         ),
         state.classificationFilterId
