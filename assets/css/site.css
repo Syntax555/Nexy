@@ -845,6 +845,44 @@ button {
   overflow-wrap: anywhere;
 }
 
+.speed-value-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.speed-value-row {
+  display: grid;
+  grid-template-columns: minmax(90px, max-content) minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #d9e3e8;
+  border-radius: 8px;
+  background: #f7fafb;
+  padding: 7px 8px;
+}
+
+.speed-value-type {
+  color: #667480;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.speed-value-rank {
+  color: #111b24;
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.speed-value-note {
+  color: #667480;
+  font-size: 0.82em;
+  font-weight: 700;
+}
+
 .section-title {
   margin: 22px 0 10px;
   color: #31404d;
@@ -1285,6 +1323,11 @@ button {
 
   .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .speed-value-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   .battle-comparison,

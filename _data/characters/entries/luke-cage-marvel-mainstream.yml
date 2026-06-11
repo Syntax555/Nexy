@@ -37,7 +37,6 @@ keys:
     travel_speed:
       value: subsonic
       modifier: likely
-      label: "running speed"
     flight_speed: null
     lifting_strength:
       value: class-m

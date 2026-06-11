@@ -196,6 +196,17 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
   errors
 end
 
+def validate_speed_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
+  errors = validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: allow_null)
+  return errors if allow_null && stat.nil?
+
+  if stat.is_a?(Hash) && stat.key?("label")
+    errors << "#{context}.label is not allowed; use one of the fixed speed fields instead"
+  end
+
+  errors
+end
+
 def validate_stat_effects(context, stat_effects, sets)
   return ["#{context} must be a map"] unless stat_effects.is_a?(Hash)
 
@@ -209,7 +220,11 @@ def validate_stat_effects(context, stat_effects, sets)
       next
     end
 
-    errors.concat(validate_ranked_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+    if catalog == :speed_tiers
+      errors.concat(validate_speed_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+    else
+      errors.concat(validate_ranked_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+    end
   end
 
   errors
@@ -682,11 +697,11 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_ref_list("#{key_context}.attack_ids", key["attack_ids"], sets[:attacks], "attack"))
 
     errors.concat(validate_ranked_stat("#{key_context}.attack_potency", key["attack_potency"], sets[:attack_durability_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.attack_speed", key["attack_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_ranked_stat("#{key_context}.combat_speed", key["combat_speed"], sets[:speed_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.reaction_speed", key["reaction_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_ranked_stat("#{key_context}.travel_speed", key["travel_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_ranked_stat("#{key_context}.flight_speed", key["flight_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
+    errors.concat(validate_speed_stat("#{key_context}.attack_speed", key["attack_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
+    errors.concat(validate_speed_stat("#{key_context}.combat_speed", key["combat_speed"], sets[:speed_tiers], sets[:stat_modifiers]))
+    errors.concat(validate_speed_stat("#{key_context}.reaction_speed", key["reaction_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
+    errors.concat(validate_speed_stat("#{key_context}.travel_speed", key["travel_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
+    errors.concat(validate_speed_stat("#{key_context}.flight_speed", key["flight_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
     errors.concat(validate_ranked_stat("#{key_context}.lifting_strength", key["lifting_strength"], sets[:lifting_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.striking_strength", key["striking_strength"], sets[:striking_strength_tiers], sets[:stat_modifiers]))
     errors.concat(validate_ranked_stat("#{key_context}.durability", key["durability"], sets[:attack_durability_tiers], sets[:stat_modifiers]))

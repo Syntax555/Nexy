@@ -30,11 +30,11 @@
   const battleScoreExcludedLabels = new Set(["Tier"]);
 
   const speedDefinitions = [
-    ["combat_speed", "combat speed"],
-    ["attack_speed", "attack speed"],
-    ["reaction_speed", "reaction speed"],
-    ["travel_speed", "travel speed"],
-    ["flight_speed", "flight speed"]
+    ["combat_speed", "Combat Speed"],
+    ["attack_speed", "Attack Speed"],
+    ["reaction_speed", "Reaction Speed"],
+    ["travel_speed", "Travel Speed"],
+    ["flight_speed", "Flight Speed"]
   ];
 
   const statCatalogs = {

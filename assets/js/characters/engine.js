@@ -112,28 +112,6 @@
     return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
   }
 
-  function joinSpeedGroups(items) {
-    return items.join("; ");
-  }
-
-  function speedLabel(stat, fallbackLabel) {
-    const normalized = normalizedStat(stat);
-    return normalized && Object.prototype.hasOwnProperty.call(normalized, "label") ? normalized.label : fallbackLabel;
-  }
-
-  function speedShortLabel(field, label) {
-    const normalizedLabel = String(label || "").replace(/\s*speed$/i, "").trim();
-    if (normalizedLabel) return normalizedLabel.replace(/\b\w/g, (char) => char.toUpperCase());
-
-    if (field === "combat_speed") return "Combat";
-    if (field === "attack_speed") return "Attack";
-    if (field === "reaction_speed") return "Reaction";
-    if (field === "travel_speed") return "Travel";
-    if (field === "flight_speed") return "Flight";
-
-    return "Speed";
-  }
-
   function speedComparisonLabel(field, fallbackLabel) {
     if (field === "combat_speed") return "Combat Speed";
     if (field === "attack_speed") return "Attack Speed";
@@ -149,25 +127,45 @@
     return normalized?.note ? ` (${normalized.note})` : "";
   }
 
-  function formatSpeed(key) {
-    const entries = speedDefinitions
+  function speedEntries(key) {
+    return speedDefinitions
       .filter(([field]) => key[field])
       .map(([field, fallbackLabel]) => ({
         field,
-        label: speedLabel(key[field], fallbackLabel),
+        label: speedComparisonLabel(field, fallbackLabel),
         note: speedNote(key[field]),
         value: formatStat(key[field], "speed_tiers")
       }))
       .filter((entry) => entry.value);
+  }
 
+  function formatSpeed(key) {
+    const entries = speedEntries(key);
     if (entries.length === 0) return "";
     if (entries.length === 1 && entries[0].field === "combat_speed") {
       return `${entries[0].value}${entries[0].note}`;
     }
 
-    return joinSpeedGroups(entries.map((entry) => {
-      return `${speedShortLabel(entry.field, entry.label)}: ${entry.value}${entry.note}`;
-    }));
+    return entries.map((entry) => `${entry.label}: ${entry.value}${entry.note}`).join(" / ");
+  }
+
+  function speedStatValueHtml(key) {
+    const entries = speedEntries(key);
+    if (entries.length === 0) return "";
+    if (entries.length === 1 && entries[0].field === "combat_speed") {
+      return escapeHtml(`${entries[0].value}${entries[0].note}`);
+    }
+
+    return `
+      <span class="speed-value-list" aria-label="${escapeHtml(formatSpeed(key))}">
+        ${entries.map((entry) => `
+          <span class="speed-value-row">
+            <span class="speed-value-type">${escapeHtml(entry.label)}</span>
+            <span class="speed-value-rank">${escapeHtml(entry.value)}${entry.note ? `<span class="speed-value-note">${escapeHtml(entry.note)}</span>` : ""}</span>
+          </span>
+        `).join("")}
+      </span>
+    `;
   }
 
   function formatAbilityLabel(label, ref = {}) {
@@ -1056,6 +1054,7 @@
       return {
         label,
         value,
+        html: field === "speed" ? speedStatValueHtml(key) : "",
         rank: statRank(key, field, catalog)
       };
     });
@@ -1141,7 +1140,7 @@
     return list(stats).map((stat) => `
       <li class="stat">
         <span class="stat-label">${escapeHtml(stat.label)}</span>
-        <span class="stat-value">${escapeHtml(stat.value)}</span>
+        <span class="stat-value">${stat.html || escapeHtml(stat.value)}</span>
       </li>
     `).join("");
   }
@@ -1447,7 +1446,7 @@
     return speedDefinitions
       .filter(([field]) => field !== "combat_speed" && key?.[field] && !opponentKey?.[field])
       .map(([field, fallbackLabel]) => {
-        const label = speedShortLabel(field, speedLabel(key[field], fallbackLabel));
+        const label = speedComparisonLabel(field, fallbackLabel);
         return `${label} - ${formatStat(key[field], "speed_tiers")}${speedNote(key[field])}`;
       });
   }

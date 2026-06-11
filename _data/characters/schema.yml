@@ -418,20 +418,26 @@ derived:
   speed_display:
     default_label: "Speed"
     default_field: combat_speed
+    fixed_types:
+      - attack_speed
+      - combat_speed
+      - reaction_speed
+      - travel_speed
+      - flight_speed
     nullable_fields:
       - attack_speed
       - reaction_speed
       - travel_speed
       - flight_speed
     compare_rule: ignore_null
-    display_rule: group_equal_speed_values_and_omit_combat_speed_label_when_it_is_the_only_speed
+    display_rule: render_available_speed_types_as_structured_rows_and_omit_combat_speed_label_when_it_is_the_only_speed
     default_display_labels:
-      combat_speed: "combat speed"
-      attack_speed: "attack speed"
-      reaction_speed: "reactions"
-      travel_speed: "movement speed"
-      flight_speed: "flight speed"
-    label_override_rule: ranked_speed_stat_label_overrides_default_display_label
+      combat_speed: "Combat Speed"
+      attack_speed: "Attack Speed"
+      reaction_speed: "Reaction Speed"
+      travel_speed: "Travel Speed"
+      flight_speed: "Flight Speed"
+    label_override_rule: speed_stats_do_not_allow_custom_labels
     note_rule: ranked_speed_stat_note_displays_after_its_speed_group
     flight_speed_requires_power_id: flight
     flight_speed_rule: flight_speed_is_ignored_unless_the_active_power_refs_include_flight
