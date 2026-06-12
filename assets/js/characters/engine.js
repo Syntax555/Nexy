@@ -1239,10 +1239,12 @@
         data-image-expand
         data-image-src="${escapeHtml(assetUrl(view.image.image))}"
         data-image-title="${escapeHtml(imageTitle)}"
-        aria-label="Expand ${escapeHtml(title(view.character.name))} image"
+        aria-controls="image-lightbox"
+        aria-haspopup="dialog"
+        aria-label="Open full-size image for ${escapeHtml(title(view.character.name))}"
       >
         <span class="image-expand-icon" aria-hidden="true"></span>
-        <span class="image-expand-label">Expand</span>
+        <span class="image-expand-label visually-hidden">Open full-size image</span>
       </button>
     ` : "";
     const heroImage = imagePlacement === "hero" ? `

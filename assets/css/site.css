@@ -607,36 +607,52 @@ img.is-pixel-trimmed {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  width: auto;
-  min-width: 36px;
-  height: 36px;
-  min-height: 36px;
-  border: 1px solid rgba(200, 211, 217, 0.9);
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(210, 220, 226, 0.92);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #203342;
   cursor: pointer;
-  padding: 0 11px;
-  font-size: 0.76rem;
-  font-weight: 800;
+  padding: 0;
   line-height: 1;
-  box-shadow: 0 10px 24px rgba(21, 32, 41, 0.14);
+  box-shadow: 0 14px 30px rgba(21, 32, 41, 0.16);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px) scale(0.96);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .image-expand-button:hover,
+.image-expand-button:focus,
 .image-expand-button:focus-visible {
   border-color: #7892a1;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 34px rgba(21, 32, 41, 0.2);
+  opacity: 1;
   outline: none;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.image-expand-button:focus-visible {
+  outline: 3px solid rgba(64, 126, 201, 0.24);
+  outline-offset: 2px;
 }
 
 .image-expand-icon {
   position: relative;
   display: block;
   flex: 0 0 auto;
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
 }
 
 .image-expand-icon::before,
@@ -647,22 +663,35 @@ img.is-pixel-trimmed {
 }
 
 .image-expand-icon::before {
-  inset: 3px 0 0 0;
-  border: 2px solid currentColor;
-  border-radius: 3px;
+  inset: 4px 0 0 0;
+  border: 1.8px solid currentColor;
+  border-radius: 4px;
 }
 
 .image-expand-icon::after {
   top: 0;
   right: 0;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid currentColor;
-  border-right: 2px solid currentColor;
+  width: 9px;
+  height: 9px;
+  border-top: 1.8px solid currentColor;
+  border-right: 1.8px solid currentColor;
 }
 
-.image-expand-label {
-  min-width: 0;
+.character-image:hover .image-expand-button,
+.character-image:focus-within .image-expand-button,
+.character-portrait:hover .image-expand-button,
+.character-portrait:focus-within .image-expand-button {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.image-expand-button:focus,
+.image-expand-button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition: none;
 }
 
 .visually-hidden {
@@ -676,6 +705,10 @@ img.is-pixel-trimmed {
   clip: rect(0, 0, 0, 0);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+body.is-lightbox-open {
+  overflow: hidden;
 }
 
 .image-lightbox {
@@ -830,9 +863,8 @@ img.is-pixel-trimmed {
 .character-portrait .image-expand-button {
   top: 8px;
   right: 8px;
-  height: 32px;
-  min-height: 32px;
-  font-size: 0.72rem;
+  width: 36px;
+  height: 36px;
 }
 
 .character-portrait .empty-image {
@@ -1370,18 +1402,6 @@ img.is-pixel-trimmed {
   top: 12px;
   right: 12px;
   z-index: 4;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 160ms ease, transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
-  pointer-events: none;
-}
-
-.battle-character-card .character-portrait:hover .image-expand-button,
-.battle-character-card .character-portrait:focus-within .image-expand-button,
-.battle-character-card:focus-within .character-portrait .image-expand-button {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 .battle-character-card .meta-list {
@@ -1456,7 +1476,7 @@ img.is-pixel-trimmed {
 }
 
 @media (hover: none) {
-  .battle-character-card .character-portrait .image-expand-button {
+  .image-expand-button {
     opacity: 1;
     transform: none;
     pointer-events: auto;

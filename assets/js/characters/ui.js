@@ -875,6 +875,7 @@
   const imageLightboxImage = imageLightbox?.querySelector("[data-image-lightbox-image]");
   const imageLightboxTitle = imageLightbox?.querySelector("[data-image-lightbox-title]");
   const imageLightboxClose = imageLightbox?.querySelector("[data-image-lightbox-close]");
+  let lastImageExpandButton = null;
   let selectors = [];
   let currentBattleViews = null;
 
@@ -887,6 +888,9 @@
       imageLightboxImage.alt = "";
     }
     if (imageLightboxTitle) imageLightboxTitle.textContent = "";
+    document.body.classList.remove("is-lightbox-open");
+    if (lastImageExpandButton?.isConnected) lastImageExpandButton.focus();
+    lastImageExpandButton = null;
   }
 
   function openImageLightbox(button) {
@@ -899,7 +903,9 @@
     imageLightboxImage.src = src;
     imageLightboxImage.alt = title;
     if (imageLightboxTitle) imageLightboxTitle.textContent = title;
+    lastImageExpandButton = button;
     imageLightbox.hidden = false;
+    document.body.classList.add("is-lightbox-open");
     imageLightboxClose?.focus();
   }
 
@@ -958,6 +964,13 @@
     if (event.key !== "Escape" || !imageLightbox || imageLightbox.hidden) return;
 
     closeImageLightbox();
+  });
+
+  imageLightbox?.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab" || imageLightbox.hidden || !imageLightboxClose) return;
+
+    event.preventDefault();
+    imageLightboxClose.focus();
   });
 
   selectors = Array.from(document.querySelectorAll("[data-selector]"))
