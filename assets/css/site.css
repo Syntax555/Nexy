@@ -1222,6 +1222,7 @@ img.is-pixel-trimmed {
 .battle-combatants {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: clamp(14px, 2vw, 24px);
 }
 
@@ -1245,7 +1246,7 @@ img.is-pixel-trimmed {
   --battle-card-padding: clamp(18px, 2vw, 28px);
   position: relative;
   isolation: isolate;
-  min-height: clamp(210px, 24svh, 290px);
+  min-height: 0;
   overflow: hidden;
   padding: var(--battle-card-padding);
 }
@@ -1253,7 +1254,7 @@ img.is-pixel-trimmed {
 .battle-character-card .character-identity {
   position: static;
   min-height: 0;
-  margin-bottom: clamp(42px, 8svh, 88px);
+  margin-bottom: clamp(12px, 1.5vw, 18px);
 }
 
 .battle-character-card .character-identity--with-image {
@@ -1263,6 +1264,7 @@ img.is-pixel-trimmed {
 .battle-character-card .character-title-block {
   position: relative;
   z-index: 2;
+  max-width: min(62%, 430px);
 }
 
 .battle-character-card .character-portrait {
@@ -1290,6 +1292,40 @@ img.is-pixel-trimmed {
   position: relative;
   z-index: 2;
   margin-bottom: 0;
+}
+
+.battle-character-card .meta-list--facts {
+  display: grid;
+  width: min(62%, 430px);
+  gap: 6px;
+}
+
+.battle-character-card .meta-list--facts li {
+  display: grid;
+  grid-template-columns: minmax(86px, max-content) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 6px;
+  background: rgba(248, 251, 252, 0.84);
+  padding: 3px 8px;
+}
+
+.meta-label {
+  color: #667480;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.meta-value {
+  min-width: 0;
+  color: #182631;
+  font-size: 0.88rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .battle-comparison {
@@ -1662,11 +1698,11 @@ img.is-pixel-trimmed {
   }
 
   .battle-character-card .character-content {
-    min-height: 220px;
+    min-height: 0;
   }
 
   .battle-character-card .character-identity {
-    margin-bottom: 42px;
+    margin-bottom: 12px;
   }
 
   .battle-character-card .character-portrait {
@@ -1678,6 +1714,17 @@ img.is-pixel-trimmed {
     height: auto;
     aspect-ratio: auto;
     justify-self: end;
+  }
+
+  .battle-character-card .character-title-block,
+  .battle-character-card .meta-list--facts {
+    width: min(68%, 430px);
+    max-width: min(68%, 430px);
+  }
+
+  .battle-character-card .meta-list--facts li {
+    grid-template-columns: 1fr;
+    gap: 1px;
   }
 
   .speed-value-row {

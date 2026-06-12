@@ -1152,10 +1152,54 @@
     return `<h4 class="section-title">${escapeHtml(titleText)}</h4><ul class="tag-list">${tags}</ul>`;
   }
 
-  function characterProfileHtml(view, { includeStats = true, includeSections = true, imagePlacement = "hero" } = {}) {
-    const detailTags = view.details
-      .map((detail) => `<li>${escapeHtml(detail)}</li>`)
-      .join("");
+  function detailFactRows(details) {
+    const rows = [];
+    const classifications = [];
+
+    list(details).forEach((detail) => {
+      const separatorIndex = detail.indexOf(": ");
+      if (separatorIndex === -1) {
+        classifications.push(detail);
+        return;
+      }
+
+      rows.push({
+        label: detail.slice(0, separatorIndex),
+        value: detail.slice(separatorIndex + 2)
+      });
+    });
+
+    if (classifications.length) {
+      rows.push({
+        label: classifications.length === 1 ? "Classification" : "Classifications",
+        value: classifications.join(", ")
+      });
+    }
+
+    return rows;
+  }
+
+  function detailFactItemHtml({ label, value }) {
+    return `
+      <li>
+        <span class="meta-label">${escapeHtml(label)}</span>
+        <span class="meta-value">${escapeHtml(value)}</span>
+      </li>
+    `;
+  }
+
+  function detailListHtml(details, detailStyle = "chips") {
+    const detailTags = detailStyle === "facts"
+      ? detailFactRows(details).map(detailFactItemHtml).join("")
+      : list(details).map((detail) => `<li>${escapeHtml(detail)}</li>`).join("");
+    if (!detailTags) return "";
+
+    const styleClass = detailStyle === "facts" ? " meta-list--facts" : "";
+
+    return `<ul class="meta-list${styleClass}" aria-label="Character details">${detailTags}</ul>`;
+  }
+
+  function characterProfileHtml(view, { includeStats = true, includeSections = true, imagePlacement = "hero", detailStyle = "chips" } = {}) {
     const sectionHtml = view.sections
       .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
       .join("");
@@ -1202,7 +1246,7 @@
           </div>
           ${identityImage}
         </div>
-        ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
+        ${detailListHtml(view.details, detailStyle)}
         ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
         ${includeSections ? sectionHtml : ""}
       </div>
@@ -1711,8 +1755,8 @@
           <small>${escapeHtml(title(baseLeftView.character.name))} vs ${escapeHtml(title(baseRightView.character.name))}</small>
         </summary>
         <div class="battle-combatants">
-          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity" })}</article>
-          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity" })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
         </div>
       </details>
       <details class="battle-fold" open>
