@@ -1,0 +1,55 @@
+name: "Kimura"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human-mutate
+  - facility
+  - mercenary
+keys:
+  - key: kimura
+    names:
+      - "Unknown"
+    images:
+      - name: "Kimura"
+        image: "assets/images/characters/kimura-marvel-mainstream/kimura.webp"
+    power_refs:
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+    resistance_refs:
+      - id: pain-manipulation-resistance
+      - id: mind-manipulation-resistance
+    attack_potency:
+      value: small-building
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: small-building-level
+      modifier: normal
+    durability:
+      value: high-universe
+      modifier: normal
+    stamina:
+      value: average
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []

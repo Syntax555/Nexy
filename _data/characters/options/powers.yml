@@ -248,6 +248,18 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: pain-manipulation
+  name: "Pain Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: biological-manipulation
   name: "Biological Manipulation"
   aliases: []

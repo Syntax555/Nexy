@@ -8,6 +8,8 @@
   name: "Human with a Symbiote"
   parent_ids:
     - human
+- id: facility
+  name: "Facility"
 - id: half-human
   name: "Half Human"
   parent_ids:
