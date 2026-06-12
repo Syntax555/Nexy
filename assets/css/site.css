@@ -1362,8 +1362,8 @@ img.is-pixel-trimmed {
 
 .battle-character-card .character-portrait img {
   opacity: 1;
-  object-fit: cover;
-  object-position: right top;
+  object-fit: contain;
+  object-position: right bottom;
 }
 
 .battle-character-card .character-portrait .image-expand-button {

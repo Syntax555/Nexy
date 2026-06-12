@@ -30,14 +30,14 @@
 
   function trimModeFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return "cover";
-    if (frame?.closest(".battle-character-card")) return "cover";
+    if (frame?.closest(".battle-character-card")) return "battle";
 
     return "contain";
   }
 
   function trimAnchorFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return { x: "center", y: "top" };
-    if (frame?.closest(".battle-character-card")) return { x: "right", y: "top" };
+    if (frame?.closest(".battle-character-card")) return { x: "right", y: "bottom" };
     if (frame?.classList.contains("character-portrait")) return { x: "right", y: "bottom" };
 
     return { x: "center", y: "bottom" };
@@ -130,7 +130,13 @@
     const frameHeight = frame.clientHeight;
     if (frameWidth <= 0 || frameHeight <= 0 || bounds.width <= 0 || bounds.height <= 0) return;
 
-    const mode = trimModeFor(frame);
+    let mode = trimModeFor(frame);
+    if (mode === "battle") {
+      const coverScale = Math.max(frameWidth / bounds.width, frameHeight / bounds.height);
+      const containScale = Math.min(frameWidth / bounds.width, frameHeight / bounds.height);
+      mode = coverScale / containScale > 1.65 ? "contain" : "cover";
+    }
+
     const scale = mode === "cover"
       ? Math.max(frameWidth / bounds.width, frameHeight / bounds.height)
       : Math.min(frameWidth / bounds.width, frameHeight / bounds.height);
