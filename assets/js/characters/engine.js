@@ -1164,6 +1164,7 @@
       <img
         src="${escapeHtml(assetUrl(view.image.image))}"
         alt="${escapeHtml(view.image.name)}"
+        data-trim-image
         loading="lazy"
         decoding="async"
       >

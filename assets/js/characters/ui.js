@@ -12,6 +12,163 @@
     escapeHtml,
     title
   } = window.NexyCharacters;
+
+  const imageBoundsCache = new Map();
+  const preparedTrimImages = new WeakSet();
+  const trimResizeObserver = "ResizeObserver" in window
+    ? new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const image = entry.target.querySelector("img[data-trim-image]");
+        if (image) requestTrimImage(image);
+      });
+    })
+    : null;
+
+  function trimFrameFor(image) {
+    return image.closest(".character-image, .character-portrait, .circle-choice-orb");
+  }
+
+  function trimModeFor(frame) {
+    if (frame?.classList.contains("circle-choice-orb")) return "cover";
+
+    return "contain";
+  }
+
+  function trimAnchorFor(frame) {
+    if (frame?.classList.contains("circle-choice-orb")) return { x: "center", y: "top" };
+    if (frame?.classList.contains("character-portrait")) return { x: "right", y: "bottom" };
+
+    return { x: "center", y: "bottom" };
+  }
+
+  function anchoredOffset(space, size, anchor) {
+    if (anchor === "right" || anchor === "bottom") return space - size;
+    if (anchor === "center") return (space - size) / 2;
+
+    return 0;
+  }
+
+  function waitForImage(image) {
+    if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      image.addEventListener("load", resolve, { once: true });
+      image.addEventListener("error", resolve, { once: true });
+    });
+  }
+
+  async function visibleImageBounds(image) {
+    const source = image.currentSrc || image.src;
+    if (!source) return null;
+    if (imageBoundsCache.has(source)) return imageBoundsCache.get(source);
+
+    const boundsPromise = (async () => {
+      await waitForImage(image);
+      const naturalWidth = image.naturalWidth;
+      const naturalHeight = image.naturalHeight;
+      if (!naturalWidth || !naturalHeight) return null;
+
+      const maxSampleSide = 900;
+      const sampleScale = Math.min(1, maxSampleSide / Math.max(naturalWidth, naturalHeight));
+      const sampleWidth = Math.max(1, Math.round(naturalWidth * sampleScale));
+      const sampleHeight = Math.max(1, Math.round(naturalHeight * sampleScale));
+      const canvas = document.createElement("canvas");
+      canvas.width = sampleWidth;
+      canvas.height = sampleHeight;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return null;
+
+      try {
+        context.drawImage(image, 0, 0, sampleWidth, sampleHeight);
+        const { data: pixels } = context.getImageData(0, 0, sampleWidth, sampleHeight);
+        let minX = sampleWidth;
+        let minY = sampleHeight;
+        let maxX = -1;
+        let maxY = -1;
+
+        for (let y = 0; y < sampleHeight; y += 1) {
+          for (let x = 0; x < sampleWidth; x += 1) {
+            const alpha = pixels[((y * sampleWidth) + x) * 4 + 3];
+            if (alpha <= 8) continue;
+
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+          }
+        }
+
+        if (maxX < minX || maxY < minY) return null;
+
+        return {
+          naturalWidth,
+          naturalHeight,
+          left: minX / sampleScale,
+          top: minY / sampleScale,
+          width: ((maxX - minX) + 1) / sampleScale,
+          height: ((maxY - minY) + 1) / sampleScale
+        };
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    imageBoundsCache.set(source, boundsPromise);
+    return boundsPromise;
+  }
+
+  async function applyTrimImage(image) {
+    const frame = trimFrameFor(image);
+    if (!frame || !image.isConnected) return;
+
+    const bounds = await visibleImageBounds(image);
+    if (!bounds || !image.isConnected) return;
+
+    const frameWidth = frame.clientWidth;
+    const frameHeight = frame.clientHeight;
+    if (frameWidth <= 0 || frameHeight <= 0 || bounds.width <= 0 || bounds.height <= 0) return;
+
+    const mode = trimModeFor(frame);
+    const scale = mode === "cover"
+      ? Math.max(frameWidth / bounds.width, frameHeight / bounds.height)
+      : Math.min(frameWidth / bounds.width, frameHeight / bounds.height);
+    const imageWidth = bounds.naturalWidth * scale;
+    const imageHeight = bounds.naturalHeight * scale;
+    const visibleWidth = bounds.width * scale;
+    const visibleHeight = bounds.height * scale;
+    const anchor = trimAnchorFor(frame);
+    const visibleLeft = anchoredOffset(frameWidth, visibleWidth, anchor.x);
+    const visibleTop = anchoredOffset(frameHeight, visibleHeight, anchor.y);
+
+    image.classList.add("is-pixel-trimmed");
+    image.style.width = `${imageWidth}px`;
+    image.style.height = `${imageHeight}px`;
+    image.style.left = `${visibleLeft - (bounds.left * scale)}px`;
+    image.style.top = `${visibleTop - (bounds.top * scale)}px`;
+  }
+
+  function requestTrimImage(image) {
+    window.requestAnimationFrame(() => {
+      applyTrimImage(image);
+    });
+  }
+
+  function prepareTrimImage(image) {
+    const frame = trimFrameFor(image);
+    if (!frame) return;
+    if (!preparedTrimImages.has(image)) {
+      preparedTrimImages.add(image);
+      image.addEventListener("load", () => requestTrimImage(image));
+      trimResizeObserver?.observe(frame);
+    }
+
+    requestTrimImage(image);
+  }
+
+  function trimImagesIn(root) {
+    root.querySelectorAll("img[data-trim-image]").forEach(prepareTrimImage);
+  }
+
   function selector(root, onSelectionChange = () => {}) {
     const choiceLabel = root.querySelector("[data-choice-label]");
     const choiceList = root.querySelector("[data-choice-list]");
@@ -365,7 +522,7 @@
       button.innerHTML = `
         <span class="circle-choice-orb circle-choice-orb--${size}">
           ${image?.image
-            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="">`
+            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="" data-trim-image>`
             : `<span>${escapeHtml(initials)}</span>`}
           <span class="circle-choice-check" aria-hidden="true">&#10003;</span>
         </span>
@@ -572,6 +729,7 @@
       renderChoices();
       renderCard(card, currentCharacter, state.keyId);
       renderCardKeySwitcher(currentCharacter);
+      trimImagesIn(root);
       onSelectionChange();
     }
 
@@ -702,6 +860,7 @@
     selectionScreen.hidden = false;
     battleScreen.hidden = true;
     currentBattleViews = null;
+    trimImagesIn(selectionScreen);
   }
 
   function showBattleScreen(leftSelection, rightSelection) {
@@ -709,6 +868,7 @@
     if (startBattleButton) startBattleButton.disabled = false;
     selectionScreen.hidden = true;
     battleScreen.hidden = false;
+    trimImagesIn(battleContent);
   }
 
   function maybeShowBattleScreen() {
