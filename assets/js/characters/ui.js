@@ -30,12 +30,14 @@
 
   function trimModeFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return "cover";
+    if (frame?.closest(".battle-character-card")) return "cover";
 
     return "contain";
   }
 
   function trimAnchorFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return { x: "center", y: "top" };
+    if (frame?.closest(".battle-character-card")) return { x: "right", y: "top" };
     if (frame?.classList.contains("character-portrait")) return { x: "right", y: "bottom" };
 
     return { x: "center", y: "bottom" };

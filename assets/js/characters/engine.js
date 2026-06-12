@@ -1242,7 +1242,7 @@
         aria-label="Expand ${escapeHtml(title(view.character.name))} image"
       >
         <span class="image-expand-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Expand image</span>
+        <span class="image-expand-label">Expand</span>
       </button>
     ` : "";
     const heroImage = imagePlacement === "hero" ? `
@@ -1254,9 +1254,9 @@
     const identityImage = imagePlacement === "identity" ? `
       <div class="character-portrait" aria-label="${escapeHtml(imageTitle)}">
         ${imageMarkup}
+        ${expandButton}
       </div>
     ` : "";
-    const titleExpandButton = imagePlacement === "identity" ? expandButton : "";
 
     return `
       ${heroImage}
@@ -1265,7 +1265,6 @@
           <div class="character-title-block">
             <div class="character-heading-row">
               <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
-              ${titleExpandButton}
             </div>
             <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
           </div>
@@ -1769,15 +1768,14 @@
     const rightView = battleEffectiveView(baseRightView, baseLeftView);
 
     content.innerHTML = `
-      <div class="battle-stage">
-        <span>${escapeHtml(title(baseLeftView.character.name))}</span>
-        <strong>VS</strong>
-        <span>${escapeHtml(title(baseRightView.character.name))}</span>
-      </div>
       <details class="battle-fold" open>
         <summary class="battle-fold-summary">
           <span>Combatants</span>
-          <small>${escapeHtml(title(baseLeftView.character.name))} vs ${escapeHtml(title(baseRightView.character.name))}</small>
+          <small class="battle-matchup">
+            <span>${escapeHtml(title(baseLeftView.character.name))}</span>
+            <strong>VS</strong>
+            <span>${escapeHtml(title(baseRightView.character.name))}</span>
+          </small>
         </summary>
         <div class="battle-combatants">
           <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
