@@ -1152,13 +1152,14 @@
     return `<h4 class="section-title">${escapeHtml(titleText)}</h4><ul class="tag-list">${tags}</ul>`;
   }
 
-  function characterProfileHtml(view, { includeStats = true, includeSections = true } = {}) {
+  function characterProfileHtml(view, { includeStats = true, includeSections = true, imagePlacement = "hero" } = {}) {
     const detailTags = view.details
       .map((detail) => `<li>${escapeHtml(detail)}</li>`)
       .join("");
     const sectionHtml = view.sections
       .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
       .join("");
+    const imageTitle = view.image ? `${title(view.character.name)} - ${view.image.name}` : "";
     const imageMarkup = view.image ? `
       <img
         src="${escapeHtml(assetUrl(view.image.image))}"
@@ -1167,28 +1168,38 @@
         decoding="async"
       >
     ` : `<div class="empty-image">?</div>`;
+    const expandButton = view.image ? `
+      <button
+        class="image-expand-button"
+        type="button"
+        data-image-expand
+        data-image-src="${escapeHtml(assetUrl(view.image.image))}"
+        data-image-title="${escapeHtml(imageTitle)}"
+        aria-label="Expand ${escapeHtml(title(view.character.name))} image"
+      >Expand</button>
+    ` : "";
+    const heroImage = imagePlacement === "hero" ? `
+      <div class="character-image">
+        ${imageMarkup}
+        ${expandButton}
+      </div>
+    ` : "";
+    const identityImage = imagePlacement === "identity" ? `
+      <div class="character-portrait" aria-label="${escapeHtml(imageTitle)}">
+        ${imageMarkup}
+        ${expandButton}
+      </div>
+    ` : "";
 
     return `
-      <div class="character-image">
-        ${view.image ? `
-          ${imageMarkup}
-          <button
-            class="image-expand-button"
-            type="button"
-            data-image-expand
-            data-image-src="${escapeHtml(assetUrl(view.image.image))}"
-            data-image-title="${escapeHtml(`${title(view.character.name)} - ${view.image.name}`)}"
-            aria-label="Expand ${escapeHtml(title(view.character.name))} image"
-          >Expand</button>
-        ` : imageMarkup}
-      </div>
+      ${heroImage}
       <div class="character-content">
-        <div class="character-identity">
+        <div class="character-identity${identityImage ? " character-identity--with-image" : ""}">
           <div class="character-title-block">
             <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
             <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
           </div>
-          <div class="character-portrait" aria-hidden="true">${imageMarkup}</div>
+          ${identityImage}
         </div>
         ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
         ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
@@ -1699,8 +1710,8 @@
           <small>${escapeHtml(title(baseLeftView.character.name))} vs ${escapeHtml(title(baseRightView.character.name))}</small>
         </summary>
         <div class="battle-combatants">
-          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false })}</article>
-          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity" })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity" })}</article>
         </div>
       </details>
       <details class="battle-fold" open>
