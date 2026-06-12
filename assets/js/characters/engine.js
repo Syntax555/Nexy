@@ -1159,11 +1159,19 @@
     const sectionHtml = view.sections
       .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
       .join("");
+    const imageMarkup = view.image ? `
+      <img
+        src="${escapeHtml(assetUrl(view.image.image))}"
+        alt="${escapeHtml(view.image.name)}"
+        loading="lazy"
+        decoding="async"
+      >
+    ` : `<div class="empty-image">?</div>`;
 
     return `
       <div class="character-image">
         ${view.image ? `
-          <img src="${escapeHtml(assetUrl(view.image.image))}" alt="${escapeHtml(view.image.name)}">
+          ${imageMarkup}
           <button
             class="image-expand-button"
             type="button"
@@ -1172,11 +1180,16 @@
             data-image-title="${escapeHtml(`${title(view.character.name)} - ${view.image.name}`)}"
             aria-label="Expand ${escapeHtml(title(view.character.name))} image"
           >Expand</button>
-        ` : `<div class="empty-image">?</div>`}
+        ` : imageMarkup}
       </div>
       <div class="character-content">
-        <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
-        <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
+        <div class="character-identity">
+          <div class="character-title-block">
+            <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
+            <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
+          </div>
+          <div class="character-portrait" aria-hidden="true">${imageMarkup}</div>
+        </div>
         ${detailTags ? `<ul class="meta-list" aria-label="Character details">${detailTags}</ul>` : ""}
         ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
         ${includeSections ? sectionHtml : ""}
