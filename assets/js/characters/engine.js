@@ -1599,11 +1599,11 @@
     return "tie";
   }
 
-  function battleStatRowsHtml(leftView, rightView) {
+  function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
 
-    return battleStatPairs(leftView, rightView).map(({ label, left, right, leftClass, rightClass }) => {
+    return pairs.map(({ label, left, right, leftClass, rightClass }) => {
       return `
         <li class="battle-stat-row">
           <div class="battle-stat-cell is-${leftClass}">
@@ -1622,8 +1622,8 @@
     }).join("");
   }
 
-  function battleScore(leftView, rightView) {
-    const rows = battleStatPairs(leftView, rightView)
+  function battleScore(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
+    const rows = pairs
       .filter((row) => !battleScoreExcludedLabels.has(row.label))
       .map((row) => {
         const leftRank = rankValue(row.left);
@@ -1659,8 +1659,8 @@
     };
   }
 
-  function battleResultHtml(leftView, rightView) {
-    const score = battleScore(leftView, rightView);
+  function battleResultHtml(leftView, rightView, pairs) {
+    const score = battleScore(leftView, rightView, pairs);
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
     const winnerText = score.winner === "left"
@@ -1766,6 +1766,7 @@
     const baseRightView = characterView(rightSelection.character, rightSelection.keyId);
     const leftView = battleEffectiveView(baseLeftView, baseRightView);
     const rightView = battleEffectiveView(baseRightView, baseLeftView);
+    const statPairs = battleStatPairs(leftView, rightView);
 
     content.innerHTML = `
       <details class="battle-fold" open>
@@ -1788,14 +1789,14 @@
           <small>Tier excluded from points</small>
         </summary>
         <section class="battle-comparison" aria-label="Stat comparison">
-          <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView)}</ul>
+          <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView, statPairs)}</ul>
         </section>
       </details>
       <div data-battle-result hidden></div>
       ${battleSectionRowsHtml(baseLeftView, baseRightView, leftView, rightView)}
     `;
 
-    return { left: leftView, right: rightView };
+    return { left: leftView, right: rightView, statPairs };
   }
 
 

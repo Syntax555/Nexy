@@ -13,8 +13,10 @@
     title
   } = window.NexyCharacters;
 
+  const charactersByEntryId = new Map(data.characters.map((character) => [character.entry_id, character]));
   const imageBoundsCache = new Map();
   const preparedTrimImages = new WeakSet();
+  const trimImageRequests = new WeakSet();
   const trimResizeObserver = "ResizeObserver" in window
     ? new ResizeObserver((entries) => {
       entries.forEach((entry) => {
@@ -29,10 +31,7 @@
   }
 
   function trimModeFor(frame) {
-    if (frame?.classList.contains("circle-choice-orb")) return "cover";
-    if (frame?.closest(".battle-character-card")) return "contain";
-
-    return "contain";
+    return frame?.classList.contains("circle-choice-orb") ? "cover" : "contain";
   }
 
   function trimAnchorFor(frame) {
@@ -150,7 +149,11 @@
   }
 
   function requestTrimImage(image) {
+    if (trimImageRequests.has(image)) return;
+
+    trimImageRequests.add(image);
     window.requestAnimationFrame(() => {
+      trimImageRequests.delete(image);
       applyTrimImage(image);
     });
   }
@@ -203,6 +206,9 @@
       filtersOpen: false,
       confirmed: false
     };
+    const classificationParentCache = new Map();
+    const characterFilterDataCache = new WeakMap();
+    const verseCharacterCache = new Map();
     const ageFilterGroups = [
       { value: "under-13", label: "Under 13", min: 0, max: 12 },
       { value: "teen", label: "Teen", min: 13, max: 19 },
@@ -238,7 +244,7 @@
     }
 
     function selectedCharacter() {
-      return data.characters.find((character) => character.entry_id === state.characterId) || null;
+      return charactersByEntryId.get(state.characterId) || null;
     }
 
     function displayCharacter() {
@@ -258,17 +264,6 @@
 
     function normalizedSearchText(value) {
       return String(value || "").trim().toLowerCase();
-    }
-
-    function characterSearchText(character) {
-      return [
-        character.name,
-        character.entry_id,
-        ...ageFilterValues(character),
-        ...tierFilterValues(character),
-        ...classificationSearchValues(character),
-        ...list(character.keys).flatMap((key) => [key.key, key.name, ...list(key.names)])
-      ].map(normalizedSearchText).join(" ");
     }
 
     function ageFilterValues(character) {
@@ -291,16 +286,26 @@
       return group ? values.some((value) => ageValueMatchesGroup(value, group)) : true;
     }
 
-    function classificationWithParents(classificationId, seen = new Set()) {
+    function resolveClassificationWithParents(classificationId, seen = new Set()) {
       if (!classificationId || seen.has(classificationId)) return [];
 
-      seen.add(classificationId);
+      const nextSeen = new Set(seen);
+      nextSeen.add(classificationId);
       const classification = byId(options.classifications, classificationId);
 
       return [
         classificationId,
-        ...list(classification?.parent_ids).flatMap((parentId) => classificationWithParents(parentId, seen))
+        ...list(classification?.parent_ids).flatMap((parentId) => resolveClassificationWithParents(parentId, nextSeen))
       ];
+    }
+
+    function classificationWithParents(classificationId) {
+      if (!classificationId) return [];
+      if (!classificationParentCache.has(classificationId)) {
+        classificationParentCache.set(classificationId, resolveClassificationWithParents(classificationId));
+      }
+
+      return classificationParentCache.get(classificationId);
     }
 
     function classificationFilterIds(character) {
@@ -310,11 +315,6 @@
         .forEach((id) => ids.add(id));
 
       return Array.from(ids);
-    }
-
-    function classificationSearchValues(character) {
-      return classificationFilterIds(character)
-        .flatMap((id) => [id, optionLabel(options.classifications, id)]);
     }
 
     function keyTierRecord(character, key) {
@@ -342,21 +342,66 @@
       return Array.from(recordsByValue.values());
     }
 
-    function tierFilterValues(character) {
-      return tierRecords(character).map((record) => record.value);
+    function characterFilterData(character) {
+      if (!character) {
+        return {
+          searchText: "",
+          ageValues: [],
+          tierRecords: [],
+          tierValues: [],
+          classificationIds: []
+        };
+      }
+
+      if (!characterFilterDataCache.has(character)) {
+        const ageValues = ageFilterValues(character);
+        const cachedTierRecords = tierRecords(character);
+        const tierValues = cachedTierRecords.map((record) => record.value);
+        const classificationIds = classificationFilterIds(character);
+        const classificationValues = classificationIds
+          .flatMap((id) => [id, optionLabel(options.classifications, id)]);
+        const searchValues = [
+          character.name,
+          character.entry_id,
+          ...ageValues,
+          ...tierValues,
+          ...classificationValues,
+          ...list(character.keys).flatMap((key) => [key.key, key.name, ...list(key.names)])
+        ];
+
+        characterFilterDataCache.set(character, {
+          searchText: searchValues.map(normalizedSearchText).join(" "),
+          ageValues,
+          tierRecords: cachedTierRecords,
+          tierValues,
+          classificationIds
+        });
+      }
+
+      return characterFilterDataCache.get(character);
     }
 
     function verseCharacters() {
-      return data.characters.filter((character) => character.verse_id === state.verseId);
+      if (!state.verseId) return [];
+      if (!verseCharacterCache.has(state.verseId)) {
+        verseCharacterCache.set(
+          state.verseId,
+          data.characters.filter((character) => character.verse_id === state.verseId)
+        );
+      }
+
+      return verseCharacterCache.get(state.verseId);
     }
 
     function characterMatchesFilters(character) {
       const query = normalizedSearchText(state.characterQuery);
-      if (query && !characterSearchText(character).includes(query)) return false;
+      const filterData = characterFilterData(character);
+
+      if (query && !filterData.searchText.includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
-      if (state.ageFilter && !ageValuesMatchFilter(ageFilterValues(character), state.ageFilter)) return false;
-      if (state.tierFilter && !tierFilterValues(character).includes(state.tierFilter)) return false;
-      if (state.classificationFilterId && !classificationFilterIds(character).includes(state.classificationFilterId)) return false;
+      if (state.ageFilter && !ageValuesMatchFilter(filterData.ageValues, state.ageFilter)) return false;
+      if (state.tierFilter && !filterData.tierValues.includes(state.tierFilter)) return false;
+      if (state.classificationFilterId && !filterData.classificationIds.includes(state.classificationFilterId)) return false;
 
       return true;
     }
@@ -654,7 +699,7 @@
     }
 
     function ageChoices(characters) {
-      const values = characters.flatMap(ageFilterValues).filter(Boolean);
+      const values = characters.flatMap((character) => characterFilterData(character).ageValues).filter(Boolean);
 
       return ageFilterGroups.filter((group) => values.some((value) => ageValueMatchesGroup(value, group)));
     }
@@ -662,7 +707,7 @@
     function tierChoices(characters) {
       const recordsByValue = new Map();
 
-      characters.flatMap(tierRecords).forEach((record) => {
+      characters.flatMap((character) => characterFilterData(character).tierRecords).forEach((record) => {
         const existing = recordsByValue.get(record.value);
         if (!existing || record.rank < existing.rank) recordsByValue.set(record.value, record);
       });
@@ -698,7 +743,7 @@
         filterControls.classification,
         "All classifications",
         uniqueSortedChoices(
-          characters.flatMap(classificationFilterIds),
+          characters.flatMap((character) => characterFilterData(character).classificationIds),
           (id) => optionLabel(options.classifications, id)
         ),
         state.classificationFilterId
@@ -893,7 +938,7 @@
     if (!result) return;
 
     result.hidden = false;
-    result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right);
+    result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right, currentBattleViews.statPairs);
     startBattleButton.disabled = true;
   });
 
