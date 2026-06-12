@@ -1232,17 +1232,54 @@ button {
 }
 
 .battle-character-card .character-content {
-  padding: clamp(18px, 2vw, 28px);
+  --battle-card-padding: clamp(18px, 2vw, 28px);
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(210px, 24svh, 290px);
+  overflow: hidden;
+  padding: var(--battle-card-padding);
 }
 
 .battle-character-card .character-identity {
-  min-height: clamp(140px, 18svh, 210px);
-  margin-bottom: 18px;
+  position: static;
+  min-height: 0;
+  margin-bottom: clamp(42px, 8svh, 88px);
+}
+
+.battle-character-card .character-identity--with-image {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.battle-character-card .character-title-block {
+  position: relative;
+  z-index: 2;
 }
 
 .battle-character-card .character-portrait {
-  width: clamp(130px, 17vw, 240px);
-  height: clamp(130px, 17svh, 210px);
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: clamp(14px, 1.4vw, 22px);
+  bottom: 0;
+  width: min(44%, 360px);
+  height: auto;
+  aspect-ratio: auto;
+  pointer-events: none;
+}
+
+.battle-character-card .character-portrait img {
+  opacity: 0.96;
+  object-position: right bottom;
+}
+
+.battle-character-card .character-portrait .image-expand-button {
+  pointer-events: auto;
+}
+
+.battle-character-card .meta-list {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0;
 }
 
 .battle-comparison {
@@ -1612,6 +1649,25 @@ button {
     width: min(100%, 220px);
     height: 150px;
     justify-self: start;
+  }
+
+  .battle-character-card .character-content {
+    min-height: 220px;
+  }
+
+  .battle-character-card .character-identity {
+    margin-bottom: 42px;
+  }
+
+  .battle-character-card .character-portrait {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    width: min(46%, 180px);
+    height: auto;
+    aspect-ratio: auto;
+    justify-self: end;
   }
 
   .speed-value-row {
