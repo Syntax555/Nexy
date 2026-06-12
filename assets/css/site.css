@@ -604,15 +604,18 @@ img.is-pixel-trimmed {
   z-index: 2;
   top: 12px;
   right: 12px;
-  min-height: 34px;
+  display: grid;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  place-items: center;
   border: 1px solid rgba(200, 211, 217, 0.9);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
   color: #203342;
   cursor: pointer;
-  padding: 0 12px;
-  font-size: 0.78rem;
-  font-weight: 800;
+  padding: 0;
   box-shadow: 0 10px 24px rgba(21, 32, 41, 0.14);
 }
 
@@ -621,6 +624,48 @@ img.is-pixel-trimmed {
   border-color: #7892a1;
   background: #ffffff;
   outline: none;
+}
+
+.image-expand-icon {
+  position: relative;
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.image-expand-icon::before,
+.image-expand-icon::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.image-expand-icon::before {
+  inset: 3px 0 0 0;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.image-expand-icon::after {
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .image-lightbox {
@@ -1244,6 +1289,14 @@ img.is-pixel-trimmed {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 2vw, 28px);
+  display: grid;
+  grid-template-areas:
+    "title art"
+    "meta art";
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 36%);
+  align-items: start;
+  column-gap: clamp(18px, 3vw, 34px);
+  row-gap: 14px;
   position: relative;
   isolation: isolate;
   min-height: 0;
@@ -1252,30 +1305,51 @@ img.is-pixel-trimmed {
 }
 
 .battle-character-card .character-identity {
-  position: static;
-  min-height: 0;
-  margin-bottom: clamp(12px, 1.5vw, 18px);
-}
-
-.battle-character-card .character-identity--with-image {
-  grid-template-columns: minmax(0, 1fr);
+  display: contents;
 }
 
 .battle-character-card .character-title-block {
+  grid-area: title;
   position: relative;
   z-index: 2;
-  max-width: min(62%, 430px);
+  max-width: none;
+}
+
+.character-heading-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.character-heading-row .character-heading {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .battle-character-card .character-portrait {
-  position: absolute;
+  grid-area: art;
+  position: relative;
   z-index: 1;
-  top: 0;
-  right: clamp(14px, 1.4vw, 22px);
-  bottom: 0;
-  width: min(44%, 360px);
-  height: auto;
+  align-self: stretch;
+  justify-self: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: clamp(170px, 18svh, 240px);
   aspect-ratio: auto;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.battle-character-card .character-portrait::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 22%;
+  background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
   pointer-events: none;
 }
 
@@ -1286,15 +1360,17 @@ img.is-pixel-trimmed {
 
 .battle-character-card .character-title-block .image-expand-button {
   position: static;
-  width: fit-content;
-  min-height: 30px;
-  margin-top: 12px;
-  padding: 0 11px;
-  font-size: 0.74rem;
+  flex: 0 0 auto;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  min-height: 34px;
+  margin-top: 2px;
   pointer-events: auto;
 }
 
 .battle-character-card .meta-list {
+  grid-area: meta;
   position: relative;
   z-index: 2;
   margin-bottom: 0;
@@ -1302,8 +1378,8 @@ img.is-pixel-trimmed {
 
 .battle-character-card .meta-list--facts {
   display: grid;
-  width: min(62%, 430px);
   gap: 8px;
+  width: min(100%, 430px);
 }
 
 .battle-character-card .meta-list--facts > li {
@@ -1734,28 +1810,33 @@ img.is-pixel-trimmed {
   }
 
   .battle-character-card .character-content {
+    grid-template-columns: minmax(0, 52%) minmax(128px, 1fr);
+    column-gap: 12px;
     min-height: 0;
+    padding: 18px;
   }
 
   .battle-character-card .character-identity {
-    margin-bottom: 12px;
+    display: contents;
   }
 
   .battle-character-card .character-portrait {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    bottom: 0;
-    width: min(54%, 210px);
-    height: auto;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 210px;
     aspect-ratio: auto;
     justify-self: end;
   }
 
+  .battle-character-card .character-portrait::before {
+    width: 12%;
+  }
+
   .battle-character-card .character-title-block,
   .battle-character-card .meta-list--facts {
-    width: min(40%, 430px);
-    max-width: min(40%, 430px);
+    width: auto;
+    max-width: none;
   }
 
   .battle-character-card .meta-fact-item {

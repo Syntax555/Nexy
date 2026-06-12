@@ -1240,7 +1240,10 @@
         data-image-src="${escapeHtml(assetUrl(view.image.image))}"
         data-image-title="${escapeHtml(imageTitle)}"
         aria-label="Expand ${escapeHtml(title(view.character.name))} image"
-      >Expand</button>
+      >
+        <span class="image-expand-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Expand image</span>
+      </button>
     ` : "";
     const heroImage = imagePlacement === "hero" ? `
       <div class="character-image">
@@ -1260,9 +1263,11 @@
       <div class="character-content">
         <div class="character-identity${identityImage ? " character-identity--with-image" : ""}">
           <div class="character-title-block">
-            <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
+            <div class="character-heading-row">
+              <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
+              ${titleExpandButton}
+            </div>
             <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
-            ${titleExpandButton}
           </div>
           ${identityImage}
         </div>
