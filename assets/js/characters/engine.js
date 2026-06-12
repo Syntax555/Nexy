@@ -1152,8 +1152,8 @@
     return `<h4 class="section-title">${escapeHtml(titleText)}</h4><ul class="tag-list">${tags}</ul>`;
   }
 
-  function detailFactRows(details) {
-    const rows = [];
+  function detailFacts(details) {
+    const facts = [];
     const classifications = [];
 
     list(details).forEach((detail) => {
@@ -1163,34 +1163,53 @@
         return;
       }
 
-      rows.push({
+      facts.push({
         label: detail.slice(0, separatorIndex),
         value: detail.slice(separatorIndex + 2)
       });
     });
 
-    if (classifications.length) {
-      rows.push({
-        label: classifications.length === 1 ? "Classification" : "Classifications",
-        value: classifications.join(", ")
-      });
-    }
-
-    return rows;
+    return { facts, classifications };
   }
 
   function detailFactItemHtml({ label, value }) {
     return `
-      <li>
+      <li class="meta-fact-item">
         <span class="meta-label">${escapeHtml(label)}</span>
         <span class="meta-value">${escapeHtml(value)}</span>
       </li>
     `;
   }
 
+  function detailClassificationGroupHtml(classifications) {
+    if (!classifications.length) return "";
+
+    const classificationItems = classifications
+      .map((classification) => `<li>${escapeHtml(classification)}</li>`)
+      .join("");
+
+    return `
+      <li class="meta-classification-group">
+        <span class="meta-label">${classifications.length === 1 ? "Classification" : "Classifications"}</span>
+        <ul class="meta-chip-list">
+          ${classificationItems}
+        </ul>
+      </li>
+    `;
+  }
+
+  function detailFactsHtml(details) {
+    const { facts, classifications } = detailFacts(details);
+
+    return [
+      ...facts.map(detailFactItemHtml),
+      detailClassificationGroupHtml(classifications)
+    ].join("");
+  }
+
   function detailListHtml(details, detailStyle = "chips") {
     const detailTags = detailStyle === "facts"
-      ? detailFactRows(details).map(detailFactItemHtml).join("")
+      ? detailFactsHtml(details)
       : list(details).map((detail) => `<li>${escapeHtml(detail)}</li>`).join("");
     if (!detailTags) return "";
 
@@ -1232,9 +1251,9 @@
     const identityImage = imagePlacement === "identity" ? `
       <div class="character-portrait" aria-label="${escapeHtml(imageTitle)}">
         ${imageMarkup}
-        ${expandButton}
       </div>
     ` : "";
+    const titleExpandButton = imagePlacement === "identity" ? expandButton : "";
 
     return `
       ${heroImage}
@@ -1243,6 +1262,7 @@
           <div class="character-title-block">
             <h3 class="character-heading">${escapeHtml(title(view.character.name))}</h3>
             <p class="character-subtitle">${escapeHtml(view.names.join(" / "))}</p>
+            ${titleExpandButton}
           </div>
           ${identityImage}
         </div>

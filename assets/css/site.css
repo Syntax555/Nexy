@@ -1284,7 +1284,13 @@ img.is-pixel-trimmed {
   object-position: right bottom;
 }
 
-.battle-character-card .character-portrait .image-expand-button {
+.battle-character-card .character-title-block .image-expand-button {
+  position: static;
+  width: fit-content;
+  min-height: 30px;
+  margin-top: 12px;
+  padding: 0 11px;
+  font-size: 0.74rem;
   pointer-events: auto;
 }
 
@@ -1297,19 +1303,30 @@ img.is-pixel-trimmed {
 .battle-character-card .meta-list--facts {
   display: grid;
   width: min(62%, 430px);
-  gap: 6px;
+  gap: 8px;
 }
 
-.battle-character-card .meta-list--facts li {
+.battle-character-card .meta-list--facts > li {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+.battle-character-card .meta-fact-item {
   display: grid;
-  grid-template-columns: minmax(86px, max-content) minmax(0, 1fr);
+  grid-template-columns: minmax(58px, max-content) minmax(0, 1fr);
   align-items: baseline;
   gap: 10px;
   width: fit-content;
   max-width: 100%;
-  border-radius: 6px;
-  background: rgba(248, 251, 252, 0.84);
-  padding: 3px 8px;
+}
+
+.battle-character-card .meta-classification-group {
+  display: grid;
+  gap: 6px;
+  width: min(100%, 360px);
 }
 
 .meta-label {
@@ -1326,6 +1343,25 @@ img.is-pixel-trimmed {
   font-size: 0.88rem;
   font-weight: 700;
   overflow-wrap: anywhere;
+}
+
+.meta-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.battle-character-card .meta-chip-list li {
+  border: 1px solid #d8e0e4;
+  border-radius: 999px;
+  background: rgba(248, 251, 252, 0.92);
+  padding: 4px 9px;
+  color: #182631;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .battle-comparison {
@@ -1718,11 +1754,11 @@ img.is-pixel-trimmed {
 
   .battle-character-card .character-title-block,
   .battle-character-card .meta-list--facts {
-    width: min(68%, 430px);
-    max-width: min(68%, 430px);
+    width: min(40%, 430px);
+    max-width: min(40%, 430px);
   }
 
-  .battle-character-card .meta-list--facts li {
+  .battle-character-card .meta-fact-item {
     grid-template-columns: 1fr;
     gap: 1px;
   }
