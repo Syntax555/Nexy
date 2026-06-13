@@ -1315,27 +1315,21 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 2vw, 28px);
-  display: grid;
-  grid-template-areas:
-    "title art"
-    "meta art";
-  grid-template-columns: minmax(0, 1fr) minmax(150px, 36%);
-  align-items: start;
-  column-gap: clamp(18px, 3vw, 34px);
-  row-gap: 14px;
+  --battle-portrait-width: clamp(170px, 36%, 330px);
+  --battle-portrait-gap: clamp(14px, 2.4vw, 30px);
   position: relative;
   isolation: isolate;
-  min-height: clamp(230px, 24svh, 300px);
+  min-height: 0;
   overflow: hidden;
-  padding: var(--battle-card-padding);
+  padding: var(--battle-card-padding) calc(var(--battle-card-padding) + var(--battle-portrait-width) + var(--battle-portrait-gap)) var(--battle-card-padding) var(--battle-card-padding);
 }
 
 .battle-character-card .character-identity {
-  display: contents;
+  display: block;
+  margin-bottom: 14px;
 }
 
 .battle-character-card .character-title-block {
-  grid-area: title;
   position: relative;
   z-index: 2;
   max-width: none;
@@ -1354,14 +1348,14 @@ body.is-lightbox-open {
 }
 
 .battle-character-card .character-portrait {
-  grid-area: art;
-  position: relative;
+  position: absolute;
   z-index: 1;
-  align-self: stretch;
-  justify-self: stretch;
-  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--battle-portrait-width);
   height: 100%;
-  min-height: clamp(190px, 22svh, 270px);
+  min-height: 0;
   aspect-ratio: auto;
   overflow: hidden;
   pointer-events: auto;
@@ -1392,7 +1386,6 @@ body.is-lightbox-open {
 }
 
 .battle-character-card .meta-list {
-  grid-area: meta;
   position: relative;
   z-index: 2;
   margin-bottom: 0;
@@ -1863,21 +1856,24 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-content {
-    grid-template-columns: minmax(0, 52%) minmax(128px, 1fr);
-    column-gap: 12px;
+    --battle-portrait-width: clamp(120px, 36vw, 180px);
+    --battle-portrait-gap: 10px;
     min-height: 0;
-    padding: 18px;
+    padding: 18px calc(18px + var(--battle-portrait-width) + var(--battle-portrait-gap)) 18px 18px;
   }
 
   .battle-character-card .character-identity {
-    display: contents;
+    display: block;
   }
 
   .battle-character-card .character-portrait {
-    position: relative;
-    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--battle-portrait-width);
     height: 100%;
-    min-height: 210px;
+    min-height: 0;
     aspect-ratio: auto;
     justify-self: end;
   }
