@@ -31,12 +31,14 @@
   }
 
   function trimModeFor(frame) {
+    if (frame?.closest(".battle-character-card")) return "cover";
+
     return frame?.classList.contains("circle-choice-orb") ? "cover" : "contain";
   }
 
   function trimAnchorFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return { x: "center", y: "top" };
-    if (frame?.closest(".battle-character-card")) return { x: "right", y: "bottom" };
+    if (frame?.closest(".battle-character-card")) return { x: "right", y: "top" };
     if (frame?.classList.contains("character-portrait")) return { x: "right", y: "bottom" };
 
     return { x: "center", y: "bottom" };
@@ -44,7 +46,7 @@
 
   function trimInsetFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return { top: 0, right: 0, bottom: 0, left: 0 };
-    if (frame?.closest(".battle-character-card")) return { top: 0, right: 18, bottom: 0, left: 18 };
+    if (frame?.closest(".battle-character-card")) return { top: 0, right: 0, bottom: 0, left: 12 };
     if (frame?.classList.contains("character-portrait")) return { top: 0, right: 10, bottom: 0, left: 10 };
 
     return { top: 0, right: 8, bottom: 0, left: 8 };
