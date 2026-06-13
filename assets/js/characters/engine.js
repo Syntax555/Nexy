@@ -1244,7 +1244,7 @@
         aria-label="Open full-size image for ${escapeHtml(title(view.character.name))}"
       >
         <span class="image-expand-icon" aria-hidden="true"></span>
-        <span class="image-expand-label visually-hidden">Open full-size image</span>
+        <span class="image-expand-label">Expand</span>
       </button>
     ` : "";
     const heroImage = imagePlacement === "hero" ? `

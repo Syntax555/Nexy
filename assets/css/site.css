@@ -607,8 +607,9 @@ img.is-pixel-trimmed {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  gap: 7px;
+  min-width: 0;
+  height: 34px;
   border: 1px solid rgba(210, 220, 226, 0.92);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.78);
@@ -616,7 +617,9 @@ img.is-pixel-trimmed {
   backdrop-filter: blur(12px);
   color: #203342;
   cursor: pointer;
-  padding: 0;
+  padding: 0 12px 0 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
   line-height: 1;
   box-shadow: 0 14px 30px rgba(21, 32, 41, 0.16);
   opacity: 0;
@@ -651,8 +654,8 @@ img.is-pixel-trimmed {
   position: relative;
   display: block;
   flex: 0 0 auto;
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
 }
 
 .image-expand-icon::before,
@@ -663,18 +666,24 @@ img.is-pixel-trimmed {
 }
 
 .image-expand-icon::before {
-  inset: 4px 0 0 0;
-  border: 1.8px solid currentColor;
-  border-radius: 4px;
+  inset: 3px 0 0 0;
+  border: 1.6px solid currentColor;
+  border-radius: 3px;
 }
 
 .image-expand-icon::after {
   top: 0;
   right: 0;
-  width: 9px;
-  height: 9px;
-  border-top: 1.8px solid currentColor;
-  border-right: 1.8px solid currentColor;
+  width: 8px;
+  height: 8px;
+  border-top: 1.6px solid currentColor;
+  border-right: 1.6px solid currentColor;
+}
+
+.image-expand-label {
+  display: block;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .character-image:hover .image-expand-button,
@@ -863,8 +872,9 @@ body.is-lightbox-open {
 .character-portrait .image-expand-button {
   top: 8px;
   right: 8px;
-  width: 36px;
-  height: 36px;
+  height: 32px;
+  padding-inline: 10px 11px;
+  font-size: 0.72rem;
 }
 
 .character-portrait .empty-image {
@@ -1476,7 +1486,10 @@ body.is-lightbox-open {
 }
 
 @media (hover: none) {
-  .image-expand-button {
+  .image-expand-button:focus,
+  .image-expand-button:focus-visible,
+  .character-image:focus-within .image-expand-button,
+  .character-portrait:focus-within .image-expand-button {
     opacity: 1;
     transform: none;
     pointer-events: auto;

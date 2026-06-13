@@ -42,6 +42,14 @@
     return { x: "center", y: "bottom" };
   }
 
+  function trimInsetFor(frame) {
+    if (frame?.classList.contains("circle-choice-orb")) return { top: 0, right: 0, bottom: 0, left: 0 };
+    if (frame?.closest(".battle-character-card")) return { top: 0, right: 18, bottom: 0, left: 18 };
+    if (frame?.classList.contains("character-portrait")) return { top: 0, right: 10, bottom: 0, left: 10 };
+
+    return { top: 0, right: 8, bottom: 0, left: 8 };
+  }
+
   function anchoredOffset(space, size, anchor) {
     if (anchor === "right" || anchor === "bottom") return space - size;
     if (anchor === "center") return (space - size) / 2;
@@ -130,16 +138,19 @@
     if (frameWidth <= 0 || frameHeight <= 0 || bounds.width <= 0 || bounds.height <= 0) return;
 
     const mode = trimModeFor(frame);
+    const inset = trimInsetFor(frame);
+    const fitWidth = Math.max(1, frameWidth - inset.left - inset.right);
+    const fitHeight = Math.max(1, frameHeight - inset.top - inset.bottom);
     const scale = mode === "cover"
-      ? Math.max(frameWidth / bounds.width, frameHeight / bounds.height)
-      : Math.min(frameWidth / bounds.width, frameHeight / bounds.height);
+      ? Math.max(fitWidth / bounds.width, fitHeight / bounds.height)
+      : Math.min(fitWidth / bounds.width, fitHeight / bounds.height);
     const imageWidth = bounds.naturalWidth * scale;
     const imageHeight = bounds.naturalHeight * scale;
     const visibleWidth = bounds.width * scale;
     const visibleHeight = bounds.height * scale;
     const anchor = trimAnchorFor(frame);
-    const visibleLeft = anchoredOffset(frameWidth, visibleWidth, anchor.x);
-    const visibleTop = anchoredOffset(frameHeight, visibleHeight, anchor.y);
+    const visibleLeft = inset.left + anchoredOffset(fitWidth, visibleWidth, anchor.x);
+    const visibleTop = inset.top + anchoredOffset(fitHeight, visibleHeight, anchor.y);
 
     image.classList.add("is-pixel-trimmed");
     image.style.width = `${imageWidth}px`;
