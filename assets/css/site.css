@@ -1315,13 +1315,12 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 2vw, 28px);
-  --battle-portrait-width: clamp(170px, 36%, 330px);
-  --battle-portrait-gap: clamp(14px, 2.4vw, 30px);
+  --battle-portrait-width: clamp(260px, 58%, 720px);
   position: relative;
   isolation: isolate;
   min-height: 0;
   overflow: hidden;
-  padding: var(--battle-card-padding) calc(var(--battle-card-padding) + var(--battle-portrait-width) + var(--battle-portrait-gap)) var(--battle-card-padding) var(--battle-card-padding);
+  padding: var(--battle-card-padding);
 }
 
 .battle-character-card .character-identity {
@@ -1368,7 +1367,7 @@ body.is-lightbox-open {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 22%;
+  width: 42%;
   background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
   pointer-events: none;
 }
@@ -1394,7 +1393,7 @@ body.is-lightbox-open {
 .battle-character-card .meta-list--facts {
   display: grid;
   gap: 8px;
-  width: min(100%, 430px);
+  width: min(100%, 520px);
 }
 
 .battle-character-card .meta-list--facts > li {
@@ -1856,10 +1855,9 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-content {
-    --battle-portrait-width: clamp(120px, 36vw, 180px);
-    --battle-portrait-gap: 10px;
+    --battle-portrait-width: clamp(150px, 52vw, 260px);
     min-height: 0;
-    padding: 18px calc(18px + var(--battle-portrait-width) + var(--battle-portrait-gap)) 18px 18px;
+    padding: 18px;
   }
 
   .battle-character-card .character-identity {
@@ -1879,7 +1877,7 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-portrait::before {
-    width: 12%;
+    width: 34%;
   }
 
   .battle-character-card .character-title-block,
