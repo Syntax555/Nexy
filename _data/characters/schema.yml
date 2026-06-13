@@ -168,6 +168,8 @@ derived:
     target_power_ids_field: target_power_ids
     all_powers_rule: empty_target_power_ids_means_all_powers
     negation_rule: non_empty_target_power_ids_negates_only_listed_powers
+    max_target_modifier_field: max_target_modifier
+    max_target_modifier_rule: when_present_only_blocks_target_power_refs_with_ability_modifier_coverage_rank_less_than_or_equal_to_that_modifier
     display_rule: targeted_power_nullification_can_display_as_target_power_name_negation
     resistance_rule: can_be_resisted_by_matching_resistance_refs
     examples:
@@ -176,6 +178,12 @@ derived:
         effects:
           - power_nullification:
               target_power_ids: []
+      minor_only_power_nullification:
+        id: power-nullification
+        effects:
+          - power_nullification:
+              target_power_ids: []
+              max_target_modifier: minor
       regeneration_negation:
         id: power-nullification
         effects:
@@ -477,6 +485,7 @@ derived:
       condition: string_or_null
     power_nullification:
       target_power_ids: list
+      max_target_modifier: ability_modifier_id_or_null
     absorption:
       target_power_refs: list
     resistance_negation:

@@ -493,6 +493,7 @@ def validate_effect(context, effect, sets)
       errors << "#{context}.power_nullification must be a map"
     else
       errors.concat(validate_ref_list("#{context}.power_nullification.target_power_ids", nullification["target_power_ids"], sets[:powers], "power"))
+      errors.concat(validate_refs("#{context}.power_nullification.max_target_modifier", [nullification["max_target_modifier"]], sets[:ability_modifiers], "ability modifier"))
     end
   end
 

@@ -1,0 +1,59 @@
+name: "Purple Man"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human-mutate
+keys:
+  - key: purple-man
+    names:
+      - "Zebediah Killgrave"
+    images:
+      - name: "Purple Man"
+        image: "assets/images/characters/purple-man-marvel-mainstream/purple-man.webp"
+    power_refs:
+      - id: mind-manipulation
+        effects:
+          - stat_effects:
+              range:
+                value: kilometers
+                modifier: normal
+      - id: power-nullification
+        effects:
+          - power_nullification:
+              target_power_ids: []
+              max_target_modifier: minor
+    resistance_refs: []
+    attack_potency:
+      value: human
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: average-human
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: average-human
+      modifier: normal
+    striking_strength:
+      value: human-level
+      modifier: normal
+    durability:
+      value: large-building
+      modifier: possibly
+    stamina:
+      value: average
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []

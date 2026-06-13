@@ -869,7 +869,9 @@
 
     if (effect.power_nullification) {
       const targets = powerNames(effect.power_nullification.target_power_ids);
-      lines.push(targets.length ? `Nullifies: ${joinText(targets)}` : "Nullifies powers");
+      const maxModifier = byId(options.ability_modifiers, effect.power_nullification.max_target_modifier);
+      const modifierLimit = maxModifier ? ` up to ${maxModifier.name}` : "";
+      lines.push(targets.length ? `Nullifies: ${joinText(targets)}${modifierLimit}` : `Nullifies powers${modifierLimit}`);
     }
 
     if (effect.absorption) {
@@ -1301,7 +1303,11 @@
     if (!effect?.power_nullification) return false;
 
     const targetIds = list(effect.power_nullification.target_power_ids);
-    return targetIds.length === 0 || targetIds.includes(ref.id);
+    const targetMatches = targetIds.length === 0 || targetIds.includes(ref.id);
+    const maxTargetModifier = byId(options.ability_modifiers, effect.power_nullification.max_target_modifier);
+    const modifierMatches = !maxTargetModifier || abilityModifierRank(ref) <= maxTargetModifier.coverage_rank;
+
+    return targetMatches && modifierMatches;
   }
 
   function effectAbsorbsPower(effect, ref, sourceRef = {}) {
