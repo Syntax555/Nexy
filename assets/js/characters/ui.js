@@ -219,7 +219,7 @@
       ageFilter: "",
       tierFilter: "",
       classificationFilterId: "",
-      sortMode: "default",
+      sortMode: "name-asc",
       filtersOpen: false,
       sortsOpen: false,
       confirmed: false
@@ -237,7 +237,6 @@
       { value: "unknown", label: "Unknown" }
     ];
     const sortChoices = [
-      { value: "default", label: "Default", shortLabel: "Default" },
       { value: "name-asc", label: "Name A-Z", shortLabel: "Name" },
       { value: "name-desc", label: "Name Z-A", shortLabel: "Name" },
       { value: "tier-desc", label: "Tier strongest first", shortLabel: "Tier" },
@@ -452,8 +451,6 @@
     }
 
     function sortCharacters(characters) {
-      if (state.sortMode === "default") return characters;
-
       return characters
         .map((character, index) => ({ character, index }))
         .sort((left, right) => {
@@ -845,7 +842,7 @@
 
     function renderSortPopover() {
       const currentSort = sortChoices.find((choice) => choice.value === state.sortMode) || sortChoices[0];
-      const sortIsActive = state.sortMode !== "default";
+      const sortIsActive = state.sortMode !== "name-asc";
 
       if (sortButton) {
         sortButton.textContent = sortIsActive ? `Sort: ${currentSort.shortLabel}` : "Sort";
@@ -946,7 +943,7 @@
       const button = event.target.closest("[data-sort-value]");
       if (!button || !sortOptions.contains(button)) return;
 
-      state.sortMode = button.dataset.sortValue || "default";
+      state.sortMode = button.dataset.sortValue || "name-asc";
       state.sortsOpen = false;
       state.confirmed = false;
       render();
