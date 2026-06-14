@@ -16,6 +16,8 @@
     - human
 - id: half-falcon
   name: "Half Falcon"
+- id: half-inhuman
+  name: "Half Inhuman"
 - id: superhero
   name: "Superhero"
 - id: avengers-academy

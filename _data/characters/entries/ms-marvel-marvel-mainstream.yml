@@ -1,0 +1,72 @@
+name: "Ms. Marvel"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: false
+  display: "Late Teens"
+classification_ids:
+  - half-human
+  - half-inhuman
+keys:
+  - key: ms-marvel
+    names:
+      - "Kamala Khan"
+    images:
+      - name: "Destined One Suit"
+        image: "assets/images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: time-travel
+        modifier: limited
+        effects:
+          - stat_effects:
+              range:
+                value: low-multiversal
+                modifier: normal
+      - id: intangibility
+        type_ids:
+          - elemental-intangibility-type-3-liquids
+      - id: size-manipulation
+        effects:
+          - stat_effects:
+              range:
+                value: tens-of-meters
+                modifier: normal
+    resistance_refs:
+      - id: mind-manipulation-resistance
+      - id: poison-manipulation-resistance
+    attack_potency:
+      value: planet
+      modifier: possibly
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed:
+      value: hypersonic
+      modifier: normal
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-m
+      modifier: at-least
+    striking_strength:
+      value: large-building-level
+      modifier: normal
+    durability:
+      value: planet
+      modifier: possibly
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - destined-one-suit
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []

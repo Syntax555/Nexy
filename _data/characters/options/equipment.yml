@@ -186,3 +186,36 @@
                     value: kilometers
                     modifier: normal
         resistance_refs: []
+- id: destined-one-suit
+  name: "Destined One Suit"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - stat_modifier_floor_effects:
+        - stat: attack_potency
+          modifier: higher
+        - stat: striking_strength
+          modifier: higher
+        - stat: durability
+          modifier: higher
+    - grants:
+        power_refs:
+          - id: absorption
+            type_ids:
+              - light-absorption
+            effects:
+              - absorption:
+                  target_power_refs:
+                    - id: light-manipulation
+          - id: absorption
+            type_ids:
+              - electricity-absorption
+            effects:
+              - absorption:
+                  target_power_refs:
+                    - id: electricity-manipulation
+        resistance_refs: []
+    - image_update:
+        name: "Destined One Suit"
+        image: "assets/images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+        priority: 10

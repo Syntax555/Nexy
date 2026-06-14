@@ -102,6 +102,16 @@
   name: "Life Force Absorption"
   covers_all: false
   covers_type_ids: []
+- id: light-absorption
+  power_id: absorption
+  name: "Light Absorption"
+  covers_all: false
+  covers_type_ids: []
+- id: electricity-absorption
+  power_id: absorption
+  name: "Electricity Absorption"
+  covers_all: false
+  covers_type_ids: []
 - id: conceptual-manipulation-type-1
   power_id: conceptual-manipulation
   name: "Type 1"

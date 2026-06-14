@@ -125,10 +125,25 @@
 
     const text = String(source.display || "").toLowerCase();
     const decadePattern = /\b(early|mid|middle|late)?\s*-?\s*(\d{1,3})\s*'?\s*s\b/g;
+    const teenPattern = /\b(early|mid|middle|late)?\s*-?\s*teens?\b/g;
     const exactPattern = /\b(\d{1,3})(?!\s*'?\s*s)\b/g;
 
     for (const match of text.matchAll(decadePattern)) {
       addDecadeAgeRange(values, Number(match[2]), match[1] || "");
+    }
+
+    for (const match of text.matchAll(teenPattern)) {
+      const qualifier = match[1] || "";
+
+      if (qualifier === "early") {
+        addAgeRange(values, 13, 15);
+      } else if (qualifier === "mid" || qualifier === "middle") {
+        addAgeRange(values, 15, 17);
+      } else if (qualifier === "late") {
+        addAgeRange(values, 17, 19);
+      } else {
+        addAgeRange(values, 13, 19);
+      }
     }
 
     for (const match of text.matchAll(exactPattern)) {
