@@ -1057,6 +1057,7 @@
         label,
         value,
         html: field === "speed" ? speedStatValueHtml(key) : "",
+        wide: field === "speed" && speedEntries(key).length > 1,
         rank: statRank(key, field, catalog)
       };
     });
@@ -1140,7 +1141,7 @@
 
   function statGridHtml(stats) {
     return list(stats).map((stat) => `
-      <li class="stat">
+      <li class="stat${stat.wide ? " stat--wide" : ""}">
         <span class="stat-label">${escapeHtml(stat.label)}</span>
         <span class="stat-value">${stat.html || escapeHtml(stat.value)}</span>
       </li>

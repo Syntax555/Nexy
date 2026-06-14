@@ -1092,6 +1092,11 @@ body.is-lightbox-open {
 .stat {
   border-top: 1px solid #e3e9ed;
   padding-top: 10px;
+  min-width: 0;
+}
+
+.stat--wide {
+  grid-column: 1 / -1;
 }
 
 .stat-label {
@@ -1109,24 +1114,27 @@ body.is-lightbox-open {
   font-size: 1.02rem;
   font-weight: 700;
   line-height: 1.25;
-  overflow-wrap: anywhere;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .speed-value-list {
   display: grid;
-  gap: 7px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 8px;
   margin-top: 7px;
 }
 
 .speed-value-row {
   display: grid;
-  grid-template-columns: minmax(90px, max-content) minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
+  min-width: 0;
+  align-items: start;
+  gap: 4px;
   border: 1px solid #d9e3e8;
   border-radius: 8px;
   background: #f7fafb;
-  padding: 7px 8px;
+  padding: 8px 10px;
 }
 
 .speed-value-type {
@@ -1142,6 +1150,8 @@ body.is-lightbox-open {
   font-size: 0.94rem;
   font-weight: 800;
   line-height: 1.2;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .speed-value-note {
