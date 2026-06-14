@@ -18,6 +18,9 @@ keys:
     power_refs:
       - id: flight
       - id: martial-arts-mastery
+      - id: regeneration
+        type_ids:
+          - low-regeneration
     resistance_refs: []
     attack_potency:
       value: wall

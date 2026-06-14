@@ -18,6 +18,9 @@ keys:
     power_refs:
       - id: martial-arts-mastery
         martial_arts_degree_id: expert
+      - id: regeneration
+        type_ids:
+          - low-regeneration
     resistance_refs:
       - id: biological-manipulation-resistance
       - id: ice-manipulation-resistance

@@ -25,6 +25,11 @@ keys:
       - id: vehicular-mastery
         type_ids:
           - land-vehicles
+      - id: body-control
+      - id: pressure-points
+      - id: paralysis-inducement
+      - id: camouflage
+      - id: telepathy
     resistance_refs:
       - id: mind-manipulation-resistance
     attack_potency:

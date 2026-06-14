@@ -19,6 +19,17 @@ keys:
         type_ids:
           - all-weapons
       - id: martial-arts-mastery
+      - id: multiple-selves
+      - id: elasticity
+      - id: body-control
+      - id: weapon-creation
+      - id: camouflage
+      - id: transformation
+      - id: regeneration
+        type_ids:
+          - low-regeneration
+      - id: surface-scaling
+      - id: healing
     resistance_refs:
       - id: precognition-resistance
       - id: soul-manipulation-resistance

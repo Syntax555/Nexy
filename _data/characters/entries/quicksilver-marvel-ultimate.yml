@@ -16,6 +16,10 @@ keys:
         image: "assets/images/characters/quicksilver-marvel-ultimate/quicksilver.webp"
     power_refs:
       - id: acrobatics
+      - id: superhuman-speed
+      - id: regeneration
+        type_ids:
+          - low-regeneration
     resistance_refs: []
     attack_potency:
       value: street

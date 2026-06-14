@@ -111,6 +111,387 @@
   variants: []
   tags:
     - mastery
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: multiple-selves
+  name: "Multiple Selves"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: elasticity
+  name: "Elasticity"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: body-control
+  name: "Body Control"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: weapon-creation
+  name: "Weapon Creation"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: camouflage
+  name: "Camouflage"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: transformation
+  name: "Transformation"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: regeneration
+  name: "Regeneration"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids:
+    - low-regeneration
+    - mid-low-regeneration
+    - high-low-regeneration
+    - low-mid-regeneration
+    - mid-regeneration
+    - high-mid-regeneration
+    - low-high-regeneration
+    - mid-high-regeneration
+    - high-regeneration
+    - low-godly-regeneration
+    - mid-godly-regeneration
+    - high-godly-regeneration
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: surface-scaling
+  name: "Surface Scaling"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: healing
+  name: "Healing"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: social-influencing
+  name: "Social Influencing"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: attack-reflection
+  name: "Attack Reflection"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: statistics-amplification
+  name: "Statistics Amplification"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: enhanced-senses
+  name: "Enhanced Senses"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: extrasensory-perception
+  name: "Extrasensory Perception"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: danmaku
+  name: "Danmaku"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: homing-attack
+  name: "Homing Attack"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: pressure-points
+  name: "Pressure Points"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: paralysis-inducement
+  name: "Paralysis Inducement"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: telepathy
+  name: "Telepathy"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: superhuman-speed
+  name: "Superhuman Speed"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: illusion-creation
+  name: "Illusion Creation"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: shapeshifting
+  name: "Shapeshifting"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: water-walking
+  name: "Water Walking"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: immortality
+  name: "Immortality"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: regeneration-negation
+  name: "Regeneration Negation"
+  aliases: []
+  variants: []
+  tags:
+    - negation
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects:
+    - power_nullification:
+        target_power_refs:
+          - id: regeneration
+        max_target_type_rank: 4
+- id: non-standard-breathing
+  name: "Non-Standard Breathing"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
   type_ids: []
   degree_ids: []
   grants:

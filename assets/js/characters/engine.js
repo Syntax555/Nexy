@@ -270,6 +270,22 @@
     return typeNames.length ? `${label}: ${typeNames.join(", ")}` : label;
   }
 
+  function powerTargetTypeLimitLabel(nullification, targetRefs = []) {
+    const maxRank = Number(nullification?.max_target_type_rank);
+    if (!Number.isFinite(maxRank)) return "";
+
+    const targetPowerIds = [
+      ...list(nullification.target_power_ids),
+      ...targetRefs.map((ref) => ref.id)
+    ];
+    const targetPowerId = targetPowerIds.find(Boolean);
+    const matchingType = list(options.power_types)
+      .filter((type) => type.power_id === targetPowerId && Number(type.rank) <= maxRank)
+      .sort((a, b) => Number(b.rank) - Number(a.rank))[0];
+
+    return matchingType ? ` up to ${matchingType.name}` : ` up to type rank ${maxRank}`;
+  }
+
   function powerTargetRefMatches(powerRef, targetRef) {
     if (!powerRef || !targetRef || powerRef.id !== targetRef.id) return false;
     if (targetRef.source_variant && powerRef.source_variant !== targetRef.source_variant) return false;
@@ -304,6 +320,14 @@
     return requiredTypes.every((requiredTypeId) => (
       ownedTypes.some((ownedTypeId) => powerTypeCovers(ownedTypeId, requiredTypeId))
     ));
+  }
+
+  function powerTypeRank(ref = {}) {
+    const ranks = list(ref.type_ids)
+      .map((typeId) => Number(byId(options.power_types, typeId)?.rank))
+      .filter(Number.isFinite);
+
+    return ranks.length ? Math.max(...ranks) : 0;
   }
 
   function powerRefMeetsRequirement(ownedRef, requiredRef) {
@@ -868,10 +892,15 @@
     lines.push(...requirementTooltipLines(effect.requirements));
 
     if (effect.power_nullification) {
-      const targets = powerNames(effect.power_nullification.target_power_ids);
+      const targetRefs = list(effect.power_nullification.target_power_refs);
+      const targets = [
+        ...powerNames(effect.power_nullification.target_power_ids),
+        ...targetRefs.map(powerTargetRefLabel)
+      ];
       const maxModifier = byId(options.ability_modifiers, effect.power_nullification.max_target_modifier);
       const modifierLimit = maxModifier ? ` up to ${maxModifier.name}` : "";
-      lines.push(targets.length ? `Nullifies: ${joinText(targets)}${modifierLimit}` : `Nullifies powers${modifierLimit}`);
+      const typeLimit = powerTargetTypeLimitLabel(effect.power_nullification, targetRefs);
+      lines.push(targets.length ? `Nullifies: ${joinText(targets)}${modifierLimit}${typeLimit}` : `Nullifies powers${modifierLimit}${typeLimit}`);
     }
 
     if (effect.absorption) {
@@ -906,6 +935,7 @@
   function catalogEffectTooltipLines(item = {}, key = null) {
     const lines = [];
 
+    if (item.placeholder) lines.push("Placeholder: no game effect yet");
     lines.push(...grantTooltipLines(item.grants));
     lines.push(...list(item.effects).flatMap((effect) => effectTooltipLines(effect, key)));
 
@@ -958,6 +988,7 @@
     const lines = [];
     const variant = powerVariant(power, ref);
 
+    if (power.placeholder) lines.push("Placeholder: no game effect yet");
     lines.push(...typeTooltipLines(ref.type_ids?.length ? ref.type_ids : power.type_ids));
     lines.push(...refScopeTooltipLines(ref, variant));
 
@@ -1304,11 +1335,17 @@
     if (!effect?.power_nullification) return false;
 
     const targetIds = list(effect.power_nullification.target_power_ids);
-    const targetMatches = targetIds.length === 0 || targetIds.includes(ref.id);
+    const targetRefs = list(effect.power_nullification.target_power_refs);
+    const hasTargets = targetIds.length > 0 || targetRefs.length > 0;
+    const targetMatches = hasTargets
+      ? targetIds.includes(ref.id) || targetRefs.some((targetRef) => powerTargetRefMatches(ref, targetRef))
+      : true;
     const maxTargetModifier = byId(options.ability_modifiers, effect.power_nullification.max_target_modifier);
     const modifierMatches = !maxTargetModifier || abilityModifierRank(ref) <= maxTargetModifier.coverage_rank;
+    const maxTargetTypeRank = Number(effect.power_nullification.max_target_type_rank);
+    const typeMatches = !Number.isFinite(maxTargetTypeRank) || powerTypeRank(ref) <= maxTargetTypeRank;
 
-    return targetMatches && modifierMatches;
+    return targetMatches && modifierMatches && typeMatches;
   }
 
   function effectAbsorbsPower(effect, ref, sourceRef = {}) {

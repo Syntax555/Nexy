@@ -33,6 +33,15 @@ keys:
               range:
                 value: tens-of-meters
                 modifier: normal
+      - id: elasticity
+      - id: shapeshifting
+      - id: body-control
+      - id: water-walking
+      - id: weapon-creation
+      - id: enhanced-senses
+      - id: regeneration
+        type_ids:
+          - low-regeneration
     resistance_refs:
       - id: mind-manipulation-resistance
       - id: poison-manipulation-resistance

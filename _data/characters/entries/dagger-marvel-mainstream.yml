@@ -37,6 +37,12 @@ keys:
                 - darkness-manipulation
                 - radiation-manipulation
                 - curse-manipulation
+      - id: enhanced-senses
+      - id: extrasensory-perception
+      - id: healing
+      - id: danmaku
+      - id: weapon-creation
+      - id: homing-attack
     resistance_refs:
       - id: mind-manipulation-resistance
       - id: curse-manipulation-resistance

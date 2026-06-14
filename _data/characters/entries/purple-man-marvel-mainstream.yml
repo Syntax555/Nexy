@@ -25,6 +25,11 @@ keys:
           - power_nullification:
               target_power_ids: []
               max_target_modifier: minor
+      - id: stealth-mastery
+      - id: illusion-creation
+      - id: regeneration
+        type_ids:
+          - low-regeneration
     resistance_refs: []
     attack_potency:
       value: human

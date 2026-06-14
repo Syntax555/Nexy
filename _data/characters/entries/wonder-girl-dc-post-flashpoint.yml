@@ -28,6 +28,10 @@ keys:
                 - id: abstract-existence
                   type_ids:
                     - abstract-existence-type-1
+      - id: immortality
+      - id: regeneration-negation
+      - id: non-standard-breathing
+        modifier: limited
     resistance_refs:
       - id: temperature-manipulation-resistance
         level: immunity

@@ -23,6 +23,8 @@ keys:
       - id: weapon-mastery
         type_ids:
           - melee-weapons
+      - id: stealth-mastery
+      - id: social-influencing
     resistance_refs:
       - id: biological-manipulation-resistance
     attack_potency:
@@ -69,6 +71,8 @@ keys:
       - id: weapon-mastery
         type_ids:
           - melee-weapons
+      - id: attack-reflection
+      - id: statistics-amplification
     resistance_refs:
       - id: biological-manipulation-resistance
     attack_potency:

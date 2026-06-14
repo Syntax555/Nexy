@@ -208,6 +208,13 @@ def validate_ref_list(context, values, allowed, label, allow_blank: false)
   validate_refs(context, values, allowed, label, allow_blank: allow_blank)
 end
 
+def validate_boolean_field(context, entry, field)
+  return [] unless entry.key?(field)
+  return [] if [true, false].include?(entry[field])
+
+  ["#{context}.#{field} must be true or false when present"]
+end
+
 def array_field(context, value, errors)
   return [] if value.nil?
   return value if value.is_a?(Array)
@@ -544,7 +551,13 @@ def validate_effect(context, effect, sets)
       errors << "#{context}.power_nullification must be a map"
     else
       errors.concat(validate_ref_list("#{context}.power_nullification.target_power_ids", nullification["target_power_ids"], sets[:powers], "power"))
+      if nullification.key?("target_power_refs")
+        errors.concat(validate_power_target_refs("#{context}.power_nullification.target_power_refs", nullification["target_power_refs"], sets))
+      end
       errors.concat(validate_refs("#{context}.power_nullification.max_target_modifier", [nullification["max_target_modifier"]], sets[:ability_modifiers], "ability modifier"))
+      unless nullification["max_target_type_rank"].nil? || nullification["max_target_type_rank"].is_a?(Integer)
+        errors << "#{context}.power_nullification.max_target_type_rank must be an integer when present"
+      end
     end
   end
 
@@ -665,6 +678,7 @@ def validate_catalog_entry(context, entry, sets, type)
   end
 
   errors << "#{context} is missing id" if entry["id"].nil? || entry["id"].to_s.empty?
+  errors.concat(validate_boolean_field(context, entry, "placeholder"))
 
   case type
   when :power_type
