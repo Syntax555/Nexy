@@ -64,6 +64,31 @@ score_cases:
       score_gap: 10
       winner: right
 
+  - id: equal-points-use-regeneration-tiebreaker
+    stats:
+      - label: Attack Potency
+        left_rank: 10
+        right_rank: 20
+        scored: true
+        expected_winner: right
+        expected_rank_gap: 10
+      - label: Speed
+        left_rank: 20
+        right_rank: 10
+        scored: true
+        expected_winner: left
+        expected_rank_gap: 10
+    tie_breaker:
+      label: Regeneration
+      left_rank: 6
+      right_rank: 1
+    expected:
+      left_score: 30
+      right_score: 30
+      score_gap: 0
+      winner: left
+      tie_breaker_winner: left
+
 status_cases:
   - id: source-power-disabled
     kind: power

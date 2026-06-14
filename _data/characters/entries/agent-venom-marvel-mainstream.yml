@@ -27,7 +27,7 @@ keys:
       - id: transformation
       - id: regeneration
         type_ids:
-          - low-regeneration
+          - high-mid-regeneration
       - id: surface-scaling
       - id: healing
     resistance_refs:

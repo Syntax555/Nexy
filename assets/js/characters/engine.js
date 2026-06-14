@@ -323,7 +323,7 @@
   }
 
   function powerTypeRank(ref = {}) {
-    const ranks = list(ref.type_ids)
+    const ranks = list(ref?.type_ids)
       .map((typeId) => Number(byId(options.power_types, typeId)?.rank))
       .filter(Number.isFinite);
 
@@ -1650,6 +1650,37 @@
     return "tie";
   }
 
+  function strongestPowerTypeRef(view, powerId) {
+    return list(view.powerRefs)
+      .filter((ref) => ref.id === powerId)
+      .reduce((best, ref) => {
+        if (!best) return ref;
+
+        const rankDiff = powerTypeRank(ref) - powerTypeRank(best);
+        if (rankDiff > 0) return ref;
+        if (rankDiff === 0 && compareRefStrength(ref, best) > 0) return ref;
+
+        return best;
+      }, null);
+  }
+
+  function powerTypeTieBreaker(leftView, rightView, powerId, label) {
+    const leftRef = strongestPowerTypeRef(leftView, powerId);
+    const rightRef = strongestPowerTypeRef(rightView, powerId);
+    const leftRank = powerTypeRank(leftRef);
+    const rightRank = powerTypeRank(rightRef);
+
+    return {
+      label,
+      leftValue: leftRef ? powerRefLabel(leftRef) : "None",
+      rightValue: rightRef ? powerRefLabel(rightRef) : "None",
+      leftRank,
+      rightRank,
+      rankGap: Math.abs(leftRank - rightRank),
+      winner: battleWinner(leftRank, rightRank)
+    };
+  }
+
   function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
@@ -1695,6 +1726,11 @@
     const leftScore = rows.reduce((total, row) => total + row.leftRank, 0);
     const rightScore = rows.reduce((total, row) => total + row.rightRank, 0);
     const scoreGap = Math.abs(leftScore - rightScore);
+    const pointWinner = battleWinner(leftScore, rightScore);
+    const tieBreaker = pointWinner === "tie"
+      ? powerTypeTieBreaker(leftView, rightView, "regeneration", "Regeneration")
+      : null;
+    const activeTieBreaker = tieBreaker?.winner !== "tie" ? tieBreaker : null;
 
     return {
       rows,
@@ -1702,11 +1738,8 @@
       rightScore,
       scoreGap,
       statCount: rows.length,
-      winner: leftScore > rightScore
-        ? "left"
-        : rightScore > leftScore
-          ? "right"
-          : "tie"
+      winner: activeTieBreaker?.winner || pointWinner,
+      tieBreaker: activeTieBreaker
     };
   }
 
@@ -1719,9 +1752,14 @@
       : score.winner === "right"
         ? `${rightName} wins`
         : "Draw";
-    const scoreDetail = score.winner === "tie"
+    const scoreDetail = score.tieBreaker
+      ? `Tie-breaker: ${score.tieBreaker.label}`
+      : score.winner === "tie"
       ? "No score gap"
       : `Wins by ${score.scoreGap} point${score.scoreGap === 1 ? "" : "s"}`;
+    const scoreContext = score.tieBreaker
+      ? `${score.statCount} stats compared, Tier excluded, points tied`
+      : `${score.statCount} stats compared, Tier excluded`;
     const rows = score.rows.map((row) => {
       const resultText = row.winner === "left"
         ? leftName
@@ -1750,6 +1788,23 @@
         </li>
       `;
     }).join("");
+    const tieBreakerRow = score.tieBreaker ? `
+      <li class="battle-point-row is-${score.tieBreaker.winner} is-tiebreaker">
+        <span class="battle-point-label">Tie-breaker: ${escapeHtml(score.tieBreaker.label)}</span>
+        <span class="battle-point-value">
+          <strong>${escapeHtml(score.tieBreaker.leftValue)}</strong>
+          <small>Rank ${score.tieBreaker.leftRank}</small>
+        </span>
+        <span class="battle-point-result">
+          <strong>${escapeHtml(score.tieBreaker.winner === "left" ? leftName : rightName)}</strong>
+          <small>${score.tieBreaker.rankGap} rank gap</small>
+        </span>
+        <span class="battle-point-value">
+          <strong>${escapeHtml(score.tieBreaker.rightValue)}</strong>
+          <small>Rank ${score.tieBreaker.rightRank}</small>
+        </span>
+      </li>
+    ` : "";
 
     return `
       <details class="battle-fold" open>
@@ -1767,7 +1822,7 @@
             <div class="battle-score-summary">
               <span>${escapeHtml(winnerText)}</span>
               <strong>${escapeHtml(scoreDetail)}</strong>
-              <small>${score.statCount} stats compared, Tier excluded</small>
+              <small>${escapeHtml(scoreContext)}</small>
             </div>
             <div class="battle-score-side">
               <span class="battle-score-name">${escapeHtml(rightName)}</span>
@@ -1775,7 +1830,7 @@
               <small>points</small>
             </div>
           </div>
-          <ul class="battle-point-list">${rows}</ul>
+          <ul class="battle-point-list">${rows}${tieBreakerRow}</ul>
         </section>
       </details>
     `;
