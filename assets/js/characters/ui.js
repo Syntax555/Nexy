@@ -195,6 +195,9 @@
     const filterButton = root.querySelector("[data-choice-filter]");
     const filterPopover = root.querySelector("[data-filter-popover]");
     const filterClearButton = root.querySelector("[data-filter-clear]");
+    const sortButton = root.querySelector("[data-choice-sort]");
+    const sortPopover = root.querySelector("[data-sort-popover]");
+    const sortOptions = root.querySelector("[data-sort-options]");
     const filterControls = {
       gender: root.querySelector("[data-filter-gender]"),
       age: root.querySelector("[data-filter-age]"),
@@ -216,7 +219,9 @@
       ageFilter: "",
       tierFilter: "",
       classificationFilterId: "",
+      sortMode: "default",
       filtersOpen: false,
+      sortsOpen: false,
       confirmed: false
     };
     const classificationParentCache = new Map();
@@ -230,6 +235,13 @@
       { value: "40s", label: "40s", min: 40, max: 49 },
       { value: "50-plus", label: "50+", min: 50 },
       { value: "unknown", label: "Unknown" }
+    ];
+    const sortChoices = [
+      { value: "default", label: "Default", shortLabel: "Default" },
+      { value: "name-asc", label: "Name A-Z", shortLabel: "Name" },
+      { value: "name-desc", label: "Name Z-A", shortLabel: "Name" },
+      { value: "tier-desc", label: "Tier strongest first", shortLabel: "Tier" },
+      { value: "tier-asc", label: "Tier weakest first", shortLabel: "Tier" }
     ];
 
     function clearSelection() {
@@ -245,6 +257,7 @@
       state.tierFilter = "";
       state.classificationFilterId = "";
       state.filtersOpen = false;
+      state.sortsOpen = false;
     }
 
     function stepItems() {
@@ -420,7 +433,53 @@
     }
 
     function filteredCharacters() {
-      return verseCharacters().filter(characterMatchesFilters);
+      return sortCharacters(verseCharacters().filter(characterMatchesFilters));
+    }
+
+    function characterSortName(character) {
+      return normalizedSearchText(`${choiceTitle(character)} ${choiceSubtitle(character)}`);
+    }
+
+    function bestTierRank(character) {
+      return characterFilterData(character).tierRecords.reduce(
+        (bestRank, record) => Math.max(bestRank, Number(record.rank) || 0),
+        0
+      );
+    }
+
+    function compareByName(left, right, direction = 1) {
+      return direction * characterSortName(left).localeCompare(characterSortName(right), undefined, { sensitivity: "base" });
+    }
+
+    function sortCharacters(characters) {
+      if (state.sortMode === "default") return characters;
+
+      return characters
+        .map((character, index) => ({ character, index }))
+        .sort((left, right) => {
+          if (state.sortMode === "name-asc") {
+            return compareByName(left.character, right.character) || left.index - right.index;
+          }
+
+          if (state.sortMode === "name-desc") {
+            return compareByName(left.character, right.character, -1) || left.index - right.index;
+          }
+
+          if (state.sortMode === "tier-desc") {
+            return bestTierRank(right.character) - bestTierRank(left.character)
+              || compareByName(left.character, right.character)
+              || left.index - right.index;
+          }
+
+          if (state.sortMode === "tier-asc") {
+            return bestTierRank(left.character) - bestTierRank(right.character)
+              || compareByName(left.character, right.character)
+              || left.index - right.index;
+          }
+
+          return left.index - right.index;
+        })
+        .map((item) => item.character);
     }
 
     function hasActiveCharacterFilter() {
@@ -486,6 +545,7 @@
       } else if (state.step === "character") {
         clearSelection();
         state.filtersOpen = false;
+        state.sortsOpen = false;
 
         const keys = list(item.keys);
         state.characterId = item.entry_id;
@@ -532,6 +592,7 @@
       if (searchShell) searchShell.hidden = state.step !== "character";
       renderFilters();
       renderFilterPopover();
+      renderSortPopover();
       if (searchInput && searchInput.value !== state.characterQuery) {
         searchInput.value = state.characterQuery;
       }
@@ -732,6 +793,7 @@
     function renderFilters() {
       if (state.step !== "character") {
         state.filtersOpen = false;
+        state.sortsOpen = false;
         return;
       }
 
@@ -779,6 +841,36 @@
       if (filterClearButton) {
         filterClearButton.disabled = filterCount === 0;
       }
+    }
+
+    function renderSortPopover() {
+      const currentSort = sortChoices.find((choice) => choice.value === state.sortMode) || sortChoices[0];
+      const sortIsActive = state.sortMode !== "default";
+
+      if (sortButton) {
+        sortButton.textContent = sortIsActive ? `Sort: ${currentSort.shortLabel}` : "Sort";
+        sortButton.classList.toggle("is-active", sortIsActive);
+        sortButton.setAttribute("aria-expanded", state.sortsOpen ? "true" : "false");
+      }
+
+      if (sortPopover) {
+        sortPopover.hidden = state.step !== "character" || !state.sortsOpen;
+      }
+
+      if (!sortOptions) return;
+
+      sortOptions.innerHTML = "";
+      sortChoices.forEach((choice) => {
+        const selected = choice.value === state.sortMode;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `sort-option${selected ? " is-active" : ""}`;
+        button.dataset.sortValue = choice.value;
+        button.setAttribute("role", "radio");
+        button.setAttribute("aria-checked", selected ? "true" : "false");
+        button.textContent = choice.label;
+        sortOptions.appendChild(button);
+      });
     }
 
     function render() {
@@ -840,7 +932,24 @@
     }
     filterButton?.addEventListener("click", () => {
       state.filtersOpen = !state.filtersOpen;
+      if (state.filtersOpen) state.sortsOpen = false;
       renderFilterPopover();
+      renderSortPopover();
+    });
+    sortButton?.addEventListener("click", () => {
+      state.sortsOpen = !state.sortsOpen;
+      if (state.sortsOpen) state.filtersOpen = false;
+      renderFilterPopover();
+      renderSortPopover();
+    });
+    sortOptions?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-sort-value]");
+      if (!button || !sortOptions.contains(button)) return;
+
+      state.sortMode = button.dataset.sortValue || "default";
+      state.sortsOpen = false;
+      state.confirmed = false;
+      render();
     });
     filterClearButton?.addEventListener("click", clearMetadataFilters);
     searchShell?.addEventListener("submit", (event) => {
@@ -859,17 +968,29 @@
       applyCharacterFilters();
     }));
     document.addEventListener("click", (event) => {
-      if (!state.filtersOpen || root.contains(event.target)) return;
+      if (root.contains(event.target)) return;
+      if (!state.filtersOpen && !state.sortsOpen) return;
 
+      const shouldFocusFilter = state.filtersOpen;
+      const shouldFocusSort = state.sortsOpen;
       state.filtersOpen = false;
+      state.sortsOpen = false;
       renderFilterPopover();
+      renderSortPopover();
+      if (shouldFocusFilter) filterButton?.blur();
+      if (shouldFocusSort) sortButton?.blur();
     });
     root.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape" || !state.filtersOpen) return;
+      if (event.key !== "Escape" || (!state.filtersOpen && !state.sortsOpen)) return;
 
+      const shouldFocusFilter = state.filtersOpen;
+      const shouldFocusSort = state.sortsOpen;
       state.filtersOpen = false;
+      state.sortsOpen = false;
       renderFilterPopover();
-      filterButton?.focus();
+      renderSortPopover();
+      if (shouldFocusFilter) filterButton?.focus();
+      if (shouldFocusSort) sortButton?.focus();
     });
     render();
 

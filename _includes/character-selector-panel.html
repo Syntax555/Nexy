@@ -27,6 +27,13 @@
             aria-expanded="false"
             data-choice-filter
           >Filter</button>
+          <button
+            class="sort-button"
+            type="button"
+            aria-controls="character-sort-{{ include.side }}"
+            aria-expanded="false"
+            data-choice-sort
+          >Sort</button>
         </div>
         <div class="choice-filter-popover" id="character-filter-{{ include.side }}" data-filter-popover hidden>
           <div class="choice-filter-header">
@@ -51,6 +58,12 @@
               <select data-filter-classification></select>
             </label>
           </div>
+        </div>
+        <div class="choice-sort-popover" id="character-sort-{{ include.side }}" data-sort-popover hidden>
+          <div class="choice-filter-header">
+            <span>Sort characters</span>
+          </div>
+          <div class="sort-options" role="radiogroup" aria-label="Sort characters" data-sort-options></div>
         </div>
       </form>
       <ul class="choice-list" data-choice-list></ul>
