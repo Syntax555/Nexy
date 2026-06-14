@@ -1,0 +1,57 @@
+name: "Falcon"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human
+keys:
+  - key: falcon
+    names:
+      - "Sam Wilson"
+    images:
+      - name: "Falcon"
+        image: "assets/images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
+    power_refs:
+      - id: martial-arts-mastery
+        degree_id: expert
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+    resistance_refs: []
+    attack_potency:
+      value: wall
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed:
+      value: hypersonic
+      modifier: normal
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-k
+      modifier: normal
+    striking_strength:
+      value: wall-level
+      modifier: plus
+    durability:
+      value: wall
+      modifier: plus
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - falcon-sam-wilson-wings
+      - falcon-sam-wilson-captain-america-shield
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids: []

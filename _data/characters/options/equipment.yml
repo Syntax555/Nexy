@@ -126,3 +126,41 @@
         durability:
           value: galaxy
           modifier: normal
+- id: falcon-sam-wilson-wings
+  name: "Falcon's Wings"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: flight
+        resistance_refs: []
+    - stat_effects:
+        flight_speed:
+          value: hypersonic
+          modifier: normal
+        durability:
+          value: city
+          modifier: normal
+- id: falcon-sam-wilson-captain-america-shield
+  name: "Captain America's Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: wall
+          modifier: higher
+        striking_strength:
+          value: wall-level
+          modifier: higher
+        durability:
+          value: high-hyperverse
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal
