@@ -195,6 +195,60 @@
   covers_all: false
   covers_type_ids:
     - mid-godly-regeneration
+- id: immortality-type-1-eternal-life
+  power_id: immortality
+  name: "Type 1 (Eternal Life)"
+  rank: 1
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-2-resilient
+  power_id: immortality
+  name: "Type 2 (Resilient)"
+  rank: 2
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-3-regeneration
+  power_id: immortality
+  name: "Type 3 (Regeneration)"
+  rank: 3
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-4-reincarnation-resurrection
+  power_id: immortality
+  name: "Type 4 (Reincarnation/Resurrection)"
+  rank: 4
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-5-deathless
+  power_id: immortality
+  name: "Type 5 (Deathless)"
+  rank: 5
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-6-parasitic
+  power_id: immortality
+  name: "Type 6 (Parasitic)"
+  rank: 6
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-7-undead
+  power_id: immortality
+  name: "Type 7 (Undead)"
+  rank: 7
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-8-reliant
+  power_id: immortality
+  name: "Type 8 (Reliant)"
+  rank: 8
+  covers_all: false
+  covers_type_ids: []
+- id: immortality-type-9-transcendental
+  power_id: immortality
+  name: "Type 9 (Transcendental)"
+  rank: 9
+  covers_all: false
+  covers_type_ids: []
 - id: conceptual-manipulation-type-1
   power_id: conceptual-manipulation
   name: "Type 1"

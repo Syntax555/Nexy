@@ -29,6 +29,8 @@ keys:
                   type_ids:
                     - abstract-existence-type-1
       - id: immortality
+        type_ids:
+          - immortality-type-3-regeneration
       - id: regeneration-negation
       - id: non-standard-breathing
         modifier: limited

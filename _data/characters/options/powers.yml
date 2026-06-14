@@ -127,7 +127,16 @@
   tags:
     - placeholder
   placeholder: true
-  type_ids: []
+  type_ids:
+    - immortality-type-1-eternal-life
+    - immortality-type-2-resilient
+    - immortality-type-3-regeneration
+    - immortality-type-4-reincarnation-resurrection
+    - immortality-type-5-deathless
+    - immortality-type-6-parasitic
+    - immortality-type-7-undead
+    - immortality-type-8-reliant
+    - immortality-type-9-transcendental
   degree_ids: []
   grants:
     power_refs: []
