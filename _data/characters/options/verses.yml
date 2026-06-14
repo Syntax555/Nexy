@@ -10,3 +10,7 @@
   name: "Post-Crisis"
   media_id: comics
   source_id: dc-comics
+- id: dc-post-flashpoint
+  name: "Post-Flashpoint"
+  media_id: comics
+  source_id: dc-comics

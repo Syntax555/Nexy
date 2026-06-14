@@ -15,7 +15,7 @@ keys:
         image: "assets/images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
     power_refs:
       - id: martial-arts-mastery
-        degree_id: expert
+        martial_arts_degree_id: expert
       - id: weapon-mastery
         type_ids:
           - all-weapons

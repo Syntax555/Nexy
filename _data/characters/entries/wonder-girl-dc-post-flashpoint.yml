@@ -1,0 +1,65 @@
+name: "Wonder Girl"
+verse_id: dc-post-flashpoint
+gender_id: female
+age:
+  value: 21
+  unknown: false
+classification_ids:
+  - amazon
+keys:
+  - key: wonder-girl
+    names:
+      - "Yara Flor"
+    images:
+      - name: "Wonder Girl"
+        image: "assets/images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - melee-weapons
+      - id: flight
+      - id: non-physical-interaction
+        effects:
+          - non_physical_interaction:
+              target_power_refs:
+                - id: incorporeality
+                - id: darkness-manipulation
+                - id: abstract-existence
+                  type_ids:
+                    - abstract-existence-type-1
+    resistance_refs:
+      - id: temperature-manipulation-resistance
+        level: immunity
+    attack_potency:
+      value: multiverse-plus
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: massively-ftl-plus
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: stellar
+      modifier: normal
+    striking_strength:
+      value: multiverse-level-plus
+      modifier: normal
+    durability:
+      value: multiverse-plus
+      modifier: normal
+    stamina:
+      value: unknown
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - golden-boleadoras
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids: []

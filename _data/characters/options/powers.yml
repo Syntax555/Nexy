@@ -416,6 +416,18 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: temperature-manipulation
+  name: "Temperature Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: light-manipulation
   name: "Light Manipulation"
   aliases: []

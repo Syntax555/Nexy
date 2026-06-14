@@ -164,3 +164,25 @@
         range:
           value: tens-of-meters
           modifier: normal
+- id: golden-boleadoras
+  name: "Golden Boleadoras"
+  weapon_type_ids:
+    - blunt-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - blunt-weapons
+  effects:
+    - stat_effects:
+        range:
+          value: tens-of-meters
+          modifier: normal
+    - grants:
+        power_refs:
+          - id: electricity-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: kilometers
+                    modifier: normal
+        resistance_refs: []

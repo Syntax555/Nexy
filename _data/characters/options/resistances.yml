@@ -68,3 +68,8 @@
   resists_power_ids:
     - poison-manipulation
   resists_effect_ids: []
+- id: temperature-manipulation-resistance
+  name: "Temperature Manipulation"
+  resists_power_ids:
+    - temperature-manipulation
+  resists_effect_ids: []
