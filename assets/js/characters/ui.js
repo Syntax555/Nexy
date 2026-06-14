@@ -342,6 +342,11 @@
       return Array.from(ids);
     }
 
+    function classificationIsFilterable(classificationId) {
+      const classification = byId(options.classifications, classificationId);
+      return Boolean(classification) && classification.filterable !== false;
+    }
+
     function keyTierRecord(character, key) {
       const tierStat = characterView(character, key.key)?.stats.find((stat) => stat.label === "Tier");
       if (!tierStat?.value) return null;
@@ -384,6 +389,7 @@
         const tierValues = cachedTierRecords.map((record) => record.value);
         const classificationIds = classificationFilterIds(character);
         const classificationValues = classificationIds
+          .filter(classificationIsFilterable)
           .flatMap((id) => [id, optionLabel(options.classifications, id)]);
         const searchValues = [
           character.name,
@@ -815,7 +821,9 @@
         filterControls.classification,
         "All classifications",
         uniqueSortedChoices(
-          characters.flatMap((character) => characterFilterData(character).classificationIds),
+          characters
+            .flatMap((character) => characterFilterData(character).classificationIds)
+            .filter(classificationIsFilterable),
           (id) => optionLabel(options.classifications, id)
         ),
         state.classificationFilterId

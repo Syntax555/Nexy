@@ -670,6 +670,12 @@ def validate_catalog_entry(context, entry, sets, type)
   when :power_type
     errors.concat(validate_refs("#{context}.power_id", [entry["power_id"]], sets[:powers], "power"))
     errors.concat(validate_ref_list("#{context}.covers_type_ids", entry["covers_type_ids"], sets[:power_types], "power type"))
+  when :classification
+    errors.concat(validate_ref_list("#{context}.parent_ids", entry["parent_ids"], sets[:classifications], "classification parent"))
+
+    if entry.key?("filterable") && ![true, false].include?(entry["filterable"])
+      errors << "#{context}.filterable must be true or false when present"
+    end
   when :power
     errors.concat(validate_ref_list("#{context}.type_ids", entry["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_ref_list("#{context}.degree_ids", entry["degree_ids"], sets[:martial_arts_degrees] | sets[:acrobatics_degrees], "degree"))
@@ -835,6 +841,10 @@ Array(options["verses"]).each_with_index do |verse, index|
   context = "options.verses[#{index}]"
   errors.concat(validate_refs("#{context}.media_id", [verse["media_id"]], sets[:media], "media"))
   errors.concat(validate_refs("#{context}.source_id", [verse["source_id"]], sets[:origins], "origin"))
+end
+
+Array(options["classifications"]).each_with_index do |entry, index|
+  errors.concat(validate_catalog_entry("options.classifications[#{index}]", entry, sets, :classification))
 end
 
 Array(options["power_types"]).each_with_index do |entry, index|

@@ -12,12 +12,23 @@
   name: "Facility"
 - id: half-human
   name: "Half Human"
+  filterable: false
   parent_ids:
     - human
+- id: falcon
+  name: "Falcon"
 - id: half-falcon
   name: "Half Falcon"
+  filterable: false
+  parent_ids:
+    - falcon
+- id: inhuman
+  name: "Inhuman"
 - id: half-inhuman
   name: "Half Inhuman"
+  filterable: false
+  parent_ids:
+    - inhuman
 - id: superhero
   name: "Superhero"
 - id: avengers-academy
