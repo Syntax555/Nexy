@@ -24,6 +24,40 @@ STAT_CATALOGS = {
   "intelligence" => :intelligence_tiers
 }.freeze
 
+NON_PHYSICAL_POWER_TYPE_ORDER = {
+  "intangibility" => [
+    "intangibility-all",
+    "elemental-intangibility-type-1-solids",
+    "elemental-intangibility-type-2-semi-solids-semi-liquids",
+    "elemental-intangibility-type-3-liquids",
+    "elemental-intangibility-type-4-aerosols",
+    "elemental-intangibility-type-5-gas",
+    "elemental-intangibility-type-6-plasma",
+    "elemental-intangibility-type-7-quantum-particles",
+    "elemental-intangibility-type-8-energy",
+    "elemental-intangibility-type-9-non-physical",
+    "physical-intangibility-non-physical",
+    "molecular-intangibility",
+    "dimensional-intangibility"
+  ],
+  "abstract-existence" => [
+    "abstract-existence-all",
+    "abstract-existence-type-1",
+    "abstract-existence-type-2"
+  ],
+  "nonexistent-physiology" => [
+    "nonexistent-physiology-all",
+    "material-nonexistence",
+    "idealistic-nonexistence",
+    "paradoxical-nonexistence",
+    "spiritual-nonexistence",
+    "conceptual-nonexistence",
+    "mental-nonexistence",
+    "information-nonexistence"
+  ],
+  "incorporeality" => []
+}.freeze
+
 def load_yaml(path)
   YAML.safe_load_file(path, aliases: true)
 end
@@ -138,6 +172,23 @@ end
 
 def validate_unique_ranks(name, entries, minimum_rank: 1)
   validate_unique_integer_field(name, entries, "rank", minimum_value: minimum_rank)
+end
+
+def validate_non_physical_power_type_order(power_types)
+  grouped_type_ids = Array(power_types)
+                     .select { |entry| entry.is_a?(Hash) }
+                     .group_by { |entry| entry["power_id"] }
+                     .transform_values { |entries| entries.map { |entry| entry["id"] } }
+  errors = []
+
+  NON_PHYSICAL_POWER_TYPE_ORDER.each do |power_id, expected_ids|
+    actual_ids = grouped_type_ids.fetch(power_id, [])
+    next if actual_ids == expected_ids
+
+    errors << "options.power_types for #{power_id.inspect} must be ordered as #{expected_ids.inspect}, got #{actual_ids.inspect}"
+  end
+
+  errors
 end
 
 def validate_refs(context, values, allowed, label, allow_blank: false)
@@ -772,6 +823,7 @@ ranked_catalog_names.each do |name|
 end
 
 errors.concat(validate_unique_integer_field("ability_modifiers", options["ability_modifiers"], "coverage_rank"))
+errors.concat(validate_non_physical_power_type_order(options["power_types"]))
 
 sets = catalog_names.to_h { |name| [name.to_sym, id_set(options[name])] }
 sets[:power_variant_ids_by_power_id] = power_variant_id_sets(options["powers"])
