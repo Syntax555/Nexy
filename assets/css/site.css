@@ -1047,6 +1047,24 @@ body.is-lightbox-open {
   background: #e5ebee;
 }
 
+.tag-list .tag-item.is-placeholder {
+  border-color: #cbd4d9;
+  background: #eef2f4;
+  color: #71808a;
+}
+
+.tag-list .tag-item.is-placeholder .status-icon {
+  background: #97a5ad;
+  box-shadow: 0 0 0 2px rgba(151, 165, 173, 0.14);
+}
+
+.tag-list .tag-item.is-placeholder:hover,
+.tag-list .tag-item.is-placeholder:focus-visible {
+  border-color: #aebbc2;
+  background: #e5ebee;
+  color: #5f6d77;
+}
+
 .tag-list .has-tooltip:focus-visible {
   border-color: #577082;
   outline: 2px solid #96adba;

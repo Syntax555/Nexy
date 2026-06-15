@@ -1011,6 +1011,7 @@
         kind: "power",
         id: ref.id,
         label: powerRefLabel(ref),
+        placeholder: Boolean(power.placeholder),
         ref,
         tooltipLines: powerTooltipLines(key, ref, power)
       };
@@ -1039,6 +1040,7 @@
         kind: "resistance",
         id: ref.id,
         label: resistanceRefLabel(ref),
+        placeholder: Boolean(resistance.placeholder),
         ref,
         tooltipLines: resistanceTooltipLines(ref, resistance)
       };
@@ -1062,6 +1064,7 @@
         kind,
         id: item.id,
         label: item.name,
+        placeholder: Boolean(item.placeholder),
         catalogItem: item,
         status: key ? itemStatus(item, key) : null,
         tooltipLines: itemTooltipLines(item, key)
@@ -1100,12 +1103,13 @@
       : "";
     const tooltipLines = [statusLine, ...list(item.tooltipLines)].filter(Boolean);
     const statusClass = item.status ? ` tag-status-${item.status.id}` : "";
+    const placeholderClass = item.placeholder ? " is-placeholder" : "";
     const tooltipClass = tooltipLines.length ? " has-tooltip" : "";
     const statusIcon = item.status
       ? `<span class="status-icon" aria-hidden="true"></span>`
       : "";
 
-    if (!tooltipLines.length) return `<li class="tag-item${statusClass}">${escapeHtml(item.label)}</li>`;
+    if (!tooltipLines.length) return `<li class="tag-item${placeholderClass}${statusClass}">${escapeHtml(item.label)}</li>`;
 
     const tooltipHtml = tooltipLines.map((line) => {
       const separatorIndex = line.indexOf(": ");
@@ -1125,7 +1129,7 @@
     }).join("");
 
     return `
-      <li class="tag-item${tooltipClass}${statusClass}" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
+      <li class="tag-item${tooltipClass}${placeholderClass}${statusClass}" tabindex="0" aria-label="${escapeHtml(`${item.label}. ${tooltipLines.join(". ")}`)}">
         ${statusIcon}<span class="tag-text">${escapeHtml(item.label)}</span>
         <span class="tag-tooltip" role="tooltip">
           <span class="tooltip-title">${escapeHtml(item.label)}</span>
