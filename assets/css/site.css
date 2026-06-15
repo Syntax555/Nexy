@@ -1048,9 +1048,10 @@ body.is-lightbox-open {
 }
 
 .tag-list .tag-item.is-placeholder {
-  border-color: #cbd4d9;
-  background: #eef2f4;
-  color: #71808a;
+  border-color: #d5dcdf;
+  background: #f0f2f3;
+  color: #7a868d;
+  opacity: 0.72;
 }
 
 .tag-list .tag-item.is-placeholder .status-icon {
@@ -1063,6 +1064,7 @@ body.is-lightbox-open {
   border-color: #aebbc2;
   background: #e5ebee;
   color: #5f6d77;
+  opacity: 0.95;
 }
 
 .tag-list .has-tooltip:focus-visible {

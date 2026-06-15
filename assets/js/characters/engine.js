@@ -40,6 +40,7 @@
   }
 
   function degreeRank(ref = {}) {
+    ref = ref || {};
     const martialRank = ref.martial_arts_degree_id
       ? byId(options.martial_arts_degrees, ref.martial_arts_degree_id)?.rank || 0
       : 0;
@@ -989,6 +990,9 @@
     const variant = powerVariant(power, ref);
 
     if (power.placeholder) lines.push("Placeholder: no game effect yet");
+    if (ref.id === "flight") lines.push("Game effect: enables Flight Speed");
+    if (ref.id === "regeneration") lines.push("Game effect: first tie-breaker when battle points are tied");
+    if (ref.id === "martial-arts-mastery") lines.push("Game effect: fallback tie-breaker if battle points and Regeneration are tied");
     lines.push(...typeTooltipLines(ref.type_ids?.length ? ref.type_ids : power.type_ids));
     lines.push(...refScopeTooltipLines(ref, variant));
 
@@ -1654,13 +1658,13 @@
     return "tie";
   }
 
-  function strongestPowerTypeRef(view, powerId) {
+  function strongestRankedPowerRef(view, powerId, ranker) {
     return list(view.powerRefs)
       .filter((ref) => ref.id === powerId)
       .reduce((best, ref) => {
         if (!best) return ref;
 
-        const rankDiff = powerTypeRank(ref) - powerTypeRank(best);
+        const rankDiff = ranker(ref) - ranker(best);
         if (rankDiff > 0) return ref;
         if (rankDiff === 0 && compareRefStrength(ref, best) > 0) return ref;
 
@@ -1668,11 +1672,11 @@
       }, null);
   }
 
-  function powerTypeTieBreaker(leftView, rightView, powerId, label) {
-    const leftRef = strongestPowerTypeRef(leftView, powerId);
-    const rightRef = strongestPowerTypeRef(rightView, powerId);
-    const leftRank = powerTypeRank(leftRef);
-    const rightRank = powerTypeRank(rightRef);
+  function powerRefTieBreaker(leftView, rightView, powerId, label, ranker) {
+    const leftRef = strongestRankedPowerRef(leftView, powerId, ranker);
+    const rightRef = strongestRankedPowerRef(rightView, powerId, ranker);
+    const leftRank = ranker(leftRef);
+    const rightRank = ranker(rightRef);
 
     return {
       label,
@@ -1683,6 +1687,13 @@
       rankGap: Math.abs(leftRank - rightRank),
       winner: battleWinner(leftRank, rightRank)
     };
+  }
+
+  function battleTieBreakers(leftView, rightView) {
+    return [
+      powerRefTieBreaker(leftView, rightView, "regeneration", "Regeneration", powerTypeRank),
+      powerRefTieBreaker(leftView, rightView, "martial-arts-mastery", "Martial Arts Mastery", degreeRank)
+    ];
   }
 
   function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
@@ -1731,10 +1742,9 @@
     const rightScore = rows.reduce((total, row) => total + row.rightRank, 0);
     const scoreGap = Math.abs(leftScore - rightScore);
     const pointWinner = battleWinner(leftScore, rightScore);
-    const tieBreaker = pointWinner === "tie"
-      ? powerTypeTieBreaker(leftView, rightView, "regeneration", "Regeneration")
+    const activeTieBreaker = pointWinner === "tie"
+      ? battleTieBreakers(leftView, rightView).find((tieBreaker) => tieBreaker.winner !== "tie")
       : null;
-    const activeTieBreaker = tieBreaker?.winner !== "tie" ? tieBreaker : null;
 
     return {
       rows,

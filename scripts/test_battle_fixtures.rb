@@ -46,11 +46,19 @@ def score_case(test_case)
   left_score = rows.sum { |row| row["left_rank"] }
   right_score = rows.sum { |row| row["right_rank"] }
   point_winner = winner_for(left_score, right_score)
-  tie_breaker = test_case["tie_breaker"]
+  tie_breakers = test_case["tie_breakers"] || [test_case["tie_breaker"]].compact
   tie_breaker_winner = nil
+  tie_breaker_label = nil
 
-  if point_winner == "tie" && tie_breaker
-    tie_breaker_winner = winner_for(tie_breaker.fetch("left_rank"), tie_breaker.fetch("right_rank"))
+  if point_winner == "tie"
+    active_tie_breaker = tie_breakers.find do |tie_breaker|
+      winner_for(tie_breaker.fetch("left_rank"), tie_breaker.fetch("right_rank")) != "tie"
+    end
+
+    if active_tie_breaker
+      tie_breaker_winner = winner_for(active_tie_breaker.fetch("left_rank"), active_tie_breaker.fetch("right_rank"))
+      tie_breaker_label = active_tie_breaker["label"]
+    end
   end
 
   {
@@ -58,7 +66,8 @@ def score_case(test_case)
     "right_score" => right_score,
     "score_gap" => (left_score - right_score).abs,
     "winner" => tie_breaker_winner && tie_breaker_winner != "tie" ? tie_breaker_winner : point_winner,
-    "tie_breaker_winner" => tie_breaker_winner
+    "tie_breaker_winner" => tie_breaker_winner,
+    "tie_breaker_label" => tie_breaker_label
   }
 end
 

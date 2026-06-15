@@ -88,6 +88,36 @@ score_cases:
       score_gap: 0
       winner: left
       tie_breaker_winner: left
+      tie_breaker_label: Regeneration
+
+  - id: equal-points-use-martial-arts-after-regeneration-tie
+    stats:
+      - label: Attack Potency
+        left_rank: 12
+        right_rank: 18
+        scored: true
+        expected_winner: right
+        expected_rank_gap: 6
+      - label: Speed
+        left_rank: 18
+        right_rank: 12
+        scored: true
+        expected_winner: left
+        expected_rank_gap: 6
+    tie_breakers:
+      - label: Regeneration
+        left_rank: 1
+        right_rank: 1
+      - label: Martial Arts Mastery
+        left_rank: 2
+        right_rank: 1
+    expected:
+      left_score: 30
+      right_score: 30
+      score_gap: 0
+      winner: left
+      tie_breaker_winner: left
+      tie_breaker_label: Martial Arts Mastery
 
 status_cases:
   - id: source-power-disabled
