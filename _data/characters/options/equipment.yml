@@ -134,6 +134,7 @@
     - grants:
         power_refs:
           - id: flight
+          - id: enhanced-senses
         resistance_refs: []
     - stat_effects:
         flight_speed:

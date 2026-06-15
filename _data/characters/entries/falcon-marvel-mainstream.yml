@@ -20,7 +20,7 @@ keys:
       - id: martial-arts-mastery
       - id: regeneration
         type_ids:
-          - low-regeneration
+          - low-mid-regeneration
     resistance_refs: []
     attack_potency:
       value: wall
