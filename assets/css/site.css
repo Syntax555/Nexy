@@ -1078,7 +1078,7 @@ body.is-lightbox-open {
   bottom: calc(100% + 12px);
   left: 50%;
   z-index: 10;
-  display: grid;
+  display: none;
   gap: 10px;
   width: max-content;
   min-width: min(320px, calc(100vw - 32px));
@@ -1115,6 +1115,7 @@ body.is-lightbox-open {
 
 .has-tooltip:hover .tag-tooltip,
 .has-tooltip:focus-visible .tag-tooltip {
+  display: grid;
   opacity: 1;
   transform: translate(-50%, 0);
 }
@@ -1875,8 +1876,36 @@ body.is-lightbox-open {
 }
 
 @media (max-width: 640px) {
+  body {
+    overflow: auto;
+  }
+
   main {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
     padding: 20px 12px;
+  }
+
+  .selection-screen,
+  .battle-screen {
+    height: auto;
+    min-height: calc(100svh - 40px);
+  }
+
+  .selection-screen:not([hidden]),
+  .battle-screen:not([hidden]) {
+    grid-template-rows: auto auto;
+  }
+
+  .versus-grid {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .selector-panel {
+    grid-template-rows: auto auto;
+    overflow: visible;
   }
 
   .selector-bar,
@@ -1912,11 +1941,58 @@ body.is-lightbox-open {
 
   .selector-body {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
   }
 
   .choice-column {
+    grid-template-rows: auto auto;
     border-right: 0;
     border-bottom: 1px solid #e3e9ed;
+  }
+
+  .choice-list {
+    max-height: min(360px, 42svh);
+  }
+
+  .character-choice-list {
+    display: flex;
+    gap: 14px;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    padding: 2px 0 10px;
+    scrollbar-gutter: auto;
+  }
+
+  .character-choice-list > li {
+    flex: 0 0 92px;
+  }
+
+  .character-choice-list .circle-choice-orb--large {
+    width: 76px;
+  }
+
+  .character-choice-list .circle-choice-title {
+    font-size: 0.76rem;
+  }
+
+  .character-choice-list .circle-choice-subtitle {
+    font-size: 0.68rem;
+  }
+
+  .character-card {
+    grid-template-rows: auto auto;
+    overflow: visible;
+  }
+
+  .character-image {
+    height: clamp(170px, 30svh, 240px);
+  }
+
+  .character-content {
+    overflow: visible;
+    padding: 18px;
   }
 
   .tag-tooltip {
