@@ -16,5 +16,8 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - schema
   - scripts
+  - test
+  - tmp
   - vendor

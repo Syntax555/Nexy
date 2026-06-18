@@ -2,12 +2,14 @@
 # frozen_string_literal: true
 
 require "set"
+require "json"
 require "yaml"
 
 ROOT = File.expand_path("..", __dir__)
 CHARACTERS_DIR = File.join(ROOT, "_data", "characters")
 CHARACTER_ENTRIES_DIR = File.join(CHARACTERS_DIR, "entries")
 OPTIONS_DIR = File.join(CHARACTERS_DIR, "options")
+CHARACTER_ENTRY_SCHEMA_PATH = File.join(ROOT, "schema", "character-entry.schema.json")
 
 STAT_CATALOGS = {
   "attack_potency" => :attack_durability_tiers,
@@ -92,6 +94,89 @@ def load_options_data
        key = File.basename(filename, File.extname(filename))
        [key, load_yaml(File.join(OPTIONS_DIR, filename))]
      end
+end
+
+def load_character_entry_schema
+  JSON.parse(File.read(CHARACTER_ENTRY_SCHEMA_PATH))
+end
+
+def json_schema_type?(value, type)
+  case type
+  when "array"
+    value.is_a?(Array)
+  when "boolean"
+    [true, false].include?(value)
+  when "integer"
+    value.is_a?(Integer)
+  when "null"
+    value.nil?
+  when "object"
+    value.is_a?(Hash)
+  when "string"
+    value.is_a?(String)
+  else
+    true
+  end
+end
+
+def resolve_schema_ref(root_schema, ref)
+  return nil unless ref.start_with?("#/")
+
+  ref.delete_prefix("#/").split("/").reduce(root_schema) do |schema, segment|
+    schema&.fetch(segment, nil)
+  end
+end
+
+def schema_type_list(schema)
+  Array(schema["type"]).compact
+end
+
+def validate_json_schema(context, value, schema, root_schema = schema)
+  schema = resolve_schema_ref(root_schema, schema["$ref"]) if schema.is_a?(Hash) && schema["$ref"]
+  return [] unless schema.is_a?(Hash)
+
+  if schema["anyOf"]
+    return [] if schema["anyOf"].any? { |child_schema| validate_json_schema(context, value, child_schema, root_schema).empty? }
+
+    return ["#{context} does not match any allowed schema shape"]
+  end
+
+  errors = []
+  types = schema_type_list(schema)
+  if types.any? && types.none? { |type| json_schema_type?(value, type) }
+    errors << "#{context} must be #{types.join(' or ')}"
+    return errors
+  end
+
+  if value.is_a?(Hash)
+    properties = schema.fetch("properties", {})
+    Array(schema["required"]).each do |field|
+      errors << "#{context} is missing #{field}" unless value.key?(field)
+    end
+
+    if schema["additionalProperties"] == false
+      extra_fields = value.keys - properties.keys
+      errors.concat(extra_fields.map { |field| "#{context}.#{field} is not allowed by the character entry schema" })
+    end
+
+    properties.each do |field, child_schema|
+      next unless value.key?(field)
+
+      errors.concat(validate_json_schema("#{context}.#{field}", value[field], child_schema, root_schema))
+    end
+  elsif value.is_a?(Array)
+    if schema["minItems"] && value.length < schema["minItems"]
+      errors << "#{context} must contain at least #{schema["minItems"]} item(s)"
+    end
+
+    if schema["items"]
+      value.each_with_index do |item, index|
+        errors.concat(validate_json_schema("#{context}[#{index}]", item, schema["items"], root_schema))
+      end
+    end
+  end
+
+  errors
 end
 
 def external_asset?(path)
@@ -786,6 +871,7 @@ def validate_character(context, character, sets, entry_id: nil)
 end
 
 data = load_characters_data
+character_entry_schema = load_character_entry_schema
 options = data.fetch("options")
 errors = []
 
@@ -908,6 +994,7 @@ else
       name = character["name"]
 
       errors << "#{context}.name must be present" if name.nil? || name.to_s.empty?
+      errors.concat(validate_json_schema(context, character, character_entry_schema))
     end
 
     errors.concat(validate_character(context, character, sets, entry_id: entry_id))

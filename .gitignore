@@ -3,6 +3,7 @@ _site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
+tmp/
 
 # Bundler local install paths
 .bundle/

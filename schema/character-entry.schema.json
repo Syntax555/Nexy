@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nexy character entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "verse_id", "gender_id", "age", "classification_ids", "keys"],
+  "properties": {
+    "name": { "type": "string" },
+    "entry_id": { "type": "string" },
+    "verse_id": { "type": "string" },
+    "gender_id": { "type": "string" },
+    "age": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": ["integer", "null"] },
+        "unknown": { "type": "boolean" },
+        "display": { "type": ["string", "null"] }
+      },
+      "required": ["unknown"]
+    },
+    "classification_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/characterKey" }
+    }
+  },
+  "$defs": {
+    "rankedStat": {
+      "anyOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "string" },
+            "modifier": { "type": ["string", "null"] },
+            "label": { "type": ["string", "null"] },
+            "note": { "type": ["string", "null"] },
+            "resistible": { "type": ["boolean", "null"] }
+          }
+        }
+      ]
+    },
+    "nullableRankedStat": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/rankedStat" }
+      ]
+    },
+    "imageRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "image"],
+      "properties": {
+        "name": { "type": "string" },
+        "image": { "type": "string" }
+      }
+    },
+    "powerRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "modifier": { "type": ["string", "null"] },
+        "type_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "martial_arts_degree_id": { "type": ["string", "null"] },
+        "acrobatics_degree_id": { "type": ["string", "null"] },
+        "magic_level_id": { "type": ["string", "null"] },
+        "magic_nature_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_variant": { "type": ["string", "null"] },
+        "condition": { "type": ["string", "null"] },
+        "effects": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "resistanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "level": { "type": ["string", "null"] },
+        "modifier": { "type": ["string", "null"] },
+        "type_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "magic_level_id": { "type": ["string", "null"] },
+        "magic_nature_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_variant": { "type": ["string", "null"] },
+        "condition": { "type": ["string", "null"] }
+      }
+    },
+    "equipmentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "effects": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "characterKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "names",
+        "images",
+        "power_refs",
+        "resistance_refs",
+        "attack_potency",
+        "combat_speed",
+        "lifting_strength",
+        "striking_strength",
+        "durability",
+        "stamina",
+        "range",
+        "standard_equipment_ids",
+        "optional_equipment_ids",
+        "intelligence",
+        "attack_ids"
+      ],
+      "properties": {
+        "key": { "type": "string" },
+        "name": { "type": ["string", "null"] },
+        "names": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "images": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/imageRef" }
+        },
+        "power_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/powerRef" }
+        },
+        "resistance_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/resistanceRef" }
+        },
+        "attack_potency": { "$ref": "#/$defs/rankedStat" },
+        "attack_speed": { "$ref": "#/$defs/nullableRankedStat" },
+        "combat_speed": { "$ref": "#/$defs/rankedStat" },
+        "reaction_speed": { "$ref": "#/$defs/nullableRankedStat" },
+        "travel_speed": { "$ref": "#/$defs/nullableRankedStat" },
+        "flight_speed": { "$ref": "#/$defs/nullableRankedStat" },
+        "lifting_strength": { "$ref": "#/$defs/rankedStat" },
+        "striking_strength": { "$ref": "#/$defs/rankedStat" },
+        "durability": { "$ref": "#/$defs/rankedStat" },
+        "stamina": { "$ref": "#/$defs/rankedStat" },
+        "range": { "$ref": "#/$defs/rankedStat" },
+        "standard_equipment_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "standard_equipment_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/equipmentRef" }
+        },
+        "optional_equipment_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "optional_equipment_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/equipmentRef" }
+        },
+        "intelligence": { "$ref": "#/$defs/rankedStat" },
+        "attack_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

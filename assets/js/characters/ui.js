@@ -187,10 +187,6 @@
     root.querySelectorAll("img[data-trim-image]").forEach(prepareTrimImage);
   }
 
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
   function tooltipTriggerFrom(target) {
     return target instanceof Element ? target.closest(".has-tooltip") : null;
   }
@@ -206,43 +202,11 @@
       return;
     }
 
-    const visualViewport = window.visualViewport;
-    const viewportLeft = visualViewport?.offsetLeft ?? 0;
-    const viewportTop = visualViewport?.offsetTop ?? 0;
-    const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
-    const viewportHeight = visualViewport?.height ?? window.innerHeight;
-    const margin = viewportWidth <= 640 ? 12 : 18;
-    const gap = 12;
-
-    tooltip.style.setProperty("--tooltip-left", "0px");
-    tooltip.style.setProperty("--tooltip-top", "0px");
-    tooltip.style.setProperty("--tooltip-arrow-left", "50%");
-    tooltip.style.maxWidth = `${Math.min(420, Math.max(220, viewportWidth - (margin * 2)))}px`;
-    tooltip.dataset.placement = "above";
-
-    const anchorRect = trigger.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
-    const tooltipWidth = tooltipRect.width;
-    const tooltipHeight = tooltipRect.height;
-    const minLeft = viewportLeft + margin;
-    const minTop = viewportTop + margin;
-    const maxLeft = Math.max(minLeft, viewportLeft + viewportWidth - tooltipWidth - margin);
-    const maxTop = Math.max(minTop, viewportTop + viewportHeight - tooltipHeight - margin);
-    const anchorCenter = anchorRect.left + (anchorRect.width / 2);
-    const left = clamp(anchorCenter - (tooltipWidth / 2), minLeft, maxLeft);
-    const spaceAbove = anchorRect.top - minTop;
-    const spaceBelow = viewportTop + viewportHeight - anchorRect.bottom - margin;
-    const placement = spaceAbove >= tooltipHeight + gap || spaceAbove >= spaceBelow ? "above" : "below";
-    const naturalTop = placement === "above"
-      ? anchorRect.top - tooltipHeight - gap
-      : anchorRect.bottom + gap;
-    const top = clamp(naturalTop, minTop, maxTop);
-    const arrowLeft = clamp(anchorCenter - left, 16, Math.max(16, tooltipWidth - 16));
-
-    tooltip.dataset.placement = placement;
-    tooltip.style.setProperty("--tooltip-left", `${Math.round(left)}px`);
-    tooltip.style.setProperty("--tooltip-top", `${Math.round(top)}px`);
-    tooltip.style.setProperty("--tooltip-arrow-left", `${Math.round(arrowLeft)}px`);
+    window.NexyFloating?.position(trigger, tooltip, {
+      maxWidth: 420,
+      minWidth: 220,
+      gap: 12
+    });
   }
 
   function scheduleTooltipPosition() {
@@ -371,7 +335,7 @@
     }
 
     function normalizedSearchText(value) {
-      return String(value || "").trim().toLowerCase();
+      return window.NexySearch?.normalize(value) || String(value || "").trim().toLowerCase();
     }
 
     function ageFilterValues(character) {
@@ -507,11 +471,9 @@
       return verseCharacterCache.get(state.verseId);
     }
 
-    function characterMatchesFilters(character) {
-      const query = normalizedSearchText(state.characterQuery);
+    function characterMatchesMetadataFilters(character) {
       const filterData = characterFilterData(character);
 
-      if (query && !filterData.searchText.includes(query)) return false;
       if (state.genderFilterId && character.gender_id !== state.genderFilterId) return false;
       if (state.ageFilter && !ageValuesMatchFilter(filterData.ageValues, state.ageFilter)) return false;
       if (state.tierFilter && !filterData.tierValues.includes(state.tierFilter)) return false;
@@ -520,8 +482,28 @@
       return true;
     }
 
+    function searchCharacters(characters) {
+      const query = normalizedSearchText(state.characterQuery);
+      if (!query) return characters;
+
+      const search = window.NexySearch;
+      if (!search) {
+        return characters.filter((character) => characterFilterData(character).searchText.includes(query));
+      }
+
+      const index = search.createSearchIndex(characters, (character) => characterFilterData(character).searchText);
+      return search.search(index, query);
+    }
+
+    function characterMatchesFilters(character) {
+      if (!characterMatchesMetadataFilters(character)) return false;
+      if (!normalizedSearchText(state.characterQuery)) return true;
+
+      return searchCharacters([character]).length > 0;
+    }
+
     function filteredCharacters() {
-      return sortCharacters(verseCharacters().filter(characterMatchesFilters));
+      return sortCharacters(searchCharacters(verseCharacters().filter(characterMatchesMetadataFilters)));
     }
 
     function characterSortName(character) {
