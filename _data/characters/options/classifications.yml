@@ -1,5 +1,7 @@
 - id: human
   name: "Human"
+- id: cyborg
+  name: "Cyborg"
 - id: symbiote
   name: "Symbiote"
 - id: human-mutate

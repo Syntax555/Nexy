@@ -205,6 +205,20 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: cyborgization
+  name: "Cyborgization"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: regeneration
   name: "Regeneration"
   aliases: []

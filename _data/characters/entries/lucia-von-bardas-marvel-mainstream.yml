@@ -1,0 +1,74 @@
+name: "Lucia von Bardas"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human
+  - cyborg
+keys:
+  - key: lucia-von-bardas
+    names:
+      - "Lucia von Bardas"
+    images:
+      - name: "Lucia von Bardas"
+        image: "assets/images/characters/lucia-von-bardas-marvel-mainstream/lucia-von-bardas.webp"
+    power_refs:
+      - id: incorporeality
+      - id: energy-manipulation
+        effects:
+          - stat_effects:
+              attack_potency:
+                value: large-building
+                modifier: higher
+              range:
+                value: several-meters
+                modifier: normal
+      - id: flight
+      - id: absorption
+        type_ids:
+          - energy-absorption
+      - id: forcefield-creation
+        effects:
+          - stat_effects:
+              durability:
+                value: planet
+                modifier: normal
+      - id: cyborgization
+    resistance_refs: []
+    attack_potency:
+      value: large-building
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed:
+      value: hypersonic
+      modifier: normal
+    travel_speed: null
+    flight_speed:
+      value: transonic
+      modifier: normal
+    lifting_strength:
+      value: superhuman
+      modifier: likely
+    striking_strength:
+      value: large-building-level
+      modifier: plus
+    durability:
+      value: large-building
+      modifier: plus
+    stamina:
+      value: average
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []
