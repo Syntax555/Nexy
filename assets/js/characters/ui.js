@@ -187,6 +187,89 @@
     root.querySelectorAll("img[data-trim-image]").forEach(prepareTrimImage);
   }
 
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function tooltipTriggerFrom(target) {
+    return target instanceof Element ? target.closest(".has-tooltip") : null;
+  }
+
+  let activeTooltipTrigger = null;
+  let tooltipPositionFrame = 0;
+
+  function positionTooltip(trigger) {
+    const tooltip = trigger?.querySelector(".tag-tooltip");
+    if (!trigger?.isConnected || !tooltip) {
+      activeTooltipTrigger?.classList.remove("is-tooltip-visible");
+      activeTooltipTrigger = null;
+      return;
+    }
+
+    const visualViewport = window.visualViewport;
+    const viewportLeft = visualViewport?.offsetLeft ?? 0;
+    const viewportTop = visualViewport?.offsetTop ?? 0;
+    const viewportWidth = visualViewport?.width ?? document.documentElement.clientWidth;
+    const viewportHeight = visualViewport?.height ?? window.innerHeight;
+    const margin = viewportWidth <= 640 ? 12 : 18;
+    const gap = 12;
+
+    tooltip.style.setProperty("--tooltip-left", "0px");
+    tooltip.style.setProperty("--tooltip-top", "0px");
+    tooltip.style.setProperty("--tooltip-arrow-left", "50%");
+    tooltip.style.maxWidth = `${Math.min(420, Math.max(220, viewportWidth - (margin * 2)))}px`;
+    tooltip.dataset.placement = "above";
+
+    const anchorRect = trigger.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const tooltipWidth = tooltipRect.width;
+    const tooltipHeight = tooltipRect.height;
+    const minLeft = viewportLeft + margin;
+    const minTop = viewportTop + margin;
+    const maxLeft = Math.max(minLeft, viewportLeft + viewportWidth - tooltipWidth - margin);
+    const maxTop = Math.max(minTop, viewportTop + viewportHeight - tooltipHeight - margin);
+    const anchorCenter = anchorRect.left + (anchorRect.width / 2);
+    const left = clamp(anchorCenter - (tooltipWidth / 2), minLeft, maxLeft);
+    const spaceAbove = anchorRect.top - minTop;
+    const spaceBelow = viewportTop + viewportHeight - anchorRect.bottom - margin;
+    const placement = spaceAbove >= tooltipHeight + gap || spaceAbove >= spaceBelow ? "above" : "below";
+    const naturalTop = placement === "above"
+      ? anchorRect.top - tooltipHeight - gap
+      : anchorRect.bottom + gap;
+    const top = clamp(naturalTop, minTop, maxTop);
+    const arrowLeft = clamp(anchorCenter - left, 16, Math.max(16, tooltipWidth - 16));
+
+    tooltip.dataset.placement = placement;
+    tooltip.style.setProperty("--tooltip-left", `${Math.round(left)}px`);
+    tooltip.style.setProperty("--tooltip-top", `${Math.round(top)}px`);
+    tooltip.style.setProperty("--tooltip-arrow-left", `${Math.round(arrowLeft)}px`);
+  }
+
+  function scheduleTooltipPosition() {
+    if (!activeTooltipTrigger) return;
+    window.cancelAnimationFrame(tooltipPositionFrame);
+    tooltipPositionFrame = window.requestAnimationFrame(() => {
+      positionTooltip(activeTooltipTrigger);
+    });
+  }
+
+  function showTooltip(trigger) {
+    if (!trigger) return;
+    if (activeTooltipTrigger && activeTooltipTrigger !== trigger) {
+      activeTooltipTrigger.classList.remove("is-tooltip-visible");
+    }
+
+    activeTooltipTrigger = trigger;
+    trigger.classList.add("is-tooltip-visible");
+    positionTooltip(trigger);
+  }
+
+  function hideTooltip(trigger) {
+    if (!trigger) return;
+    trigger.classList.remove("is-tooltip-visible");
+    if (activeTooltipTrigger === trigger) activeTooltipTrigger = null;
+  }
+
   function selector(root, onSelectionChange = () => {}) {
     const choiceLabel = root.querySelector("[data-choice-label]");
     const choiceList = root.querySelector("[data-choice-list]");
@@ -1099,7 +1182,51 @@
     }
   });
 
+  document.addEventListener("pointerover", (event) => {
+    const trigger = tooltipTriggerFrom(event.target);
+    if (trigger) showTooltip(trigger);
+  });
+
+  document.addEventListener("pointerout", (event) => {
+    const trigger = tooltipTriggerFrom(event.target);
+    if (!trigger || (event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) return;
+
+    hideTooltip(trigger);
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    const trigger = tooltipTriggerFrom(event.target);
+    if (trigger) {
+      showTooltip(trigger);
+      return;
+    }
+
+    hideTooltip(activeTooltipTrigger);
+  });
+
+  document.addEventListener("focusin", (event) => {
+    const trigger = tooltipTriggerFrom(event.target);
+    if (trigger) showTooltip(trigger);
+  });
+
+  document.addEventListener("focusout", (event) => {
+    const trigger = tooltipTriggerFrom(event.target);
+    if (!trigger || (event.relatedTarget instanceof Node && trigger.contains(event.relatedTarget))) return;
+
+    hideTooltip(trigger);
+  });
+
+  window.addEventListener("resize", scheduleTooltipPosition);
+  window.visualViewport?.addEventListener("resize", scheduleTooltipPosition);
+  window.visualViewport?.addEventListener("scroll", scheduleTooltipPosition);
+  document.addEventListener("scroll", scheduleTooltipPosition, true);
+
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && activeTooltipTrigger) {
+      hideTooltip(activeTooltipTrigger);
+      return;
+    }
+
     if (event.key !== "Escape" || !imageLightbox || imageLightbox.hidden) return;
 
     closeImageLightbox();
