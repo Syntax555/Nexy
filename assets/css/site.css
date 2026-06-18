@@ -937,9 +937,17 @@ body.is-lightbox-open {
 
 .tag-list .tag-item {
   display: inline-flex;
+  flex: 0 1 auto;
   align-items: center;
+  align-self: flex-start;
   gap: 7px;
+  max-width: 100%;
   position: relative;
+}
+
+.tag-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .status-icon {
@@ -1261,6 +1269,8 @@ body.is-lightbox-open {
 .tag-list {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
   gap: 8px;
 }
 
