@@ -269,6 +269,7 @@
       sortMode: "name-asc",
       filtersOpen: false,
       sortsOpen: false,
+      cardCollapsed: false,
       confirmed: false
     };
     const classificationParentCache = new Map();
@@ -293,6 +294,7 @@
     function clearSelection() {
       state.characterId = null;
       state.keyId = null;
+      state.cardCollapsed = false;
       state.confirmed = false;
     }
 
@@ -784,6 +786,22 @@
       imageArea.appendChild(switcher);
     }
 
+    function renderSelectedCardToggle(character) {
+      card.classList.toggle("is-collapsible", Boolean(character));
+      card.classList.toggle("is-collapsed", Boolean(character && state.cardCollapsed));
+      card.querySelector("[data-selected-card-toggle]")?.remove();
+
+      if (!character) return;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "selected-card-toggle";
+      button.dataset.selectedCardToggle = "";
+      button.setAttribute("aria-expanded", state.cardCollapsed ? "false" : "true");
+      button.textContent = state.cardCollapsed ? "Show selected character" : "Hide selected character";
+      card.prepend(button);
+    }
+
     function optionLabel(itemsById, id) {
       return byId(itemsById, id)?.name || title(id);
     }
@@ -950,7 +968,8 @@
       confirmButton.textContent = state.confirmed ? "Confirmed" : "Confirm";
       renderChoices();
       renderCard(card, currentCharacter, state.keyId);
-      renderCardKeySwitcher(currentCharacter);
+      renderSelectedCardToggle(currentCharacter);
+      if (!state.cardCollapsed) renderCardKeySwitcher(currentCharacter);
       trimImagesIn(root);
       onSelectionChange();
     }
@@ -977,6 +996,13 @@
       render();
     });
     backButton.addEventListener("click", back);
+    card.addEventListener("click", (event) => {
+      const toggle = event.target.closest("[data-selected-card-toggle]");
+      if (!toggle || !card.contains(toggle)) return;
+
+      state.cardCollapsed = !state.cardCollapsed;
+      render();
+    });
 
     function clearMetadataFilters() {
       state.genderFilterId = "";

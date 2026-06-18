@@ -1761,6 +1761,16 @@
     const score = battleScore(leftView, rightView, pairs);
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
+    const pointLabel = (value) => `${value} point${value === 1 ? "" : "s"}`;
+    const rowSideClass = (winner, side) => {
+      if (winner === "tie") return "tie";
+      return winner === side ? "winner" : "lower";
+    };
+    const resultName = (winner) => {
+      if (winner === "left") return leftName;
+      if (winner === "right") return rightName;
+      return "Same";
+    };
     const winnerText = score.winner === "left"
       ? `${leftName} wins`
       : score.winner === "right"
@@ -1775,47 +1785,53 @@
       ? `${score.statCount} stats compared, Tier excluded, points tied`
       : `${score.statCount} stats compared, Tier excluded`;
     const rows = score.rows.map((row) => {
-      const resultText = row.winner === "left"
-        ? leftName
-        : row.winner === "right"
-          ? rightName
-          : "Same";
+      const resultText = resultName(row.winner);
       const gapText = row.rankGap === 0
         ? "No point gap"
         : `${row.rankGap} point gap`;
 
       return `
         <li class="battle-point-row is-${row.winner}">
-          <span class="battle-point-label">${escapeHtml(row.label)}</span>
-          <span class="battle-point-value">
+          <div class="battle-point-header">
+            <span class="battle-point-label">${escapeHtml(row.label)}</span>
+            <span class="battle-point-result">
+              <strong>${escapeHtml(resultText)}</strong>
+              <small>${escapeHtml(gapText)}</small>
+            </span>
+          </div>
+          <span class="battle-point-value battle-point-value--left is-${rowSideClass(row.winner, "left")}">
+            <small>${escapeHtml(leftName)}</small>
             <strong>${escapeHtml(row.leftValue)}</strong>
-            <small>${row.leftRank} point${row.leftRank === 1 ? "" : "s"}</small>
+            <em>${escapeHtml(pointLabel(row.leftRank))}</em>
           </span>
-          <span class="battle-point-result">
-            <strong>${escapeHtml(resultText)}</strong>
-            <small>${escapeHtml(gapText)}</small>
-          </span>
-          <span class="battle-point-value">
+          <span class="battle-point-vs" aria-hidden="true">VS</span>
+          <span class="battle-point-value battle-point-value--right is-${rowSideClass(row.winner, "right")}">
+            <small>${escapeHtml(rightName)}</small>
             <strong>${escapeHtml(row.rightValue)}</strong>
-            <small>${row.rightRank} point${row.rightRank === 1 ? "" : "s"}</small>
+            <em>${escapeHtml(pointLabel(row.rightRank))}</em>
           </span>
         </li>
       `;
     }).join("");
     const tieBreakerRow = score.tieBreaker ? `
       <li class="battle-point-row is-${score.tieBreaker.winner} is-tiebreaker">
-        <span class="battle-point-label">Tie-breaker: ${escapeHtml(score.tieBreaker.label)}</span>
-        <span class="battle-point-value">
+        <div class="battle-point-header">
+          <span class="battle-point-label">Tie-breaker: ${escapeHtml(score.tieBreaker.label)}</span>
+          <span class="battle-point-result">
+            <strong>${escapeHtml(resultName(score.tieBreaker.winner))}</strong>
+            <small>${score.tieBreaker.rankGap} rank gap</small>
+          </span>
+        </div>
+        <span class="battle-point-value battle-point-value--left is-${rowSideClass(score.tieBreaker.winner, "left")}">
+          <small>${escapeHtml(leftName)}</small>
           <strong>${escapeHtml(score.tieBreaker.leftValue)}</strong>
-          <small>Rank ${score.tieBreaker.leftRank}</small>
+          <em>Rank ${score.tieBreaker.leftRank}</em>
         </span>
-        <span class="battle-point-result">
-          <strong>${escapeHtml(score.tieBreaker.winner === "left" ? leftName : rightName)}</strong>
-          <small>${score.tieBreaker.rankGap} rank gap</small>
-        </span>
-        <span class="battle-point-value">
+        <span class="battle-point-vs" aria-hidden="true">VS</span>
+        <span class="battle-point-value battle-point-value--right is-${rowSideClass(score.tieBreaker.winner, "right")}">
+          <small>${escapeHtml(rightName)}</small>
           <strong>${escapeHtml(score.tieBreaker.rightValue)}</strong>
-          <small>Rank ${score.tieBreaker.rightRank}</small>
+          <em>Rank ${score.tieBreaker.rightRank}</em>
         </span>
       </li>
     ` : "";

@@ -637,6 +637,10 @@ img.is-pixel-trimmed {
   overflow: hidden;
 }
 
+.selected-card-toggle {
+  display: none;
+}
+
 .character-image {
   display: grid;
   position: relative;
@@ -1679,26 +1683,27 @@ body.is-lightbox-open {
 
 .battle-score {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.52fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(10px, 1.6vw, 18px);
-  margin-bottom: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.58fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(10px, 1.4vw, 16px);
+  margin-bottom: clamp(12px, 1.6vw, 18px);
 }
 
 .battle-score-side {
   display: grid;
-  gap: 6px;
+  align-content: center;
+  gap: 5px;
   min-width: 0;
   border: 1px solid #e3e9ed;
   border-radius: 8px;
   background: #f8fbfc;
-  padding: 14px;
+  padding: 14px 16px;
   text-align: center;
 }
 
 .battle-score-side strong {
   color: #162029;
-  font-size: 2.3rem;
+  font-size: clamp(1.75rem, 3vw, 2.45rem);
   line-height: 1;
 }
 
@@ -1719,15 +1724,20 @@ body.is-lightbox-open {
 
 .battle-score-summary {
   display: grid;
+  align-content: center;
   gap: 5px;
   justify-items: center;
   min-width: 0;
+  border: 1px solid #d8e0e4;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+  padding: 14px 16px;
   text-align: center;
 }
 
 .battle-score-summary span {
   color: #162029;
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
   font-weight: 800;
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -1747,7 +1757,7 @@ body.is-lightbox-open {
 
 .battle-point-list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1755,72 +1765,152 @@ body.is-lightbox-open {
 
 .battle-point-row {
   display: grid;
-  grid-template-columns: minmax(120px, 0.42fr) minmax(0, 1fr) minmax(170px, 0.62fr) minmax(0, 1fr) minmax(120px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas:
+    "header header header"
+    "left vs right";
   align-items: stretch;
-  gap: 10px;
+  gap: 9px 10px;
   border: 1px solid #e3e9ed;
   border-radius: 8px;
   background: #f8fbfc;
-  padding: 10px 12px;
+  padding: 10px;
 }
 
 .battle-point-row.is-left {
   border-color: #9ebbd7;
-  background: #f0f6fc;
+  background: #f4f8fc;
 }
 
 .battle-point-row.is-right {
   border-color: #b6c99f;
-  background: #f3f8ee;
+  background: #f4f8ee;
+}
+
+.battle-point-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  border-bottom: 1px solid #e3e9ed;
+  padding: 0 2px 8px;
 }
 
 .battle-point-label {
-  grid-column: 1;
   color: #667480;
   font-size: 0.75rem;
   font-weight: 800;
+  line-height: 1.2;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
-.battle-point-value,
 .battle-point-result {
   display: grid;
-  align-content: center;
-  gap: 3px;
-  justify-items: center;
   min-width: 0;
-  font-size: 0.92rem;
-  overflow-wrap: anywhere;
-  text-align: center;
-}
-
-.battle-point-result {
-  grid-column: 3;
   color: #31404d;
+  gap: 2px;
+  justify-items: end;
+  text-align: right;
 }
 
-.battle-point-row > .battle-point-value:nth-child(2) {
-  grid-column: 2;
-}
-
-.battle-point-row > .battle-point-value:nth-child(4) {
-  grid-column: 4;
-}
-
-.battle-point-value strong,
 .battle-point-result strong {
   color: #162029;
-  font-size: 0.94rem;
+  font-size: 0.95rem;
   font-weight: 800;
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.battle-point-value small,
 .battle-point-result small {
   color: #667480;
   font-size: 0.74rem;
   font-weight: 700;
   line-height: 1.25;
+}
+
+.battle-point-value {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  border: 1px solid #dce5e9;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+
+.battle-point-value--left {
+  grid-area: left;
+}
+
+.battle-point-value--right {
+  grid-area: right;
+  justify-items: end;
+  text-align: right;
+}
+
+.battle-point-value small {
+  color: #73818c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.battle-point-value strong {
+  color: #162029;
+  font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.battle-point-value em {
+  color: #667480;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.battle-point-value.is-winner {
+  border-color: #9fc9ad;
+  background: #eef8f1;
+}
+
+.battle-point-value.is-winner strong {
+  color: #146c36;
+}
+
+.battle-point-value.is-lower {
+  border-color: #e2a3a3;
+  background: #fff0f0;
+}
+
+.battle-point-value.is-lower strong {
+  color: #a92f2f;
+}
+
+.battle-point-value.is-tie {
+  border-color: #cbd8de;
+  background: #f7fafb;
+}
+
+.battle-point-vs {
+  grid-area: vs;
+  align-self: center;
+  border: 1px solid #d8e0e4;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #667480;
+  padding: 5px 7px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .battle-section {
@@ -1868,33 +1958,19 @@ body.is-lightbox-open {
 
   .battle-score-summary {
     order: -1;
-    border: 1px solid #e3e9ed;
-    border-radius: 8px;
-    background: #f8fbfc;
-    padding: 14px;
   }
 
   .battle-point-row {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "header header"
+      "left right"
+      "vs vs";
   }
 
-  .battle-point-label {
-    grid-column: 1 / -1;
-  }
-
-  .battle-point-row > .battle-point-value:nth-child(2) {
-    grid-column: 1;
-  }
-
-  .battle-point-row > .battle-point-value:nth-child(4) {
-    grid-column: 2;
-  }
-
-  .battle-point-result {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    border-top: 1px solid #e3e9ed;
-    padding-top: 8px;
+  .battle-point-vs {
+    justify-self: center;
+    padding-inline: 12px;
   }
 }
 
@@ -2005,8 +2081,55 @@ body.is-lightbox-open {
   }
 
   .character-card {
+    position: relative;
     grid-template-rows: auto auto;
     overflow: visible;
+  }
+
+  .character-card.is-collapsed {
+    display: block;
+    min-height: 0;
+    padding: 10px 12px;
+    background: #ffffff;
+  }
+
+  .character-card.is-collapsed > :not(.selected-card-toggle) {
+    display: none !important;
+  }
+
+  .selected-card-toggle {
+    position: absolute;
+    z-index: 5;
+    top: 10px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    border: 1px solid #c8d3d9;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #203342;
+    cursor: pointer;
+    padding: 0 12px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 10px 24px rgba(21, 32, 41, 0.12);
+  }
+
+  .selected-card-toggle:hover,
+  .selected-card-toggle:focus-visible {
+    border-color: #7892a1;
+    background: #ffffff;
+    outline: none;
+  }
+
+  .character-card.is-collapsed .selected-card-toggle {
+    position: static;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: none;
   }
 
   .character-image {
@@ -2120,28 +2243,40 @@ body.is-lightbox-open {
     gap: 10px;
   }
 
-  .battle-point-row {
-    grid-template-columns: 1fr;
-  }
-
-  .battle-point-label,
-  .battle-point-row > .battle-point-value:nth-child(2),
-  .battle-point-row > .battle-point-value:nth-child(4),
-  .battle-point-result {
-    grid-column: auto;
-    grid-row: auto;
-  }
-
-  .battle-point-row > .battle-point-value:nth-child(4) {
-    text-align: center;
-  }
-
   .battle-score-summary {
     min-width: 0;
   }
 
+  .battle-point-row {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .battle-point-header {
+    display: grid;
+    justify-items: stretch;
+    gap: 6px;
+    padding-bottom: 8px;
+  }
+
+  .battle-point-label {
+    font-size: 0.76rem;
+  }
+
   .battle-point-result {
-    justify-items: center;
-    text-align: center;
+    justify-items: start;
+    border: 1px solid #e3e9ed;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 8px 10px;
+    text-align: left;
+  }
+
+  .battle-point-value {
+    padding: 10px;
+  }
+
+  .battle-point-value strong {
+    font-size: 1rem;
   }
 }
