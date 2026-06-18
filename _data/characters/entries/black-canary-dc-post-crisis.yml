@@ -18,7 +18,7 @@ keys:
       - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
-          - all-weapons
+          - melee-weapons
       - id: acrobatics
     resistance_refs:
       - id: mind-manipulation-resistance

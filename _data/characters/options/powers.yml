@@ -49,6 +49,7 @@
     - all-weapons
     - firearms
     - gunpowder-handguns
+    - crossbows
     - melee-weapons
     - blunt-weapons
     - sharp-weapons
@@ -818,6 +819,18 @@
   effects: []
 - id: radiation-manipulation
   name: "Radiation Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: corruption
+  name: "Corruption"
   aliases: []
   variants: []
   tags: []

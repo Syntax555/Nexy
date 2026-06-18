@@ -19,7 +19,8 @@ keys:
       - id: weapon-mastery
         type_ids:
           - all-weapons
-    resistance_refs: []
+    resistance_refs:
+      - id: pain-manipulation-resistance
     attack_potency:
       value: wall
       modifier: plus

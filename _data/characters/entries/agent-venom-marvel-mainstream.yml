@@ -6,7 +6,8 @@ age:
   unknown: true
   display: "Likely mid-20's"
 classification_ids:
-  - human-with-symbiote
+  - human
+  - symbiote
 keys:
   - key: agent-venom
     names:
@@ -17,7 +18,7 @@ keys:
     power_refs:
       - id: weapon-mastery
         type_ids:
-          - all-weapons
+          - firearms
       - id: martial-arts-mastery
       - id: multiple-selves
       - id: elasticity

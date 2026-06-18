@@ -41,7 +41,7 @@ keys:
       - id: enhanced-senses
       - id: regeneration
         type_ids:
-          - low-regeneration
+          - high-low-regeneration
     resistance_refs:
       - id: mind-manipulation-resistance
       - id: poison-manipulation-resistance

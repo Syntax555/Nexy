@@ -18,7 +18,8 @@ keys:
     power_refs:
       - id: weapon-mastery
         type_ids:
-          - all-weapons
+          - firearms
+          - crossbows
       - id: attack-reflection
     resistance_refs:
       - id: pain-manipulation-resistance

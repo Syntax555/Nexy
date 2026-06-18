@@ -20,7 +20,7 @@ keys:
         martial_arts_degree_id: expert
       - id: regeneration
         type_ids:
-          - low-regeneration
+          - mid-low-regeneration
     resistance_refs:
       - id: biological-manipulation-resistance
       - id: ice-manipulation-resistance

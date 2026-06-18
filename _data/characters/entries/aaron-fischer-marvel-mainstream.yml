@@ -22,7 +22,7 @@ keys:
       - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
-          - melee-weapons
+          - shields
       - id: stealth-mastery
       - id: social-influencing
     resistance_refs:
@@ -70,7 +70,9 @@ keys:
       - id: martial-arts-mastery
       - id: weapon-mastery
         type_ids:
-          - melee-weapons
+          - shields
+      - id: stealth-mastery
+      - id: social-influencing
       - id: attack-reflection
       - id: statistics-amplification
     resistance_refs:
