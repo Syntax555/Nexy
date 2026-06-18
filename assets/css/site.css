@@ -262,6 +262,20 @@ button {
   background: var(--color-surface-hover);
 }
 
+.back-button:focus-visible,
+.confirm-button:focus-visible,
+.secondary-button:focus-visible,
+.filter-button:focus-visible,
+.sort-button:focus-visible,
+.filter-chip:focus-visible,
+.sort-option:focus-visible,
+.choice-button:focus-visible,
+.selected-card-toggle:focus-visible,
+.image-lightbox-close:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
 .selector-body {
   display: grid;
   grid-template-columns: minmax(240px, 22vw) minmax(0, 1fr);
@@ -752,6 +766,47 @@ img.is-pixel-trimmed {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+.character-card.is-empty {
+  grid-template-rows: minmax(0, 1fr);
+  min-height: clamp(180px, 32svh, 320px);
+  background:
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(135deg, var(--color-border-soft), transparent 42%, var(--color-border-soft)) border-box;
+}
+
+.character-empty-state {
+  display: grid;
+  min-height: 100%;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: clamp(22px, 4vw, 40px);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.character-empty-mark {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.character-empty-state p {
+  margin: 0;
+  color: var(--color-text-subtle);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 .selected-card-toggle {
@@ -1427,6 +1482,10 @@ body.is-lightbox-open {
   scrollbar-color: var(--color-scrollbar) transparent;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
+}
+
+[data-battle-result] {
+  scroll-margin-top: 12px;
 }
 
 .battle-fold {
@@ -2395,5 +2454,42 @@ body.is-lightbox-open {
 
   .battle-point-value strong {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .choice-search-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .choice-search-input {
+    grid-column: 1 / -1;
+  }
+
+  .filter-button,
+  .sort-button {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .selector-actions,
+  .battle-actions {
+    flex-wrap: wrap;
+  }
+
+  .confirm-button,
+  .secondary-button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
   }
 }

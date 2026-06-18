@@ -1326,12 +1326,22 @@
     `;
   }
 
+  function emptyCharacterCardHtml() {
+    return `
+      <div class="character-empty-state" aria-live="polite">
+        <span class="character-empty-mark" aria-hidden="true">VS</span>
+        <p>No character selected</p>
+      </div>
+    `;
+  }
+
   function renderCard(card, character, keyId = null) {
     const view = characterView(character, keyId);
+    card.classList.toggle("is-empty", !view);
 
     if (!view) {
-      card.hidden = true;
-      card.innerHTML = "";
+      card.hidden = false;
+      card.innerHTML = emptyCharacterCardHtml();
       return;
     }
 
@@ -1919,6 +1929,7 @@
           <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
         </div>
       </details>
+      <div data-battle-result hidden></div>
       <details class="battle-fold" open>
         <summary class="battle-fold-summary">
           <span>Stats</span>
@@ -1928,7 +1939,6 @@
           <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView, statPairs)}</ul>
         </section>
       </details>
-      <div data-battle-result hidden></div>
       ${battleSectionRowsHtml(baseLeftView, baseRightView, leftView, rightView)}
     `;
 

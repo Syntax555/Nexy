@@ -713,7 +713,7 @@
       button.innerHTML = `
         <span class="circle-choice-orb circle-choice-orb--${size}">
           ${image?.image
-            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="" data-trim-image>`
+            ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="" loading="lazy" decoding="async" data-trim-image>`
             : `<span>${escapeHtml(initials)}</span>`}
           <span class="circle-choice-check" aria-hidden="true">&#10003;</span>
         </span>
@@ -1175,6 +1175,7 @@
 
     result.hidden = false;
     result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right, currentBattleViews.statPairs);
+    result.scrollIntoView({ block: "nearest" });
     startBattleButton.disabled = true;
   });
 
