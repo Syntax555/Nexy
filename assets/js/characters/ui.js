@@ -1106,7 +1106,6 @@
   const selectionScreen = document.querySelector("[data-selection-screen]");
   const battleScreen = document.querySelector("[data-battle-screen]");
   const battleContent = document.querySelector("[data-battle-content]");
-  const startBattleButton = document.querySelector("[data-start-battle]");
   const editSelectionButton = document.querySelector("[data-edit-selection]");
   const imageLightbox = document.querySelector("[data-image-lightbox]");
   const imageLightboxImage = imageLightbox?.querySelector("[data-image-lightbox-image]");
@@ -1114,7 +1113,6 @@
   const imageLightboxClose = imageLightbox?.querySelector("[data-image-lightbox-close]");
   let lastImageExpandButton = null;
   let selectors = [];
-  let currentBattleViews = null;
 
   function closeImageLightbox() {
     if (!imageLightbox) return;
@@ -1149,13 +1147,20 @@
   function showSelectionScreen() {
     selectionScreen.hidden = false;
     battleScreen.hidden = true;
-    currentBattleViews = null;
     trimImagesIn(selectionScreen);
   }
 
   function showBattleScreen(leftSelection, rightSelection) {
-    currentBattleViews = renderBattle(battleContent, leftSelection, rightSelection);
-    if (startBattleButton) startBattleButton.disabled = false;
+    const battleViews = renderBattle(battleContent, leftSelection, rightSelection);
+    const comparison = battleContent.querySelector("[data-battle-comparison]");
+    const comparisonStatus = battleContent.querySelector("[data-battle-comparison-status]");
+
+    if (comparison) {
+      comparison.innerHTML = battleResultHtml(battleViews.left, battleViews.right, battleViews.statPairs);
+      const resultSummary = comparison.querySelector("[data-battle-summary]")?.dataset.battleSummary;
+      if (comparisonStatus && resultSummary) comparisonStatus.textContent = resultSummary;
+    }
+
     selectionScreen.hidden = true;
     battleScreen.hidden = false;
     trimImagesIn(battleContent);
@@ -1170,22 +1175,7 @@
 
   editSelectionButton?.addEventListener("click", () => {
     selectors.forEach((item) => item.unconfirm());
-    if (startBattleButton) startBattleButton.disabled = true;
     showSelectionScreen();
-  });
-
-  startBattleButton?.addEventListener("click", () => {
-    if (!currentBattleViews) return;
-
-    const comparison = battleContent.querySelector("[data-battle-comparison]");
-    const comparisonStatus = battleContent.querySelector("[data-battle-comparison-status]");
-    if (!comparison) return;
-
-    comparison.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right, currentBattleViews.statPairs);
-    const resultSummary = comparison.querySelector("[data-battle-summary]")?.dataset.battleSummary;
-    if (comparisonStatus && resultSummary) comparisonStatus.textContent = resultSummary;
-    comparison.scrollIntoView({ block: "nearest" });
-    startBattleButton.disabled = true;
   });
 
   document.addEventListener("click", (event) => {
