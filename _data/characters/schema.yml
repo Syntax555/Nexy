@@ -101,6 +101,7 @@ derived:
   power_effects:
     identity_field: id
     identity_rule: same_power_id_is_same_power_even_when_effects_differ
+    placeholder_override_rule: a_boolean_placeholder_on_a_character_power_ref_overrides_the_catalog_default
     type_field: type_ids
     type_rule: empty_type_ids_means_all_or_unspecified_types
     alias_rule: aliases_are_same_power_not_separate_powers
@@ -568,6 +569,7 @@ derived:
     power:
       id: string
       name: string
+      placeholder: boolean_or_null_defaults_to_false
       aliases: list
       variants:
         - id: string
@@ -659,6 +661,7 @@ keys:
         image: string
     power_refs:
       - id: power_id
+        placeholder: boolean_or_null_inherits_catalog_default
         modifier: ability_modifier_id
         type_ids: list_or_null
         martial_arts_degree_id: martial_arts_degree_id_or_null

@@ -1,0 +1,68 @@
+name: "Lila Cheney"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human
+  - mutate
+keys:
+  - key: lila-cheney
+    names:
+      - "Lila Cheney"
+    images:
+      - name: "Lila Cheney"
+        image: "assets/images/characters/lila-cheney-marvel-mainstream/lila-cheney.webp"
+    power_refs:
+      - id: acrobatics
+      - id: teleportation
+        placeholder: false
+        effects:
+          - stat_effects:
+              range:
+                value: hundreds-of-meters
+                modifier: normal
+      - id: dimensional-travel
+        placeholder: false
+        effects:
+          - stat_effects:
+              range:
+                value: interdimensional
+                modifier: normal
+      - id: space-survival
+      - id: bfr
+    resistance_refs: []
+    attack_potency:
+      value: wall
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: massively-ftl-plus
+      modifier: normal
+    reaction_speed:
+      value: massively-ftl-plus
+      modifier: normal
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: superhuman
+      modifier: normal
+    striking_strength:
+      value: wall-level
+      modifier: normal
+    durability:
+      value: wall
+      modifier: normal
+    stamina:
+      value: average
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: higher
+    attack_ids: []

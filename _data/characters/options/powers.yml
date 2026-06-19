@@ -299,6 +299,48 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: dimensional-travel
+  name: "Dimensional Travel"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: space-survival
+  name: "Space Survival"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: bfr
+  name: "BFR"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: social-influencing
   name: "Social Influencing"
   aliases: []

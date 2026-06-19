@@ -1018,8 +1018,9 @@
   function powerTooltipLines(key, ref, power) {
     const lines = [];
     const variant = powerVariant(power, ref);
+    const placeholder = Boolean(ref.placeholder ?? power.placeholder);
 
-    if (power.placeholder || ref.placeholder) lines.push("Placeholder: no game effect yet");
+    if (placeholder) lines.push("Placeholder: no game effect yet");
     if (ref.id === "flight") lines.push("Game effect: enables Flight Speed");
     if (ref.id === "regeneration") lines.push("Game effect: first tie-breaker when battle points are tied");
     if (ref.id === "martial-arts-mastery") lines.push("Game effect: fallback tie-breaker if battle points and Regeneration are tied");
@@ -1045,7 +1046,7 @@
         kind: "power",
         id: ref.id,
         label: powerRefLabel(ref),
-        placeholder: Boolean(power.placeholder || ref.placeholder),
+        placeholder: Boolean(ref.placeholder ?? power.placeholder),
         ref,
         tooltipLines: powerTooltipLines(key, ref, power)
       };

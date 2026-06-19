@@ -200,10 +200,23 @@ function testDamageTransferal() {
   assert.equal(nullifiedBattle.left.powerRefs.some((ref) => ref.id === "damage-transferal"), false);
 }
 
+function testCharacterSpecificPlaceholderOverride() {
+  const lila = engine.characterView(character("Lila Cheney"));
+  const powers = lila.sections.find(([name]) => name === "Powers")[1];
+  const power = (id) => powers.find((item) => item.id === id);
+
+  assert.equal(engine.formatStat(lila.effectiveKey.range, "range_tiers"), "Interdimensional");
+  assert.equal(power("teleportation").placeholder, false);
+  assert.equal(power("dimensional-travel").placeholder, false);
+  assert.equal(power("space-survival").placeholder, true);
+  assert.equal(power("bfr").placeholder, true);
+}
+
 testModifierOrdering();
 testMagicResistanceLevels();
 testNonResistibleStatEffects();
 testScoreAndSpeedSelection();
 testDamageTransferal();
+testCharacterSpecificPlaceholderOverride();
 
 console.log("character engine tests passed");
