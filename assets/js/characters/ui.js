@@ -1177,12 +1177,14 @@
   startBattleButton?.addEventListener("click", () => {
     if (!currentBattleViews) return;
 
-    const result = battleContent.querySelector("[data-battle-result]");
-    if (!result) return;
+    const comparison = battleContent.querySelector("[data-battle-comparison]");
+    const comparisonStatus = battleContent.querySelector("[data-battle-comparison-status]");
+    if (!comparison) return;
 
-    result.hidden = false;
-    result.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right, currentBattleViews.statPairs);
-    result.scrollIntoView({ block: "nearest" });
+    comparison.innerHTML = battleResultHtml(currentBattleViews.left, currentBattleViews.right, currentBattleViews.statPairs);
+    const resultSummary = comparison.querySelector("[data-battle-summary]")?.dataset.battleSummary;
+    if (comparisonStatus && resultSummary) comparisonStatus.textContent = resultSummary;
+    comparison.scrollIntoView({ block: "nearest" });
     startBattleButton.disabled = true;
   });
 

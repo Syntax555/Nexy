@@ -1780,22 +1780,37 @@
     };
   }
 
-  function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
+  function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView), score = null) {
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
+    const scoreRows = new Map(list(score?.rows).map((row) => [row.label, row]));
 
     return pairs.map(({ label, left, right, leftClass, rightClass }) => {
+      const scoreRow = scoreRows.get(label);
+      const resultDetail = score
+        ? scoreRow
+          ? scoreRow.winner === "tie"
+            ? "Even"
+            : `${scoreRow.winner === "left" ? leftName : rightName} +${scoreRow.rankGap}`
+          : "Excluded"
+        : "";
+
       return `
-        <li class="battle-stat-row">
+        <li class="battle-stat-row${score ? " is-scored" : ""}">
           <div class="battle-stat-cell is-${leftClass}">
             <span class="battle-side-label">${escapeHtml(leftName)}</span>
             <span class="stat-value">${escapeHtml(left?.value || "")}</span>
+            ${scoreRow ? `<small class="battle-stat-points">${scoreRow.leftRank} pts</small>` : ""}
             ${left?.note ? `<small class="battle-stat-note">${escapeHtml(left.note)}</small>` : ""}
           </div>
-          <span class="battle-stat-label">${escapeHtml(label)}</span>
+          <span class="battle-stat-label">
+            <strong>${escapeHtml(label)}</strong>
+            ${score ? `<small>${escapeHtml(resultDetail)}</small>` : ""}
+          </span>
           <div class="battle-stat-cell is-${rightClass}">
             <span class="battle-side-label">${escapeHtml(rightName)}</span>
             <span class="stat-value">${escapeHtml(right?.value || "")}</span>
+            ${scoreRow ? `<small class="battle-stat-points">${scoreRow.rightRank} pts</small>` : ""}
             ${right?.note ? `<small class="battle-stat-note">${escapeHtml(right.note)}</small>` : ""}
           </div>
         </li>
@@ -1847,16 +1862,6 @@
     const score = battleScore(leftView, rightView, pairs);
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
-    const pointLabel = (value) => `${value} point${value === 1 ? "" : "s"}`;
-    const rowSideClass = (winner, side) => {
-      if (winner === "tie") return "tie";
-      return winner === side ? "winner" : "lower";
-    };
-    const resultName = (winner) => {
-      if (winner === "left") return leftName;
-      if (winner === "right") return rightName;
-      return "Same";
-    };
     const winnerText = score.winner === "left"
       ? `${leftName} wins`
       : score.winner === "right"
@@ -1865,95 +1870,29 @@
     const scoreDetail = score.interaction
       ? score.interaction.winner === "tie" ? "Stalemate" : "Automatic win"
       : score.tieBreaker
-      ? `Tie-breaker: ${score.tieBreaker.label}`
+      ? `Tie-breaker · ${score.tieBreaker.label}`
       : score.winner === "tie"
-      ? "No score gap"
-      : `Wins by ${score.scoreGap} point${score.scoreGap === 1 ? "" : "s"}`;
-    const scoreContext = score.interaction
-      ? `${score.interaction.summary}. ${score.interaction.detail}`
-      : score.tieBreaker
-      ? `${score.statCount} stats compared, Tier excluded, points tied`
-      : `${score.statCount} stats compared, Tier excluded`;
-    const rows = score.rows.map((row) => {
-      const resultText = resultName(row.winner);
-      const gapText = row.rankGap === 0
-        ? "No point gap"
-        : `${row.rankGap} point gap`;
-
-      return `
-        <li class="battle-point-row is-${row.winner}">
-          <div class="battle-point-header">
-            <span class="battle-point-label">${escapeHtml(row.label)}</span>
-            <span class="battle-point-result">
-              <strong>${escapeHtml(resultText)}</strong>
-              <small>${escapeHtml(gapText)}</small>
-            </span>
-          </div>
-          <span class="battle-point-value battle-point-value--left is-${rowSideClass(row.winner, "left")}">
-            <small>${escapeHtml(leftName)}</small>
-            <strong>${escapeHtml(row.leftValue)}</strong>
-            <em>${escapeHtml(pointLabel(row.leftRank))}</em>
-          </span>
-          <span class="battle-point-vs" aria-hidden="true">VS</span>
-          <span class="battle-point-value battle-point-value--right is-${rowSideClass(row.winner, "right")}">
-            <small>${escapeHtml(rightName)}</small>
-            <strong>${escapeHtml(row.rightValue)}</strong>
-            <em>${escapeHtml(pointLabel(row.rightRank))}</em>
-          </span>
-        </li>
-      `;
-    }).join("");
-    const tieBreakerRow = score.tieBreaker ? `
-      <li class="battle-point-row is-${score.tieBreaker.winner} is-tiebreaker">
-        <div class="battle-point-header">
-          <span class="battle-point-label">Tie-breaker: ${escapeHtml(score.tieBreaker.label)}</span>
-          <span class="battle-point-result">
-            <strong>${escapeHtml(resultName(score.tieBreaker.winner))}</strong>
-            <small>${score.tieBreaker.rankGap} rank gap</small>
-          </span>
-        </div>
-        <span class="battle-point-value battle-point-value--left is-${rowSideClass(score.tieBreaker.winner, "left")}">
-          <small>${escapeHtml(leftName)}</small>
-          <strong>${escapeHtml(score.tieBreaker.leftValue)}</strong>
-          <em>Rank ${score.tieBreaker.leftRank}</em>
-        </span>
-        <span class="battle-point-vs" aria-hidden="true">VS</span>
-        <span class="battle-point-value battle-point-value--right is-${rowSideClass(score.tieBreaker.winner, "right")}">
-          <small>${escapeHtml(rightName)}</small>
-          <strong>${escapeHtml(score.tieBreaker.rightValue)}</strong>
-          <em>Rank ${score.tieBreaker.rightRank}</em>
-        </span>
-      </li>
-    ` : "";
+      ? "Scores tied"
+      : `+${score.scoreGap} pts`;
+    const summary = `${winnerText} · ${scoreDetail}`;
 
     return `
-      <details class="battle-fold" open>
-        <summary class="battle-fold-summary">
-          <span>Result</span>
-          <small>${escapeHtml(winnerText)}</small>
-        </summary>
-        <section class="battle-result" aria-live="polite">
-          <div class="battle-score">
-            <div class="battle-score-side">
-              <span class="battle-score-name">${escapeHtml(leftName)}</span>
-              <strong>${score.leftScore}</strong>
-              <small>points</small>
-            </div>
-            <div class="battle-score-summary">
-              <span>${escapeHtml(winnerText)}</span>
-              <strong>${escapeHtml(scoreDetail)}</strong>
-              <small>${escapeHtml(scoreContext)}</small>
-              ${score.interaction ? `<em>Stat points shown for reference only</em>` : ""}
-            </div>
-            <div class="battle-score-side">
-              <span class="battle-score-name">${escapeHtml(rightName)}</span>
-              <strong>${score.rightScore}</strong>
-              <small>points</small>
-            </div>
-          </div>
-          <ul class="battle-point-list">${rows}${tieBreakerRow}</ul>
-        </section>
-      </details>
+      <div class="battle-score" data-battle-summary="${escapeHtml(summary)}">
+        <div class="battle-score-side">
+          <span class="battle-score-name">${escapeHtml(leftName)}</span>
+          <strong>${score.leftScore} <small>pts</small></strong>
+        </div>
+        <div class="battle-score-summary">
+          <strong>${escapeHtml(winnerText)}</strong>
+          <span>${escapeHtml(scoreDetail)}</span>
+          ${score.interaction ? `<small>${escapeHtml(score.interaction.summary)}</small>` : ""}
+        </div>
+        <div class="battle-score-side">
+          <span class="battle-score-name">${escapeHtml(rightName)}</span>
+          <strong>${score.rightScore} <small>pts</small></strong>
+        </div>
+      </div>
+      <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView, pairs, score)}</ul>
     `;
   }
 
@@ -2010,13 +1949,12 @@
           <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
         </div>
       </details>
-      <div data-battle-result hidden></div>
       <details class="battle-fold" open>
         <summary class="battle-fold-summary">
-          <span>Stats</span>
-          <small>Tier excluded from points</small>
+          <span>Comparison</span>
+          <small data-battle-comparison-status>Tier excluded</small>
         </summary>
-        <section class="battle-comparison" aria-label="Stat comparison">
+        <section class="battle-comparison" aria-label="Stat comparison" aria-live="polite" data-battle-comparison>
           <ul class="battle-stat-list">${battleStatRowsHtml(leftView, rightView, statPairs)}</ul>
         </section>
       </details>
