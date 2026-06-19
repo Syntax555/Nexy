@@ -2271,6 +2271,10 @@ body.is-lightbox-open {
     overflow: visible;
   }
 
+  .character-card.is-collapsible:not(.is-collapsed) {
+    grid-template-rows: auto auto auto;
+  }
+
   .character-card.is-collapsed {
     display: block;
     min-height: 0;
@@ -2283,36 +2287,36 @@ body.is-lightbox-open {
   }
 
   .selected-card-toggle {
-    position: absolute;
-    z-index: 5;
-    top: 10px;
-    right: 12px;
+    position: static;
+    z-index: auto;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-pill);
-    background: rgba(var(--surface-rgb), 0.94);
+    justify-content: flex-end;
+    width: 100%;
+    min-height: 40px;
+    border: 0;
+    border-bottom: 1px solid var(--color-border-soft);
+    border-radius: 0;
+    background: var(--color-surface);
     color: var(--color-brand);
     cursor: pointer;
-    padding: 0 12px;
+    padding: 0 14px;
     font-size: 0.8rem;
     font-weight: 800;
     line-height: 1;
-    box-shadow: var(--shadow-floating);
+    box-shadow: none;
   }
 
   .selected-card-toggle:hover,
   .selected-card-toggle:focus-visible {
-    border-color: var(--color-focus);
-    background: var(--color-surface);
+    background: var(--color-surface-muted);
     outline: none;
   }
 
   .character-card.is-collapsed .selected-card-toggle {
     position: static;
     width: 100%;
+    border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-md);
     box-shadow: none;
   }
