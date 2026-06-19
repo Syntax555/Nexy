@@ -7,7 +7,7 @@ age:
   display: "Mid 20s"
 classification_ids:
   - human
-  - human-mutate
+  - mutate
 keys:
   - key: dagger
     names:

@@ -5,7 +5,8 @@ age:
   value: null
   unknown: true
 classification_ids:
-  - human-mutate
+  - human
+  - mutate
   - facility
   - mercenary
 keys:

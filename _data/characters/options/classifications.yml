@@ -4,10 +4,8 @@
   name: "Cyborg"
 - id: symbiote
   name: "Symbiote"
-- id: human-mutate
-  name: "Human Mutate"
-  parent_ids:
-    - human
+- id: mutate
+  name: "Mutate"
 - id: human-with-symbiote
   name: "Human with a Symbiote"
   parent_ids:

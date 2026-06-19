@@ -18,6 +18,16 @@
   resists_power_ids:
     - biological-manipulation
   resists_effect_ids: []
+- id: disease-manipulation-resistance
+  name: "Disease Manipulation"
+  resists_power_ids:
+    - disease-manipulation
+  resists_effect_ids: []
+- id: telepathy-resistance
+  name: "Telepathy"
+  resists_power_ids:
+    - telepathy
+  resists_effect_ids: []
 - id: ice-manipulation-resistance
   name: "Ice Manipulation"
   resists_power_ids:

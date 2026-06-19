@@ -6,7 +6,8 @@ age:
   unknown: true
   display: "In his 30s or 40s"
 classification_ids:
-  - human-mutate
+  - human
+  - mutate
   - vigilante
 keys:
   - key: luke-cage

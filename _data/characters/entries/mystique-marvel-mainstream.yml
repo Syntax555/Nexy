@@ -1,0 +1,70 @@
+name: "Mystique"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: 140
+  unknown: false
+  display: "Over 140 years old"
+classification_ids:
+  - human
+  - mutate
+keys:
+  - key: mystique
+    names:
+      - "Raven Darkhölme"
+    images:
+      - name: "Mystique"
+        image: "assets/images/characters/mystique-marvel-mainstream/mystique.webp"
+    power_refs:
+      - id: martial-arts-mastery
+      - id: weapon-mastery
+        type_ids:
+          - all-weapons
+      - id: regeneration
+        type_ids:
+          - mid-low-regeneration
+      - id: shapeshifting
+        effects:
+          - stat_modifier_floor_effects:
+              - stat: range
+                modifier: higher
+      - id: enhanced-senses
+      - id: longevity
+      - id: adaptive-appearance
+    resistance_refs:
+      - id: poison-manipulation-resistance
+      - id: disease-manipulation-resistance
+      - id: telepathy-resistance
+    attack_potency:
+      value: wall
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed:
+      value: hypersonic
+      modifier: normal
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: peak-human
+      modifier: normal
+    striking_strength:
+      value: wall-level
+      modifier: plus
+    durability:
+      value: wall
+      modifier: plus
+    stamina:
+      value: superhuman
+      modifier: likely
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids: []

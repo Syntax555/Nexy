@@ -5,7 +5,8 @@ age:
   value: 19
   unknown: false
 classification_ids:
-  - human-mutate
+  - human
+  - mutate
   - superhero
   - avengers-academy
   - captains-network

@@ -327,6 +327,34 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: longevity
+  name: "Longevity"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: adaptive-appearance
+  name: "Adaptive Appearance"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: extrasensory-perception
   name: "Extrasensory Perception"
   aliases: []
@@ -443,9 +471,7 @@
   name: "Shapeshifting"
   aliases: []
   variants: []
-  tags:
-    - placeholder
-  placeholder: true
+  tags: []
   type_ids: []
   degree_ids: []
   grants:
@@ -689,6 +715,18 @@
   effects: []
 - id: biological-manipulation
   name: "Biological Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: disease-manipulation
+  name: "Disease Manipulation"
   aliases: []
   variants: []
   tags: []
