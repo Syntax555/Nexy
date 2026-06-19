@@ -271,6 +271,34 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: afterimage-creation
+  name: "Afterimage Creation"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: teleportation
+  name: "Teleportation"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: social-influencing
   name: "Social Influencing"
   aliases: []
@@ -604,6 +632,30 @@
   effects: []
 - id: size-manipulation
   name: "Size Manipulation"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: damage-transferal
+  name: "Damage Transferal"
+  aliases: []
+  variants: []
+  tags: []
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
+- id: gravity-manipulation
+  name: "Gravity Manipulation"
   aliases: []
   variants: []
   tags: []

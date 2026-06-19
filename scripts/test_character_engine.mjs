@@ -46,6 +46,12 @@ function isolatedCharacter(name, powerRefs = [], resistanceRefs = []) {
   return { ...source, name, keys: [key] };
 }
 
+function characterWithStats(name, stats, powerRefs = []) {
+  const source = isolatedCharacter(name, powerRefs);
+  Object.assign(source.keys[0], stats);
+  return source;
+}
+
 function testModifierOrdering() {
   const wallAtLeast = engine.compositeRank(stat("wall", "at-least"), "attack_durability_tiers");
   const smallBuildingAtMost = engine.compositeRank(stat("small-building", "at-most"), "attack_durability_tiers");
@@ -126,9 +132,67 @@ function testScoreAndSpeedSelection() {
   assert.match(speedRows[0].left.note, /Travel Speed/);
 }
 
+function testDamageTransferal() {
+  const escapade = engine.characterView(character("Escapade"));
+  const cappedTarget = engine.characterView(characterWithStats("Eligible target", {
+    attack_potency: stat("high-outerverse"),
+    striking_strength: stat("high-outerverse-level"),
+    durability: stat("high-outerverse"),
+    range: stat("extended-melee-range")
+  }));
+  const transferred = engine.battleEffectiveViews(escapade, cappedTarget);
+
+  assert.equal(engine.formatStat(transferred.left.effectiveKey.attack_potency, "attack_durability_tiers"), "High Outerverse");
+  assert.equal(engine.formatStat(transferred.right.effectiveKey.attack_potency, "attack_durability_tiers"), "Wall+");
+  assert.equal(transferred.left.effectiveKey.combat_speed.modifier, "higher");
+  assert.deepEqual(
+    Array.from(transferred.left.opponentStatSwap.statNames),
+    ["attack_potency", "striking_strength", "durability"]
+  );
+
+  const distantTarget = engine.characterView(characterWithStats("Distant target", {
+    attack_potency: stat("high-outerverse"),
+    striking_strength: stat("high-outerverse-level"),
+    durability: stat("high-outerverse"),
+    range: stat("several-meters")
+  }));
+  const distantBattle = engine.battleEffectiveViews(escapade, distantTarget);
+
+  assert.equal(engine.formatStat(distantBattle.left.effectiveKey.attack_potency, "attack_durability_tiers"), "Wall+");
+  assert.equal(distantBattle.left.effectiveKey.combat_speed.modifier, "normal");
+  assert.equal(distantBattle.left.opponentStatSwap, undefined);
+
+  const overCapTarget = engine.characterView(characterWithStats("Over-cap target", {
+    attack_potency: stat("boundless"),
+    striking_strength: stat("inapplicable"),
+    durability: stat("boundless"),
+    range: stat("standard-melee-range")
+  }));
+  const overCapBattle = engine.battleEffectiveViews(escapade, overCapTarget);
+
+  assert.equal(engine.formatStat(overCapBattle.left.effectiveKey.attack_potency, "attack_durability_tiers"), "Wall+");
+  assert.equal(overCapBattle.left.effectiveKey.combat_speed.modifier, "normal");
+
+  const nullifier = engine.characterView(characterWithStats("Nullifier", {
+    attack_potency: stat("high-outerverse"),
+    striking_strength: stat("high-outerverse-level"),
+    durability: stat("high-outerverse"),
+    range: stat("standard-melee-range")
+  }, [{
+    id: "power-nullification",
+    effects: [{ power_nullification: { target_power_ids: ["damage-transferal"] } }]
+  }]));
+  const nullifiedBattle = engine.battleEffectiveViews(escapade, nullifier);
+
+  assert.equal(engine.formatStat(nullifiedBattle.left.effectiveKey.attack_potency, "attack_durability_tiers"), "Wall+");
+  assert.equal(nullifiedBattle.left.effectiveKey.combat_speed.modifier, "normal");
+  assert.equal(nullifiedBattle.left.powerRefs.some((ref) => ref.id === "damage-transferal"), false);
+}
+
 testModifierOrdering();
 testMagicResistanceLevels();
 testNonResistibleStatEffects();
 testScoreAndSpeedSelection();
+testDamageTransferal();
 
 console.log("character engine tests passed");

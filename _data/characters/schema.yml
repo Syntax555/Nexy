@@ -504,6 +504,13 @@ derived:
       target_immunity_ids: list
     non_physical_interaction:
       target_power_refs: list
+    opponent_stat_swap:
+      stat_names: list_of_ranked_stat_fields
+      max_target_range: ranked_range
+      max_target_stats: map_of_ranked_stat_caps_by_field
+      on_success_stat_modifier_floor_effects: list
+      activation_rule: opponent_range_is_at_or_below_the_limit_and_at_least_one_eligible_stat_improves_the_user
+      conflict_rule: when_both_sides_can_swap_the_side_with_the_larger_total_rank_gain_activates_and_equal_gains_cancel
     stat_effects:
       attack_potency: ranked_attack_durability_or_null
       attack_speed: ranked_speed_or_null

@@ -35,6 +35,8 @@
   name: "Superhero"
 - id: avengers-academy
   name: "Avengers Academy"
+- id: new-mutants
+  name: "New Mutants"
 - id: captains-network
   name: "Captains Network"
 - id: mercenary

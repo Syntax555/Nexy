@@ -535,6 +535,7 @@ def validate_power_refs(context, refs, sets)
     end
 
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power"))
+    errors.concat(validate_boolean_field(ref_context, ref, "placeholder"))
     errors.concat(validate_refs("#{ref_context}.modifier", [ref["modifier"] || "normal"], sets[:ability_modifiers], "ability modifier"))
     errors.concat(validate_ref_list("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type"))
     errors.concat(validate_refs("#{ref_context}.martial_arts_degree_id", [ref["martial_arts_degree_id"]], sets[:martial_arts_degrees], "martial arts degree"))
@@ -657,6 +658,63 @@ def validate_effect(context, effect, sets)
 
   if effect.key?("stat_modifier_floor_effects")
     errors.concat(validate_stat_modifier_floor_effects("#{context}.stat_modifier_floor_effects", effect["stat_modifier_floor_effects"], sets))
+  end
+
+  if effect.key?("opponent_stat_swap")
+    swap = effect["opponent_stat_swap"]
+
+    unless swap.is_a?(Hash)
+      errors << "#{context}.opponent_stat_swap must be a map"
+    else
+      stat_names = swap["stat_names"]
+      unless stat_names.is_a?(Array) && stat_names.any?
+        errors << "#{context}.opponent_stat_swap.stat_names must contain at least one ranked stat field"
+        stat_names = []
+      end
+
+      stat_names.each do |stat_name|
+        errors << "#{context}.opponent_stat_swap.stat_names contains unknown stat #{stat_name.inspect}" unless STAT_CATALOGS.key?(stat_name)
+      end
+
+      if swap.key?("max_target_range")
+        errors.concat(validate_ranked_stat(
+          "#{context}.opponent_stat_swap.max_target_range",
+          swap["max_target_range"],
+          sets[:range_tiers],
+          sets[:stat_modifiers],
+          locked_values: sets[:locked_stat_values].fetch(:range_tiers, Set.new)
+        ))
+      end
+
+      max_target_stats = swap["max_target_stats"]
+      unless max_target_stats.is_a?(Hash)
+        errors << "#{context}.opponent_stat_swap.max_target_stats must be a map"
+        max_target_stats = {}
+      end
+
+      max_target_stats.each do |stat_name, stat|
+        catalog = STAT_CATALOGS[stat_name]
+        if catalog.nil?
+          errors << "#{context}.opponent_stat_swap.max_target_stats contains unknown stat #{stat_name.inspect}"
+          next
+        end
+
+        errors << "#{context}.opponent_stat_swap.max_target_stats.#{stat_name} is not listed in stat_names" unless stat_names.include?(stat_name)
+        errors.concat(validate_ranked_stat(
+          "#{context}.opponent_stat_swap.max_target_stats.#{stat_name}",
+          stat,
+          sets[catalog],
+          sets[:stat_modifiers],
+          locked_values: sets[:locked_stat_values].fetch(catalog, Set.new)
+        ))
+      end
+
+      errors.concat(validate_stat_modifier_floor_effects(
+        "#{context}.opponent_stat_swap.on_success_stat_modifier_floor_effects",
+        swap["on_success_stat_modifier_floor_effects"] || [],
+        sets
+      ))
+    end
   end
 
   if effect.key?("power_nullification")

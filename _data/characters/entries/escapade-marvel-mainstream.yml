@@ -1,0 +1,92 @@
+name: "Escapade"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+classification_ids:
+  - human
+  - mutate
+  - avengers-academy
+  - new-mutants
+  - superhero
+keys:
+  - key: escapade
+    names:
+      - "Shela Sexton"
+    images:
+      - name: "Escapade"
+        image: "assets/images/characters/escapade-marvel-mainstream/escapade.webp"
+    power_refs:
+      - id: acrobatics
+      - id: martial-arts-mastery
+      - id: damage-transferal
+        effects:
+          - stat_effects:
+              range:
+                value: extended-melee-range
+                modifier: normal
+            opponent_stat_swap:
+              stat_names:
+                - attack_potency
+                - striking_strength
+                - durability
+              max_target_range:
+                value: extended-melee-range
+                modifier: normal
+              max_target_stats:
+                attack_potency:
+                  value: high-outerverse
+                  modifier: normal
+                striking_strength:
+                  value: high-outerverse-level
+                  modifier: normal
+                durability:
+                  value: high-outerverse
+                  modifier: normal
+              on_success_stat_modifier_floor_effects:
+                - stat: combat_speed
+                  modifier: higher
+      - id: afterimage-creation
+      - id: stealth-mastery
+      - id: teleportation
+      - id: healing
+        modifier: limited
+      - id: illusion-creation
+      - id: shapeshifting
+        placeholder: true
+      - id: telepathy
+        modifier: limited
+    resistance_refs: []
+    attack_potency:
+      value: wall
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: wall-level
+      modifier: plus
+    durability:
+      value: wall
+      modifier: plus
+    stamina:
+      value: athletic
+      modifier: at-least
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - gravity-gauntlets
+    optional_equipment_ids: []
+    intelligence:
+      value: average
+      modifier: normal
+    attack_ids: []

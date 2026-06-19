@@ -894,6 +894,30 @@
       lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName}`);
     });
 
+    if (effect.opponent_stat_swap) {
+      const swap = effect.opponent_stat_swap;
+      const statNames = list(swap.stat_names).map(statLabel);
+      const statCaps = Object.entries(swap.max_target_stats || {})
+        .map(([statName, stat]) => {
+          const catalog = statCatalogs[statName];
+          const value = catalog ? formatStat(stat, catalog).replace(/ level(?=\+?$)/i, "") : "";
+          return value ? `${statLabel(statName)} ${value}` : "";
+        })
+        .filter(Boolean);
+      const rangeLimit = swap.max_target_range
+        ? formatStat(swap.max_target_range, "range_tiers")
+        : "";
+
+      if (statNames.length) lines.push(`Swaps stronger opponent stats: ${joinText(statNames)}`);
+      if (rangeLimit) lines.push(`Requires opponent range: ${rangeLimit} or lower`);
+      if (statCaps.length) lines.push(`Transfer limits: ${joinText(statCaps)}`);
+
+      list(swap.on_success_stat_modifier_floor_effects).forEach((modifierFloor) => {
+        const modifierName = byId(statModifiers, modifierFloor.modifier)?.name || humanizeId(modifierFloor.modifier);
+        lines.push(`On use: Raises ${statLabel(modifierFloor.stat)} modifier to ${modifierName}`);
+      });
+    }
+
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
     lines.push(...grantTooltipLines(effect.grants));
     lines.push(...requirementTooltipLines(effect.requirements));
@@ -995,7 +1019,7 @@
     const lines = [];
     const variant = powerVariant(power, ref);
 
-    if (power.placeholder) lines.push("Placeholder: no game effect yet");
+    if (power.placeholder || ref.placeholder) lines.push("Placeholder: no game effect yet");
     if (ref.id === "flight") lines.push("Game effect: enables Flight Speed");
     if (ref.id === "regeneration") lines.push("Game effect: first tie-breaker when battle points are tied");
     if (ref.id === "martial-arts-mastery") lines.push("Game effect: fallback tie-breaker if battle points and Regeneration are tied");
@@ -1021,7 +1045,7 @@
         kind: "power",
         id: ref.id,
         label: powerRefLabel(ref),
-        placeholder: Boolean(power.placeholder),
+        placeholder: Boolean(power.placeholder || ref.placeholder),
         ref,
         tooltipLines: powerTooltipLines(key, ref, power)
       };
@@ -1617,6 +1641,99 @@
     };
   }
 
+  function opponentStatSwapCandidate(ownerView, targetView, side) {
+    return list(ownerView.effects)
+      .filter((effect) => effect?.opponent_stat_swap)
+      .map((effect) => {
+        const swap = effect.opponent_stat_swap;
+        const rangeLimit = swap.max_target_range;
+        const targetRange = targetView.effectiveKey.range;
+
+        if (rangeLimit && compositeRank(targetRange, "range_tiers") > compositeRank(rangeLimit, "range_tiers")) {
+          return null;
+        }
+
+        const swaps = list(swap.stat_names).flatMap((statName) => {
+          const catalog = statCatalogs[statName];
+          const ownerStat = ownerView.effectiveKey[statName];
+          const ownerBaseStat = ownerView.key[statName];
+          const targetStat = targetView.effectiveKey[statName];
+          const targetCap = swap.max_target_stats?.[statName];
+          if (!catalog || !ownerStat || !ownerBaseStat || !targetStat) return [];
+
+          const ownerRank = compositeRank(ownerStat, catalog);
+          const targetRank = compositeRank(targetStat, catalog);
+          const capRank = targetCap ? compositeRank(targetCap, catalog) : Number.POSITIVE_INFINITY;
+          if (targetRank <= ownerRank || targetRank > capRank) return [];
+
+          return [{ statName, gain: targetRank - ownerRank }];
+        });
+
+        if (!swaps.length) return null;
+
+        return {
+          side,
+          swap,
+          swaps,
+          gain: swaps.reduce((total, entry) => total + entry.gain, 0)
+        };
+      })
+      .filter(Boolean)
+      .reduce((best, candidate) => !best || candidate.gain > best.gain ? candidate : best, null);
+  }
+
+  function applyOpponentStatSwap(leftView, rightView) {
+    const leftCandidate = opponentStatSwapCandidate(leftView, rightView, "left");
+    const rightCandidate = opponentStatSwapCandidate(rightView, leftView, "right");
+    const candidate = leftCandidate && rightCandidate
+      ? leftCandidate.gain === rightCandidate.gain
+        ? null
+        : leftCandidate.gain > rightCandidate.gain ? leftCandidate : rightCandidate
+      : leftCandidate || rightCandidate;
+
+    if (!candidate) return { left: leftView, right: rightView };
+
+    const sourceView = candidate.side === "left" ? leftView : rightView;
+    const targetView = candidate.side === "left" ? rightView : leftView;
+    const sourceKey = { ...sourceView.effectiveKey };
+    const targetKey = { ...targetView.effectiveKey };
+
+    candidate.swaps.forEach(({ statName }) => {
+      sourceKey[statName] = normalizedStat(targetView.effectiveKey[statName]);
+      targetKey[statName] = normalizedStat(sourceView.key[statName]);
+    });
+
+    list(candidate.swap.on_success_stat_modifier_floor_effects).forEach((modifierFloor) => {
+      const catalog = statCatalogs[modifierFloor.stat];
+      if (!catalog) return;
+
+      sourceKey[modifierFloor.stat] = raiseStatModifier(
+        sourceKey[modifierFloor.stat],
+        modifierFloor.modifier,
+        catalog
+      );
+    });
+
+    const outcome = {
+      side: candidate.side,
+      statNames: candidate.swaps.map(({ statName }) => statName),
+      gain: candidate.gain
+    };
+    const sourceResult = { ...sourceView, effectiveKey: sourceKey, stats: statsForKey(sourceKey), opponentStatSwap: outcome };
+    const targetResult = { ...targetView, effectiveKey: targetKey, stats: statsForKey(targetKey), opponentStatSwap: outcome };
+
+    return candidate.side === "left"
+      ? { left: sourceResult, right: targetResult }
+      : { left: targetResult, right: sourceResult };
+  }
+
+  function battleEffectiveViews(baseLeftView, baseRightView) {
+    const leftView = battleEffectiveView(baseLeftView, baseRightView);
+    const rightView = battleEffectiveView(baseRightView, baseLeftView);
+
+    return applyOpponentStatSwap(leftView, rightView);
+  }
+
   function statComparisonClass(rank, otherRank) {
     if (rank > otherRank) return "higher";
     if (rank < otherRank) return "lower";
@@ -1972,8 +2089,9 @@
   function renderBattle(content, leftSelection, rightSelection) {
     const baseLeftView = characterView(leftSelection.character, leftSelection.keyId);
     const baseRightView = characterView(rightSelection.character, rightSelection.keyId);
-    const leftView = battleEffectiveView(baseLeftView, baseRightView);
-    const rightView = battleEffectiveView(baseRightView, baseLeftView);
+    const battleViews = battleEffectiveViews(baseLeftView, baseRightView);
+    const leftView = battleViews.left;
+    const rightView = battleViews.right;
     const statPairs = battleStatPairs(leftView, rightView);
 
     content.innerHTML = `
@@ -2009,6 +2127,7 @@
 
   Object.assign(window.NexyCharacters, {
     battleEffectiveView,
+    battleEffectiveViews,
     battleResultHtml,
     battleScore,
     battleStatPairs,

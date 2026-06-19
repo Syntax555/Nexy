@@ -220,3 +220,18 @@
         name: "Destined One Suit"
         image: "assets/images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
         priority: 10
+- id: gravity-gauntlets
+  name: "Gravity Gauntlets"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: flight
+          - id: gravity-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: several-meters
+                    modifier: at-least
+        resistance_refs: []

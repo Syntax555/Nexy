@@ -68,6 +68,7 @@
       "required": ["id"],
       "properties": {
         "id": { "type": "string" },
+        "placeholder": { "type": ["boolean", "null"] },
         "modifier": { "type": ["string", "null"] },
         "type_ids": {
           "type": "array",
