@@ -1706,6 +1706,80 @@
     ];
   }
 
+  const nonPhysicalProtectionPowerIds = new Set([
+    "intangibility",
+    "incorporeality",
+    "abstract-existence",
+    "nonexistent-physiology"
+  ]);
+
+  function nonPhysicalTargetCoversProtection(targetRef, protectionRef) {
+    if (!targetRef || !protectionRef || targetRef.id !== protectionRef.id) return false;
+
+    const protectionTypeIds = list(protectionRef.type_ids);
+    const targetTypeIds = list(targetRef.type_ids);
+    if (protectionTypeIds.length) return powerTypesCover(targetTypeIds, protectionTypeIds);
+
+    const availableTypes = list(options.power_types).filter((type) => type.power_id === protectionRef.id);
+    if (!availableTypes.length) return true;
+
+    return targetTypeIds.some((typeId) => byId(options.power_types, typeId)?.covers_all);
+  }
+
+  function nonPhysicalInteractionTargets(view) {
+    return list(view.effects).flatMap((effect) => (
+      list(effect?.non_physical_interaction?.target_power_refs)
+    ));
+  }
+
+  function activeNonPhysicalProtections(view) {
+    return list(view.powerRefs).filter((ref) => nonPhysicalProtectionPowerIds.has(ref.id));
+  }
+
+  function nonPhysicalAttackStatus(attackerView, targetView) {
+    const interactionTargets = nonPhysicalInteractionTargets(attackerView);
+    const blockedBy = activeNonPhysicalProtections(targetView)
+      .filter((protectionRef) => !interactionTargets.some((targetRef) => (
+        nonPhysicalTargetCoversProtection(targetRef, protectionRef)
+      )))
+      .map(powerTargetRefLabel);
+
+    return {
+      canAffect: blockedBy.length === 0,
+      blockedBy
+    };
+  }
+
+  function battleInteractionOutcome(leftView, rightView) {
+    const leftAttack = nonPhysicalAttackStatus(leftView, rightView);
+    const rightAttack = nonPhysicalAttackStatus(rightView, leftView);
+    if (leftAttack.canAffect && rightAttack.canAffect) return null;
+
+    const leftName = title(leftView.character.name);
+    const rightName = title(rightView.character.name);
+    if (leftAttack.canAffect) {
+      return {
+        winner: "left",
+        summary: `${rightName} cannot affect ${leftName}`,
+        detail: `Blocked by ${joinText(rightAttack.blockedBy)}`
+      };
+    }
+
+    if (rightAttack.canAffect) {
+      return {
+        winner: "right",
+        summary: `${leftName} cannot affect ${rightName}`,
+        detail: `Blocked by ${joinText(leftAttack.blockedBy)}`
+      };
+    }
+
+    return {
+      winner: "tie",
+      summary: "Neither combatant can affect the other",
+      detail: `${leftName} is blocked by ${joinText(leftAttack.blockedBy)}; ${rightName} is blocked by ${joinText(rightAttack.blockedBy)}`
+    };
+  }
+
   function battleStatRowsHtml(leftView, rightView, pairs = battleStatPairs(leftView, rightView)) {
     const leftName = title(leftView.character.name);
     const rightName = title(rightView.character.name);
@@ -1752,7 +1826,8 @@
     const rightScore = rows.reduce((total, row) => total + row.rightRank, 0);
     const scoreGap = Math.abs(leftScore - rightScore);
     const pointWinner = battleWinner(leftScore, rightScore);
-    const activeTieBreaker = pointWinner === "tie"
+    const interaction = battleInteractionOutcome(leftView, rightView);
+    const activeTieBreaker = !interaction && pointWinner === "tie"
       ? battleTieBreakers(leftView, rightView).find((tieBreaker) => tieBreaker.winner !== "tie")
       : null;
 
@@ -1762,8 +1837,9 @@
       rightScore,
       scoreGap,
       statCount: rows.length,
-      winner: activeTieBreaker?.winner || pointWinner,
-      tieBreaker: activeTieBreaker
+      winner: interaction?.winner || activeTieBreaker?.winner || pointWinner,
+      tieBreaker: activeTieBreaker,
+      interaction
     };
   }
 
@@ -1786,12 +1862,16 @@
       : score.winner === "right"
         ? `${rightName} wins`
         : "Draw";
-    const scoreDetail = score.tieBreaker
+    const scoreDetail = score.interaction
+      ? score.interaction.winner === "tie" ? "Stalemate" : "Automatic win"
+      : score.tieBreaker
       ? `Tie-breaker: ${score.tieBreaker.label}`
       : score.winner === "tie"
       ? "No score gap"
       : `Wins by ${score.scoreGap} point${score.scoreGap === 1 ? "" : "s"}`;
-    const scoreContext = score.tieBreaker
+    const scoreContext = score.interaction
+      ? `${score.interaction.summary}. ${score.interaction.detail}`
+      : score.tieBreaker
       ? `${score.statCount} stats compared, Tier excluded, points tied`
       : `${score.statCount} stats compared, Tier excluded`;
     const rows = score.rows.map((row) => {
@@ -1863,6 +1943,7 @@
               <span>${escapeHtml(winnerText)}</span>
               <strong>${escapeHtml(scoreDetail)}</strong>
               <small>${escapeHtml(scoreContext)}</small>
+              ${score.interaction ? `<em>Stat points shown for reference only</em>` : ""}
             </div>
             <div class="battle-score-side">
               <span class="battle-score-name">${escapeHtml(rightName)}</span>

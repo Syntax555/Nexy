@@ -49,8 +49,9 @@ def score_case(test_case)
   tie_breakers = test_case["tie_breakers"] || [test_case["tie_breaker"]].compact
   tie_breaker_winner = nil
   tie_breaker_label = nil
+  interaction_winner = test_case.dig("interaction", "winner")
 
-  if point_winner == "tie"
+  if interaction_winner.nil? && point_winner == "tie"
     active_tie_breaker = tie_breakers.find do |tie_breaker|
       winner_for(tie_breaker.fetch("left_rank"), tie_breaker.fetch("right_rank")) != "tie"
     end
@@ -65,9 +66,10 @@ def score_case(test_case)
     "left_score" => left_score,
     "right_score" => right_score,
     "score_gap" => (left_score - right_score).abs,
-    "winner" => tie_breaker_winner && tie_breaker_winner != "tie" ? tie_breaker_winner : point_winner,
+    "winner" => interaction_winner || (tie_breaker_winner && tie_breaker_winner != "tie" ? tie_breaker_winner : point_winner),
     "tie_breaker_winner" => tie_breaker_winner,
-    "tie_breaker_label" => tie_breaker_label
+    "tie_breaker_label" => tie_breaker_label,
+    "interaction_winner" => interaction_winner
   }
 end
 

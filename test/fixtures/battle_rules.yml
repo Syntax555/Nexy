@@ -119,6 +119,49 @@ score_cases:
       tie_breaker_winner: left
       tie_breaker_label: Martial Arts Mastery
 
+  - id: non-physical-interaction-overrides-points
+    stats:
+      - label: Attack Potency
+        left_rank: 20
+        right_rank: 100
+        scored: true
+    interaction:
+      winner: left
+    expected:
+      left_score: 20
+      right_score: 100
+      score_gap: 80
+      winner: left
+      interaction_winner: left
+
+  - id: mutual-non-physical-block-is-stalemate
+    stats:
+      - label: Attack Potency
+        left_rank: 100
+        right_rank: 20
+        scored: true
+    interaction:
+      winner: tie
+    expected:
+      left_score: 100
+      right_score: 20
+      score_gap: 80
+      winner: tie
+      interaction_winner: tie
+
+  - id: matching-interaction-uses-normal-points
+    stats:
+      - label: Attack Potency
+        left_rank: 80
+        right_rank: 20
+        scored: true
+    expected:
+      left_score: 80
+      right_score: 20
+      score_gap: 60
+      winner: left
+      interaction_winner:
+
 status_cases:
   - id: source-power-disabled
     kind: power

@@ -1931,6 +1931,15 @@ body.is-lightbox-open {
   font-weight: 700;
 }
 
+.battle-score-summary em {
+  color: var(--color-text-subtle);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .battle-point-list {
   display: grid;
   gap: 10px;

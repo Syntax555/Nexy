@@ -263,6 +263,17 @@ derived:
     incorporeality_rule: incorporeality_has_no_subtypes_so_targeting_incorporeality_with_empty_type_ids_covers_all_incorporeality
     override_rule: local_power_ref_effects_narrow_or_expand_targets_for_specific_characters
     display_rule: show_target_power_and_type_names_as_can_affect
+    battle_resolution:
+      protected_power_ids:
+        - intangibility
+        - incorporeality
+        - abstract-existence
+        - nonexistent-physiology
+      active_state_rule: resolve_nullification_resistance_and_effect_blocking_before_interaction
+      coverage_rule: every_active_non_physical_protection_on_the_target_requires_matching_active_non_physical_interaction
+      one_sided_rule: combatant_that_can_affect_the_other_wins_automatically
+      mutual_block_rule: neither_combatant_can_affect_the_other_is_a_stalemate
+      normal_rule: when_both_combatants_can_affect_each_other_use_stat_points_and_tie_breakers
     examples:
       all_intangibility_only:
         id: non-physical-interaction
