@@ -37,3 +37,6 @@ jobs:
 
       - name: Build GitHub Pages site
         run: JEKYLL_ENV=production bundle exec jekyll build
+
+      - name: Run character engine tests
+        run: node scripts/test_character_engine.mjs

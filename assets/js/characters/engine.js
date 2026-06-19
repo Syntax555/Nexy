@@ -20,8 +20,10 @@
     return typeof stat === "string" ? { value: stat, modifier: "normal" } : stat;
   }
 
-  function modifier(stat) {
+  function modifier(stat, entry = null) {
     const normalized = normalizedStat(stat);
+    if (entry?.modifier_behavior === "locked_to_normal") return byId(statModifiers, "normal");
+
     return byId(statModifiers, normalized?.modifier || "normal") || byId(statModifiers, "normal");
   }
 
@@ -62,7 +64,7 @@
 
   function compositeRank(stat, catalogName) {
     const entry = statEntry(stat, catalogName);
-    const mod = modifier(stat);
+    const mod = modifier(stat, entry);
     return entry ? ((entry.rank - 1) * 8) + mod.rank : 0;
   }
 
@@ -94,7 +96,7 @@
     const entry = statEntry(stat, catalogName);
     if (!entry) return "";
 
-    const mod = modifier(stat);
+    const mod = modifier(stat, entry);
     const prefix = mod.display_prefix ? `${mod.display_prefix} ` : "";
     const suffix = mod.display_suffix || "";
     return `${prefix}${statDisplayValue(entry, catalogName, valueField)}${suffix}`;
@@ -705,8 +707,11 @@
     return resolved;
   }
 
-  function raiseStatModifier(stat, modifierId) {
+  function raiseStatModifier(stat, modifierId, catalogName) {
     const normalized = normalizedStat(stat);
+    const entry = statEntry(normalized, catalogName);
+    if (entry?.modifier_behavior === "locked_to_normal") return { ...normalized, modifier: "normal" };
+
     const floor = byId(statModifiers, modifierId);
     const current = modifier(normalized);
 
@@ -744,9 +749,10 @@
 
       list(effect.stat_modifier_floor_effects).forEach((modifierFloor) => {
         const statName = modifierFloor.stat;
-        if (!statCatalogs[statName]) return;
+        const catalogName = statCatalogs[statName];
+        if (!catalogName) return;
 
-        result[statName] = raiseStatModifier(result[statName], modifierFloor.modifier);
+        result[statName] = raiseStatModifier(result[statName], modifierFloor.modifier, catalogName);
       });
     });
 
@@ -1443,6 +1449,19 @@
   function resistanceBlocksPower(powerRef, resistanceRef) {
     const resistance = byId(options.resistances, resistanceRef.id);
     if (!list(resistance?.resists_power_ids).includes(powerRef.id)) return false;
+    if (resistanceRef.source_variant && powerRef.source_variant !== resistanceRef.source_variant) return false;
+    if (magicLevelRank(resistanceRef) < magicLevelRank(powerRef)) return false;
+
+    const resistanceTypeIds = list(resistanceRef.type_ids);
+    const powerTypeIds = list(powerRef.type_ids);
+    if (resistanceTypeIds.length) {
+      if (!powerTypeIds.length) {
+        const coversAllTypes = resistanceTypeIds.some((typeId) => byId(options.power_types, typeId)?.covers_all);
+        if (!coversAllTypes) return false;
+      } else if (!powerTypesCover(resistanceTypeIds, powerTypeIds)) {
+        return false;
+      }
+    }
 
     const level = byId(options.resistance_levels, resistanceRef.level || "resistant");
     return level?.id === "immunity" || abilityModifierRank(resistanceRef) >= abilityModifierRank(powerRef);
@@ -1551,6 +1570,15 @@
     return powerNullifiedBy(ref, opponentView) || powerResistedBy(ref, ownerView, opponentView);
   }
 
+  function nonResistibleStatEffect(effect) {
+    const statEffects = Object.fromEntries(
+      Object.entries(effect?.stat_effects || {})
+        .filter(([, stat]) => normalizedStat(stat)?.resistible === false)
+    );
+
+    return Object.keys(statEffects).length ? { stat_effects: statEffects } : null;
+  }
+
   function battleEffectiveView(view, opponentView) {
     const includeEffect = (effect) => !effectBlockedBy(effect, view, opponentView);
     const requirementPowerRefs = powerRefs(
@@ -1566,7 +1594,16 @@
       (ref) => !powerBlockedInBattle(ref, view, opponentView),
       includeEffect
     );
-    const effects = activeEffects(view.key, resolvedPowerRefs, itemEffects, includeEffect);
+    const nonResistibleEffects = list(view.powerRefs)
+      .filter((ref) => !powerNullifiedBy(ref, opponentView) && powerResistedBy(ref, view, opponentView))
+      .flatMap(powerRefEffects)
+      .filter(includeEffect)
+      .map(nonResistibleStatEffect)
+      .filter(Boolean);
+    const effects = [
+      ...activeEffects(view.key, resolvedPowerRefs, itemEffects, includeEffect),
+      ...nonResistibleEffects
+    ];
     const key = effectiveKey(view.key, resolvedPowerRefs, itemEffects, effects);
 
     return {
@@ -1971,10 +2008,15 @@
 
 
   Object.assign(window.NexyCharacters, {
+    battleEffectiveView,
     battleResultHtml,
     battleScore,
+    battleStatPairs,
     characterView,
+    compositeRank,
+    formatStat,
     renderBattle,
-    renderCard
+    renderCard,
+    resistanceBlocksPower
   });
 })();

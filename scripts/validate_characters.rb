@@ -308,7 +308,7 @@ def array_field(context, value, errors)
   []
 end
 
-def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
+def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: false, locked_values: Set.new)
   return [] if allow_null && stat.nil?
 
   errors = []
@@ -336,11 +336,21 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
 
   errors.concat(validate_refs("#{context}.value", [value], allowed_values, "tier"))
   errors.concat(validate_refs("#{context}.modifier", [modifier], stat_modifiers, "stat modifier"))
+  if locked_values.include?(value) && modifier != "normal"
+    errors << "#{context}.modifier must be normal for #{value.inspect}"
+  end
   errors
 end
 
-def validate_speed_stat(context, stat, allowed_values, stat_modifiers, allow_null: false)
-  errors = validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_null: allow_null)
+def validate_speed_stat(context, stat, allowed_values, stat_modifiers, allow_null: false, locked_values: Set.new)
+  errors = validate_ranked_stat(
+    context,
+    stat,
+    allowed_values,
+    stat_modifiers,
+    allow_null: allow_null,
+    locked_values: locked_values
+  )
   return errors if allow_null && stat.nil?
 
   if stat.is_a?(Hash) && stat.key?("label")
@@ -364,9 +374,23 @@ def validate_stat_effects(context, stat_effects, sets)
     end
 
     if catalog == :speed_tiers
-      errors.concat(validate_speed_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+      errors.concat(validate_speed_stat(
+        "#{context}.#{stat_name}",
+        value,
+        sets[catalog],
+        sets[:stat_modifiers],
+        allow_null: true,
+        locked_values: sets[:locked_stat_values].fetch(catalog, Set.new)
+      ))
     else
-      errors.concat(validate_ranked_stat("#{context}.#{stat_name}", value, sets[catalog], sets[:stat_modifiers], allow_null: true))
+      errors.concat(validate_ranked_stat(
+        "#{context}.#{stat_name}",
+        value,
+        sets[catalog],
+        sets[:stat_modifiers],
+        allow_null: true,
+        locked_values: sets[:locked_stat_values].fetch(catalog, Set.new)
+      ))
     end
   end
 
@@ -444,7 +468,13 @@ def validate_derived_power_rule(context, rule, sets)
       "value" => requirement["value"],
       "modifier" => requirement["modifier"] || "normal"
     }
-    errors.concat(validate_ranked_stat(requirement_context, stat_requirement, sets[catalog], sets[:stat_modifiers]))
+    errors.concat(validate_ranked_stat(
+      requirement_context,
+      stat_requirement,
+      sets[catalog],
+      sets[:stat_modifiers],
+      locked_values: sets[:locked_stat_values].fetch(catalog, Set.new)
+    ))
   end
 
   errors
@@ -853,18 +883,18 @@ def validate_character(context, character, sets, entry_id: nil)
     errors.concat(validate_equipment_refs("#{key_context}.optional_equipment_refs", key["optional_equipment_refs"], sets))
     errors.concat(validate_ref_list("#{key_context}.attack_ids", key["attack_ids"], sets[:attacks], "attack"))
 
-    errors.concat(validate_ranked_stat("#{key_context}.attack_potency", key["attack_potency"], sets[:attack_durability_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_speed_stat("#{key_context}.attack_speed", key["attack_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_speed_stat("#{key_context}.combat_speed", key["combat_speed"], sets[:speed_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_speed_stat("#{key_context}.reaction_speed", key["reaction_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_speed_stat("#{key_context}.travel_speed", key["travel_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_speed_stat("#{key_context}.flight_speed", key["flight_speed"], sets[:speed_tiers], sets[:stat_modifiers], allow_null: true))
-    errors.concat(validate_ranked_stat("#{key_context}.lifting_strength", key["lifting_strength"], sets[:lifting_strength_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.striking_strength", key["striking_strength"], sets[:striking_strength_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.durability", key["durability"], sets[:attack_durability_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.stamina", key["stamina"], sets[:stamina_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.range", key["range"], sets[:range_tiers], sets[:stat_modifiers]))
-    errors.concat(validate_ranked_stat("#{key_context}.intelligence", key["intelligence"], sets[:intelligence_tiers], sets[:stat_modifiers]))
+    STAT_CATALOGS.each do |field, catalog|
+      allow_null = %w[attack_speed reaction_speed travel_speed flight_speed].include?(field)
+      validator = field.end_with?("_speed") || field == "combat_speed" ? method(:validate_speed_stat) : method(:validate_ranked_stat)
+      errors.concat(validator.call(
+        "#{key_context}.#{field}",
+        key[field],
+        sets[catalog],
+        sets[:stat_modifiers],
+        allow_null: allow_null,
+        locked_values: sets[:locked_stat_values].fetch(catalog, Set.new)
+      ))
+    end
   end
 
   errors
@@ -932,6 +962,13 @@ errors.concat(validate_unique_integer_field("ability_modifiers", options["abilit
 errors.concat(validate_non_physical_power_type_order(options["power_types"]))
 
 sets = catalog_names.to_h { |name| [name.to_sym, id_set(options[name])] }
+sets[:locked_stat_values] = STAT_CATALOGS.values.uniq.to_h do |catalog|
+  locked_ids = Array(options[catalog.to_s])
+               .select { |entry| entry.is_a?(Hash) && entry["modifier_behavior"] == "locked_to_normal" }
+               .map { |entry| entry["id"] }
+               .to_set
+  [catalog, locked_ids]
+end
 sets[:power_variant_ids_by_power_id] = power_variant_id_sets(options["powers"])
 sets[:power_type_power_ids] = Array(options["power_types"]).filter_map do |entry|
   [entry["id"], entry["power_id"]] if entry.is_a?(Hash)
