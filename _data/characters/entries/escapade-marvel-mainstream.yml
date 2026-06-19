@@ -87,6 +87,6 @@ keys:
       - gravity-gauntlets
     optional_equipment_ids: []
     intelligence:
-      value: average
-      modifier: normal
+      value: above-average
+      modifier: at-least
     attack_ids: []
