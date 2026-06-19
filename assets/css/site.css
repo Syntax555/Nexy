@@ -1828,27 +1828,11 @@ body.is-lightbox-open {
   overflow-wrap: anywhere;
 }
 
-.battle-stat-cell.is-higher {
-  border-color: var(--color-success-border);
-  background: var(--color-success-bg);
-}
-
-.battle-stat-cell.is-higher .stat-value {
-  color: var(--color-success-text);
-}
-
-.battle-stat-cell.is-lower {
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-bg);
-}
-
-.battle-stat-cell.is-lower .stat-value {
-  color: var(--color-danger-text);
-}
-
+.battle-stat-cell.is-higher,
+.battle-stat-cell.is-lower,
 .battle-stat-cell.is-same {
-  border-color: var(--color-border-strong);
-  background: var(--color-surface-soft);
+  border-color: var(--color-border-soft);
+  background: var(--color-surface);
 }
 
 .battle-score {
@@ -1917,7 +1901,7 @@ body.is-lightbox-open {
 }
 
 .battle-score-summary span {
-  color: var(--color-brand);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 900;
   line-height: 1.2;
@@ -1943,7 +1927,7 @@ body.is-lightbox-open {
 }
 
 .battle-stat-row.is-scored .battle-stat-label small {
-  color: var(--color-brand);
+  color: var(--color-text-secondary);
 }
 
 .battle-stat-points {
@@ -1951,6 +1935,51 @@ body.is-lightbox-open {
   font-size: 0.7rem;
   font-weight: 800;
   line-height: 1;
+}
+
+.battle-stat-meter {
+  display: block;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-soft);
+  overflow: hidden;
+}
+
+.battle-stat-meter::after {
+  content: "";
+  display: block;
+  width: var(--battle-stat-strength);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-text-subtle);
+  transform: scaleX(0);
+  animation: battle-stat-meter-grow 520ms cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+}
+
+.battle-stat-meter.is-left::after {
+  margin-left: auto;
+  transform-origin: right center;
+}
+
+.battle-stat-meter.is-right::after {
+  transform-origin: left center;
+}
+
+.battle-stat-cell.is-higher .battle-stat-meter::after {
+  background: var(--color-ink);
+}
+
+@keyframes battle-stat-meter-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-stat-meter::after {
+    animation: none;
+    transform: none;
+  }
 }
 
 .battle-section {

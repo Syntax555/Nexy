@@ -1787,6 +1787,9 @@
 
     return pairs.map(({ label, left, right, leftClass, rightClass }) => {
       const scoreRow = scoreRows.get(label);
+      const totalRank = scoreRow ? scoreRow.leftRank + scoreRow.rightRank : 0;
+      const leftStrength = totalRank > 0 ? Math.round((scoreRow.leftRank / totalRank) * 100) : 50;
+      const rightStrength = 100 - leftStrength;
       const resultDetail = score
         ? scoreRow
           ? scoreRow.winner === "tie"
@@ -1801,6 +1804,7 @@
             <span class="battle-side-label">${escapeHtml(leftName)}</span>
             <span class="stat-value">${escapeHtml(left?.value || "")}</span>
             ${scoreRow ? `<small class="battle-stat-points">${scoreRow.leftRank} pts</small>` : ""}
+            ${scoreRow ? `<span class="battle-stat-meter is-left" style="--battle-stat-strength: ${leftStrength}%" aria-hidden="true"></span>` : ""}
             ${left?.note ? `<small class="battle-stat-note">${escapeHtml(left.note)}</small>` : ""}
           </div>
           <span class="battle-stat-label">
@@ -1811,6 +1815,7 @@
             <span class="battle-side-label">${escapeHtml(rightName)}</span>
             <span class="stat-value">${escapeHtml(right?.value || "")}</span>
             ${scoreRow ? `<small class="battle-stat-points">${scoreRow.rightRank} pts</small>` : ""}
+            ${scoreRow ? `<span class="battle-stat-meter is-right" style="--battle-stat-strength: ${rightStrength}%" aria-hidden="true"></span>` : ""}
             ${right?.note ? `<small class="battle-stat-note">${escapeHtml(right.note)}</small>` : ""}
           </div>
         </li>
