@@ -111,17 +111,28 @@ function testNonResistibleStatEffects() {
 
 function testScoreAndSpeedSelection() {
   const neutralView = (name) => ({ character: { name }, powerRefs: [], effects: [] });
-  const score = engine.battleScore(neutralView("Left"), neutralView("Right"), [
-    { label: "Tier", left: { rank: 999 }, right: { rank: 1 } },
-    { label: "Attack Potency", left: { rank: 80 }, right: { rank: 10 } },
-    { label: "Speed", left: { rank: 30 }, right: { rank: 70 } }
-  ]);
+  const scorePairs = [
+    { label: "Tier", left: { value: "Left Tier", rank: 999 }, right: { value: "Right Tier", rank: 1 } },
+    { label: "Attack Potency", left: { value: "Left Attack", rank: 80 }, right: { value: "Right Attack", rank: 10 } },
+    { label: "Speed", left: { value: "Left Speed", rank: 30 }, right: { value: "Right Speed", rank: 70 } },
+    { label: "Range", left: { value: "Left Range", rank: 20 }, right: { value: "Right Range", rank: 20 } }
+  ];
+  const leftView = neutralView("Left");
+  const rightView = neutralView("Right");
+  const score = engine.battleScore(leftView, rightView, scorePairs);
 
   assert.deepEqual(
     { left: score.leftScore, right: score.rightScore, gap: score.scoreGap, winner: score.winner },
-    { left: 110, right: 80, gap: 30, winner: "left" },
+    { left: 130, right: 100, gap: 30, winner: "left" },
     "scores must sum ranked stats and exclude Tier"
   );
+
+  const resultHtml = engine.battleResultHtml(leftView, rightView, scorePairs);
+  assert.doesNotMatch(resultHtml, /battle-stat-meter/, "result rows must not use ambiguous proportional meters");
+  assert.match(resultHtml, /\u2190 70 pts/, "a left-side win must point toward the left value");
+  assert.match(resultHtml, /40 pts \u2192/, "a right-side win must point toward the right value");
+  assert.match(resultHtml, />Even</, "tied rows must be explicit");
+  assert.match(resultHtml, />Excluded</, "excluded rows must be explicit");
 
   const luke = engine.characterView(character("Luke Cage"));
   const agentVenom = engine.characterView(character("Agent Venom"));

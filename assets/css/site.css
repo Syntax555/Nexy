@@ -1923,7 +1923,9 @@ body.is-lightbox-open {
   font-size: 0.68rem;
   font-weight: 800;
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
   text-transform: none;
+  white-space: nowrap;
 }
 
 .battle-stat-row.is-scored .battle-stat-label small {
@@ -1935,51 +1937,7 @@ body.is-lightbox-open {
   font-size: 0.7rem;
   font-weight: 800;
   line-height: 1;
-}
-
-.battle-stat-meter {
-  display: block;
-  height: 4px;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-soft);
-  overflow: hidden;
-}
-
-.battle-stat-meter::after {
-  content: "";
-  display: block;
-  width: var(--battle-stat-strength);
-  height: 100%;
-  border-radius: inherit;
-  background: var(--color-text-subtle);
-  transform: scaleX(0);
-  animation: battle-stat-meter-grow 520ms cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
-}
-
-.battle-stat-meter.is-left::after {
-  margin-left: auto;
-  transform-origin: right center;
-}
-
-.battle-stat-meter.is-right::after {
-  transform-origin: left center;
-}
-
-.battle-stat-cell.is-higher .battle-stat-meter::after {
-  background: var(--color-ink);
-}
-
-@keyframes battle-stat-meter-grow {
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .battle-stat-meter::after {
-    animation: none;
-    transform: none;
-  }
+  font-variant-numeric: tabular-nums;
 }
 
 .battle-section {
