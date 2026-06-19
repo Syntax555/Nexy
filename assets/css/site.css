@@ -1615,6 +1615,12 @@ body.is-lightbox-open {
   padding: var(--battle-card-padding);
 }
 
+@media (min-width: 641px) {
+  .battle-character-card .character-content {
+    min-height: clamp(300px, 24vw, 380px);
+  }
+}
+
 .battle-character-card .character-identity {
   display: block;
   margin-bottom: 14px;
@@ -1666,8 +1672,8 @@ body.is-lightbox-open {
 
 .battle-character-card .character-portrait img {
   opacity: 1;
-  object-fit: cover;
-  object-position: right top;
+  object-fit: contain;
+  object-position: right bottom;
 }
 
 .battle-character-card .character-portrait .image-expand-button {
@@ -2377,6 +2383,11 @@ body.is-lightbox-open {
 
   .battle-character-card .character-portrait::before {
     width: 34%;
+  }
+
+  .battle-character-card .character-portrait img {
+    object-fit: cover;
+    object-position: right top;
   }
 
   .battle-character-card .character-title-block,

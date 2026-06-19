@@ -31,14 +31,21 @@
   }
 
   function trimModeFor(frame) {
-    if (frame?.closest(".battle-character-card")) return "cover";
+    if (frame?.closest(".battle-character-card")) {
+      return window.matchMedia("(max-width: 640px)").matches ? "cover" : "contain";
+    }
 
     return frame?.classList.contains("circle-choice-orb") ? "cover" : "contain";
   }
 
   function trimAnchorFor(frame) {
     if (frame?.classList.contains("circle-choice-orb")) return { x: "center", y: "top" };
-    if (frame?.closest(".battle-character-card")) return { x: "right", y: "top" };
+    if (frame?.closest(".battle-character-card")) {
+      return {
+        x: "right",
+        y: window.matchMedia("(max-width: 640px)").matches ? "top" : "bottom",
+      };
+    }
     if (frame?.classList.contains("character-portrait")) return { x: "right", y: "bottom" };
 
     return { x: "center", y: "bottom" };
