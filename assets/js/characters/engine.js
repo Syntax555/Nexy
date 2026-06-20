@@ -457,16 +457,17 @@
       .filter(Boolean);
   }
 
-  function usableItemEffects(ids, refs, catalogName, ownedPowerRefs) {
+  function usableItemEffects(ids, refs, catalogName, ownedPowerRefs, includeItem = () => true) {
     return catalogItemsFromRefs(itemRefs(ids, refs), catalogName)
       .filter((item) => powerRefsMeetRequirements(ownedPowerRefs, item.required_power_refs))
+      .filter(includeItem)
       .flatMap((item) => list(item.effects));
   }
 
-  function activeItemEffectsForPowerRefs(key, ownedPowerRefs) {
+  function activeItemEffectsForPowerRefs(key, ownedPowerRefs, includeItem = () => true) {
     return [
-      ...usableItemEffects(key.standard_equipment_ids, key.standard_equipment_refs, "equipment", ownedPowerRefs),
-      ...usableItemEffects(key.attack_ids, [], "attacks", ownedPowerRefs)
+      ...usableItemEffects(key.standard_equipment_ids, key.standard_equipment_refs, "equipment", ownedPowerRefs, includeItem),
+      ...usableItemEffects(key.attack_ids, [], "attacks", ownedPowerRefs, includeItem)
     ];
   }
 
@@ -1057,11 +1058,14 @@
     const lines = [];
     const resistedPowers = powerNames(resistance.resists_power_ids);
     const resistedEffects = list(resistance.resists_effect_ids).map(humanizeId);
+    const resistedWeaponTypes = list(resistance.resists_weapon_type_ids)
+      .map((typeId) => byId(options.power_types, typeId)?.name || humanizeId(typeId));
 
     lines.push(...typeTooltipLines(ref.type_ids));
     lines.push(...refScopeTooltipLines(ref));
     if (resistedPowers.length) lines.push(`Resists: ${joinText(resistedPowers)}`);
     if (resistedEffects.length) lines.push(`Resists effects: ${joinText(resistedEffects)}`);
+    if (resistedWeaponTypes.length) lines.push(`Resists weapon types: ${joinText(resistedWeaponTypes)}`);
 
     return lines;
   }
@@ -1471,6 +1475,25 @@
     return view.resistanceRefs.filter((ref) => !resistanceNegatedBy(ref, opponentView));
   }
 
+  function resistanceBlocksWeaponType(weaponTypeId, resistanceRef) {
+    const resistance = byId(options.resistances, resistanceRef.id);
+
+    return list(resistance?.resists_weapon_type_ids)
+      .some((resistedTypeId) => powerTypeCovers(resistedTypeId, weaponTypeId));
+  }
+
+  function weaponItemResistedBy(item, ownerView, opponentView) {
+    if (!list(item?.weapon_type_ids).length) return null;
+
+    const resistingRef = effectiveResistanceRefsFor(opponentView, ownerView)
+      .find((resistanceRef) => list(item.weapon_type_ids)
+        .some((weaponTypeId) => resistanceBlocksWeaponType(weaponTypeId, resistanceRef)));
+
+    return resistingRef
+      ? status("resisted", `${resistanceRefLabel(resistingRef)} blocks this weapon`)
+      : null;
+  }
+
   function resistanceBlocksPower(powerRef, resistanceRef) {
     const resistance = byId(options.resistances, resistanceRef.id);
     if (!list(resistance?.resists_power_ids).includes(powerRef.id)) return false;
@@ -1576,7 +1599,8 @@
     }
 
     if ((item.kind === "equipment" || item.kind === "attack") && item.catalogItem) {
-      return itemStatusForPowerRefs(item.catalogItem, ownerBattleView.powerRefs, "Required power is inactive in this battle")
+      return weaponItemResistedBy(item.catalogItem, ownerView, opponentView)
+        || itemStatusForPowerRefs(item.catalogItem, ownerBattleView.powerRefs, "Required power is inactive in this battle")
         || item.status
         || status("active");
     }
@@ -1606,13 +1630,14 @@
 
   function battleEffectiveView(view, opponentView) {
     const includeEffect = (effect) => !effectBlockedBy(effect, view, opponentView);
+    const includeItem = (item) => !weaponItemResistedBy(item, view, opponentView);
     const requirementPowerRefs = powerRefs(
       view.key,
       [],
       (ref) => !powerBlockedInBattle(ref, view, opponentView),
       includeEffect
     );
-    const itemEffects = activeItemEffectsForPowerRefs(view.key, requirementPowerRefs);
+    const itemEffects = activeItemEffectsForPowerRefs(view.key, requirementPowerRefs, includeItem);
     const resolvedPowerRefs = powerRefs(
       view.key,
       itemEffects,

@@ -88,3 +88,9 @@
   resists_power_ids:
     - temperature-manipulation
   resists_effect_ids: []
+- id: blunt-weapons-resistance
+  name: "Blunt Weapons"
+  resists_power_ids: []
+  resists_effect_ids: []
+  resists_weapon_type_ids:
+    - blunt-weapons

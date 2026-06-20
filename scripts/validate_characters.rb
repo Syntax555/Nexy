@@ -876,6 +876,7 @@ def validate_catalog_entry(context, entry, sets, type)
     end
   when :resistance
     errors.concat(validate_ref_list("#{context}.resists_power_ids", entry["resists_power_ids"], sets[:powers], "power"))
+    errors.concat(validate_ref_list("#{context}.resists_weapon_type_ids", entry["resists_weapon_type_ids"], sets[:power_types], "weapon type"))
   when :magic_level
     errors.concat(validate_ref_list("#{context}.inherits_level_ids", entry["inherits_level_ids"], sets[:magic_levels], "magic level"))
     errors.concat(validate_power_refs("#{context}.power_refs", entry["power_refs"] || [], sets))

@@ -619,6 +619,7 @@ derived:
       name: string
       resists_power_ids: list
       resists_effect_ids: list
+      resists_weapon_type_ids: list
     equipment:
       id: string
       name: string

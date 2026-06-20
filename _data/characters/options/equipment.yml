@@ -235,3 +235,21 @@
                     value: several-meters
                     modifier: at-least
         resistance_refs: []
+- id: obliterator-cane
+  name: "Obliterator Cane"
+  weapon_type_ids:
+    - blunt-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - blunt-weapons
+  effects:
+    - grants:
+        power_refs:
+          - id: energy-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: hundreds-of-meters
+                    modifier: normal
+        resistance_refs: []

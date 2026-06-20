@@ -212,11 +212,33 @@ function testCharacterSpecificPlaceholderOverride() {
   assert.equal(power("bfr").placeholder, true);
 }
 
+function testWeaponTypeResistance() {
+  const caneUserSource = isolatedCharacter("Cane user", [{
+    id: "weapon-mastery",
+    type_ids: ["all-weapons"]
+  }]);
+  caneUserSource.keys[0].standard_equipment_ids = ["obliterator-cane"];
+
+  const caneUser = engine.characterView(caneUserSource);
+  const bluntResister = engine.characterView(isolatedCharacter(
+    "Blunt resister",
+    [],
+    [{ id: "blunt-weapons-resistance" }]
+  ));
+  const resistedView = engine.battleEffectiveView(caneUser, bluntResister);
+
+  assert.equal(engine.formatStat(caneUser.effectiveKey.range, "range_tiers"), "Hundreds of Meters");
+  assert.equal(caneUser.powerRefs.some((ref) => ref.id === "energy-manipulation"), true);
+  assert.equal(engine.formatStat(resistedView.effectiveKey.range, "range_tiers"), "Standard Melee Range");
+  assert.equal(resistedView.powerRefs.some((ref) => ref.id === "energy-manipulation"), false);
+}
+
 testModifierOrdering();
 testMagicResistanceLevels();
 testNonResistibleStatEffects();
 testScoreAndSpeedSelection();
 testDamageTransferal();
 testCharacterSpecificPlaceholderOverride();
+testWeaponTypeResistance();
 
 console.log("character engine tests passed");
