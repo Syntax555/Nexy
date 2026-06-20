@@ -341,6 +341,20 @@
     resistance_refs: []
     magic_level_ids: []
   effects: []
+- id: invisibility
+  name: "Invisibility"
+  aliases: []
+  variants: []
+  tags:
+    - placeholder
+  placeholder: true
+  type_ids: []
+  degree_ids: []
+  grants:
+    power_refs: []
+    resistance_refs: []
+    magic_level_ids: []
+  effects: []
 - id: social-influencing
   name: "Social Influencing"
   aliases: []

@@ -1,0 +1,62 @@
+name: "Aurora"
+verse_id: marvel-mainstream
+gender_id: female
+age:
+  value: null
+  unknown: true
+  display: "Late 20s to early 40s"
+classification_ids:
+  - mutant
+keys:
+  - key: aurora
+    names:
+      - "Jean-Marie Beaubier"
+    images:
+      - name: "Aurora"
+        image: "assets/images/characters/aurora-marvel-mainstream/aurora.webp"
+    power_refs:
+      - id: regeneration
+        type_ids:
+          - low-regeneration
+      - id: flight
+      - id: martial-arts-mastery
+      - id: energy-manipulation
+        effects:
+          - stat_effects:
+              range:
+                value: kilometers
+                modifier: normal
+      - id: invisibility
+    resistance_refs:
+      - id: ice-manipulation-resistance
+    attack_potency:
+      value: small-building
+      modifier: normal
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: athletic-human
+      modifier: normal
+    striking_strength:
+      value: small-building-level
+      modifier: normal
+    durability:
+      value: small-building
+      modifier: normal
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids: []
+    optional_equipment_ids: []
+    intelligence:
+      value: above-average
+      modifier: normal
+    attack_ids: []

@@ -6,6 +6,8 @@
   name: "Symbiote"
 - id: mutate
   name: "Mutate"
+- id: mutant
+  name: "Mutant"
 - id: human-with-symbiote
   name: "Human with a Symbiote"
   parent_ids:

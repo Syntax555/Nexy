@@ -233,6 +233,17 @@ function testWeaponTypeResistance() {
   assert.equal(resistedView.powerRefs.some((ref) => ref.id === "energy-manipulation"), false);
 }
 
+function testAuroraEffects() {
+  const aurora = engine.characterView(character("Aurora"));
+  const powers = aurora.sections.find(([name]) => name === "Powers")[1];
+  const power = (id) => powers.find((item) => item.id === id);
+
+  assert.equal(engine.formatStat(aurora.effectiveKey.range, "range_tiers"), "Kilometers");
+  assert.equal(power("flight").placeholder, false);
+  assert.equal(power("regeneration").label, "Regeneration: Low");
+  assert.equal(power("invisibility").placeholder, true);
+}
+
 testModifierOrdering();
 testMagicResistanceLevels();
 testNonResistibleStatEffects();
@@ -240,5 +251,6 @@ testScoreAndSpeedSelection();
 testDamageTransferal();
 testCharacterSpecificPlaceholderOverride();
 testWeaponTypeResistance();
+testAuroraEffects();
 
 console.log("character engine tests passed");
