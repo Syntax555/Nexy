@@ -4,7 +4,10 @@ title: Home
 ---
 
 <section class="selection-screen" data-selection-screen>
-  <h1 class="page-title">{{ site.title | escape }}</h1>
+  <div class="selection-bar">
+    <h1 class="page-title">{{ site.title | escape }}</h1>
+    {% include theme-toggle.html %}
+  </div>
 
   <div class="versus-grid">
     {% include character-selector-panel.html side="left" title="Left" aria_label="Left character" %}
@@ -16,6 +19,7 @@ title: Home
   <div class="battle-bar">
     <h1 class="page-title">Battle</h1>
     <div class="battle-actions">
+      {% include theme-toggle.html %}
       <button class="secondary-button" type="button" data-edit-selection>Change Characters</button>
     </div>
   </div>

@@ -4,8 +4,23 @@
     <meta charset="{{ site.encoding | default: 'utf-8' | escape }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ page.description | default: site.description | escape }}">
+    <meta name="theme-color" content="#f4f7f8">
     <title>{% if page.title %}{{ page.title | escape }} | {% endif %}{{ site.title | escape }}</title>
+    <script>
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem("nexy-theme");
+        } catch {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#0d1117" : "#f4f7f8";
+      })();
+    </script>
     <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+    <script src="{{ '/assets/js/theme.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   </head>
   <body>
     <main>
