@@ -722,7 +722,6 @@
           ${image?.image
             ? `<img src="${escapeHtml(assetUrl(image.image))}" alt="" loading="lazy" decoding="async" data-trim-image>`
             : `<span>${escapeHtml(initials)}</span>`}
-          <span class="circle-choice-check" aria-hidden="true">&#10003;</span>
         </span>
         <span class="circle-choice-title">${escapeHtml(label)}</span>
         ${subtitle ? `<span class="circle-choice-subtitle">${escapeHtml(subtitle)}</span>` : ""}
