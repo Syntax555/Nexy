@@ -1300,17 +1300,18 @@
     includeSections = true,
     imagePlacement = "hero",
     detailStyle = "chips",
-    collapsibleDetails = false
+    trimImage = true
   } = {}) {
     const sectionHtml = view.sections
       .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
       .join("");
     const imageTitle = view.image ? `${title(view.character.name)} - ${view.image.name}` : "";
+    const trimImageAttribute = trimImage ? " data-trim-image" : "";
     const imageMarkup = view.image ? `
       <img
         src="${escapeHtml(assetUrl(view.image.image))}"
         alt="${escapeHtml(view.image.name)}"
-        data-trim-image
+        ${trimImageAttribute}
         loading="lazy"
         decoding="async"
       >
@@ -1348,17 +1349,6 @@
       </div>
     ` : "";
     const detailsMarkup = detailListHtml(view.details, detailStyle);
-    const profileDetails = collapsibleDetails && detailsMarkup ? `
-      <details class="battle-character-details">
-        <summary aria-label="Toggle character details" title="Character details">
-          <svg class="battle-details-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="m6 9 6 6 6-6"></path>
-          </svg>
-          <span class="visually-hidden">Character details</span>
-        </summary>
-        ${detailsMarkup}
-      </details>
-    ` : detailsMarkup;
 
     return `
       ${heroImage}
@@ -1372,7 +1362,7 @@
           </div>
           ${identityImage}
         </div>
-        ${profileDetails}
+        ${detailsMarkup}
         ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
         ${includeSections ? sectionHtml : ""}
       </div>
@@ -2146,8 +2136,8 @@
           </small>
         </summary>
         <div class="battle-combatants">
-          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", collapsibleDetails: true })}</article>
-          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", collapsibleDetails: true })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", trimImage: false })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", trimImage: false })}</article>
         </div>
       </details>
       <details class="battle-fold" open>

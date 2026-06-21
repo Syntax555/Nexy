@@ -1702,8 +1702,8 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 1.5vw, 24px);
-  --battle-portrait-height: clamp(190px, 14vw, 220px);
-  --battle-portrait-width: clamp(260px, 58%, 580px);
+  --battle-portrait-height: clamp(230px, 17vw, 275px);
+  --battle-portrait-width: clamp(320px, 68%, 680px);
   position: relative;
   isolation: isolate;
   min-height: 0;
@@ -1768,9 +1768,16 @@ body.is-lightbox-open {
 }
 
 .battle-character-card .character-portrait img {
+  position: absolute;
+  top: 10%;
+  right: 0;
+  bottom: auto;
+  left: auto;
+  width: 80%;
+  height: 80%;
   opacity: 1;
   object-fit: contain;
-  object-position: right bottom;
+  object-position: right center;
 }
 
 .battle-character-card .character-portrait .image-expand-button {
@@ -1783,59 +1790,6 @@ body.is-lightbox-open {
   position: relative;
   z-index: 2;
   margin-bottom: 0;
-}
-
-.battle-character-details {
-  position: relative;
-  z-index: 3;
-  width: fit-content;
-  max-width: min(100%, 380px);
-  margin-top: 8px;
-}
-
-.battle-character-details > summary {
-  display: inline-grid;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  background: rgba(var(--surface-rgb), 0.92);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  list-style: none;
-  padding: 0;
-}
-
-.battle-character-details > summary::-webkit-details-marker {
-  display: none;
-}
-
-.battle-details-icon {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform var(--motion-fast);
-}
-
-.battle-character-details[open] .battle-details-icon {
-  transform: rotate(180deg);
-}
-
-.battle-character-details > summary:hover,
-.battle-character-details > summary:focus-visible {
-  border-color: var(--color-focus);
-  background: var(--color-surface-hover);
-  outline: none;
-}
-
-.battle-character-details > .meta-list {
-  margin-top: 12px;
 }
 
 .battle-character-card .meta-list--facts {
@@ -2405,8 +2359,8 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-content {
-    --battle-portrait-height: 176px;
-    --battle-portrait-width: clamp(150px, 52vw, 260px);
+    --battle-portrait-height: 220px;
+    --battle-portrait-width: clamp(190px, 65vw, 320px);
     min-height: 190px;
     padding: 18px;
   }
@@ -2433,8 +2387,8 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-portrait img {
-    object-fit: cover;
-    object-position: right top;
+    object-fit: contain;
+    object-position: right center;
   }
 
   .battle-character-card .character-title-block,
@@ -2446,11 +2400,6 @@ body.is-lightbox-open {
   .battle-character-card .meta-fact-item {
     grid-template-columns: 1fr;
     gap: 1px;
-  }
-
-  .battle-character-details {
-    max-width: calc(100% - 100px);
-    margin-top: 8px;
   }
 
   .speed-value-row {
