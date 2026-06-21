@@ -280,6 +280,12 @@ button {
   min-height: 0;
 }
 
+.battle-screen {
+  width: 100%;
+  max-width: 1480px;
+  margin-inline: auto;
+}
+
 .selection-screen:not([hidden]),
 .battle-screen:not([hidden]) {
   display: grid;
@@ -1560,6 +1566,7 @@ body.is-lightbox-open {
 
 .battle-bar .page-title {
   margin: 0;
+  font-size: clamp(1.9rem, 2.5vw, 2.35rem);
 }
 
 .battle-content {
@@ -1694,7 +1701,7 @@ body.is-lightbox-open {
 }
 
 .battle-character-card .character-content {
-  --battle-card-padding: clamp(18px, 2vw, 28px);
+  --battle-card-padding: clamp(18px, 1.5vw, 24px);
   --battle-portrait-width: clamp(260px, 58%, 720px);
   position: relative;
   isolation: isolate;
@@ -1705,7 +1712,7 @@ body.is-lightbox-open {
 
 @media (min-width: 641px) {
   .battle-character-card .character-content {
-    min-height: clamp(210px, 17vw, 270px);
+    min-height: clamp(205px, 15vw, 235px);
   }
 }
 
@@ -2124,6 +2131,25 @@ body.is-lightbox-open {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+}
+
+@media (min-width: 1181px) {
+  .battle-bar {
+    margin-bottom: 16px;
+    padding-block: 11px;
+  }
+
+  .battle-fold {
+    margin-bottom: 14px;
+  }
+
+  .battle-stat-row {
+    padding-block: 10px;
+  }
+
+  .battle-stat-cell {
+    padding: 10px 12px;
+  }
 }
 
 @media (max-width: 1180px) {
