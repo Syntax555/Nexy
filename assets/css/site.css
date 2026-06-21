@@ -1702,6 +1702,7 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 1.5vw, 24px);
+  --battle-portrait-height: clamp(164px, 12vw, 188px);
   --battle-portrait-width: clamp(230px, 52%, 520px);
   position: relative;
   isolation: isolate;
@@ -1712,7 +1713,7 @@ body.is-lightbox-open {
 
 @media (min-width: 641px) {
   .battle-character-card .character-content {
-    height: clamp(205px, 15vw, 235px);
+    min-height: clamp(205px, 15vw, 235px);
   }
 }
 
@@ -1742,15 +1743,16 @@ body.is-lightbox-open {
 .battle-character-card .character-portrait {
   position: absolute;
   z-index: 1;
-  top: 0;
+  top: 50%;
   right: 0;
-  bottom: 0;
+  bottom: auto;
   width: var(--battle-portrait-width);
-  height: 100%;
+  height: var(--battle-portrait-height);
   min-height: 0;
   aspect-ratio: auto;
   overflow: hidden;
   pointer-events: auto;
+  transform: translateY(-50%);
 }
 
 .battle-character-card .character-portrait::before {
@@ -1787,7 +1789,7 @@ body.is-lightbox-open {
   position: relative;
   z-index: 3;
   width: fit-content;
-  max-width: min(100%, 520px);
+  max-width: min(100%, 380px);
   margin-top: 8px;
 }
 
@@ -1830,12 +1832,6 @@ body.is-lightbox-open {
 
 .battle-character-details > .meta-list {
   margin-top: 12px;
-  max-height: 92px;
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding-right: 6px;
-  scrollbar-color: var(--color-scrollbar) transparent;
-  scrollbar-width: thin;
 }
 
 .battle-character-card .meta-list--facts {
@@ -2405,9 +2401,9 @@ body.is-lightbox-open {
   }
 
   .battle-character-card .character-content {
+    --battle-portrait-height: 176px;
     --battle-portrait-width: clamp(150px, 52vw, 260px);
-    height: 220px;
-    min-height: 0;
+    min-height: 190px;
     padding: 18px;
   }
 
@@ -2417,14 +2413,15 @@ body.is-lightbox-open {
 
   .battle-character-card .character-portrait {
     position: absolute;
-    top: 0;
+    top: 50%;
     right: 0;
-    bottom: 0;
+    bottom: auto;
     width: var(--battle-portrait-width);
-    height: 100%;
+    height: var(--battle-portrait-height);
     min-height: 0;
     aspect-ratio: auto;
     justify-self: end;
+    transform: translateY(-50%);
   }
 
   .battle-character-card .character-portrait::before {
@@ -2450,10 +2447,6 @@ body.is-lightbox-open {
   .battle-character-details {
     max-width: calc(100% - 100px);
     margin-top: 8px;
-  }
-
-  .battle-character-details > .meta-list {
-    max-height: 82px;
   }
 
   .speed-value-row {
