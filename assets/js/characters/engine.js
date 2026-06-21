@@ -1295,7 +1295,13 @@
     return `<ul class="meta-list${styleClass}" aria-label="Character details">${detailTags}</ul>`;
   }
 
-  function characterProfileHtml(view, { includeStats = true, includeSections = true, imagePlacement = "hero", detailStyle = "chips" } = {}) {
+  function characterProfileHtml(view, {
+    includeStats = true,
+    includeSections = true,
+    imagePlacement = "hero",
+    detailStyle = "chips",
+    collapsibleDetails = false
+  } = {}) {
     const sectionHtml = view.sections
       .map(([sectionTitle, items]) => tagSectionHtml(sectionTitle, items))
       .join("");
@@ -1341,6 +1347,13 @@
         ${expandButton}
       </div>
     ` : "";
+    const detailsMarkup = detailListHtml(view.details, detailStyle);
+    const profileDetails = collapsibleDetails && detailsMarkup ? `
+      <details class="battle-character-details">
+        <summary>Details</summary>
+        ${detailsMarkup}
+      </details>
+    ` : detailsMarkup;
 
     return `
       ${heroImage}
@@ -1354,7 +1367,7 @@
           </div>
           ${identityImage}
         </div>
-        ${detailListHtml(view.details, detailStyle)}
+        ${profileDetails}
         ${includeStats ? `<ul class="stat-grid">${statGridHtml(view.stats)}</ul>` : ""}
         ${includeSections ? sectionHtml : ""}
       </div>
@@ -1972,8 +1985,8 @@
           ? scoreRow.winner === "tie"
             ? "Even"
             : scoreRow.winner === "left"
-              ? `\u2190 ${scoreRow.rankGap} pts`
-              : `${scoreRow.rankGap} pts \u2192`
+              ? `${leftName} +${scoreRow.rankGap} pts`
+              : `${rightName} +${scoreRow.rankGap} pts`
           : "Excluded"
         : "";
 
@@ -2052,11 +2065,11 @@
     const scoreDetail = score.interaction
       ? score.interaction.winner === "tie" ? "Stalemate" : "Automatic win"
       : score.tieBreaker
-      ? `Tie-breaker · ${score.tieBreaker.label}`
+      ? `Tie-breaker: ${score.tieBreaker.label}`
       : score.winner === "tie"
       ? "Scores tied"
       : `+${score.scoreGap} pts`;
-    const summary = `${winnerText} · ${scoreDetail}`;
+    const summary = `${winnerText} - ${scoreDetail}`;
 
     return `
       <div class="battle-score" data-battle-summary="${escapeHtml(summary)}">
@@ -2128,8 +2141,8 @@
           </small>
         </summary>
         <div class="battle-combatants">
-          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
-          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts" })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseLeftView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", collapsibleDetails: true })}</article>
+          <article class="battle-character-card">${characterProfileHtml(baseRightView, { includeStats: false, includeSections: false, imagePlacement: "identity", detailStyle: "facts", collapsibleDetails: true })}</article>
         </div>
       </details>
       <details class="battle-fold" open>

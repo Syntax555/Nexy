@@ -2,7 +2,12 @@
   <div class="selector-bar">
     <h2 class="side-title">{{ include.title | escape }}</h2>
     <div class="selector-actions">
-      <button class="back-button" type="button" data-back aria-label="Back" title="Back">&larr;</button>
+      <button class="back-button" type="button" data-back aria-label="Back" title="Back">
+        <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M19 12H5"></path>
+          <path d="m12 19-7-7 7-7"></path>
+        </svg>
+      </button>
       <button class="confirm-button" type="button" data-confirm disabled>Confirm</button>
     </div>
   </div>
