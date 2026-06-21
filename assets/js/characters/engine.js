@@ -1350,7 +1350,12 @@
     const detailsMarkup = detailListHtml(view.details, detailStyle);
     const profileDetails = collapsibleDetails && detailsMarkup ? `
       <details class="battle-character-details">
-        <summary>Details</summary>
+        <summary aria-label="Toggle character details" title="Character details">
+          <svg class="battle-details-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+          <span class="visually-hidden">Character details</span>
+        </summary>
         ${detailsMarkup}
       </details>
     ` : detailsMarkup;

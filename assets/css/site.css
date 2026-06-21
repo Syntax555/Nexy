@@ -1702,8 +1702,8 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 1.5vw, 24px);
-  --battle-portrait-height: clamp(164px, 12vw, 188px);
-  --battle-portrait-width: clamp(230px, 52%, 520px);
+  --battle-portrait-height: clamp(190px, 14vw, 220px);
+  --battle-portrait-width: clamp(260px, 58%, 580px);
   position: relative;
   isolation: isolate;
   min-height: 0;
@@ -1794,33 +1794,37 @@ body.is-lightbox-open {
 }
 
 .battle-character-details > summary {
-  display: inline-flex;
+  display: inline-grid;
   align-items: center;
-  gap: 7px;
-  min-height: 34px;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: rgba(var(--surface-rgb), 0.92);
   color: var(--color-text-secondary);
   cursor: pointer;
   list-style: none;
-  padding: 0 12px;
-  font-size: 0.76rem;
-  font-weight: 800;
+  padding: 0;
 }
 
 .battle-character-details > summary::-webkit-details-marker {
   display: none;
 }
 
-.battle-character-details > summary::after {
-  content: "+";
-  font-size: 0.95rem;
-  line-height: 1;
+.battle-details-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--motion-fast);
 }
 
-.battle-character-details[open] > summary::after {
-  content: "-";
+.battle-character-details[open] .battle-details-icon {
+  transform: rotate(180deg);
 }
 
 .battle-character-details > summary:hover,
