@@ -1702,7 +1702,7 @@ body.is-lightbox-open {
 
 .battle-character-card .character-content {
   --battle-card-padding: clamp(18px, 1.5vw, 24px);
-  --battle-portrait-width: clamp(260px, 58%, 720px);
+  --battle-portrait-width: clamp(230px, 52%, 520px);
   position: relative;
   isolation: isolate;
   min-height: 0;
@@ -1712,7 +1712,7 @@ body.is-lightbox-open {
 
 @media (min-width: 641px) {
   .battle-character-card .character-content {
-    min-height: clamp(205px, 15vw, 235px);
+    height: clamp(205px, 15vw, 235px);
   }
 }
 
@@ -1788,7 +1788,7 @@ body.is-lightbox-open {
   z-index: 3;
   width: fit-content;
   max-width: min(100%, 520px);
-  margin-top: 22px;
+  margin-top: 8px;
 }
 
 .battle-character-details > summary {
@@ -1830,6 +1830,12 @@ body.is-lightbox-open {
 
 .battle-character-details > .meta-list {
   margin-top: 12px;
+  max-height: 92px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+  scrollbar-color: var(--color-scrollbar) transparent;
+  scrollbar-width: thin;
 }
 
 .battle-character-card .meta-list--facts {
@@ -2400,7 +2406,8 @@ body.is-lightbox-open {
 
   .battle-character-card .character-content {
     --battle-portrait-width: clamp(150px, 52vw, 260px);
-    min-height: 190px;
+    height: 220px;
+    min-height: 0;
     padding: 18px;
   }
 
@@ -2442,7 +2449,11 @@ body.is-lightbox-open {
 
   .battle-character-details {
     max-width: calc(100% - 100px);
-    margin-top: 18px;
+    margin-top: 8px;
+  }
+
+  .battle-character-details > .meta-list {
+    max-height: 82px;
   }
 
   .speed-value-row {
