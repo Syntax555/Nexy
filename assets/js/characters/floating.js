@@ -22,11 +22,16 @@
     const gap = options.gap ?? 12;
     const minWidth = options.minWidth ?? 220;
     const maxWidth = options.maxWidth ?? 420;
+    const availableWidth = Math.max(0, viewport.width - (margin * 2));
+    const availableHeight = Math.max(0, viewport.height - (margin * 2));
 
     floating.style.setProperty("--tooltip-left", "0px");
     floating.style.setProperty("--tooltip-top", "0px");
     floating.style.setProperty("--tooltip-arrow-left", "50%");
-    floating.style.maxWidth = `${Math.min(maxWidth, Math.max(minWidth, viewport.width - (margin * 2)))}px`;
+    floating.style.minWidth = `${Math.min(minWidth, availableWidth)}px`;
+    floating.style.maxWidth = `${Math.min(maxWidth, availableWidth)}px`;
+    floating.style.maxHeight = `${availableHeight}px`;
+    floating.style.overflowY = "auto";
     floating.dataset.placement = "above";
 
     const anchorRect = trigger.getBoundingClientRect();

@@ -129,8 +129,8 @@ function testScoreAndSpeedSelection() {
 
   const resultHtml = engine.battleResultHtml(leftView, rightView, scorePairs);
   assert.doesNotMatch(resultHtml, /battle-stat-meter/, "result rows must not use ambiguous proportional meters");
-  assert.match(resultHtml, /\u2190 70 pts/, "a left-side win must point toward the left value");
-  assert.match(resultHtml, /40 pts \u2192/, "a right-side win must point toward the right value");
+  assert.match(resultHtml, />Left \+70 pts</, "a left-side win must name the left character");
+  assert.match(resultHtml, />Right \+40 pts</, "a right-side win must name the right character");
   assert.match(resultHtml, />Even</, "tied rows must be explicit");
   assert.match(resultHtml, />Excluded</, "excluded rows must be explicit");
 

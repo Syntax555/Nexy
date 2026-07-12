@@ -5,6 +5,9 @@ require "yaml"
 
 ROOT = File.expand_path("..", __dir__)
 FIXTURE_PATH = File.join(ROOT, "test", "fixtures", "battle_rules.yml")
+WINNERS = %w[left right tie].freeze
+STATUSES = %w[active disabled absorbed negated nullified resisted].freeze
+REQUIRED_SCORE_EXPECTATIONS = %w[left_score right_score score_gap winner].freeze
 
 def fail_with(message)
   warn "battle fixture tests failed:"
@@ -74,33 +77,109 @@ def score_case(test_case)
 end
 
 def validate_score_case(test_case)
-  expected = test_case.fetch("expected")
+  return ["score case must be a map"] unless test_case.is_a?(Hash)
+
+  errors = []
+  id = test_case["id"]
+  stats = test_case["stats"]
+  expected = test_case["expected"]
+  errors << "score case id must be present" if id.to_s.empty?
+  errors << "#{id}.stats must contain at least one stat" unless stats.is_a?(Array) && stats.any?
+  errors << "#{id}.expected must be a non-empty map" unless expected.is_a?(Hash) && expected.any?
+
+  if stats.is_a?(Array)
+    stats.each_with_index do |stat, index|
+      context = "#{id}.stats[#{index}]"
+      unless stat.is_a?(Hash)
+        errors << "#{context} must be a map"
+        next
+      end
+
+      errors << "#{context}.label must be present" if stat["label"].to_s.empty?
+      %w[left_rank right_rank].each do |field|
+        errors << "#{context}.#{field} must be an integer" unless stat[field].is_a?(Integer)
+      end
+      if stat.key?("scored") && ![true, false].include?(stat["scored"])
+        errors << "#{context}.scored must be true or false"
+      end
+      if stat["expected_winner"] && !WINNERS.include?(stat["expected_winner"])
+        errors << "#{context}.expected_winner must be left, right, or tie"
+      end
+      if stat.key?("expected_rank_gap") && (!stat["expected_rank_gap"].is_a?(Integer) || stat["expected_rank_gap"].negative?)
+        errors << "#{context}.expected_rank_gap must be a non-negative integer"
+      end
+    end
+  end
+
+  if expected.is_a?(Hash)
+    missing_expectations = REQUIRED_SCORE_EXPECTATIONS - expected.keys
+    errors.concat(missing_expectations.map { |key| "#{id}.expected is missing #{key}" })
+    if expected["winner"] && !WINNERS.include?(expected["winner"])
+      errors << "#{id}.expected.winner must be left, right, or tie"
+    end
+  end
+
+  interaction_winner = test_case.dig("interaction", "winner")
+  if interaction_winner && !WINNERS.include?(interaction_winner)
+    errors << "#{id}.interaction.winner must be left, right, or tie"
+  end
+
+  return errors if errors.any?
+
   actual = score_case(test_case)
   mismatches = expected.filter_map do |key, value|
+    next "#{id}.expected.#{key} is not a supported result field" unless actual.key?(key)
     next if actual[key] == value
 
-    "#{test_case["id"]}.#{key} expected #{value.inspect}, got #{actual[key].inspect}"
+    "#{id}.#{key} expected #{value.inspect}, got #{actual[key].inspect}"
   end
 
   mismatches
 end
 
 def validate_status_case(test_case)
+  return ["status case must be a map"] unless test_case.is_a?(Hash)
+
   errors = []
+  errors << "status case id must be present" if test_case["id"].to_s.empty?
   errors << "#{test_case["id"]}.kind must be present" if test_case["kind"].to_s.empty?
   errors << "#{test_case["id"]}.status must be present" if test_case["status"].to_s.empty?
+  if test_case["status"] && !STATUSES.include?(test_case["status"])
+    errors << "#{test_case["id"]}.status must be a known battle status"
+  end
   errors << "#{test_case["id"]}.detail must be present" if test_case["detail"].to_s.empty?
   errors
 end
 
 fixture = YAML.safe_load_file(FIXTURE_PATH)
-errors = []
+fail_with("fixture root must be a map") unless fixture.is_a?(Hash)
 
-Array(fixture["score_cases"]).each do |test_case|
+score_cases = fixture["score_cases"]
+status_cases = fixture["status_cases"]
+fail_with("score_cases must contain at least one case") unless score_cases.is_a?(Array) && score_cases.any?
+fail_with("status_cases must contain at least one case") unless status_cases.is_a?(Array) && status_cases.any?
+
+errors = []
+ids = {}
+
+(score_cases + status_cases).each do |test_case|
+  next unless test_case.is_a?(Hash)
+
+  id = test_case["id"]
+  next if id.to_s.empty?
+
+  if ids.key?(id)
+    errors << "duplicate fixture id #{id.inspect}"
+  else
+    ids[id] = true
+  end
+end
+
+score_cases.each do |test_case|
   errors.concat(validate_score_case(test_case))
 end
 
-Array(fixture["status_cases"]).each do |test_case|
+status_cases.each do |test_case|
   errors.concat(validate_status_case(test_case))
 end
 

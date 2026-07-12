@@ -20,6 +20,7 @@ Nexy is a GitHub Pages/Jekyll site for selecting and comparing character profile
 - `_data/characters/options/*.yml` contains predefined catalogs such as tiers, powers, media, and classifications.
 - `assets/images/characters/<character-id>/` contains local images for that character.
 - `scripts/validate_characters.rb` validates character data before building.
+- `scripts/test_character_validator.rb` checks validator safeguards against silent bad data.
 - `scripts/import_fandom_character.rb` creates manual-review drafts from VS Battles/Fandom pages.
 - `scripts/trim_character_images.rb` optionally trims image whitespace with ImageMagick.
 - `scripts/test_battle_fixtures.rb` checks small battle-rule fixtures.
@@ -115,13 +116,19 @@ Run these before pushing changes:
 
 ```bash
 ruby scripts/validate_characters.rb
+ruby scripts/test_character_validator.rb
 ruby scripts/test_battle_fixtures.rb
 node --check assets/js/characters/data.js
 node --check assets/js/characters/engine.js
 node --check assets/js/characters/floating.js
 node --check assets/js/characters/search.js
 node --check assets/js/characters/ui.js
+node --check assets/js/theme.js
 JEKYLL_ENV=production bundle exec jekyll build
 ```
 
 The same checks run in GitHub Actions on every push and pull request.
+
+## Publishing
+
+The configured production URL is `https://syntax555.github.io/Nexy`. In the repository's GitHub Pages settings, deploy from the `main` branch with Jekyll enabled. The CI workflow validates every build but does not publish it; GitHub Pages performs the deployment from the configured branch.

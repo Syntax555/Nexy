@@ -472,7 +472,7 @@ derived:
         id: flight
         source_variant: gliding
   effects:
-    activation_rule: requirements_met_and_not_nullified
+    activation_rule: active_source_and_not_nullified
     battle_item_activation_rule: equipment_and_attack_effects_require_battle_active_required_powers
     stat_rule: best_composite_rank_per_stat
     stat_resistible_rule: stat_effects_resistible_false_are_not_stopped_by_matching_resistance_refs
@@ -494,7 +494,6 @@ derived:
       name: string
       image: string
       priority: integer
-      condition: string_or_null
     power_nullification:
       target_power_ids: list
       max_target_modifier: ability_modifier_id_or_null
@@ -537,10 +536,6 @@ derived:
     grants:
       power_refs: list
       resistance_refs: list
-    requirements:
-      stat_minimums: list
-      power_refs: list
-      equipment_ids: list
     nullified_by:
       resistance_refs: list
       power_refs: list

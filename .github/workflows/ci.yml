@@ -26,13 +26,19 @@ jobs:
       - name: Validate character data
         run: ruby scripts/validate_characters.rb
 
+      - name: Test character validator safeguards
+        run: ruby scripts/test_character_validator.rb
+
       - name: Run battle fixture tests
         run: ruby scripts/test_battle_fixtures.rb
 
       - name: Check JavaScript syntax
         run: |
+          node --check assets/js/theme.js
           node --check assets/js/characters/data.js
           node --check assets/js/characters/engine.js
+          node --check assets/js/characters/floating.js
+          node --check assets/js/characters/search.js
           node --check assets/js/characters/ui.js
 
       - name: Build GitHub Pages site

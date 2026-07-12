@@ -20,7 +20,7 @@
     if (themeColor) themeColor.content = isDark ? "#0d1117" : "#f4f7f8";
 
     toggles.forEach((toggle) => {
-      toggle.setAttribute("aria-label", `Switch to ${nextLabel.toLowerCase()}`);
+      toggle.setAttribute("aria-label", "Dark mode");
       toggle.setAttribute("aria-pressed", String(isDark));
       toggle.title = `Switch to ${nextLabel.toLowerCase()}`;
       toggle.querySelector("[data-theme-label]").textContent = nextLabel;
