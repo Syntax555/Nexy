@@ -67,7 +67,7 @@
   }
 
   function waitForImage(image) {
-    if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+    if (image.complete) return Promise.resolve();
 
     return new Promise((resolve) => {
       image.addEventListener("load", resolve, { once: true });
@@ -192,6 +192,15 @@
 
   function trimImagesIn(root) {
     root.querySelectorAll("img[data-trim-image]").forEach(prepareTrimImage);
+  }
+
+  function stopObservingTrimImagesIn(root) {
+    if (!trimResizeObserver) return;
+
+    root.querySelectorAll("img[data-trim-image]").forEach((image) => {
+      const frame = trimFrameFor(image);
+      if (frame) trimResizeObserver.unobserve(frame);
+    });
   }
 
   function tooltipTriggerFrom(target) {
@@ -599,6 +608,7 @@
     }
 
     function choose(item) {
+      const previousStep = state.step;
       state.confirmed = false;
 
       if (state.step === "media") {
@@ -630,7 +640,7 @@
         state.step = "character";
       }
 
-      render();
+      render({ focusStep: state.step !== previousStep });
     }
 
     function back() {
@@ -652,7 +662,7 @@
         clearSelection();
       }
 
-      render();
+      render({ focusStep: true });
     }
 
     function renderChoices() {
@@ -967,17 +977,19 @@
       });
     }
 
-    function render() {
+    function render({ focusStep = false } = {}) {
       const currentCharacter = displayCharacter();
       backButton.disabled = state.step === "media";
       confirmButton.disabled = !currentCharacter || state.confirmed;
       confirmButton.textContent = state.confirmed ? "Confirmed" : "Confirm";
       renderChoices();
+      stopObservingTrimImagesIn(card);
       renderCard(card, currentCharacter, state.keyId);
       renderSelectedCardToggle(currentCharacter);
       if (!state.cardCollapsed) renderCardKeySwitcher(currentCharacter);
       trimImagesIn(root);
       onSelectionChange();
+      if (focusStep) choiceLabel.focus({ preventScroll: true });
     }
 
     function confirmedSelection() {
@@ -1123,6 +1135,8 @@
     }
     if (imageLightboxTitle) imageLightboxTitle.textContent = "";
     document.body.classList.remove("is-lightbox-open");
+    selectionScreen.inert = false;
+    battleScreen.inert = false;
     if (lastImageExpandButton?.isConnected) lastImageExpandButton.focus();
     lastImageExpandButton = null;
   }
@@ -1140,16 +1154,20 @@
     lastImageExpandButton = button;
     imageLightbox.hidden = false;
     document.body.classList.add("is-lightbox-open");
+    selectionScreen.inert = true;
+    battleScreen.inert = true;
     imageLightboxClose?.focus();
   }
 
-  function showSelectionScreen() {
+  function showSelectionScreen({ focusTitle = false } = {}) {
     selectionScreen.hidden = false;
     battleScreen.hidden = true;
     trimImagesIn(selectionScreen);
+    if (focusTitle) selectionScreen.querySelector("[data-screen-title]")?.focus({ preventScroll: true });
   }
 
   function showBattleScreen(leftSelection, rightSelection) {
+    stopObservingTrimImagesIn(battleContent);
     const battleViews = renderBattle(battleContent, leftSelection, rightSelection);
     const comparison = battleContent.querySelector("[data-battle-comparison]");
     const comparisonStatus = battleContent.querySelector("[data-battle-comparison-status]");
@@ -1163,6 +1181,7 @@
     selectionScreen.hidden = true;
     battleScreen.hidden = false;
     trimImagesIn(battleContent);
+    battleScreen.querySelector("[data-screen-title]")?.focus({ preventScroll: true });
   }
 
   function maybeShowBattleScreen() {
@@ -1174,7 +1193,7 @@
 
   editSelectionButton?.addEventListener("click", () => {
     selectors.forEach((item) => item.unconfirm());
-    showSelectionScreen();
+    showSelectionScreen({ focusTitle: true });
   });
 
   document.addEventListener("click", (event) => {
@@ -1229,14 +1248,12 @@
   document.addEventListener("scroll", scheduleTooltipPosition, true);
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && activeTooltipTrigger) {
-      hideTooltip(activeTooltipTrigger);
+    if (event.key === "Escape" && imageLightbox && !imageLightbox.hidden) {
+      closeImageLightbox();
       return;
     }
 
-    if (event.key !== "Escape" || !imageLightbox || imageLightbox.hidden) return;
-
-    closeImageLightbox();
+    if (event.key === "Escape" && activeTooltipTrigger) hideTooltip(activeTooltipTrigger);
   });
 
   imageLightbox?.addEventListener("keydown", (event) => {

@@ -3,9 +3,8 @@
   <head>
     <meta charset="{{ site.encoding | default: 'utf-8' | escape }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ page.description | default: site.description | escape }}">
     <meta name="theme-color" content="#f4f7f8">
-    <title>{% if page.title %}{{ page.title | escape }} | {% endif %}{{ site.title | escape }}</title>
+    {% seo %}
     <script>
       (() => {
         let theme = null;

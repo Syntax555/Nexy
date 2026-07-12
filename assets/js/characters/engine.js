@@ -821,21 +821,6 @@
     return lines;
   }
 
-  function requirementTooltipLines(requirements = {}) {
-    const lines = [];
-    const statMinimums = list(requirements.stat_minimums)
-      .map(formatStatRequirement)
-      .filter(Boolean);
-    const requiredPowers = list(requirements.power_refs).map(powerRefLabel);
-    const requiredEquipment = nameList(requirements.equipment_ids, "equipment");
-
-    if (statMinimums.length) lines.push(`Requires stats: ${joinText(statMinimums)}`);
-    if (requiredPowers.length) lines.push(`Requires powers: ${joinText(requiredPowers)}`);
-    if (requiredEquipment.length) lines.push(`Requires equipment: ${joinText(requiredEquipment)}`);
-
-    return lines;
-  }
-
   function effectTooltipLines(effect = {}, key = null) {
     const lines = [];
 
@@ -921,7 +906,6 @@
 
     if (effect.image_update?.name) lines.push(`Changes image: ${effect.image_update.name}`);
     lines.push(...grantTooltipLines(effect.grants));
-    lines.push(...requirementTooltipLines(effect.requirements));
 
     if (effect.power_nullification) {
       const targetRefs = list(effect.power_nullification.target_power_refs);
@@ -2103,7 +2087,7 @@
       return `
         <details class="battle-fold" open>
           <summary class="battle-fold-summary">
-            <span>${escapeHtml(sectionTitle)}</span>
+            <span role="heading" aria-level="2">${escapeHtml(sectionTitle)}</span>
             <small>Battle status</small>
           </summary>
           <section class="battle-section">
@@ -2128,7 +2112,7 @@
     content.innerHTML = `
       <details class="battle-fold" open>
         <summary class="battle-fold-summary">
-          <span>Combatants</span>
+          <span role="heading" aria-level="2">Combatants</span>
           <small class="battle-matchup">
             <span>${escapeHtml(title(baseLeftView.character.name))}</span>
             <strong>VS</strong>
@@ -2142,7 +2126,7 @@
       </details>
       <details class="battle-fold" open>
         <summary class="battle-fold-summary">
-          <span>Comparison</span>
+          <span role="heading" aria-level="2">Comparison</span>
           <small data-battle-comparison-status>Tier excluded</small>
         </summary>
         <section class="battle-comparison" aria-label="Stat comparison" aria-live="polite" data-battle-comparison>

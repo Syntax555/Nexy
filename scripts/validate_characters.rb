@@ -26,6 +26,44 @@ STAT_CATALOGS = {
   "intelligence" => :intelligence_tiers
 }.freeze
 
+EFFECT_FIELDS = %w[
+  grants
+  stat_effects
+  stat_modifier_floor_effects
+  opponent_stat_swap
+  power_nullification
+  absorption
+  resistance_negation
+  non_physical_interaction
+  image_update
+  nullified_by
+].freeze
+
+POWER_REF_FIELDS = %w[
+  id
+  placeholder
+  modifier
+  type_ids
+  martial_arts_degree_id
+  acrobatics_degree_id
+  magic_level_id
+  magic_nature_ids
+  source_variant
+  condition
+  effects
+].freeze
+
+RESISTANCE_REF_FIELDS = %w[
+  id
+  level
+  modifier
+  type_ids
+  magic_level_id
+  magic_nature_ids
+  source_variant
+  condition
+].freeze
+
 NON_PHYSICAL_POWER_TYPE_ORDER = {
   "intangibility" => [
     "intangibility-all",
@@ -183,6 +221,24 @@ def external_asset?(path)
   path.match?(%r{\A(?:[a-z][a-z0-9+.-]*:)?//}i) || path.start_with?("data:")
 end
 
+def validate_local_image_path(context, image_path, entry_id: nil)
+  return [] if external_asset?(image_path)
+
+  normalized_path = image_path.delete_prefix("/")
+  expected_prefix = entry_id && entry_id != "empty" ? "assets/images/characters/#{entry_id}/" : "assets/images/characters/"
+  expected_root = File.expand_path(expected_prefix, ROOT)
+  absolute_path = File.expand_path(normalized_path, ROOT)
+  expected_root_prefix = "#{expected_root}#{File::SEPARATOR}"
+
+  unless absolute_path.start_with?(expected_root_prefix)
+    return ["#{context} local path must stay under #{expected_prefix.inspect}"]
+  end
+
+  return [] if File.file?(absolute_path)
+
+  ["#{context} local file does not exist at #{normalized_path.inspect}"]
+end
+
 def fail_with(message)
   warn "character data validation failed:"
   warn message
@@ -318,7 +374,11 @@ def validate_ranked_stat(context, stat, allowed_values, stat_modifiers, allow_nu
     modifier = "normal"
   elsif stat.is_a?(Hash)
     value = stat["value"]
-    modifier = stat.fetch("modifier", "normal")
+    modifier = stat["modifier"] || "normal"
+
+    unknown_fields = stat.keys - %w[value modifier label note resistible]
+    errors.concat(unknown_fields.map { |field| "#{context}.#{field} is not a ranked stat field" })
+    errors << "#{context}.value must be present" if value.nil? || value.to_s.empty?
 
     %w[label note].each do |field|
       next unless stat.key?(field)
@@ -429,6 +489,7 @@ def validate_derived_power_rule(context, rule, sets)
   min_matches = rule["min_matches"]
 
   errors << "#{context} is missing id" if rule["id"].nil? || rule["id"].to_s.empty?
+  errors << "#{context}.power_id must be present" if rule["power_id"].nil? || rule["power_id"].to_s.empty?
   errors.concat(validate_refs("#{context}.power_id", [rule["power_id"]], sets[:powers], "power"))
 
   unless requirements.is_a?(Array) && requirements.any?
@@ -501,19 +562,7 @@ def validate_images(context, images, entry_id: nil)
       next
     end
 
-    image_path = image_path.to_s
-    next if external_asset?(image_path)
-
-    normalized_path = image_path.delete_prefix("/")
-    expected_prefix = entry_id && entry_id != "empty" ? "assets/images/characters/#{entry_id}/" : "assets/images/characters/"
-
-    unless normalized_path.start_with?(expected_prefix)
-      errors << "#{image_context}.image local path must start with #{expected_prefix.inspect}"
-      next
-    end
-
-    absolute_path = File.join(ROOT, normalized_path)
-    errors << "#{image_context}.image local file does not exist at #{normalized_path.inspect}" unless File.file?(absolute_path)
+    errors.concat(validate_local_image_path("#{image_context}.image", image_path.to_s, entry_id: entry_id))
   end
 
   errors
@@ -534,6 +583,9 @@ def validate_power_refs(context, refs, sets)
       next
     end
 
+    errors << "#{ref_context}.id must be present" if ref["id"].nil? || ref["id"].to_s.empty?
+    unknown_fields = ref.keys - POWER_REF_FIELDS
+    errors.concat(unknown_fields.map { |field| "#{ref_context}.#{field} is not allowed" })
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power"))
     errors.concat(validate_boolean_field(ref_context, ref, "placeholder"))
     errors.concat(validate_refs("#{ref_context}.modifier", [ref["modifier"] || "normal"], sets[:ability_modifiers], "ability modifier"))
@@ -576,7 +628,11 @@ def validate_power_target_refs(context, refs, sets)
       next ["#{ref_context} must be a map"]
     end
 
-    errors = validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power") +
+    errors = []
+    errors << "#{ref_context}.id must be present" if ref["id"].nil? || ref["id"].to_s.empty?
+    unknown_fields = ref.keys - %w[id type_ids]
+    errors.concat(unknown_fields.map { |field| "#{ref_context}.#{field} is not allowed" })
+    errors += validate_refs("#{ref_context}.id", [ref["id"]], sets[:powers], "power") +
              validate_ref_list("#{ref_context}.type_ids", ref["type_ids"], sets[:power_types], "power type") +
              validate_power_type_ownership(ref_context, ref, sets)
 
@@ -589,6 +645,8 @@ def validate_grants(context, grants, sets)
   return ["#{context} must be a map"] unless grants.is_a?(Hash)
 
   errors = []
+  unknown_fields = grants.keys - %w[power_refs resistance_refs magic_level_ids]
+  errors.concat(unknown_fields.map { |field| "#{context}.#{field} is not allowed" })
 
   errors.concat(validate_power_refs("#{context}.power_refs", grants["power_refs"] || [], sets))
   errors.concat(validate_resistance_refs("#{context}.resistance_refs", grants["resistance_refs"] || [], sets))
@@ -611,6 +669,9 @@ def validate_resistance_refs(context, refs, sets)
       next
     end
 
+    errors << "#{ref_context}.id must be present" if ref["id"].nil? || ref["id"].to_s.empty?
+    unknown_fields = ref.keys - RESISTANCE_REF_FIELDS
+    errors.concat(unknown_fields.map { |field| "#{ref_context}.#{field} is not allowed" })
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:resistances], "resistance"))
     errors.concat(validate_refs("#{ref_context}.level", [ref["level"] || "resistant"], sets[:resistance_levels], "resistance level"))
     errors.concat(validate_refs("#{ref_context}.modifier", [ref["modifier"] || "normal"], sets[:ability_modifiers], "ability modifier"))
@@ -636,6 +697,9 @@ def validate_equipment_refs(context, refs, sets)
       next
     end
 
+    errors << "#{ref_context}.id must be present" if ref["id"].nil? || ref["id"].to_s.empty?
+    unknown_fields = ref.keys - %w[id effects]
+    errors.concat(unknown_fields.map { |field| "#{ref_context}.#{field} is not allowed" })
     errors.concat(validate_refs("#{ref_context}.id", [ref["id"]], sets[:equipment], "equipment"))
     validate_effect_list("#{ref_context}.effects", ref["effects"], sets, errors)
   end
@@ -647,6 +711,9 @@ def validate_effect(context, effect, sets)
   return ["#{context} must be a map"] unless effect.is_a?(Hash)
 
   errors = []
+  errors << "#{context} must contain at least one effect field" if effect.empty?
+  unknown_fields = effect.keys - EFFECT_FIELDS
+  errors.concat(unknown_fields.map { |field| "#{context}.#{field} is not a supported effect field" })
 
   if effect.key?("grants")
     errors.concat(validate_grants("#{context}.grants", effect["grants"], sets))
@@ -798,16 +865,19 @@ def validate_image_update(context, image_update)
   return ["#{context} must be a map"] unless image_update.is_a?(Hash)
 
   errors = []
+  unknown_fields = image_update.keys - %w[name image priority]
+  errors.concat(unknown_fields.map { |field| "#{context}.#{field} is not allowed" })
 
   errors << "#{context}.name must be present" if image_update["name"].nil? || image_update["name"].to_s.empty?
-  errors << "#{context}.image must be present" if image_update["image"].nil? || image_update["image"].to_s.empty?
+  image_path = image_update["image"]
+  if image_path.nil? || image_path.to_s.empty?
+    errors << "#{context}.image must be present"
+  else
+    errors.concat(validate_local_image_path("#{context}.image", image_path.to_s))
+  end
 
   unless image_update["priority"].nil? || image_update["priority"].is_a?(Integer)
     errors << "#{context}.priority must be an integer when present"
-  end
-
-  unless image_update["condition"].nil? || image_update["condition"].is_a?(String)
-    errors << "#{context}.condition must be a string when present"
   end
 
   errors

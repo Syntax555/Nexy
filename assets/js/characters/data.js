@@ -164,7 +164,12 @@
   }
 
   function normalizeCharacterEntries(entries) {
-    if (Array.isArray(entries)) return entries;
+    if (Array.isArray(entries)) {
+      return entries.map((character, index) => normalizeCharacterEntry(
+        character?.entry_id || character?.id || `character-${index + 1}`,
+        character || {}
+      ));
+    }
 
     return Object.entries(entries || {})
       .map(([entryId, character]) => normalizeCharacterEntry(entryId, character));

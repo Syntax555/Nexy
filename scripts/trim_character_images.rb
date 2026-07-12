@@ -68,6 +68,12 @@ if options[:check]
 end
 
 abort "Missing --out PATH. Refusing to overwrite original character images." unless options[:out]
+source_path = File.expand_path(options[:source])
+out_path = File.expand_path(options[:out])
+source_prefix = "#{source_path}#{File::SEPARATOR}"
+if out_path == source_path || out_path.start_with?(source_prefix)
+  abort "Output directory must be outside the source image tree. Refusing to overwrite original character images."
+end
 abort "ImageMagick `magick` command was not found. Run with --check for details." unless magick
 abort "Source directory does not exist: #{options[:source]}" unless Dir.exist?(options[:source])
 

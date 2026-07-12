@@ -1,11 +1,12 @@
 ---
 layout: default
-title: Home
+title: Character Battle Comparator
+description: Select detailed character profiles, compare their abilities, and resolve battle matchups.
 ---
 
 <section class="selection-screen" data-selection-screen>
   <div class="selection-bar">
-    <h1 class="page-title">{{ site.title | escape }}</h1>
+    <h1 class="page-title" data-screen-title tabindex="-1">{{ site.title | escape }}</h1>
     {% include theme-toggle.html %}
   </div>
 
@@ -15,9 +16,13 @@ title: Home
   </div>
 </section>
 
+<noscript>
+  <p class="noscript-message">Nexy needs JavaScript enabled to load the character selector and battle comparison.</p>
+</noscript>
+
 <section class="battle-screen" data-battle-screen hidden>
   <div class="battle-bar">
-    <h1 class="page-title">Battle</h1>
+    <h1 class="page-title" data-screen-title tabindex="-1">Battle</h1>
     <div class="battle-actions">
       {% include theme-toggle.html %}
       <button class="secondary-button" type="button" data-edit-selection>Change Characters</button>
