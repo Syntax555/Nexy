@@ -1,134 +1,242 @@
-# Nexy
+# Nexy Battle Lab
 
-Nexy is a GitHub Pages/Jekyll site for selecting and comparing character profiles.
+Nexy is a deterministic, data-driven character matchup site published at
+[syntax555.github.io/Nexy](https://syntax555.github.io/Nexy/).
 
-## Project Layout
+The project is a fully static TypeScript application. Character data is authored
+in YAML, validated and compiled at build time, then evaluated in the browser by
+a pure rules engine. It does not use Jekyll, Ruby, a database, or a server
+runtime.
 
-- `_layouts/default.html` defines the shared HTML shell.
-- `index.html` contains the home page structure and includes the selector UI.
-- `_includes/character-selector-panel.html` contains the reusable left/right selector panel markup.
-- `_includes/character-data.html` renders the Jekyll data payload for the browser.
-- `assets/css/site.css` contains site styling.
-- `assets/js/characters/data.js` prepares the browser data payload and shared catalogs.
-- `assets/js/characters/engine.js` resolves stats, powers, effects, tooltips, and battle comparisons.
-- `assets/js/characters/floating.js` keeps generated tooltips inside the visible viewport.
-- `assets/js/characters/search.js` provides static fuzzy character search without a build step.
-- `assets/js/characters/ui.js` contains selector and battle-screen DOM behavior.
-- `_data/characters/entries/*.yml` contains one character profile per file.
-- `_data/characters/schema.yml` documents the character data shape and rules.
-- `schema/character-entry.schema.json` is the machine-readable shape check for character entries.
-- `_data/characters/options/*.yml` contains predefined catalogs such as tiers, powers, media, and classifications.
-- `assets/images/characters/<character-id>/` contains local images for that character.
-- `scripts/validate_characters.rb` validates character data before building.
-- `scripts/test_character_validator.rb` checks validator safeguards against silent bad data.
-- `scripts/import_fandom_character.rb` creates manual-review drafts from VS Battles/Fandom pages.
-- `scripts/trim_character_images.rb` optionally trims image whitespace with ImageMagick.
-- `scripts/test_battle_fixtures.rb` checks small battle-rule fixtures.
-- `test/fixtures/battle_rules.yml` contains battle scoring/status fixture cases.
-- `.github/workflows/ci.yml` runs validation, fixture tests, JS syntax checks, and the production Jekyll build on GitHub.
+## Stack
 
-## Adding Characters
+- **TypeScript 7** for strict types across the data model, rules engine, tooling,
+  and interface
+- **Preact 10** for a small component runtime
+- **Vite 8** for fast development and optimized static production bundles
+- **YAML + Zod** for readable source data with structural and semantic validation
+- **Vitest** for engine, content-pipeline, search, URL-state, and component tests
+- **Sharp** for build-time character thumbnails, profile images, and social-card
+  optimization
+- **GitHub Actions + GitHub Pages** for validation and static deployment
 
-Create one file per character:
+The production build uses `/Nexy/` as its base path so scripts, styles, images,
+and shared matchup URLs work from the GitHub Pages project URL.
+
+## Gameplay model
+
+Nexy is a transparent matchup comparator rather than a turn-based combat
+simulation.
+
+1. Each side selects a character and one of its combat forms.
+2. The engine resolves standard equipment, attacks, explicit powers, recursive
+   grants, derived abilities, resistances, and stat effects.
+3. Nullification, absorption, resistance negation, and non-physical interaction
+   are resolved until both profiles reach a stable state.
+4. Ranked combat statistics contribute comparison points. Tier is shown but is
+   not counted separately because it is derived from attack potency.
+5. Interaction advantages and deterministic tie-break rules produce the final
+   verdict.
+
+Ruleset v1 also detects reciprocal counter loops and suppresses cycling
+capabilities consistently, so swapping the left and right fighters does not
+change the underlying result.
+
+## Architecture
 
 ```text
-_data/characters/entries/ms-marvel.yml
+.
+|-- content/
+|   |-- catalogs/             # Shared powers, tiers, equipment, verses, and rules
+|   |-- characters/           # One human-authored YAML file per character
+|   `-- images/               # Build sources such as the social card
+|-- public/
+|   |-- images/characters/    # Original character artwork, grouped by entry id
+|   `-- .nojekyll             # Serve the Vite output without Jekyll processing
+|-- src/
+|   |-- app/                  # Application state, assets, theme, and URL state
+|   |-- components/           # Preact interface components
+|   |-- domain/               # Shared data and report types
+|   |-- engine/               # Pure deterministic matchup engine
+|   |-- generated/            # Compiled character/catalog JSON
+|   |-- search/               # Dependency-free roster search
+|   `-- styles/               # Tokens, global styles, layout, and battle views
+|-- tools/
+|   |-- content/              # YAML compiler, schemas, and character scaffolder
+|   `-- images/               # Responsive image generation
+|-- tests/                    # Automated tests and parity fixtures
+|-- index.html                # Vite document entry point
+`-- vite.config.ts            # Build configuration and GitHub Pages base path
 ```
 
-Save local character images in the matching assets folder:
+The boundaries are intentional:
+
+- `content/` is the editable source of truth.
+- `tools/content/` rejects malformed YAML, invalid references, duplicate IDs,
+  broken rank tables, unsafe image paths, and missing local assets.
+- `src/engine/` consumes typed data and returns structured reports without
+  touching the DOM or generating HTML.
+- Preact components render those reports and manage only interface state.
+
+## Local development
+
+Install Node.js 24 or newer and pnpm 11.9.0, then run:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+`pnpm dev` compiles the YAML and generates optimized images before starting
+Vite. Open:
 
 ```text
-assets/images/characters/ms-marvel/original-costume.webp
+http://127.0.0.1:5173/Nexy/
 ```
 
-Reference that image path in the character key:
+To inspect the production bundle locally:
+
+```bash
+pnpm build
+pnpm preview
+```
+
+The preview is available at `http://127.0.0.1:4173/Nexy/`.
+
+## Add a character
+
+Start with the TypeScript scaffolder:
+
+```bash
+pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --identity "Ororo Munroe" --verse marvel-mainstream --gender female
+```
+
+Preview the YAML without writing anything:
+
+```bash
+pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --verse marvel-mainstream --dry-run
+```
+
+The command validates the verse and gender IDs, refuses to overwrite an
+existing entry, and creates:
+
+```text
+content/characters/storm-marvel-mainstream.yaml
+public/images/characters/storm-marvel-mainstream/
+```
+
+Next:
+
+1. Put verified artwork in the generated image directory.
+2. Add the image reference to the relevant form.
+3. Replace the scaffold statistics with researched values.
+4. Reference reusable catalog IDs from `content/catalogs/`.
+5. Run `pnpm content:build` and then `pnpm check`.
+
+Character filenames, entry IDs, and form IDs use lowercase letters, numbers,
+and single hyphens. The entry ID is derived from the YAML filename. A character
+can have multiple forms by adding objects to `keys`.
+
+A local image reference is relative to `public/`:
 
 ```yaml
 images:
-  - name: "Original Costume"
-    image: "assets/images/characters/ms-marvel/original-costume.webp"
+  - name: "Classic suit"
+    image: "images/characters/storm-marvel-mainstream/classic.webp"
 ```
 
-The filename is the character entry id. Use lowercase letters, numbers, and hyphens.
+Local artwork must remain inside the matching character directory. Validation
+rejects missing files, parent-directory traversal, backslashes, and references
+to another character's directory. WebP is recommended for source artwork, but
+PNG, JPEG, AVIF, and WebP are accepted by the image build.
 
-## Adding Powers, Equipment, And Attacks
-
-Add reusable options under `_data/characters/options/` first, then reference those option ids from character entry files.
-
-- Use `powers.yml` for reusable powers and per-power variants.
-- Use `resistances.yml` for resistance definitions that point at resisted power ids.
-- Use `equipment.yml` and `attacks.yml` for usable items or attacks/techniques.
-- Use local `effects` on a character key only when that character uses the same catalog power differently.
-- Use `derived_power_rules.yml` for powers granted automatically from stats.
-
-This keeps character files focused on selection identity, key stats, owned powers/resistances, and chosen equipment or attacks.
-
-## Drafting From VS Battles Pages
-
-Use the importer only to create a review draft:
-
-```bash
-ruby scripts/import_fandom_character.rb "https://vsbattles.fandom.com/wiki/Agent_Venom" --out tmp/agent-venom-draft.yml
-```
-
-The script reads the public MediaWiki API and extracts likely stat lines, page image names, and source metadata. It does not write into `_data/characters/entries/` because every value still needs manual mapping to Nexy option ids and manual verification.
-
-## Character Images
-
-The browser trims visible image whitespace at runtime so existing assets can work without a required asset pipeline.
-
-For cleaner source images, optionally trim copies offline with ImageMagick:
-
-```bash
-ruby scripts/trim_character_images.rb --check
-ruby scripts/trim_character_images.rb --out tmp/trimmed-character-images
-```
-
-Review the generated files before replacing anything under `assets/images/characters/`.
-
-## Speed Notes
-
-`combat_speed` is the default speed. If it is the only speed set, the site displays only the tier, such as `Hypersonic`.
-
-When multiple speeds are set, equal tiers are grouped:
+Simple ranked statistics can use a catalog ID directly:
 
 ```yaml
+attack_potency: large-building
 combat_speed: hypersonic
-reaction_speed: hypersonic
-travel_speed:
-  value: subsonic
-  label: "running speed"
 ```
 
-This displays as `Hypersonic combat speed and reactions, Subsonic running speed`.
-
-Use `note` for profile-specific details:
+Use the expanded form for a modifier or explanatory note:
 
 ```yaml
-reaction_speed:
-  value: relativistic
-  note: "with precognition"
+attack_potency:
+  value: large-building
+  modifier: higher
+  note: "with charged energy output"
 ```
 
-## Checks
+Reusable powers, variants, resistances, attacks, equipment, tiers, and derived
+rules live in `content/catalogs/`. Prefer a stable catalog reference over
+duplicating shared behavior in an individual character.
 
-Run these before pushing changes:
+## Content and image pipeline
+
+Validate all YAML, referenced local images, and confirm that the checked-in
+generated JSON is current without rewriting it:
 
 ```bash
-ruby scripts/validate_characters.rb
-ruby scripts/test_character_validator.rb
-ruby scripts/test_battle_fixtures.rb
-node --check assets/js/characters/data.js
-node --check assets/js/characters/engine.js
-node --check assets/js/characters/floating.js
-node --check assets/js/characters/search.js
-node --check assets/js/characters/ui.js
-node --check assets/js/theme.js
-JEKYLL_ENV=production bundle exec jekyll build
+pnpm content:check
 ```
 
-The same checks run in GitHub Actions on every push and pull request.
+Compile the validated YAML to `src/generated/nexy-data.json`:
 
-## Publishing
+```bash
+pnpm content:build
+```
 
-The configured production URL is `https://syntax555.github.io/Nexy`. In the repository's GitHub Pages settings, deploy from the `main` branch with Jekyll enabled. The CI workflow validates every build but does not publish it; GitHub Pages performs the deployment from the configured branch.
+Do not edit the generated JSON by hand. Change the YAML source and rebuild it.
+
+Generate 160 px roster thumbnails, 640 px profile images, and the optimized
+1200 x 630 social card:
+
+```bash
+pnpm images:build
+```
+
+Generated image variants are written below `public/images/generated/`. The
+social-card source is `content/images/og-source.png`; its generated public file
+is `public/og.png`.
+
+## Validation and tests
+
+The main commands are:
+
+```bash
+pnpm typecheck        # Strict TypeScript checks
+pnpm test             # Run the test suite once
+pnpm test:watch       # Run affected tests while developing
+pnpm test:coverage    # Run tests with coverage enforcement
+pnpm build            # Compile content/images and create dist/
+pnpm check            # Validate content, typecheck, test, and production-build
+```
+
+`pnpm check` already includes the production build, so it is the single
+pre-push command for a complete verification.
+
+### Legacy parity fixture
+
+`tests/fixtures/legacy-parity.json` is an immutable snapshot captured from the
+old Jekyll/JavaScript engine at commit
+`66e22416331bbeced0554e85112f6992eeff41ab`. It contains digests for all 21
+forms and all 441 ordered matchups. The tests compare the replacement engine
+against that independent baseline; do not regenerate the fixture with the
+current TypeScript engine when changing rules. If a future ruleset intentionally
+changes outcomes, preserve this fixture and add a separately versioned one with
+its own source and generation notes.
+
+## GitHub Pages deployment
+
+The workflow in `.github/workflows/ci.yml` runs `pnpm check` for pull requests,
+pushes to `main`, and manual runs. A successful `main` run uploads `dist/` and
+deploys it with the official GitHub Pages actions. Pull requests validate the
+same code without deploying.
+
+In the repository settings, configure **Pages > Build and deployment > Source**
+to **GitHub Actions**. No Jekyll theme, Pages gem, or branch-generated `_site/`
+directory is used.
+
+If the repository or account name changes, update `VITE_BASE_PATH` in the
+workflow, the default `base` in `vite.config.ts`, the canonical/social URLs in
+`index.html`, the return link in `public/404.html`, and the URLs in
+`public/robots.txt` and `public/sitemap.xml`.

@@ -1,0 +1,6996 @@
+{
+  "characters": [
+    {
+      "name": "Captain America",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": 19,
+        "unknown": false
+      },
+      "classification_ids": [
+        "human",
+        "mutate",
+        "superhero",
+        "avengers-academy",
+        "captains-network",
+        "vigilante"
+      ],
+      "keys": [
+        {
+          "key": "original",
+          "name": "Base",
+          "names": [
+            "Aaron Fischer"
+          ],
+          "images": [
+            {
+              "name": "Original",
+              "image": "images/characters/aaron-fischer-marvel-mainstream/original.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "shields"
+              ]
+            },
+            {
+              "id": "stealth-mastery"
+            },
+            {
+              "id": "social-influencing"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "biological-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "street",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "street-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "street",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "makeshift-shield"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        },
+        {
+          "key": "post-alchemax-enhancement",
+          "name": "Post-Alchemax Enhancement",
+          "names": [
+            "Aaron Fischer"
+          ],
+          "images": [
+            {
+              "name": "Post-Alchemax Enhancement",
+              "image": "images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "shields"
+              ]
+            },
+            {
+              "id": "stealth-mastery"
+            },
+            {
+              "id": "social-influencing"
+            },
+            {
+              "id": "attack-reflection"
+            },
+            {
+              "id": "statistics-amplification"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "biological-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "street",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "street-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "street",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "lunellum-shield"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "aaron-fischer-marvel-mainstream"
+    },
+    {
+      "name": "Agent Venom",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true,
+        "display": "Likely mid-20's"
+      },
+      "classification_ids": [
+        "human",
+        "symbiote"
+      ],
+      "keys": [
+        {
+          "key": "agent-venom",
+          "names": [
+            "Eugene \"Flash\" Thompson"
+          ],
+          "images": [
+            {
+              "name": "Agent Venom",
+              "image": "images/characters/agent-venom-marvel-mainstream/agent-venom.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "firearms"
+              ]
+            },
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "multiple-selves"
+            },
+            {
+              "id": "elasticity"
+            },
+            {
+              "id": "body-control"
+            },
+            {
+              "id": "weapon-creation"
+            },
+            {
+              "id": "camouflage"
+            },
+            {
+              "id": "transformation"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "high-mid-regeneration"
+              ]
+            },
+            {
+              "id": "surface-scaling"
+            },
+            {
+              "id": "healing"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "precognition-resistance"
+            },
+            {
+              "id": "soul-manipulation-resistance"
+            },
+            {
+              "id": "poison-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "large-building",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-m",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "large-building-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "large-building",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "m1911"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "agent-venom-marvel-mainstream"
+    },
+    {
+      "name": "Aurora",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true,
+        "display": "Late 20s to early 40s"
+      },
+      "classification_ids": [
+        "mutant"
+      ],
+      "keys": [
+        {
+          "key": "aurora",
+          "names": [
+            "Jean-Marie Beaubier"
+          ],
+          "images": [
+            {
+              "name": "Aurora",
+              "image": "images/characters/aurora-marvel-mainstream/aurora.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "low-regeneration"
+              ]
+            },
+            {
+              "id": "flight"
+            },
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "energy-manipulation",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "kilometers",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "invisibility"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "ice-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "small-building-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "aurora-marvel-mainstream"
+    },
+    {
+      "name": "Black Canary",
+      "verse_id": "dc-post-crisis",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "justice-league",
+        "vigilante"
+      ],
+      "keys": [
+        {
+          "key": "post-crisis",
+          "names": [
+            "Dinah Laurel Drake-Lance"
+          ],
+          "images": [
+            {
+              "name": "Post-Crisis",
+              "image": "images/characters/black-canary-dc-post-crisis/black-canary.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "melee-weapons"
+              ]
+            },
+            {
+              "id": "acrobatics"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "mind-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "small-building",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic-plus",
+            "modifier": "possibly"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "small-building-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "small-building",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": [
+            "canary-cry"
+          ]
+        }
+      ],
+      "entry_id": "black-canary-dc-post-crisis"
+    },
+    {
+      "name": "Dagger",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true,
+        "display": "Mid 20s"
+      },
+      "classification_ids": [
+        "human",
+        "mutate"
+      ],
+      "keys": [
+        {
+          "key": "dagger",
+          "names": [
+            "Tandy Bowen"
+          ],
+          "images": [
+            {
+              "name": "Dagger",
+              "image": "images/characters/dagger-marvel-mainstream/dagger.png"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "acrobatics",
+              "acrobatics_degree_id": "expert"
+            },
+            {
+              "id": "martial-arts-mastery",
+              "martial_arts_degree_id": "expert"
+            },
+            {
+              "id": "berserk-mode",
+              "effects": [
+                {
+                  "stat_modifier_floor_effects": [
+                    {
+                      "stat": "attack_potency",
+                      "modifier": "higher"
+                    },
+                    {
+                      "stat": "striking_strength",
+                      "modifier": "higher"
+                    },
+                    {
+                      "stat": "durability",
+                      "modifier": "higher"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "power-nullification",
+              "effects": [
+                {
+                  "power_nullification": {
+                    "target_power_ids": [
+                      "poison-manipulation",
+                      "darkness-manipulation",
+                      "radiation-manipulation",
+                      "curse-manipulation"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "enhanced-senses"
+            },
+            {
+              "id": "extrasensory-perception"
+            },
+            {
+              "id": "healing"
+            },
+            {
+              "id": "danmaku"
+            },
+            {
+              "id": "weapon-creation"
+            },
+            {
+              "id": "homing-attack"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "mind-manipulation-resistance"
+            },
+            {
+              "id": "curse-manipulation-resistance"
+            },
+            {
+              "id": "madness-manipulation-resistance"
+            },
+            {
+              "id": "fear-manipulation-resistance"
+            },
+            {
+              "id": "corruption-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "athlete",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "athlete-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "athlete",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "attack_ids": [
+            "lightforce-energy"
+          ]
+        }
+      ],
+      "entry_id": "dagger-marvel-mainstream"
+    },
+    {
+      "name": "Elektra",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true,
+        "display": "In her late 20s or early 30s"
+      },
+      "classification_ids": [
+        "mercenary",
+        "ninja"
+      ],
+      "keys": [
+        {
+          "key": "elektra",
+          "names": [
+            "Elektra Natchios"
+          ],
+          "images": [
+            {
+              "name": "Elektra",
+              "image": "images/characters/elektra-marvel-mainstream/elektra.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery",
+              "martial_arts_degree_id": "master"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "all-weapons"
+              ]
+            },
+            {
+              "id": "acrobatics"
+            },
+            {
+              "id": "vehicular-mastery",
+              "type_ids": [
+                "land-vehicles"
+              ]
+            },
+            {
+              "id": "body-control"
+            },
+            {
+              "id": "pressure-points"
+            },
+            {
+              "id": "paralysis-inducement"
+            },
+            {
+              "id": "camouflage"
+            },
+            {
+              "id": "telepathy"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "mind-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-k",
+            "modifier": "at-most"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "standard_equipment_refs": [
+            {
+              "id": "sai",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "attack_potency": {
+                      "value": "street",
+                      "modifier": "higher"
+                    },
+                    "combat_speed": {
+                      "value": "average-human",
+                      "modifier": "normal"
+                    },
+                    "durability": {
+                      "value": "street",
+                      "modifier": "normal"
+                    },
+                    "range": {
+                      "value": "tens-of-meters",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "at-least"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "elektra-marvel-mainstream"
+    },
+    {
+      "name": "Escapade",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "mutate",
+        "avengers-academy",
+        "new-mutants",
+        "superhero"
+      ],
+      "keys": [
+        {
+          "key": "escapade",
+          "names": [
+            "Shela Sexton"
+          ],
+          "images": [
+            {
+              "name": "Escapade",
+              "image": "images/characters/escapade-marvel-mainstream/escapade.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "acrobatics"
+            },
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "damage-transferal",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "extended-melee-range",
+                      "modifier": "normal"
+                    }
+                  },
+                  "opponent_stat_swap": {
+                    "stat_names": [
+                      "attack_potency",
+                      "striking_strength",
+                      "durability"
+                    ],
+                    "max_target_range": {
+                      "value": "extended-melee-range",
+                      "modifier": "normal"
+                    },
+                    "max_target_stats": {
+                      "attack_potency": {
+                        "value": "high-outerverse",
+                        "modifier": "normal"
+                      },
+                      "striking_strength": {
+                        "value": "high-outerverse-level",
+                        "modifier": "normal"
+                      },
+                      "durability": {
+                        "value": "high-outerverse",
+                        "modifier": "normal"
+                      }
+                    },
+                    "on_success_stat_modifier_floor_effects": [
+                      {
+                        "stat": "combat_speed",
+                        "modifier": "higher"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "afterimage-creation"
+            },
+            {
+              "id": "stealth-mastery"
+            },
+            {
+              "id": "teleportation"
+            },
+            {
+              "id": "healing",
+              "modifier": "limited"
+            },
+            {
+              "id": "illusion-creation"
+            },
+            {
+              "id": "shapeshifting",
+              "placeholder": true
+            },
+            {
+              "id": "telepathy",
+              "modifier": "limited"
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "athletic",
+            "modifier": "at-least"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "gravity-gauntlets"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "at-least"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "escapade-marvel-mainstream"
+    },
+    {
+      "name": "Falcon",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": 17,
+        "unknown": false
+      },
+      "classification_ids": [
+        "half-human",
+        "half-falcon",
+        "superhero"
+      ],
+      "keys": [
+        {
+          "key": "falcon",
+          "names": [
+            "Joaquín Torres"
+          ],
+          "images": [
+            {
+              "name": "Falcon",
+              "image": "images/characters/falcon-marvel-mainstream/falcon.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "flight"
+            },
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "low-mid-regeneration"
+              ]
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-5",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "falcon-marvel-mainstream"
+    },
+    {
+      "name": "Falcon",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human"
+      ],
+      "keys": [
+        {
+          "key": "falcon",
+          "names": [
+            "Sam Wilson"
+          ],
+          "images": [
+            {
+              "name": "Falcon",
+              "image": "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery",
+              "martial_arts_degree_id": "expert"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "all-weapons"
+              ]
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "pain-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-k",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "falcon-sam-wilson-wings",
+            "falcon-sam-wilson-captain-america-shield"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "falcon-sam-wilson-marvel-mainstream"
+    },
+    {
+      "name": "Kimura",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "mutate",
+        "facility",
+        "mercenary"
+      ],
+      "keys": [
+        {
+          "key": "kimura",
+          "names": [
+            "Unknown"
+          ],
+          "images": [
+            {
+              "name": "Kimura",
+              "image": "images/characters/kimura-marvel-mainstream/kimura.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "firearms",
+                "crossbows"
+              ]
+            },
+            {
+              "id": "attack-reflection"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "pain-manipulation-resistance"
+            },
+            {
+              "id": "mind-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "small-building-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "high-universe",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "kimura-marvel-mainstream"
+    },
+    {
+      "name": "Kingpin",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": false,
+        "display": "Middle aged"
+      },
+      "classification_ids": [
+        "human"
+      ],
+      "keys": [
+        {
+          "key": "kingpin",
+          "names": [
+            "Wilson Grant Fisk"
+          ],
+          "images": [
+            {
+              "name": "Kingpin",
+              "image": "images/characters/kingpin-marvel-mainstream/kingpin.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery",
+              "martial_arts_degree_id": "expert"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "all-weapons"
+              ]
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "blunt-weapons-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "travel_speed": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-k",
+            "modifier": "at-least"
+          },
+          "striking_strength": {
+            "value": "small-building-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "obliterator-cane"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "kingpin-marvel-mainstream"
+    },
+    {
+      "name": "Lila Cheney",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "mutate"
+      ],
+      "keys": [
+        {
+          "key": "lila-cheney",
+          "names": [
+            "Lila Cheney"
+          ],
+          "images": [
+            {
+              "name": "Lila Cheney",
+              "image": "images/characters/lila-cheney-marvel-mainstream/lila-cheney.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "acrobatics"
+            },
+            {
+              "id": "teleportation",
+              "placeholder": false,
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "hundreds-of-meters",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "dimensional-travel",
+              "placeholder": false,
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "interdimensional",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "space-survival"
+            },
+            {
+              "id": "bfr"
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "massively-ftl-plus",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "massively-ftl-plus",
+            "modifier": "normal"
+          },
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "higher"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "lila-cheney-marvel-mainstream"
+    },
+    {
+      "name": "Lucia von Bardas",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "cyborg"
+      ],
+      "keys": [
+        {
+          "key": "lucia-von-bardas",
+          "names": [
+            "Lucia von Bardas"
+          ],
+          "images": [
+            {
+              "name": "Lucia von Bardas",
+              "image": "images/characters/lucia-von-bardas-marvel-mainstream/lucia-von-bardas.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "incorporeality"
+            },
+            {
+              "id": "energy-manipulation",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "attack_potency": {
+                      "value": "large-building",
+                      "modifier": "higher"
+                    },
+                    "range": {
+                      "value": "several-meters",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "flight"
+            },
+            {
+              "id": "absorption",
+              "type_ids": [
+                "energy-absorption"
+              ]
+            },
+            {
+              "id": "forcefield-creation",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "durability": {
+                      "value": "planet",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "cyborgization"
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "large-building",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "travel_speed": null,
+          "flight_speed": {
+            "value": "transonic",
+            "modifier": "normal"
+          },
+          "lifting_strength": {
+            "value": "superhuman",
+            "modifier": "likely"
+          },
+          "striking_strength": {
+            "value": "large-building-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "large-building",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "lucia-von-bardas-marvel-mainstream"
+    },
+    {
+      "name": "Luke Cage",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true,
+        "display": "In his 30s or 40s"
+      },
+      "classification_ids": [
+        "human",
+        "mutate",
+        "vigilante"
+      ],
+      "keys": [
+        {
+          "key": "luke-cage",
+          "names": [
+            "Carl Lucas"
+          ],
+          "images": [
+            {
+              "name": "Luke Cage",
+              "image": "images/characters/luke-cage-marvel-mainstream/luke-cage.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery",
+              "martial_arts_degree_id": "expert"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "mid-low-regeneration"
+              ]
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "biological-manipulation-resistance"
+            },
+            {
+              "id": "ice-manipulation-resistance"
+            },
+            {
+              "id": "electricity-manipulation-resistance"
+            },
+            {
+              "id": "mind-manipulation-resistance"
+            },
+            {
+              "id": "fire-manipulation-resistance"
+            },
+            {
+              "id": "acid-manipulation-resistance"
+            },
+            {
+              "id": "poison-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "large-building",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": {
+            "value": "subsonic",
+            "modifier": "likely"
+          },
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-m",
+            "modifier": "at-least"
+          },
+          "striking_strength": {
+            "value": "large-building-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "small-town",
+            "modifier": "at-most"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "tens-of-meters",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "luke-cage-marvel-mainstream"
+    },
+    {
+      "name": "Ms. Marvel",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": null,
+        "unknown": false,
+        "display": "Late Teens"
+      },
+      "classification_ids": [
+        "half-human",
+        "half-inhuman"
+      ],
+      "keys": [
+        {
+          "key": "ms-marvel",
+          "names": [
+            "Kamala Khan"
+          ],
+          "images": [
+            {
+              "name": "Destined One Suit",
+              "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "time-travel",
+              "modifier": "limited",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "low-multiversal",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "intangibility",
+              "type_ids": [
+                "elemental-intangibility-type-3-liquids"
+              ]
+            },
+            {
+              "id": "size-manipulation",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "tens-of-meters",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "elasticity"
+            },
+            {
+              "id": "shapeshifting"
+            },
+            {
+              "id": "body-control"
+            },
+            {
+              "id": "water-walking"
+            },
+            {
+              "id": "weapon-creation"
+            },
+            {
+              "id": "enhanced-senses"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "high-low-regeneration"
+              ]
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "mind-manipulation-resistance"
+            },
+            {
+              "id": "poison-manipulation-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "planet",
+            "modifier": "possibly"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-m",
+            "modifier": "at-least"
+          },
+          "striking_strength": {
+            "value": "large-building-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "planet",
+            "modifier": "possibly"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "destined-one-suit"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "ms-marvel-marvel-mainstream"
+    },
+    {
+      "name": "Mystique",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "female",
+      "age": {
+        "value": 140,
+        "unknown": false,
+        "display": "Over 140 years old"
+      },
+      "classification_ids": [
+        "human",
+        "mutate"
+      ],
+      "keys": [
+        {
+          "key": "mystique",
+          "names": [
+            "Raven Darkhölme"
+          ],
+          "images": [
+            {
+              "name": "Mystique",
+              "image": "images/characters/mystique-marvel-mainstream/mystique.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "all-weapons"
+              ]
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "mid-low-regeneration"
+              ]
+            },
+            {
+              "id": "shapeshifting",
+              "effects": [
+                {
+                  "stat_modifier_floor_effects": [
+                    {
+                      "stat": "range",
+                      "modifier": "higher"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "enhanced-senses"
+            },
+            {
+              "id": "longevity"
+            },
+            {
+              "id": "adaptive-appearance"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "poison-manipulation-resistance"
+            },
+            {
+              "id": "disease-manipulation-resistance"
+            },
+            {
+              "id": "telepathy-resistance"
+            }
+          ],
+          "attack_potency": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "peak-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "wall-level",
+            "modifier": "plus"
+          },
+          "durability": {
+            "value": "wall",
+            "modifier": "plus"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "likely"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "mystique-marvel-mainstream"
+    },
+    {
+      "name": "Purple Man",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "mutate"
+      ],
+      "keys": [
+        {
+          "key": "purple-man",
+          "names": [
+            "Zebediah Killgrave"
+          ],
+          "images": [
+            {
+              "name": "Purple Man",
+              "image": "images/characters/purple-man-marvel-mainstream/purple-man.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "mind-manipulation",
+              "effects": [
+                {
+                  "stat_effects": {
+                    "range": {
+                      "value": "kilometers",
+                      "modifier": "normal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "power-nullification",
+              "effects": [
+                {
+                  "power_nullification": {
+                    "target_power_ids": [],
+                    "max_target_modifier": "minor"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "stealth-mastery"
+            },
+            {
+              "id": "illusion-creation"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "low-mid-regeneration"
+              ]
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "human",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "average-human",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "average-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "human-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "large-building",
+            "modifier": "possibly"
+          },
+          "stamina": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "above-average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "purple-man-marvel-mainstream"
+    },
+    {
+      "name": "Quicksilver",
+      "verse_id": "marvel-ultimate",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "superhero"
+      ],
+      "keys": [
+        {
+          "key": "quicksilver",
+          "names": [
+            "Pietro Lensherr"
+          ],
+          "images": [
+            {
+              "name": "Quicksilver",
+              "image": "images/characters/quicksilver-marvel-ultimate/quicksilver.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "acrobatics"
+            },
+            {
+              "id": "superhuman-speed"
+            },
+            {
+              "id": "regeneration",
+              "type_ids": [
+                "low-regeneration"
+              ]
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "street",
+            "modifier": "at-least"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "massively-hypersonic-plus",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "athletic-human",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "street-level",
+            "modifier": "at-least"
+          },
+          "durability": {
+            "value": "street",
+            "modifier": "at-least"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "average",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "quicksilver-marvel-ultimate"
+    },
+    {
+      "name": "U.S. Agent",
+      "verse_id": "marvel-mainstream",
+      "gender_id": "male",
+      "age": {
+        "value": null,
+        "unknown": true
+      },
+      "classification_ids": [
+        "human",
+        "mutate"
+      ],
+      "keys": [
+        {
+          "key": "modern",
+          "names": [
+            "John Walker"
+          ],
+          "images": [
+            {
+              "name": "Modern",
+              "image": "images/characters/us-agent-marvel-mainstream/modern.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "all-weapons"
+              ]
+            },
+            {
+              "id": "acrobatics"
+            },
+            {
+              "id": "vehicular-mastery",
+              "type_ids": [
+                "air-vehicles"
+              ]
+            }
+          ],
+          "resistance_refs": [],
+          "attack_potency": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "hypersonic",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "class-25",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "small-building-level",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "small-building",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "glock-pistol",
+            "vibranium-shield"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "us-agent-marvel-mainstream"
+    },
+    {
+      "name": "Wonder Girl",
+      "verse_id": "dc-post-flashpoint",
+      "gender_id": "female",
+      "age": {
+        "value": 21,
+        "unknown": false
+      },
+      "classification_ids": [
+        "amazon"
+      ],
+      "keys": [
+        {
+          "key": "wonder-girl",
+          "names": [
+            "Yara Flor"
+          ],
+          "images": [
+            {
+              "name": "Wonder Girl",
+              "image": "images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp"
+            }
+          ],
+          "power_refs": [
+            {
+              "id": "martial-arts-mastery"
+            },
+            {
+              "id": "weapon-mastery",
+              "type_ids": [
+                "melee-weapons"
+              ]
+            },
+            {
+              "id": "flight"
+            },
+            {
+              "id": "non-physical-interaction",
+              "effects": [
+                {
+                  "non_physical_interaction": {
+                    "target_power_refs": [
+                      {
+                        "id": "incorporeality"
+                      },
+                      {
+                        "id": "darkness-manipulation"
+                      },
+                      {
+                        "id": "abstract-existence",
+                        "type_ids": [
+                          "abstract-existence-type-1"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "immortality",
+              "type_ids": [
+                "immortality-type-3-regeneration"
+              ]
+            },
+            {
+              "id": "regeneration-negation"
+            },
+            {
+              "id": "non-standard-breathing",
+              "modifier": "limited"
+            }
+          ],
+          "resistance_refs": [
+            {
+              "id": "temperature-manipulation-resistance",
+              "level": "immunity"
+            }
+          ],
+          "attack_potency": {
+            "value": "multiverse-plus",
+            "modifier": "normal"
+          },
+          "attack_speed": null,
+          "combat_speed": {
+            "value": "massively-ftl-plus",
+            "modifier": "normal"
+          },
+          "reaction_speed": null,
+          "travel_speed": null,
+          "flight_speed": null,
+          "lifting_strength": {
+            "value": "stellar",
+            "modifier": "normal"
+          },
+          "striking_strength": {
+            "value": "multiverse-level-plus",
+            "modifier": "normal"
+          },
+          "durability": {
+            "value": "multiverse-plus",
+            "modifier": "normal"
+          },
+          "stamina": {
+            "value": "superhuman",
+            "modifier": "normal"
+          },
+          "range": {
+            "value": "standard-melee-range",
+            "modifier": "normal"
+          },
+          "standard_equipment_ids": [
+            "golden-boleadoras"
+          ],
+          "optional_equipment_ids": [],
+          "intelligence": {
+            "value": "gifted",
+            "modifier": "normal"
+          },
+          "attack_ids": []
+        }
+      ],
+      "entry_id": "wonder-girl-dc-post-flashpoint"
+    }
+  ],
+  "options": {
+    "ability_modifiers": [
+      {
+        "id": "minor",
+        "name": "Minor",
+        "display_prefix": "Minor",
+        "display_suffix": "",
+        "coverage_rank": 1,
+        "availability": "always"
+      },
+      {
+        "id": "limited",
+        "name": "Limited",
+        "display_prefix": "Limited",
+        "display_suffix": "",
+        "coverage_rank": 2,
+        "availability": "always"
+      },
+      {
+        "id": "conditional",
+        "name": "Conditional",
+        "display_prefix": "Conditional",
+        "display_suffix": "",
+        "coverage_rank": 3,
+        "availability": "condition_required"
+      },
+      {
+        "id": "unconventional",
+        "name": "Unconventional",
+        "display_prefix": "Unconventional",
+        "display_suffix": "",
+        "coverage_rank": 4,
+        "availability": "irregular"
+      },
+      {
+        "id": "normal",
+        "name": "Normal",
+        "display_prefix": "",
+        "display_suffix": "",
+        "coverage_rank": 5,
+        "availability": "always"
+      },
+      {
+        "id": "enhanced",
+        "name": "Enhanced",
+        "display_prefix": "Enhanced",
+        "display_suffix": "",
+        "coverage_rank": 6,
+        "availability": "always"
+      },
+      {
+        "id": "greater",
+        "name": "Greater",
+        "display_prefix": "Greater",
+        "display_suffix": "",
+        "coverage_rank": 7,
+        "availability": "always"
+      },
+      {
+        "id": "immense",
+        "name": "Immense",
+        "display_prefix": "Immense",
+        "display_suffix": "",
+        "coverage_rank": 8,
+        "availability": "always"
+      }
+    ],
+    "acrobatics_degrees": [
+      {
+        "id": "unspecified",
+        "name": "Acrobatics",
+        "rank": 0,
+        "display_as_power_name": true
+      },
+      {
+        "id": "expert",
+        "name": "Expert Acrobat",
+        "rank": 1,
+        "display_as_power_name": false
+      }
+    ],
+    "attack_durability_tiers": [
+      {
+        "id": "low-hypoverse",
+        "name": "Low Hypoverse",
+        "tier": "11-C",
+        "rank": 1
+      },
+      {
+        "id": "hypoverse",
+        "name": "Hypoverse",
+        "tier": "11-B",
+        "rank": 2
+      },
+      {
+        "id": "high-hypoverse",
+        "name": "High Hypoverse",
+        "tier": "11-A",
+        "rank": 3
+      },
+      {
+        "id": "below-average-human",
+        "name": "Below Average Human",
+        "tier": "10-C",
+        "rank": 4
+      },
+      {
+        "id": "human",
+        "name": "Human",
+        "tier": "10-B",
+        "rank": 5
+      },
+      {
+        "id": "athlete",
+        "name": "Athlete",
+        "tier": "10-A",
+        "rank": 6
+      },
+      {
+        "id": "street",
+        "name": "Street",
+        "tier": "9-C",
+        "rank": 7
+      },
+      {
+        "id": "wall",
+        "name": "Wall",
+        "tier": "9-B",
+        "rank": 8
+      },
+      {
+        "id": "small-building",
+        "name": "Small Building",
+        "tier": "9-A",
+        "rank": 9
+      },
+      {
+        "id": "building",
+        "name": "Building",
+        "tier": "8-C",
+        "rank": 10
+      },
+      {
+        "id": "large-building",
+        "name": "Large Building",
+        "tier": "High 8-C",
+        "rank": 11
+      },
+      {
+        "id": "city-block",
+        "name": "City Block",
+        "tier": "8-B",
+        "rank": 12
+      },
+      {
+        "id": "multi-city-block",
+        "name": "Multi-City Block",
+        "tier": "8-A",
+        "rank": 13
+      },
+      {
+        "id": "small-town",
+        "name": "Small Town",
+        "tier": "Low 7-C",
+        "rank": 14
+      },
+      {
+        "id": "town",
+        "name": "Town",
+        "tier": "7-C",
+        "rank": 15
+      },
+      {
+        "id": "large-town",
+        "name": "Large Town",
+        "tier": "High 7-C",
+        "rank": 16
+      },
+      {
+        "id": "small-city",
+        "name": "Small City",
+        "tier": "Low 7-B",
+        "rank": 17
+      },
+      {
+        "id": "city",
+        "name": "City",
+        "tier": "7-B",
+        "rank": 18
+      },
+      {
+        "id": "mountain",
+        "name": "Mountain",
+        "tier": "7-A",
+        "rank": 19
+      },
+      {
+        "id": "large-mountain",
+        "name": "Large Mountain",
+        "tier": "High 7-A",
+        "rank": 20
+      },
+      {
+        "id": "island",
+        "name": "Island",
+        "tier": "6-C",
+        "rank": 21
+      },
+      {
+        "id": "large-island",
+        "name": "Large Island",
+        "tier": "High 6-C",
+        "rank": 22
+      },
+      {
+        "id": "small-country",
+        "name": "Small Country",
+        "tier": "Low 6-B",
+        "rank": 23
+      },
+      {
+        "id": "country",
+        "name": "Country",
+        "tier": "6-B",
+        "rank": 24
+      },
+      {
+        "id": "large-country",
+        "name": "Large Country",
+        "tier": "High 6-B",
+        "rank": 25
+      },
+      {
+        "id": "continent",
+        "name": "Continent",
+        "tier": "6-A",
+        "rank": 26
+      },
+      {
+        "id": "multi-continent",
+        "name": "Multi-Continent",
+        "tier": "High 6-A",
+        "rank": 27
+      },
+      {
+        "id": "moon",
+        "name": "Moon",
+        "tier": "5-C",
+        "rank": 28
+      },
+      {
+        "id": "small-planet",
+        "name": "Small Planet",
+        "tier": "Low 5-B",
+        "rank": 29
+      },
+      {
+        "id": "planet",
+        "name": "Planet",
+        "tier": "5-B",
+        "rank": 30
+      },
+      {
+        "id": "large-planet",
+        "name": "Large Planet",
+        "tier": "5-A",
+        "rank": 31
+      },
+      {
+        "id": "brown-dwarf",
+        "name": "Brown Dwarf",
+        "tier": "High 5-A",
+        "rank": 32
+      },
+      {
+        "id": "small-star",
+        "name": "Small Star",
+        "tier": "Low 4-C",
+        "rank": 33
+      },
+      {
+        "id": "star",
+        "name": "Star",
+        "tier": "4-C",
+        "rank": 34
+      },
+      {
+        "id": "large-star",
+        "name": "Large Star",
+        "tier": "High 4-C",
+        "rank": 35
+      },
+      {
+        "id": "solar-system",
+        "name": "Solar System",
+        "tier": "4-B",
+        "rank": 36
+      },
+      {
+        "id": "multi-solar-system",
+        "name": "Multi-Solar System",
+        "tier": "4-A",
+        "rank": 37
+      },
+      {
+        "id": "galaxy",
+        "name": "Galaxy",
+        "tier": "3-C",
+        "rank": 38
+      },
+      {
+        "id": "multi-galaxy",
+        "name": "Multi-Galaxy",
+        "tier": "3-B",
+        "rank": 39
+      },
+      {
+        "id": "universe",
+        "name": "Universe",
+        "tier": "3-A",
+        "rank": 40
+      },
+      {
+        "id": "high-universe",
+        "name": "High Universe",
+        "tier": "High 3-A",
+        "rank": 41
+      },
+      {
+        "id": "universe-plus",
+        "name": "Universe+",
+        "tier": "Low 2-C",
+        "rank": 42
+      },
+      {
+        "id": "low-multiverse",
+        "name": "Low Multiverse",
+        "tier": "2-C",
+        "rank": 43
+      },
+      {
+        "id": "multiverse",
+        "name": "Multiverse",
+        "tier": "2-B",
+        "rank": 44
+      },
+      {
+        "id": "multiverse-plus",
+        "name": "Multiverse+",
+        "tier": "2-A",
+        "rank": 45
+      },
+      {
+        "id": "low-complex-multiverse",
+        "name": "Low Complex Multiverse",
+        "tier": "Low 1-C",
+        "rank": 46
+      },
+      {
+        "id": "complex-multiverse",
+        "name": "Complex Multiverse",
+        "tier": "1-C",
+        "rank": 47
+      },
+      {
+        "id": "high-complex-multiverse",
+        "name": "High Complex Multiverse",
+        "tier": "High 1-C",
+        "rank": 48
+      },
+      {
+        "id": "hyperverse",
+        "name": "Hyperverse",
+        "tier": "1-B",
+        "rank": 49
+      },
+      {
+        "id": "high-hyperverse",
+        "name": "High Hyperverse",
+        "tier": "High 1-B",
+        "rank": 50
+      },
+      {
+        "id": "low-outerverse",
+        "name": "Low Outerverse",
+        "tier": "Low 1-A",
+        "rank": 51
+      },
+      {
+        "id": "outerverse",
+        "name": "Outerverse",
+        "tier": "1-A",
+        "rank": 52
+      },
+      {
+        "id": "high-outerverse",
+        "name": "High Outerverse",
+        "tier": "High 1-A",
+        "rank": 53
+      },
+      {
+        "id": "boundless",
+        "name": "Boundless",
+        "tier": "0",
+        "rank": 54
+      }
+    ],
+    "attacks": [
+      {
+        "id": "lightforce-energy",
+        "name": "Lightforce Energy",
+        "weapon_type_ids": [],
+        "required_power_refs": [],
+        "effects": [
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "light-manipulation",
+                  "source_variant": "dagger-lightforce"
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "canary-cry",
+        "name": "Canary Cry",
+        "weapon_type_ids": [],
+        "required_power_refs": [],
+        "effects": [
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "sound-manipulation",
+                  "source_variant": "black-canary-canary-cry"
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      }
+    ],
+    "classifications": [
+      {
+        "id": "human",
+        "name": "Human"
+      },
+      {
+        "id": "cyborg",
+        "name": "Cyborg"
+      },
+      {
+        "id": "symbiote",
+        "name": "Symbiote"
+      },
+      {
+        "id": "mutate",
+        "name": "Mutate"
+      },
+      {
+        "id": "mutant",
+        "name": "Mutant"
+      },
+      {
+        "id": "human-with-symbiote",
+        "name": "Human with a Symbiote",
+        "parent_ids": [
+          "human"
+        ]
+      },
+      {
+        "id": "facility",
+        "name": "Facility"
+      },
+      {
+        "id": "half-human",
+        "name": "Half Human",
+        "filterable": false,
+        "parent_ids": [
+          "human"
+        ]
+      },
+      {
+        "id": "falcon",
+        "name": "Falcon"
+      },
+      {
+        "id": "half-falcon",
+        "name": "Half Falcon",
+        "filterable": false,
+        "parent_ids": [
+          "falcon"
+        ]
+      },
+      {
+        "id": "inhuman",
+        "name": "Inhuman"
+      },
+      {
+        "id": "half-inhuman",
+        "name": "Half Inhuman",
+        "filterable": false,
+        "parent_ids": [
+          "inhuman"
+        ]
+      },
+      {
+        "id": "superhero",
+        "name": "Superhero"
+      },
+      {
+        "id": "avengers-academy",
+        "name": "Avengers Academy"
+      },
+      {
+        "id": "new-mutants",
+        "name": "New Mutants"
+      },
+      {
+        "id": "captains-network",
+        "name": "Captains Network"
+      },
+      {
+        "id": "mercenary",
+        "name": "Mercenary"
+      },
+      {
+        "id": "ninja",
+        "name": "Ninja"
+      },
+      {
+        "id": "justice-league",
+        "name": "Justice League"
+      },
+      {
+        "id": "vigilante",
+        "name": "Vigilante"
+      },
+      {
+        "id": "amazon",
+        "name": "Amazon"
+      }
+    ],
+    "derived_power_rules": [
+      {
+        "id": "superhuman-physical-characteristics",
+        "power_id": "superhuman-physical-characteristics",
+        "min_matches": 2,
+        "requirements": [
+          {
+            "stat": "combat_speed",
+            "value": "superhuman",
+            "comparison": "at-least"
+          },
+          {
+            "stat": "lifting_strength",
+            "value": "superhuman",
+            "comparison": "at-least"
+          },
+          {
+            "stat": "striking_strength",
+            "value": "street-level",
+            "modifier": "at-least",
+            "comparison": "at-least"
+          },
+          {
+            "stat": "durability",
+            "value": "street",
+            "modifier": "at-least",
+            "comparison": "at-least"
+          }
+        ]
+      },
+      {
+        "id": "genius-intelligence",
+        "power_id": "genius-intelligence",
+        "min_matches": 1,
+        "requirements": [
+          {
+            "stat": "intelligence",
+            "value": "genius",
+            "comparison": "at-least"
+          }
+        ]
+      }
+    ],
+    "equipment": [
+      {
+        "id": "glock-pistol",
+        "name": "Glock Pistol",
+        "weapon_type_ids": [
+          "gunpowder-handguns"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "gunpowder-handguns"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "street",
+                "modifier": "higher"
+              },
+              "combat_speed": {
+                "value": "transonic",
+                "modifier": "normal"
+              },
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "m1911",
+        "name": "M1911",
+        "weapon_type_ids": [
+          "gunpowder-handguns"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "gunpowder-handguns"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "street",
+                "modifier": "higher"
+              },
+              "combat_speed": {
+                "value": "subsonic-plus",
+                "modifier": "normal"
+              },
+              "durability": {
+                "value": "street",
+                "modifier": "normal"
+              },
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "sai",
+        "name": "Sai",
+        "weapon_type_ids": [
+          "sharp-weapons"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "sharp-weapons"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "street",
+                "modifier": "higher"
+              },
+              "combat_speed": {
+                "value": "average-human",
+                "modifier": "normal"
+              },
+              "durability": {
+                "value": "street",
+                "modifier": "normal"
+              },
+              "range": {
+                "value": "extended-melee-range",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "makeshift-shield",
+        "name": "Makeshift Shield",
+        "weapon_type_ids": [
+          "shields"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "shields"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "lunellum-shield",
+        "name": "Lunellum Shield",
+        "weapon_type_ids": [
+          "shields"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "shields"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "striking_strength": {
+                "value": "wall-level",
+                "modifier": "plus"
+              },
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          },
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "energy-manipulation",
+                  "effects": [
+                    {
+                      "stat_effects": {
+                        "attack_potency": {
+                          "value": "wall",
+                          "modifier": "plus"
+                        },
+                        "striking_strength": {
+                          "value": "wall-level",
+                          "modifier": "plus"
+                        }
+                      }
+                    },
+                    {
+                      "grants": {
+                        "power_refs": [
+                          {
+                            "id": "forcefield-creation",
+                            "effects": [
+                              {
+                                "stat_effects": {
+                                  "durability": {
+                                    "value": "wall",
+                                    "modifier": "plus"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "vibranium-shield",
+        "name": "Vibranium Shield",
+        "weapon_type_ids": [
+          "shields"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "shields"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "small-building",
+                "modifier": "higher"
+              },
+              "durability": {
+                "value": "galaxy",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "falcon-sam-wilson-wings",
+        "name": "Falcon's Wings",
+        "weapon_type_ids": [],
+        "required_power_refs": [],
+        "effects": [
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "flight"
+                },
+                {
+                  "id": "enhanced-senses"
+                }
+              ],
+              "resistance_refs": []
+            }
+          },
+          {
+            "stat_effects": {
+              "flight_speed": {
+                "value": "hypersonic",
+                "modifier": "normal"
+              },
+              "durability": {
+                "value": "city",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "falcon-sam-wilson-captain-america-shield",
+        "name": "Captain America's Shield",
+        "weapon_type_ids": [
+          "shields"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "shields"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "wall",
+                "modifier": "higher"
+              },
+              "striking_strength": {
+                "value": "wall-level",
+                "modifier": "higher"
+              },
+              "durability": {
+                "value": "high-hyperverse",
+                "modifier": "normal"
+              },
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "golden-boleadoras",
+        "name": "Golden Boleadoras",
+        "weapon_type_ids": [
+          "blunt-weapons"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "blunt-weapons"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "stat_effects": {
+              "range": {
+                "value": "tens-of-meters",
+                "modifier": "normal"
+              }
+            }
+          },
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "electricity-manipulation",
+                  "effects": [
+                    {
+                      "stat_effects": {
+                        "range": {
+                          "value": "kilometers",
+                          "modifier": "normal"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "destined-one-suit",
+        "name": "Destined One Suit",
+        "weapon_type_ids": [],
+        "required_power_refs": [],
+        "effects": [
+          {
+            "stat_modifier_floor_effects": [
+              {
+                "stat": "attack_potency",
+                "modifier": "higher"
+              },
+              {
+                "stat": "striking_strength",
+                "modifier": "higher"
+              },
+              {
+                "stat": "durability",
+                "modifier": "higher"
+              }
+            ]
+          },
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "absorption",
+                  "type_ids": [
+                    "light-absorption"
+                  ],
+                  "effects": [
+                    {
+                      "absorption": {
+                        "target_power_refs": [
+                          {
+                            "id": "light-manipulation"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "absorption",
+                  "type_ids": [
+                    "electricity-absorption"
+                  ],
+                  "effects": [
+                    {
+                      "absorption": {
+                        "target_power_refs": [
+                          {
+                            "id": "electricity-manipulation"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "resistance_refs": []
+            }
+          },
+          {
+            "image_update": {
+              "name": "Destined One Suit",
+              "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp",
+              "priority": 10
+            }
+          }
+        ]
+      },
+      {
+        "id": "gravity-gauntlets",
+        "name": "Gravity Gauntlets",
+        "weapon_type_ids": [],
+        "required_power_refs": [],
+        "effects": [
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "flight"
+                },
+                {
+                  "id": "gravity-manipulation",
+                  "effects": [
+                    {
+                      "stat_effects": {
+                        "range": {
+                          "value": "several-meters",
+                          "modifier": "at-least"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "obliterator-cane",
+        "name": "Obliterator Cane",
+        "weapon_type_ids": [
+          "blunt-weapons"
+        ],
+        "required_power_refs": [
+          {
+            "id": "weapon-mastery",
+            "type_ids": [
+              "blunt-weapons"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "grants": {
+              "power_refs": [
+                {
+                  "id": "energy-manipulation",
+                  "effects": [
+                    {
+                      "stat_effects": {
+                        "range": {
+                          "value": "hundreds-of-meters",
+                          "modifier": "normal"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "resistance_refs": []
+            }
+          }
+        ]
+      }
+    ],
+    "genders": [
+      {
+        "id": "male",
+        "name": "Male"
+      },
+      {
+        "id": "female",
+        "name": "Female"
+      },
+      {
+        "id": "nonbinary",
+        "name": "Non-binary"
+      },
+      {
+        "id": "unknown",
+        "name": "Unknown"
+      }
+    ],
+    "intelligence_tiers": [
+      {
+        "id": "mindless",
+        "name": "Mindless",
+        "rank": 1
+      },
+      {
+        "id": "instinctive",
+        "name": "Instinctive",
+        "rank": 2
+      },
+      {
+        "id": "animalistic",
+        "name": "Animalistic",
+        "rank": 3
+      },
+      {
+        "id": "high-animalistic",
+        "name": "High Animalistic",
+        "rank": 4
+      },
+      {
+        "id": "below-average",
+        "name": "Below Average",
+        "rank": 5
+      },
+      {
+        "id": "average",
+        "name": "Average",
+        "rank": 6
+      },
+      {
+        "id": "above-average",
+        "name": "Above Average",
+        "rank": 7
+      },
+      {
+        "id": "gifted",
+        "name": "Gifted",
+        "rank": 8
+      },
+      {
+        "id": "genius",
+        "name": "Genius",
+        "rank": 9
+      },
+      {
+        "id": "extraordinary-genius",
+        "name": "Extraordinary Genius",
+        "rank": 10
+      },
+      {
+        "id": "supergenius",
+        "name": "Supergenius",
+        "rank": 11
+      },
+      {
+        "id": "nigh-omniscient",
+        "name": "Nigh-Omniscient",
+        "rank": 12
+      },
+      {
+        "id": "omniscient",
+        "name": "Omniscient",
+        "rank": 13
+      }
+    ],
+    "lifting_strength_tiers": [
+      {
+        "id": "insubstantial",
+        "name": "Insubstantial",
+        "rank": 1
+      },
+      {
+        "id": "below-average-human",
+        "name": "Below Average Human",
+        "rank": 2
+      },
+      {
+        "id": "average-human",
+        "name": "Average Human",
+        "rank": 3
+      },
+      {
+        "id": "above-average-human",
+        "name": "Above Average Human",
+        "rank": 4
+      },
+      {
+        "id": "athletic-human",
+        "name": "Athletic Human",
+        "rank": 5
+      },
+      {
+        "id": "peak-human",
+        "name": "Peak Human",
+        "rank": 6
+      },
+      {
+        "id": "superhuman",
+        "name": "Superhuman",
+        "rank": 7
+      },
+      {
+        "id": "class-1",
+        "name": "Class 1",
+        "rank": 8
+      },
+      {
+        "id": "class-5",
+        "name": "Class 5",
+        "rank": 9
+      },
+      {
+        "id": "class-10",
+        "name": "Class 10",
+        "rank": 10
+      },
+      {
+        "id": "class-25",
+        "name": "Class 25",
+        "rank": 11
+      },
+      {
+        "id": "class-50",
+        "name": "Class 50",
+        "rank": 12
+      },
+      {
+        "id": "class-100",
+        "name": "Class 100",
+        "rank": 13
+      },
+      {
+        "id": "class-k",
+        "name": "Class K",
+        "rank": 14
+      },
+      {
+        "id": "class-m",
+        "name": "Class M",
+        "rank": 15
+      },
+      {
+        "id": "class-g",
+        "name": "Class G",
+        "rank": 16
+      },
+      {
+        "id": "class-t",
+        "name": "Class T",
+        "rank": 17
+      },
+      {
+        "id": "class-p",
+        "name": "Class P",
+        "rank": 18
+      },
+      {
+        "id": "class-e",
+        "name": "Class E",
+        "rank": 19
+      },
+      {
+        "id": "class-z",
+        "name": "Class Z",
+        "rank": 20
+      },
+      {
+        "id": "class-y",
+        "name": "Class Y",
+        "rank": 21
+      },
+      {
+        "id": "pre-stellar",
+        "name": "Pre-Stellar",
+        "rank": 22
+      },
+      {
+        "id": "stellar",
+        "name": "Stellar",
+        "rank": 23
+      },
+      {
+        "id": "multi-stellar",
+        "name": "Multi-Stellar",
+        "rank": 24
+      },
+      {
+        "id": "galactic",
+        "name": "Galactic",
+        "rank": 25
+      },
+      {
+        "id": "multi-galactic",
+        "name": "Multi-Galactic",
+        "rank": 26
+      },
+      {
+        "id": "universal",
+        "name": "Universal",
+        "rank": 27
+      },
+      {
+        "id": "infinite",
+        "name": "Infinite",
+        "rank": 28
+      },
+      {
+        "id": "immeasurable",
+        "name": "Immeasurable",
+        "rank": 29
+      },
+      {
+        "id": "inapplicable",
+        "name": "Inapplicable",
+        "rank": 30,
+        "comparison_class": "transcendent",
+        "modifier_behavior": "locked_to_normal",
+        "description": "Characters existing beyond quantitative and qualitative distinction alike."
+      }
+    ],
+    "magic_levels": [
+      {
+        "id": "basic-level-magic-users",
+        "name": "Basic-Level Magic Users",
+        "rank": 1,
+        "inherits_level_ids": [],
+        "power_refs": [
+          {
+            "id": "magic",
+            "modifier": "normal",
+            "type_ids": [],
+            "magic_level_id": "basic-level-magic-users",
+            "effects": null
+          },
+          {
+            "id": "magical-aura",
+            "modifier": "normal",
+            "type_ids": [],
+            "magic_level_id": null,
+            "effects": null
+          },
+          {
+            "id": "conceptual-manipulation",
+            "modifier": "normal",
+            "type_ids": [
+              "conceptual-manipulation-type-1"
+            ],
+            "magic_level_id": null,
+            "effects": null
+          }
+        ],
+        "resistance_refs": []
+      },
+      {
+        "id": "low-tier-sorcerers",
+        "name": "Low-Tier Sorcerers",
+        "rank": 2,
+        "inherits_level_ids": [
+          "basic-level-magic-users"
+        ],
+        "power_refs": [
+          {
+            "id": "magic",
+            "modifier": "enhanced",
+            "type_ids": [],
+            "magic_level_id": "low-tier-sorcerers",
+            "effects": null
+          }
+        ],
+        "resistance_refs": []
+      },
+      {
+        "id": "master-sorcerers",
+        "name": "Master Sorcerers",
+        "rank": 3,
+        "inherits_level_ids": [
+          "basic-level-magic-users",
+          "low-tier-sorcerers"
+        ],
+        "power_refs": [
+          {
+            "id": "magic",
+            "modifier": "greater",
+            "type_ids": [],
+            "magic_level_id": "master-sorcerers",
+            "effects": null
+          }
+        ],
+        "resistance_refs": []
+      },
+      {
+        "id": "sorcerer-supreme-level",
+        "name": "Sorcerer Supreme Level",
+        "rank": 4,
+        "inherits_level_ids": [
+          "basic-level-magic-users",
+          "low-tier-sorcerers",
+          "master-sorcerers"
+        ],
+        "power_refs": [
+          {
+            "id": "magic",
+            "modifier": "immense",
+            "type_ids": [],
+            "magic_level_id": "sorcerer-supreme-level",
+            "effects": null
+          }
+        ],
+        "resistance_refs": []
+      }
+    ],
+    "magic_natures": [
+      {
+        "id": "nature-of-magic",
+        "name": "Nature of Magic",
+        "aliases": [
+          "Magical Energy"
+        ],
+        "description": "Powers and abilities of raw magic/magical energy itself, not a sorcerer-user level.",
+        "display": "hidden_from_character_power_list",
+        "applies_to": "raw_magic",
+        "ownership": "effect_payload",
+        "inherits_nature_ids": [],
+        "power_refs": [],
+        "resistance_refs": [],
+        "effects": []
+      }
+    ],
+    "martial_arts_degrees": [
+      {
+        "id": "unspecified",
+        "name": "Martial Arts Mastery",
+        "rank": 0,
+        "display_as_power_name": true
+      },
+      {
+        "id": "expert",
+        "name": "Expert Martial Artist",
+        "rank": 1,
+        "display_as_power_name": false
+      },
+      {
+        "id": "master",
+        "name": "Master Martial Artist",
+        "rank": 2,
+        "display_as_power_name": false
+      }
+    ],
+    "media": [
+      {
+        "id": "comics",
+        "name": "Comics"
+      }
+    ],
+    "origins": [
+      {
+        "id": "marvel-comics",
+        "name": "Marvel Comics",
+        "media_id": "comics"
+      },
+      {
+        "id": "dc-comics",
+        "name": "DC Comics",
+        "media_id": "comics"
+      }
+    ],
+    "power_types": [
+      {
+        "id": "all-weapons",
+        "power_id": "weapon-mastery",
+        "name": "All Weapons",
+        "covers_all": true,
+        "covers_type_ids": []
+      },
+      {
+        "id": "firearms",
+        "power_id": "weapon-mastery",
+        "name": "Firearms",
+        "covers_all": false,
+        "covers_type_ids": [
+          "gunpowder-handguns"
+        ]
+      },
+      {
+        "id": "gunpowder-handguns",
+        "power_id": "weapon-mastery",
+        "name": "Gunpowder Handguns",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "crossbows",
+        "power_id": "weapon-mastery",
+        "name": "Crossbows",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "melee-weapons",
+        "power_id": "weapon-mastery",
+        "name": "Melee Weapons",
+        "covers_all": false,
+        "covers_type_ids": [
+          "blunt-weapons",
+          "sharp-weapons",
+          "shields",
+          "armour"
+        ]
+      },
+      {
+        "id": "blunt-weapons",
+        "power_id": "weapon-mastery",
+        "name": "Blunt Weapons",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "sharp-weapons",
+        "power_id": "weapon-mastery",
+        "name": "Sharp Weapons",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "shields",
+        "power_id": "weapon-mastery",
+        "name": "Shields",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "armour",
+        "power_id": "weapon-mastery",
+        "name": "Armour",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "land-vehicles",
+        "power_id": "vehicular-mastery",
+        "name": "Land Vehicles",
+        "description": "The ability to have mastered transport whilst driving on roads, rough terrain, and in vehicles such as cars, bikes, trucks, and tanks.",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "air-vehicles",
+        "power_id": "vehicular-mastery",
+        "name": "Air Vehicles",
+        "description": "The ability to pilot aircraft and push them to their limits, including planes and helicopters.",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "seaborne-vehicles",
+        "power_id": "vehicular-mastery",
+        "name": "Seaborne Vehicles",
+        "description": "The ability to drive boats, submarines, and ships with little difficulty.",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "space-vehicles",
+        "power_id": "vehicular-mastery",
+        "name": "Space Vehicles",
+        "description": "The ability to fly and maneuver ships or shuttles through dangerous hazards and difficult situations.",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "absorption-all",
+        "power_id": "absorption",
+        "name": "Absorption (All)",
+        "covers_all": true,
+        "covers_type_ids": [
+          "biological-absorption",
+          "energy-absorption",
+          "power-absorption",
+          "soul-absorption",
+          "life-force-absorption"
+        ]
+      },
+      {
+        "id": "biological-absorption",
+        "power_id": "absorption",
+        "name": "Biological Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "energy-absorption",
+        "power_id": "absorption",
+        "name": "Energy Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "power-absorption",
+        "power_id": "absorption",
+        "name": "Power Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "soul-absorption",
+        "power_id": "absorption",
+        "name": "Soul Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "life-force-absorption",
+        "power_id": "absorption",
+        "name": "Life Force Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "light-absorption",
+        "power_id": "absorption",
+        "name": "Light Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "electricity-absorption",
+        "power_id": "absorption",
+        "name": "Electricity Absorption",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "low-regeneration",
+        "power_id": "regeneration",
+        "name": "Low",
+        "rank": 1,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "mid-low-regeneration",
+        "power_id": "regeneration",
+        "name": "Mid-Low",
+        "rank": 2,
+        "covers_all": false,
+        "covers_type_ids": [
+          "low-regeneration"
+        ]
+      },
+      {
+        "id": "high-low-regeneration",
+        "power_id": "regeneration",
+        "name": "High-Low",
+        "rank": 3,
+        "covers_all": false,
+        "covers_type_ids": [
+          "mid-low-regeneration"
+        ]
+      },
+      {
+        "id": "low-mid-regeneration",
+        "power_id": "regeneration",
+        "name": "Low-Mid",
+        "rank": 4,
+        "covers_all": false,
+        "covers_type_ids": [
+          "high-low-regeneration"
+        ]
+      },
+      {
+        "id": "mid-regeneration",
+        "power_id": "regeneration",
+        "name": "Mid",
+        "rank": 5,
+        "covers_all": false,
+        "covers_type_ids": [
+          "low-mid-regeneration"
+        ]
+      },
+      {
+        "id": "high-mid-regeneration",
+        "power_id": "regeneration",
+        "name": "High-Mid",
+        "rank": 6,
+        "covers_all": false,
+        "covers_type_ids": [
+          "mid-regeneration"
+        ]
+      },
+      {
+        "id": "low-high-regeneration",
+        "power_id": "regeneration",
+        "name": "Low-High",
+        "rank": 7,
+        "covers_all": false,
+        "covers_type_ids": [
+          "high-mid-regeneration"
+        ]
+      },
+      {
+        "id": "mid-high-regeneration",
+        "power_id": "regeneration",
+        "name": "Mid-High",
+        "rank": 8,
+        "covers_all": false,
+        "covers_type_ids": [
+          "low-high-regeneration"
+        ]
+      },
+      {
+        "id": "high-regeneration",
+        "power_id": "regeneration",
+        "name": "High",
+        "rank": 9,
+        "covers_all": false,
+        "covers_type_ids": [
+          "mid-high-regeneration"
+        ]
+      },
+      {
+        "id": "low-godly-regeneration",
+        "power_id": "regeneration",
+        "name": "Low-Godly",
+        "rank": 10,
+        "covers_all": false,
+        "covers_type_ids": [
+          "high-regeneration"
+        ]
+      },
+      {
+        "id": "mid-godly-regeneration",
+        "power_id": "regeneration",
+        "name": "Mid-Godly",
+        "rank": 11,
+        "covers_all": false,
+        "covers_type_ids": [
+          "low-godly-regeneration"
+        ]
+      },
+      {
+        "id": "high-godly-regeneration",
+        "power_id": "regeneration",
+        "name": "High-Godly",
+        "rank": 12,
+        "covers_all": false,
+        "covers_type_ids": [
+          "mid-godly-regeneration"
+        ]
+      },
+      {
+        "id": "immortality-type-1-eternal-life",
+        "power_id": "immortality",
+        "name": "Type 1 (Eternal Life)",
+        "rank": 1,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-2-resilient",
+        "power_id": "immortality",
+        "name": "Type 2 (Resilient)",
+        "rank": 2,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-3-regeneration",
+        "power_id": "immortality",
+        "name": "Type 3 (Regeneration)",
+        "rank": 3,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-4-reincarnation-resurrection",
+        "power_id": "immortality",
+        "name": "Type 4 (Reincarnation/Resurrection)",
+        "rank": 4,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-5-deathless",
+        "power_id": "immortality",
+        "name": "Type 5 (Deathless)",
+        "rank": 5,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-6-parasitic",
+        "power_id": "immortality",
+        "name": "Type 6 (Parasitic)",
+        "rank": 6,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-7-undead",
+        "power_id": "immortality",
+        "name": "Type 7 (Undead)",
+        "rank": 7,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-8-reliant",
+        "power_id": "immortality",
+        "name": "Type 8 (Reliant)",
+        "rank": 8,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "immortality-type-9-transcendental",
+        "power_id": "immortality",
+        "name": "Type 9 (Transcendental)",
+        "rank": 9,
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "conceptual-manipulation-type-1",
+        "power_id": "conceptual-manipulation",
+        "name": "Type 1",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "intangibility-all",
+        "power_id": "intangibility",
+        "name": "Intangibility (All)",
+        "covers_all": true,
+        "covers_type_ids": [
+          "elemental-intangibility-type-1-solids",
+          "elemental-intangibility-type-2-semi-solids-semi-liquids",
+          "elemental-intangibility-type-3-liquids",
+          "elemental-intangibility-type-4-aerosols",
+          "elemental-intangibility-type-5-gas",
+          "elemental-intangibility-type-6-plasma",
+          "elemental-intangibility-type-7-quantum-particles",
+          "elemental-intangibility-type-8-energy",
+          "elemental-intangibility-type-9-non-physical",
+          "physical-intangibility-non-physical",
+          "molecular-intangibility",
+          "dimensional-intangibility"
+        ]
+      },
+      {
+        "id": "elemental-intangibility-type-1-solids",
+        "power_id": "intangibility",
+        "name": "Elemental Type 1 (Solids)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-2-semi-solids-semi-liquids",
+        "power_id": "intangibility",
+        "name": "Elemental Type 2 (Semi-Solids/Semi-Liquids)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-3-liquids",
+        "power_id": "intangibility",
+        "name": "Elemental Type 3 (Liquids)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-4-aerosols",
+        "power_id": "intangibility",
+        "name": "Elemental Type 4 (Aerosols)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-5-gas",
+        "power_id": "intangibility",
+        "name": "Elemental Type 5 (Gas)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-6-plasma",
+        "power_id": "intangibility",
+        "name": "Elemental Type 6 (Plasma)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-7-quantum-particles",
+        "power_id": "intangibility",
+        "name": "Elemental Type 7 (Quantum Particles)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-8-energy",
+        "power_id": "intangibility",
+        "name": "Elemental Type 8 (Energy)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "elemental-intangibility-type-9-non-physical",
+        "power_id": "intangibility",
+        "name": "Elemental Type 9 (Non-Physical)",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "physical-intangibility-non-physical",
+        "power_id": "intangibility",
+        "name": "Non-Physical",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "molecular-intangibility",
+        "power_id": "intangibility",
+        "name": "Molecular",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "dimensional-intangibility",
+        "power_id": "intangibility",
+        "name": "Dimensional",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "abstract-existence-all",
+        "power_id": "abstract-existence",
+        "name": "Abstract Existence (All)",
+        "covers_all": true,
+        "covers_type_ids": [
+          "abstract-existence-type-1",
+          "abstract-existence-type-2"
+        ]
+      },
+      {
+        "id": "abstract-existence-type-1",
+        "power_id": "abstract-existence",
+        "name": "Type 1",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "abstract-existence-type-2",
+        "power_id": "abstract-existence",
+        "name": "Type 2",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "nonexistent-physiology-all",
+        "power_id": "nonexistent-physiology",
+        "name": "Nonexistent Physiology (All)",
+        "covers_all": true,
+        "covers_type_ids": [
+          "material-nonexistence",
+          "idealistic-nonexistence",
+          "paradoxical-nonexistence",
+          "spiritual-nonexistence",
+          "conceptual-nonexistence",
+          "mental-nonexistence",
+          "information-nonexistence"
+        ]
+      },
+      {
+        "id": "material-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Material Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "idealistic-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Idealistic Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "paradoxical-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Paradoxical Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "spiritual-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Spiritual Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "conceptual-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Conceptual Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "mental-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Mental Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      },
+      {
+        "id": "information-nonexistence",
+        "power_id": "nonexistent-physiology",
+        "name": "Information Nonexistence",
+        "covers_all": false,
+        "covers_type_ids": []
+      }
+    ],
+    "powers": [
+      {
+        "id": "superhuman-physical-characteristics",
+        "name": "Superhuman Physical Characteristics",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "physical",
+          "derived"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "genius-intelligence",
+        "name": "Genius Intelligence",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mental",
+          "derived"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "berserk-mode",
+        "name": "Berserk Mode",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mode"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "weapon-mastery",
+        "name": "Weapon Mastery",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mastery"
+        ],
+        "type_ids": [
+          "all-weapons",
+          "firearms",
+          "gunpowder-handguns",
+          "crossbows",
+          "melee-weapons",
+          "blunt-weapons",
+          "sharp-weapons",
+          "shields",
+          "armour"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "vehicular-mastery",
+        "name": "Vehicular Mastery",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mastery"
+        ],
+        "type_ids": [
+          "land-vehicles",
+          "air-vehicles",
+          "seaborne-vehicles",
+          "space-vehicles"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "martial-arts-mastery",
+        "name": "Martial Arts Mastery",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mastery"
+        ],
+        "type_ids": [],
+        "degree_ids": [
+          "expert",
+          "master"
+        ],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "acrobatics",
+        "name": "Acrobatics",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [
+          "expert"
+        ],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "stealth-mastery",
+        "name": "Stealth Mastery",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "mastery",
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "multiple-selves",
+        "name": "Multiple Selves",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "elasticity",
+        "name": "Elasticity",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "body-control",
+        "name": "Body Control",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "weapon-creation",
+        "name": "Weapon Creation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "camouflage",
+        "name": "Camouflage",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "transformation",
+        "name": "Transformation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "cyborgization",
+        "name": "Cyborgization",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "regeneration",
+        "name": "Regeneration",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [
+          "low-regeneration",
+          "mid-low-regeneration",
+          "high-low-regeneration",
+          "low-mid-regeneration",
+          "mid-regeneration",
+          "high-mid-regeneration",
+          "low-high-regeneration",
+          "mid-high-regeneration",
+          "high-regeneration",
+          "low-godly-regeneration",
+          "mid-godly-regeneration",
+          "high-godly-regeneration"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "surface-scaling",
+        "name": "Surface Scaling",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "healing",
+        "name": "Healing",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "afterimage-creation",
+        "name": "Afterimage Creation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "teleportation",
+        "name": "Teleportation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "dimensional-travel",
+        "name": "Dimensional Travel",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "space-survival",
+        "name": "Space Survival",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "bfr",
+        "name": "BFR",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "invisibility",
+        "name": "Invisibility",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "social-influencing",
+        "name": "Social Influencing",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "attack-reflection",
+        "name": "Attack Reflection",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "statistics-amplification",
+        "name": "Statistics Amplification",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "enhanced-senses",
+        "name": "Enhanced Senses",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "longevity",
+        "name": "Longevity",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "adaptive-appearance",
+        "name": "Adaptive Appearance",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "extrasensory-perception",
+        "name": "Extrasensory Perception",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "danmaku",
+        "name": "Danmaku",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "homing-attack",
+        "name": "Homing Attack",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "pressure-points",
+        "name": "Pressure Points",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "paralysis-inducement",
+        "name": "Paralysis Inducement",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "telepathy",
+        "name": "Telepathy",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "superhuman-speed",
+        "name": "Superhuman Speed",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "illusion-creation",
+        "name": "Illusion Creation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "shapeshifting",
+        "name": "Shapeshifting",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "water-walking",
+        "name": "Water Walking",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "immortality",
+        "name": "Immortality",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [
+          "immortality-type-1-eternal-life",
+          "immortality-type-2-resilient",
+          "immortality-type-3-regeneration",
+          "immortality-type-4-reincarnation-resurrection",
+          "immortality-type-5-deathless",
+          "immortality-type-6-parasitic",
+          "immortality-type-7-undead",
+          "immortality-type-8-reliant",
+          "immortality-type-9-transcendental"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "regeneration-negation",
+        "name": "Regeneration Negation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "negation"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": [
+          {
+            "power_nullification": {
+              "target_power_refs": [
+                {
+                  "id": "regeneration"
+                }
+              ],
+              "max_target_type_rank": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "non-standard-breathing",
+        "name": "Non-Standard Breathing",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "placeholder"
+        ],
+        "placeholder": true,
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "forcefield-creation",
+        "name": "Forcefield Creation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "energy-manipulation",
+        "name": "Energy Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "absorption",
+        "name": "Absorption",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "absorption"
+        ],
+        "type_ids": [
+          "absorption-all",
+          "biological-absorption",
+          "energy-absorption",
+          "power-absorption",
+          "soul-absorption",
+          "life-force-absorption",
+          "light-absorption",
+          "electricity-absorption"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "time-travel",
+        "name": "Time Travel",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "size-manipulation",
+        "name": "Size Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "damage-transferal",
+        "name": "Damage Transferal",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "gravity-manipulation",
+        "name": "Gravity Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "flight",
+        "name": "Flight",
+        "aliases": [
+          "Gliding"
+        ],
+        "variants": [
+          {
+            "id": "gliding",
+            "name": "Gliding",
+            "display_as_power_name": true,
+            "inherits_base_grants": true,
+            "grants": {
+              "power_refs": [],
+              "resistance_refs": [],
+              "magic_level_ids": []
+            },
+            "effects": []
+          }
+        ],
+        "tags": [
+          "movement"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "intangibility",
+        "name": "Intangibility",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "non-physical"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "incorporeality",
+        "name": "Incorporeality",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "non-physical"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "abstract-existence",
+        "name": "Abstract Existence",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "non-physical"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "nonexistent-physiology",
+        "name": "Nonexistent Physiology",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "non-physical"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "mind-manipulation",
+        "name": "Mind Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "pain-manipulation",
+        "name": "Pain Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "biological-manipulation",
+        "name": "Biological Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "disease-manipulation",
+        "name": "Disease Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "curse-manipulation",
+        "name": "Curse Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "madness-manipulation",
+        "name": "Madness Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "fear-manipulation",
+        "name": "Fear Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "soul-manipulation",
+        "name": "Soul Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "precognition",
+        "name": "Precognition",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "electricity-manipulation",
+        "name": "Electricity Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "ice-manipulation",
+        "name": "Ice Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "poison-manipulation",
+        "name": "Poison Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "fire-manipulation",
+        "name": "Fire Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "acid-manipulation",
+        "name": "Acid Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "darkness-manipulation",
+        "name": "Darkness Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "radiation-manipulation",
+        "name": "Radiation Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "corruption",
+        "name": "Corruption",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "temperature-manipulation",
+        "name": "Temperature Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "light-manipulation",
+        "name": "Light Manipulation",
+        "aliases": [],
+        "variants": [
+          {
+            "id": "dagger-lightforce",
+            "name": "Dagger Lightforce",
+            "inherits_base_grants": true,
+            "grants": {
+              "power_refs": [],
+              "resistance_refs": [],
+              "magic_level_ids": []
+            },
+            "effects": [
+              {
+                "grants": {
+                  "power_refs": [
+                    {
+                      "id": "durability-negation",
+                      "effects": [
+                        {
+                          "power_nullification": {
+                            "target_power_ids": [
+                              "forcefield-creation"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "soul-manipulation"
+                    },
+                    {
+                      "id": "non-physical-interaction",
+                      "effects": [
+                        {
+                          "non_physical_interaction": {
+                            "target_power_refs": [
+                              {
+                                "id": "intangibility",
+                                "type_ids": [
+                                  "physical-intangibility-non-physical"
+                                ]
+                              }
+                            ]
+                          },
+                          "nullified_by": {
+                            "resistance_refs": [
+                              {
+                                "id": "soul-manipulation-resistance"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "resistance_refs": []
+                }
+              }
+            ]
+          }
+        ],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": [
+          {
+            "stat_effects": {
+              "attack_potency": {
+                "value": "multi-city-block",
+                "modifier": "at-least"
+              },
+              "combat_speed": {
+                "value": "speed-of-light",
+                "modifier": "normal",
+                "resistible": false
+              },
+              "striking_strength": {
+                "value": "multi-city-block-level",
+                "modifier": "at-least"
+              },
+              "durability": {
+                "value": "multi-city-block",
+                "modifier": "at-least"
+              },
+              "range": {
+                "value": "hundreds-of-kilometers",
+                "modifier": "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "sound-manipulation",
+        "name": "Sound Manipulation",
+        "aliases": [],
+        "variants": [
+          {
+            "id": "black-canary-canary-cry",
+            "name": "Canary Cry",
+            "inherits_base_grants": true,
+            "grants": {
+              "power_refs": [],
+              "resistance_refs": [],
+              "magic_level_ids": []
+            },
+            "effects": [
+              {
+                "stat_effects": {
+                  "attack_potency": {
+                    "value": "small-building",
+                    "modifier": "higher"
+                  },
+                  "range": {
+                    "value": "hundreds-of-meters",
+                    "modifier": "normal"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "tags": [],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "durability-negation",
+        "name": "Durability Negation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "negation"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "non-physical-interaction",
+        "name": "Non-Physical Interaction",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "interaction"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "power-nullification",
+        "name": "Power Nullification",
+        "aliases": [
+          "Negation"
+        ],
+        "variants": [],
+        "tags": [
+          "nullification"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "resistance-negation",
+        "name": "Resistance Negation",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "nullification"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "magic",
+        "name": "Magic",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "magical-aura",
+        "name": "Magical Aura",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "conceptual-manipulation",
+        "name": "Conceptual Manipulation",
+        "aliases": [],
+        "variants": [],
+        "tags": [],
+        "type_ids": [
+          "conceptual-manipulation-type-1"
+        ],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "mystic-being",
+        "name": "Mystic Being",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic",
+          "magic-type"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": [
+            "basic-level-magic-users"
+          ]
+        },
+        "effects": []
+      },
+      {
+        "id": "dark-dimension-magic",
+        "name": "Dark Dimension Magic",
+        "aliases": [],
+        "variants": [
+          {
+            "id": "faltine",
+            "name": "Faltine",
+            "inherits_base_grants": true,
+            "grants": {
+              "power_refs": [],
+              "resistance_refs": [],
+              "magic_level_ids": []
+            },
+            "effects": []
+          }
+        ],
+        "tags": [
+          "magic",
+          "magic-type"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [
+            {
+              "id": "mystic-being",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            }
+          ],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "chaos-magic",
+        "name": "Chaos Magic",
+        "aliases": [
+          "Hex Magic"
+        ],
+        "variants": [],
+        "tags": [
+          "magic",
+          "magic-type"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "hellfire",
+        "name": "Hellfire",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic",
+          "hellfire"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "demonic-magic",
+        "name": "Demonic Magic",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic",
+          "magic-type",
+          "demonic-magic"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [
+            {
+              "id": "innate-demon-physiology",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            },
+            {
+              "id": "standard-demonic-powers",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            }
+          ],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "innate-demon-physiology",
+        "name": "Innate Demon Physiology",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "demonic-magic"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "standard-demonic-powers",
+        "name": "Standard Demonic Powers",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "demonic-magic"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      },
+      {
+        "id": "hell-lord",
+        "name": "Hell-Lord",
+        "aliases": [],
+        "variants": [],
+        "tags": [
+          "magic",
+          "hell-lord"
+        ],
+        "type_ids": [],
+        "degree_ids": [],
+        "grants": {
+          "power_refs": [
+            {
+              "id": "hellfire",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            },
+            {
+              "id": "innate-demon-physiology",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            },
+            {
+              "id": "standard-demonic-powers",
+              "modifier": "normal",
+              "type_ids": [],
+              "magic_level_id": null,
+              "magic_nature_ids": [],
+              "source_variant": null,
+              "condition": null,
+              "effects": null
+            }
+          ],
+          "resistance_refs": [],
+          "magic_level_ids": []
+        },
+        "effects": []
+      }
+    ],
+    "range_tiers": [
+      {
+        "id": "below-standard-melee-range",
+        "name": "Below Standard Melee Range",
+        "rank": 1
+      },
+      {
+        "id": "standard-melee-range",
+        "name": "Standard Melee Range",
+        "rank": 2
+      },
+      {
+        "id": "extended-melee-range",
+        "name": "Extended Melee Range",
+        "rank": 3
+      },
+      {
+        "id": "several-meters",
+        "name": "Several Meters",
+        "rank": 4
+      },
+      {
+        "id": "tens-of-meters",
+        "name": "Tens of Meters",
+        "rank": 5
+      },
+      {
+        "id": "hundreds-of-meters",
+        "name": "Hundreds of Meters",
+        "rank": 6
+      },
+      {
+        "id": "kilometers",
+        "name": "Kilometers",
+        "rank": 7
+      },
+      {
+        "id": "tens-of-kilometers",
+        "name": "Tens of Kilometers",
+        "rank": 8
+      },
+      {
+        "id": "hundreds-of-kilometers",
+        "name": "Hundreds of Kilometers",
+        "rank": 9
+      },
+      {
+        "id": "thousands-of-kilometers",
+        "name": "Thousands of Kilometers",
+        "rank": 10
+      },
+      {
+        "id": "planetary",
+        "name": "Planetary",
+        "rank": 11
+      },
+      {
+        "id": "stellar",
+        "name": "Stellar",
+        "rank": 12
+      },
+      {
+        "id": "interplanetary",
+        "name": "Interplanetary",
+        "rank": 13
+      },
+      {
+        "id": "interstellar",
+        "name": "Interstellar",
+        "rank": 14
+      },
+      {
+        "id": "galactic",
+        "name": "Galactic",
+        "rank": 15
+      },
+      {
+        "id": "intergalactic",
+        "name": "Intergalactic",
+        "rank": 16
+      },
+      {
+        "id": "universal",
+        "name": "Universal",
+        "rank": 17
+      },
+      {
+        "id": "high-universal",
+        "name": "High Universal",
+        "rank": 18
+      },
+      {
+        "id": "universal-plus",
+        "name": "Universal+",
+        "rank": 19
+      },
+      {
+        "id": "interdimensional",
+        "name": "Interdimensional",
+        "rank": 20
+      },
+      {
+        "id": "low-multiversal",
+        "name": "Low Multiversal",
+        "rank": 21
+      },
+      {
+        "id": "multiversal",
+        "name": "Multiversal",
+        "rank": 22
+      },
+      {
+        "id": "multiversal-plus",
+        "name": "Multiversal+",
+        "rank": 23
+      },
+      {
+        "id": "extradimensional",
+        "name": "Extradimensional",
+        "rank": 24
+      },
+      {
+        "id": "low-complex-multiversal",
+        "name": "Low Complex Multiversal",
+        "rank": 25
+      },
+      {
+        "id": "complex-multiversal",
+        "name": "Complex Multiversal",
+        "rank": 26
+      },
+      {
+        "id": "high-complex-multiversal",
+        "name": "High Complex Multiversal",
+        "rank": 27
+      },
+      {
+        "id": "hyperversal",
+        "name": "Hyperversal",
+        "rank": 28
+      },
+      {
+        "id": "high-hyperversal",
+        "name": "High Hyperversal",
+        "rank": 29
+      },
+      {
+        "id": "low-outerversal",
+        "name": "Low Outerversal",
+        "rank": 30
+      },
+      {
+        "id": "outerversal",
+        "name": "Outerversal",
+        "rank": 31
+      },
+      {
+        "id": "outerversal-plus",
+        "name": "Outerversal+",
+        "rank": 32
+      },
+      {
+        "id": "high-outerversal",
+        "name": "High Outerversal",
+        "rank": 33
+      },
+      {
+        "id": "high-outerversal-plus",
+        "name": "High Outerversal+",
+        "rank": 34
+      },
+      {
+        "id": "boundless",
+        "name": "Boundless",
+        "rank": 35
+      }
+    ],
+    "resistance_levels": [
+      {
+        "id": "resistant",
+        "name": "Resistance",
+        "rank": 1,
+        "bypasses_ability_modifier_coverage": false
+      },
+      {
+        "id": "immunity",
+        "name": "Immunity",
+        "rank": 2,
+        "bypasses_ability_modifier_coverage": true
+      }
+    ],
+    "resistances": [
+      {
+        "id": "magic-resistance",
+        "name": "Magic",
+        "resists_power_ids": [
+          "magic"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "mind-manipulation-resistance",
+        "name": "Mind Manipulation",
+        "resists_power_ids": [
+          "mind-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "pain-manipulation-resistance",
+        "name": "Pain Manipulation",
+        "resists_power_ids": [
+          "pain-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "biological-manipulation-resistance",
+        "name": "Biological Manipulation",
+        "resists_power_ids": [
+          "biological-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "disease-manipulation-resistance",
+        "name": "Disease Manipulation",
+        "resists_power_ids": [
+          "disease-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "telepathy-resistance",
+        "name": "Telepathy",
+        "resists_power_ids": [
+          "telepathy"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "ice-manipulation-resistance",
+        "name": "Ice Manipulation",
+        "resists_power_ids": [
+          "ice-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "electricity-manipulation-resistance",
+        "name": "Electricity Manipulation",
+        "resists_power_ids": [
+          "electricity-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "curse-manipulation-resistance",
+        "name": "Curse Manipulation",
+        "resists_power_ids": [
+          "curse-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "madness-manipulation-resistance",
+        "name": "Madness Manipulation",
+        "resists_power_ids": [
+          "madness-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "fear-manipulation-resistance",
+        "name": "Fear Manipulation",
+        "resists_power_ids": [
+          "fear-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "fire-manipulation-resistance",
+        "name": "Fire Manipulation",
+        "resists_power_ids": [
+          "fire-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "acid-manipulation-resistance",
+        "name": "Acid Manipulation",
+        "resists_power_ids": [
+          "acid-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "soul-manipulation-resistance",
+        "name": "Soul Manipulation",
+        "resists_power_ids": [
+          "soul-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "precognition-resistance",
+        "name": "Precognition",
+        "resists_power_ids": [
+          "precognition"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "poison-manipulation-resistance",
+        "name": "Poison Manipulation",
+        "resists_power_ids": [
+          "poison-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "corruption-resistance",
+        "name": "Corruption",
+        "resists_power_ids": [
+          "corruption"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "temperature-manipulation-resistance",
+        "name": "Temperature Manipulation",
+        "resists_power_ids": [
+          "temperature-manipulation"
+        ],
+        "resists_effect_ids": []
+      },
+      {
+        "id": "blunt-weapons-resistance",
+        "name": "Blunt Weapons",
+        "resists_power_ids": [],
+        "resists_effect_ids": [],
+        "resists_weapon_type_ids": [
+          "blunt-weapons"
+        ]
+      }
+    ],
+    "speed_tiers": [
+      {
+        "id": "immobile",
+        "name": "Immobile",
+        "rank": 1
+      },
+      {
+        "id": "below-average-human",
+        "name": "Below Average Human",
+        "rank": 2
+      },
+      {
+        "id": "average-human",
+        "name": "Average Human",
+        "rank": 3
+      },
+      {
+        "id": "athletic-human",
+        "name": "Athletic Human",
+        "rank": 4
+      },
+      {
+        "id": "peak-human",
+        "name": "Peak Human",
+        "rank": 5
+      },
+      {
+        "id": "superhuman",
+        "name": "Superhuman",
+        "rank": 6
+      },
+      {
+        "id": "subsonic",
+        "name": "Subsonic",
+        "rank": 7
+      },
+      {
+        "id": "subsonic-plus",
+        "name": "Subsonic+",
+        "rank": 8
+      },
+      {
+        "id": "transonic",
+        "name": "Transonic",
+        "rank": 9
+      },
+      {
+        "id": "supersonic",
+        "name": "Supersonic",
+        "rank": 10
+      },
+      {
+        "id": "supersonic-plus",
+        "name": "Supersonic+",
+        "rank": 11
+      },
+      {
+        "id": "hypersonic",
+        "name": "Hypersonic",
+        "rank": 12
+      },
+      {
+        "id": "hypersonic-plus",
+        "name": "Hypersonic+",
+        "rank": 13
+      },
+      {
+        "id": "high-hypersonic",
+        "name": "High Hypersonic",
+        "rank": 14
+      },
+      {
+        "id": "high-hypersonic-plus",
+        "name": "High Hypersonic+",
+        "rank": 15
+      },
+      {
+        "id": "massively-hypersonic",
+        "name": "Massively Hypersonic",
+        "rank": 16
+      },
+      {
+        "id": "massively-hypersonic-plus",
+        "name": "Massively Hypersonic+",
+        "rank": 17
+      },
+      {
+        "id": "sub-relativistic",
+        "name": "Sub-Relativistic",
+        "rank": 18
+      },
+      {
+        "id": "sub-relativistic-plus",
+        "name": "Sub-Relativistic+",
+        "rank": 19
+      },
+      {
+        "id": "relativistic",
+        "name": "Relativistic",
+        "rank": 20
+      },
+      {
+        "id": "relativistic-plus",
+        "name": "Relativistic+",
+        "rank": 21
+      },
+      {
+        "id": "speed-of-light",
+        "name": "Speed of Light",
+        "rank": 22
+      },
+      {
+        "id": "ftl",
+        "name": "FTL",
+        "rank": 23
+      },
+      {
+        "id": "ftl-plus",
+        "name": "FTL+",
+        "rank": 24
+      },
+      {
+        "id": "massively-ftl",
+        "name": "Massively FTL",
+        "rank": 25
+      },
+      {
+        "id": "massively-ftl-plus",
+        "name": "Massively FTL+",
+        "rank": 26
+      },
+      {
+        "id": "infinite-speed",
+        "name": "Infinite Speed",
+        "rank": 27
+      },
+      {
+        "id": "immeasurable",
+        "name": "Immeasurable",
+        "rank": 28
+      },
+      {
+        "id": "omnipresent",
+        "name": "Omnipresent",
+        "rank": 29
+      }
+    ],
+    "stamina_tiers": [
+      {
+        "id": "unknown",
+        "name": "Unknown",
+        "rank": 1
+      },
+      {
+        "id": "below-average",
+        "name": "Below Average",
+        "rank": 2
+      },
+      {
+        "id": "average",
+        "name": "Average",
+        "rank": 3
+      },
+      {
+        "id": "athletic",
+        "name": "Athletic",
+        "rank": 4
+      },
+      {
+        "id": "peak-human",
+        "name": "Peak Human",
+        "rank": 5
+      },
+      {
+        "id": "superhuman",
+        "name": "Superhuman",
+        "rank": 6
+      },
+      {
+        "id": "infinite",
+        "name": "Infinite",
+        "rank": 7
+      },
+      {
+        "id": "inapplicable",
+        "name": "Inapplicable",
+        "rank": 8,
+        "comparison_class": "transcendent",
+        "modifier_behavior": "locked_to_normal",
+        "description": "Characters existing beyond quantitative and qualitative distinction alike."
+      }
+    ],
+    "stat_modifiers": [
+      {
+        "id": "at-most",
+        "name": "At most",
+        "display_prefix": "At most",
+        "display_suffix": "",
+        "rank": 1
+      },
+      {
+        "id": "lower",
+        "name": "Lower",
+        "display_prefix": "Lower",
+        "display_suffix": "",
+        "rank": 2
+      },
+      {
+        "id": "possibly",
+        "name": "Possibly",
+        "display_prefix": "Possibly",
+        "display_suffix": "",
+        "rank": 3
+      },
+      {
+        "id": "likely",
+        "name": "Likely",
+        "display_prefix": "Likely",
+        "display_suffix": "",
+        "rank": 4
+      },
+      {
+        "id": "normal",
+        "name": "Normal",
+        "display_prefix": "",
+        "display_suffix": "",
+        "rank": 5
+      },
+      {
+        "id": "plus",
+        "name": "+",
+        "display_prefix": "",
+        "display_suffix": "+",
+        "rank": 6
+      },
+      {
+        "id": "higher",
+        "name": "Higher",
+        "display_prefix": "Higher",
+        "display_suffix": "",
+        "rank": 7
+      },
+      {
+        "id": "at-least",
+        "name": "At least",
+        "display_prefix": "At least",
+        "display_suffix": "",
+        "rank": 8
+      }
+    ],
+    "striking_strength_tiers": [
+      {
+        "id": "low-hypoverse-level",
+        "name": "Low Hypoverse level",
+        "rank": 1
+      },
+      {
+        "id": "hypoverse-level",
+        "name": "Hypoverse level",
+        "rank": 2
+      },
+      {
+        "id": "high-hypoverse-level",
+        "name": "High Hypoverse level",
+        "rank": 3
+      },
+      {
+        "id": "below-average-human-level",
+        "name": "Below Average Human level",
+        "rank": 4
+      },
+      {
+        "id": "human-level",
+        "name": "Human level",
+        "rank": 5
+      },
+      {
+        "id": "athlete-level",
+        "name": "Athlete level",
+        "rank": 6
+      },
+      {
+        "id": "street-level",
+        "name": "Street level",
+        "rank": 7
+      },
+      {
+        "id": "wall-level",
+        "name": "Wall level",
+        "rank": 8
+      },
+      {
+        "id": "small-building-level",
+        "name": "Small Building level",
+        "rank": 9
+      },
+      {
+        "id": "building-level",
+        "name": "Building level",
+        "rank": 10
+      },
+      {
+        "id": "large-building-level",
+        "name": "Large Building level",
+        "rank": 11
+      },
+      {
+        "id": "city-block-level",
+        "name": "City Block level",
+        "rank": 12
+      },
+      {
+        "id": "multi-city-block-level",
+        "name": "Multi-City Block level",
+        "rank": 13
+      },
+      {
+        "id": "small-town-level",
+        "name": "Small Town level",
+        "rank": 14
+      },
+      {
+        "id": "town-level",
+        "name": "Town level",
+        "rank": 15
+      },
+      {
+        "id": "large-town-level",
+        "name": "Large Town level",
+        "rank": 16
+      },
+      {
+        "id": "small-city-level",
+        "name": "Small City level",
+        "rank": 17
+      },
+      {
+        "id": "city-level",
+        "name": "City level",
+        "rank": 18
+      },
+      {
+        "id": "mountain-level",
+        "name": "Mountain level",
+        "rank": 19
+      },
+      {
+        "id": "large-mountain-level",
+        "name": "Large Mountain level",
+        "rank": 20
+      },
+      {
+        "id": "island-level",
+        "name": "Island level",
+        "rank": 21
+      },
+      {
+        "id": "large-island-level",
+        "name": "Large Island level",
+        "rank": 22
+      },
+      {
+        "id": "small-country-level",
+        "name": "Small Country level",
+        "rank": 23
+      },
+      {
+        "id": "country-level",
+        "name": "Country level",
+        "rank": 24
+      },
+      {
+        "id": "large-country-level",
+        "name": "Large Country level",
+        "rank": 25
+      },
+      {
+        "id": "continent-level",
+        "name": "Continent level",
+        "rank": 26
+      },
+      {
+        "id": "multi-continent-level",
+        "name": "Multi-Continent level",
+        "rank": 27
+      },
+      {
+        "id": "moon-level",
+        "name": "Moon level",
+        "rank": 28
+      },
+      {
+        "id": "small-planet-level",
+        "name": "Small Planet level",
+        "rank": 29
+      },
+      {
+        "id": "planet-level",
+        "name": "Planet level",
+        "rank": 30
+      },
+      {
+        "id": "large-planet-level",
+        "name": "Large Planet level",
+        "rank": 31
+      },
+      {
+        "id": "brown-dwarf-level",
+        "name": "Brown Dwarf level",
+        "rank": 32
+      },
+      {
+        "id": "small-star-level",
+        "name": "Small Star level",
+        "rank": 33
+      },
+      {
+        "id": "star-level",
+        "name": "Star level",
+        "rank": 34
+      },
+      {
+        "id": "large-star-level",
+        "name": "Large Star level",
+        "rank": 35
+      },
+      {
+        "id": "solar-system-level",
+        "name": "Solar System level",
+        "rank": 36
+      },
+      {
+        "id": "multi-solar-system-level",
+        "name": "Multi-Solar System level",
+        "rank": 37
+      },
+      {
+        "id": "galaxy-level",
+        "name": "Galaxy level",
+        "rank": 38
+      },
+      {
+        "id": "multi-galaxy-level",
+        "name": "Multi-Galaxy level",
+        "rank": 39
+      },
+      {
+        "id": "universe-level",
+        "name": "Universe level",
+        "rank": 40
+      },
+      {
+        "id": "high-universe-level",
+        "name": "High Universe level",
+        "rank": 41
+      },
+      {
+        "id": "universe-level-plus",
+        "name": "Universe level+",
+        "rank": 42
+      },
+      {
+        "id": "low-multiverse-level",
+        "name": "Low Multiverse level",
+        "rank": 43
+      },
+      {
+        "id": "multiverse-level",
+        "name": "Multiverse level",
+        "rank": 44
+      },
+      {
+        "id": "multiverse-level-plus",
+        "name": "Multiverse level+",
+        "rank": 45
+      },
+      {
+        "id": "low-complex-multiverse-level",
+        "name": "Low Complex Multiverse level",
+        "rank": 46
+      },
+      {
+        "id": "complex-multiverse-level",
+        "name": "Complex Multiverse level",
+        "rank": 47
+      },
+      {
+        "id": "high-complex-multiverse-level",
+        "name": "High Complex Multiverse level",
+        "rank": 48
+      },
+      {
+        "id": "hyperverse-level",
+        "name": "Hyperverse level",
+        "rank": 49
+      },
+      {
+        "id": "high-hyperverse-level",
+        "name": "High Hyperverse level",
+        "rank": 50
+      },
+      {
+        "id": "low-outerverse-level",
+        "name": "Low Outerverse level",
+        "rank": 51
+      },
+      {
+        "id": "outerverse-level",
+        "name": "Outerverse level",
+        "rank": 52
+      },
+      {
+        "id": "outerverse-level-plus",
+        "name": "Outerverse level+",
+        "rank": 53
+      },
+      {
+        "id": "high-outerverse-level",
+        "name": "High Outerverse level",
+        "rank": 54
+      },
+      {
+        "id": "inapplicable",
+        "name": "Inapplicable",
+        "rank": 55,
+        "comparison_class": "transcendent",
+        "modifier_behavior": "locked_to_normal",
+        "description": "Characters existing beyond quantitative and qualitative distinction alike."
+      }
+    ],
+    "verses": [
+      {
+        "id": "marvel-mainstream",
+        "name": "Mainstream",
+        "media_id": "comics",
+        "source_id": "marvel-comics"
+      },
+      {
+        "id": "marvel-ultimate",
+        "name": "Ultimate Marvel",
+        "media_id": "comics",
+        "source_id": "marvel-comics"
+      },
+      {
+        "id": "dc-post-crisis",
+        "name": "Post-Crisis",
+        "media_id": "comics",
+        "source_id": "dc-comics"
+      },
+      {
+        "id": "dc-post-flashpoint",
+        "name": "Post-Flashpoint",
+        "media_id": "comics",
+        "source_id": "dc-comics"
+      }
+    ]
+  }
+}

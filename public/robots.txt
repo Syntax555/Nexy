@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://syntax555.github.io/Nexy/sitemap.xml

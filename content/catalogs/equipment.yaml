@@ -1,0 +1,255 @@
+- id: glock-pistol
+  name: "Glock Pistol"
+  weapon_type_ids:
+    - gunpowder-handguns
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - gunpowder-handguns
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: transonic
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal
+- id: m1911
+  name: "M1911"
+  weapon_type_ids:
+    - gunpowder-handguns
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - gunpowder-handguns
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: subsonic-plus
+          modifier: normal
+        durability:
+          value: street
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal
+- id: sai
+  name: "Sai"
+  weapon_type_ids:
+    - sharp-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - sharp-weapons
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: street
+          modifier: higher
+        combat_speed:
+          value: average-human
+          modifier: normal
+        durability:
+          value: street
+          modifier: normal
+        range:
+          value: extended-melee-range
+          modifier: normal
+- id: makeshift-shield
+  name: "Makeshift Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        range:
+          value: tens-of-meters
+          modifier: normal
+- id: lunellum-shield
+  name: "Lunellum Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        striking_strength:
+          value: wall-level
+          modifier: plus
+        range:
+          value: tens-of-meters
+          modifier: normal
+    - grants:
+        power_refs:
+          - id: energy-manipulation
+            effects:
+              - stat_effects:
+                  attack_potency:
+                    value: wall
+                    modifier: plus
+                  striking_strength:
+                    value: wall-level
+                    modifier: plus
+              - grants:
+                  power_refs:
+                    - id: forcefield-creation
+                      effects:
+                        - stat_effects:
+                            durability:
+                              value: wall
+                              modifier: plus
+        resistance_refs: []
+- id: vibranium-shield
+  name: "Vibranium Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: small-building
+          modifier: higher
+        durability:
+          value: galaxy
+          modifier: normal
+- id: falcon-sam-wilson-wings
+  name: "Falcon's Wings"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: flight
+          - id: enhanced-senses
+        resistance_refs: []
+    - stat_effects:
+        flight_speed:
+          value: hypersonic
+          modifier: normal
+        durability:
+          value: city
+          modifier: normal
+- id: falcon-sam-wilson-captain-america-shield
+  name: "Captain America's Shield"
+  weapon_type_ids:
+    - shields
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - shields
+  effects:
+    - stat_effects:
+        attack_potency:
+          value: wall
+          modifier: higher
+        striking_strength:
+          value: wall-level
+          modifier: higher
+        durability:
+          value: high-hyperverse
+          modifier: normal
+        range:
+          value: tens-of-meters
+          modifier: normal
+- id: golden-boleadoras
+  name: "Golden Boleadoras"
+  weapon_type_ids:
+    - blunt-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - blunt-weapons
+  effects:
+    - stat_effects:
+        range:
+          value: tens-of-meters
+          modifier: normal
+    - grants:
+        power_refs:
+          - id: electricity-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: kilometers
+                    modifier: normal
+        resistance_refs: []
+- id: destined-one-suit
+  name: "Destined One Suit"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - stat_modifier_floor_effects:
+        - stat: attack_potency
+          modifier: higher
+        - stat: striking_strength
+          modifier: higher
+        - stat: durability
+          modifier: higher
+    - grants:
+        power_refs:
+          - id: absorption
+            type_ids:
+              - light-absorption
+            effects:
+              - absorption:
+                  target_power_refs:
+                    - id: light-manipulation
+          - id: absorption
+            type_ids:
+              - electricity-absorption
+            effects:
+              - absorption:
+                  target_power_refs:
+                    - id: electricity-manipulation
+        resistance_refs: []
+    - image_update:
+        name: "Destined One Suit"
+        image: "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+        priority: 10
+- id: gravity-gauntlets
+  name: "Gravity Gauntlets"
+  weapon_type_ids: []
+  required_power_refs: []
+  effects:
+    - grants:
+        power_refs:
+          - id: flight
+          - id: gravity-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: several-meters
+                    modifier: at-least
+        resistance_refs: []
+- id: obliterator-cane
+  name: "Obliterator Cane"
+  weapon_type_ids:
+    - blunt-weapons
+  required_power_refs:
+    - id: weapon-mastery
+      type_ids:
+        - blunt-weapons
+  effects:
+    - grants:
+        power_refs:
+          - id: energy-manipulation
+            effects:
+              - stat_effects:
+                  range:
+                    value: hundreds-of-meters
+                    modifier: normal
+        resistance_refs: []

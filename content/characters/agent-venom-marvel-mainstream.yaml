@@ -1,0 +1,69 @@
+name: "Agent Venom"
+verse_id: marvel-mainstream
+gender_id: male
+age:
+  value: null
+  unknown: true
+  display: "Likely mid-20's"
+classification_ids:
+  - human
+  - symbiote
+keys:
+  - key: agent-venom
+    names:
+      - "Eugene \"Flash\" Thompson"
+    images:
+      - name: "Agent Venom"
+        image: "images/characters/agent-venom-marvel-mainstream/agent-venom.webp"
+    power_refs:
+      - id: weapon-mastery
+        type_ids:
+          - firearms
+      - id: martial-arts-mastery
+      - id: multiple-selves
+      - id: elasticity
+      - id: body-control
+      - id: weapon-creation
+      - id: camouflage
+      - id: transformation
+      - id: regeneration
+        type_ids:
+          - high-mid-regeneration
+      - id: surface-scaling
+      - id: healing
+    resistance_refs:
+      - id: precognition-resistance
+      - id: soul-manipulation-resistance
+      - id: poison-manipulation-resistance
+    attack_potency:
+      value: large-building
+      modifier: plus
+    attack_speed: null
+    combat_speed:
+      value: hypersonic
+      modifier: normal
+    reaction_speed: null
+    travel_speed: null
+    flight_speed: null
+    lifting_strength:
+      value: class-m
+      modifier: normal
+    striking_strength:
+      value: large-building-level
+      modifier: plus
+    durability:
+      value: large-building
+      modifier: plus
+    stamina:
+      value: superhuman
+      modifier: normal
+    range:
+      value: standard-melee-range
+      modifier: normal
+    standard_equipment_ids:
+      - m1911
+    optional_equipment_ids: []
+    intelligence:
+      value: gifted
+      modifier: normal
+    attack_ids: []

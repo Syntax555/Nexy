@@ -1,48 +1,68 @@
-name: CI
+name: Validate and deploy GitHub Pages
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: Validate, test, and build
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
         with:
-          ruby-version: "3.2"
-          bundler-cache: true
+          node-version: "24"
+          cache: pnpm
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Validate, test, and build
+        env:
+          VITE_BASE_PATH: /Nexy/
+        run: pnpm check
+
+      - name: Upload GitHub Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
         with:
-          node-version: "20"
+          path: dist
 
-      - name: Validate character data
-        run: ruby scripts/validate_characters.rb
+  deploy:
+    name: Deploy GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-      - name: Test character validator safeguards
-        run: ruby scripts/test_character_validator.rb
-
-      - name: Run battle fixture tests
-        run: ruby scripts/test_battle_fixtures.rb
-
-      - name: Check JavaScript syntax
-        run: |
-          node --check assets/js/theme.js
-          node --check assets/js/characters/data.js
-          node --check assets/js/characters/engine.js
-          node --check assets/js/characters/floating.js
-          node --check assets/js/characters/search.js
-          node --check assets/js/characters/ui.js
-
-      - name: Build GitHub Pages site
-        run: JEKYLL_ENV=production bundle exec jekyll build
-
-      - name: Run character engine tests
-        run: node scripts/test_character_engine.mjs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

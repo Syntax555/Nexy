@@ -1,0 +1,44 @@
+{
+  "name": "nexy-battle-lab",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A typed, deterministic character matchup engine built for GitHub Pages.",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "content:build": "tsx tools/content/build.ts",
+    "content:check": "tsx tools/content/build.ts --check",
+    "images:build": "tsx tools/images/build.ts",
+    "character:new": "tsx tools/content/new-character.ts",
+    "predev": "pnpm content:build && pnpm images:build",
+    "dev": "vite",
+    "prebuild": "pnpm content:build && pnpm images:build",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "pnpm content:check && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "preact": "10.29.7"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "2.10.6",
+    "@testing-library/preact": "3.2.4",
+    "@types/node": "24.10.13",
+    "@vitest/coverage-v8": "4.1.10",
+    "happy-dom": "20.11.1",
+    "sharp": "0.35.3",
+    "tsx": "4.23.1",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "vitest": "4.1.10",
+    "yaml": "2.9.0",
+    "zod": "4.4.3"
+  }
+}

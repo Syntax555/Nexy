@@ -1,47 +1,58 @@
----
-layout: default
-title: Character Battle Comparator
-description: Select detailed character profiles, compare their abilities, and resolve battle matchups.
----
-
-<section class="selection-screen" data-selection-screen>
-  <div class="selection-bar">
-    <h1 class="page-title" data-screen-title tabindex="-1">{{ site.title | escape }}</h1>
-    {% include theme-toggle.html %}
-  </div>
-
-  <div class="versus-grid">
-    {% include character-selector-panel.html side="left" title="Left" aria_label="Left character" %}
-    {% include character-selector-panel.html side="right" title="Right" aria_label="Right character" %}
-  </div>
-</section>
-
-<noscript>
-  <p class="noscript-message">Nexy needs JavaScript enabled to load the character selector and battle comparison.</p>
-</noscript>
-
-<section class="battle-screen" data-battle-screen hidden>
-  <div class="battle-bar">
-    <h1 class="page-title" data-screen-title tabindex="-1">Battle</h1>
-    <div class="battle-actions">
-      {% include theme-toggle.html %}
-      <button class="secondary-button" type="button" data-edit-selection>Change Characters</button>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090b12">
+    <meta name="color-scheme" content="dark light">
+    <meta
+      name="description"
+      content="Build character matchups and inspect every stat, power, resistance, and battle interaction."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nexy">
+    <meta property="og:title" content="Nexy Battle Lab">
+    <meta
+      property="og:description"
+      content="Pick two fighters. Read every advantage. Resolve the matchup with a transparent ruleset."
+    >
+    <meta property="og:url" content="https://syntax555.github.io/Nexy/">
+    <meta property="og:image" content="https://syntax555.github.io/Nexy/og.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nexy Battle Lab">
+    <meta
+      name="twitter:description"
+      content="Pick two fighters. Read every advantage."
+    >
+    <meta name="twitter:image" content="https://syntax555.github.io/Nexy/og.png">
+    <meta name="twitter:image:alt" content="Nexy Battle Lab character matchup arena">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Nexy Battle Lab character matchup arena">
+    <link rel="canonical" href="https://syntax555.github.io/Nexy/">
+    <title>Nexy Battle Lab</title>
+    <script>
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem("nexy-theme");
+        } catch {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="boot-shell" role="status" aria-live="polite">
+        <span class="boot-mark">N</span>
+        <span>Loading Battle Lab…</span>
+      </div>
     </div>
-  </div>
-  <div class="battle-content" data-battle-content></div>
-</section>
-
-<div id="image-lightbox" class="image-lightbox" data-image-lightbox hidden role="dialog" aria-modal="true" aria-label="Character image preview">
-  <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Close image preview">Close</button>
-  <figure class="image-lightbox-frame">
-    <img data-image-lightbox-image alt="">
-    <figcaption data-image-lightbox-title></figcaption>
-  </figure>
-</div>
-
-{% include character-data.html %}
-<script src="{{ '/assets/js/characters/data.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
-<script src="{{ '/assets/js/characters/engine.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
-<script src="{{ '/assets/js/characters/floating.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
-<script src="{{ '/assets/js/characters/search.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
-<script src="{{ '/assets/js/characters/ui.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
+    <noscript>Nexy Battle Lab requires JavaScript to resolve character matchups.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

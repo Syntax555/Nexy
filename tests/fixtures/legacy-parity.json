@@ -1,0 +1,3564 @@
+{
+  "schemaVersion": 1,
+  "ruleset": "v1",
+  "provenance": {
+    "sourceCommit": "66e22416331bbeced0554e85112f6992eeff41ab",
+    "capturedFrom": "The pre-migration Jekyll and JavaScript rules engine",
+    "generationNote": "One-time export of all normalized profiles and ordered matchups. Never regenerate these digests from the replacement TypeScript engine."
+  },
+  "formCount": 21,
+  "matchupCount": 441,
+  "forms": {
+    "aaron-fischer-marvel-mainstream~original": "9b19cf7eba864cfe64ea7a64b6d6727ab2f2a4d3b2aa2c6ce89c0608f5f79cd2",
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement": "bd08b13bd680db0643f236210a3ff47ae023d0916dbedbc2cdd2eb1c106032d2",
+    "agent-venom-marvel-mainstream~agent-venom": "44a16ea0d5e877e2ee67d3ed08de3b6d372ce78d6e818edb2d52ca71a45c24a6",
+    "aurora-marvel-mainstream~aurora": "09d72cb0abd0f07aba31e79deea95b682936308e0ce1b2426d6702654b105f97",
+    "black-canary-dc-post-crisis~post-crisis": "3b373707c4e0d3347921a06e496aee2878b4601d177ecde0301088efb2849f07",
+    "dagger-marvel-mainstream~dagger": "586aeb977206a893584971198a0e983d20a2d857d396d63eb011d999e2dc8ae3",
+    "elektra-marvel-mainstream~elektra": "c283736c8eedcb487a40411d3e3ac4dde30eb2ea4b6c2519c760888ba643a444",
+    "escapade-marvel-mainstream~escapade": "6a09459f8ffcd9883015870feffb6e24502284c2a35b80220c0e97fa8ab0994f",
+    "falcon-marvel-mainstream~falcon": "3497bc743c05deb5010e9191a037b70a64cd8583f7afd080b76c1e681d3d0e5f",
+    "falcon-sam-wilson-marvel-mainstream~falcon": "1438bfe00963cb0458015396404efbe9748a0e8f253fd3ca015488aa34e98f94",
+    "kimura-marvel-mainstream~kimura": "729a978e9fcde05e52fbc9dba5e021805b83924526167b2341be1b2b04350eea",
+    "kingpin-marvel-mainstream~kingpin": "a2642009e092b75a0e3a96a400c963d635bb03e5c883d72765efb953b1592f56",
+    "lila-cheney-marvel-mainstream~lila-cheney": "887fe9d59e2392543f464acee906a629868a7a4707123cb3c9e56cd5bd44cc2e",
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas": "54b7042574597299325035934a8824c86d3667d9a2019fd0761488bf7cb62d00",
+    "luke-cage-marvel-mainstream~luke-cage": "600fa938d088929788bfc8d96e622d67386bc4f6865dd21b57a3d5f8531d2f61",
+    "ms-marvel-marvel-mainstream~ms-marvel": "85a1f3c69328d2da38d0d94e16e881a410f436aee73c723e2bb481c539b76e03",
+    "mystique-marvel-mainstream~mystique": "edc0caaa8e8956e675a0a4ca0d555c390f84806a8e8931ae0b6e271ec9bb69a6",
+    "purple-man-marvel-mainstream~purple-man": "70922f72d1566ce23fe43792f4465e1555c4131b4950cf169bb72c8a1bb830d2",
+    "quicksilver-marvel-ultimate~quicksilver": "a84d14c27a918e4fc2d50ba65314efd57a66fb801afd413a00613658ed5acba4",
+    "us-agent-marvel-mainstream~modern": "f0a7564d6edb0f19353c3cee8a3b07d7a2d8a4e5b7be375b1381b3e3ee9d41c1",
+    "wonder-girl-dc-post-flashpoint~wonder-girl": "5f543606d75a077a02887d5f069b5dd0360c0b331701b5ff5572af9bfc4713c6"
+  },
+  "matchups": {
+    "aaron-fischer-marvel-mainstream~original::aaron-fischer-marvel-mainstream~original": {
+      "winner": "tie",
+      "leftScore": 416,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "601ab6b43526a5e22be8532a352201457d3f492838c3ce495671b3031b93dfc2"
+    },
+    "aaron-fischer-marvel-mainstream~original::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f20d91060ea35ee7f43d407f1b43b0dc4b4783f76c31612facf489bb9e55947e"
+    },
+    "aaron-fischer-marvel-mainstream~original::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a10ee7cdd9253fca4f40ebcc303e58a5dc319af1add64abccdb7b59d9469d972"
+    },
+    "aaron-fischer-marvel-mainstream~original::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2b2e524b18592d44b3e2c76651390eb18f70e1d5cebc045a0f358c0c65f7d33b"
+    },
+    "aaron-fischer-marvel-mainstream~original::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d3c1b67029ebbd4fcd4c98302f5f40e41e59df83445a437ebc3010a8d735a3dc"
+    },
+    "aaron-fischer-marvel-mainstream~original::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "775e3690957b29cd9d6cd831fd1df46364af5c8360461e791811c4bb8a7e4ccc"
+    },
+    "aaron-fischer-marvel-mainstream~original::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c093a17694f2ce51453e7c11857047ee01eb29c88393f70f25e9917215d9f673"
+    },
+    "aaron-fischer-marvel-mainstream~original::escapade-marvel-mainstream~escapade": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0c43629787bc98015b43b3028d22bc24fea1e45dedb7424c96259b9230f799e7"
+    },
+    "aaron-fischer-marvel-mainstream~original::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "15702f2d8bba7a5756b7e8cb6c56997dfe87bfd8364df475162348d9d206425c"
+    },
+    "aaron-fischer-marvel-mainstream~original::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a5526dadf23fa83754df0e37c273ec0aa4e4a0392223130931f6e403a3e08357"
+    },
+    "aaron-fischer-marvel-mainstream~original::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a3d2916750ae802a05c0dc821bc1a4262e874a9b6677073f8409257acc9883ff"
+    },
+    "aaron-fischer-marvel-mainstream~original::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b5bdf77a32b1c594d7a82eed6873ddc284febad1f7823471956b950b4f39bf8b"
+    },
+    "aaron-fischer-marvel-mainstream~original::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0440aae1c0e5f87fed6040e124e897aa01230c0afbe93e9d1699d18874a800d8"
+    },
+    "aaron-fischer-marvel-mainstream~original::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 650,
+      "interaction": "Captain America cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "a941932458e6689ef5066feeb3ac5636e50ef325d81ec961b7b71c8ea012715c"
+    },
+    "aaron-fischer-marvel-mainstream~original::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6c29cc08527d6891f8122a5d2c2afdeb3a317d02b66d26283d4f8eadda84a698"
+    },
+    "aaron-fischer-marvel-mainstream~original::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 1041,
+      "interaction": "Captain America cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "fe0ce38817947e536e31cf4ec5b775358e85e11e285c02eb09f4bc9ea4f3de1f"
+    },
+    "aaron-fischer-marvel-mainstream~original::mystique-marvel-mainstream~mystique": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4197f5b13b98522078e7c3aa4b406c9c9cd7fef7a1935ec18d1e4b40c8ee7db6"
+    },
+    "aaron-fischer-marvel-mainstream~original::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 416,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "936c937a8cf8f7c9b76f6d71ad7625d030e9b2c48484867e0a051c9271c435b3"
+    },
+    "aaron-fischer-marvel-mainstream~original::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5044b45c0ef660b7e360d067485e181d1ac73dc0dc021c7aaebdc5e5cc5358d2"
+    },
+    "aaron-fischer-marvel-mainstream~original::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "835085c674badd54f4583d31fcf3a0a91519852269195cb83db5cbe0ac5edb8f"
+    },
+    "aaron-fischer-marvel-mainstream~original::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 416,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9173880dee39a519dcebd3a0447b4b85ae045ff7298dac895f02e3251351f473"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 443,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "134e2693dd24a76db890c2145f43207dc1d51c33ff378a4881d08f2883f36966"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "tie",
+      "leftScore": 443,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4e82e065c6e378677abf0b24e47e056984be5c12040baa14507a6e478fdbff9d"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bf1b97336acd7216ff0ba7afe8b788b0f121872d99f33d066d3e93b5cb8635ef"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "25eddce67188e36f99bd8c7871c5c6bbf0369f090fca08a318412a98fc96827f"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6782063645c36ce4b4e95310e03a51713d482680521f2af284b59d2b34c79410"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 434,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ae79fedda4c47e0b502e4e809c539714765074f922640744fb94e53ea6b857c0"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9332cba6e1f7cadbc8d70b0f1c0d3152c7bb033d6c69cd996a1edfd97409ffc5"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 443,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7215a5bd57619def7cc51dc159fef5ad3f64f7fca6131bf3167ab309436c3ca8"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e38d23cc3e905b8c435048b57cc2ea8000809d3a7bf155cb229a472a47cfa458"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "34832e6438d5e441a479793341b5200cfd31716c1a89cfde72877b12b71a9293"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ab70aa02c04b571caba36b1f4b5d76e9ae2cd4d1c3a347ce85b61da036044b9a"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e19de7ad1f8cbd8708b204a1f0161245aabd748fde3e833f11fc8eafeafc1bd4"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e3fd49e7a091c9fc2338b26fc7b5c466ffc2bead78beff1a59579fd7e9b6150b"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 650,
+      "interaction": "Captain America cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f33adf110914ed711a1c18a054b444c79ea1c5e7d2956d8b574320d912207d44"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b5fb7df3409e3d9b854dd6f019caa96ac7b134e37b152e4f346df2d4320d191a"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 1041,
+      "interaction": "Captain America cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "e531e3eef8403b84f915aab4310f064e2508427de5ab3bc1740d9a6e2934b415"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::mystique-marvel-mainstream~mystique": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9f32c4a356837c070b8e21aa911e7e5111f74ffd0bd59c1d36f773c657134bcb"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 443,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5674e34b4db0c3f7dbfbe0a3132e58acb284b2aaa5256dc6a92ca218da0cddcf"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 443,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1fd9cf6038281f69a3cb3ce75200e497fb9900c8d02bb48f1328bc22fe127689"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3b6f9de3e32db41d068500259b01a8729ca043472df14ab86ee1a9a7c4d79ae8"
+    },
+    "aaron-fischer-marvel-mainstream~post-alchemax-enhancement::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 443,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "74b80fe2c33f27de38d258dd97955bc9905dc02005806746fced7e708037835b"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ce574818387e117b2f812c1657328c87b67336eefe84314aaed930f9da4f12af"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fcfc81f577813294c33627406a7b58ccff59b96218be9de58a1bb5005b7a9e10"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "tie",
+      "leftScore": 611,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e857d8318ad5e900f5a68482b2e05cc19dbe948dd942c8e3cd582a77949f12e9"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2e30ec1fa40049d080d6a2490479814ac57ca877f1fd803adda3850de78451cb"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3ab13eb67315aa9c2aac572f8275b3283e006de015552c72c2a6cd9fdb8f83a8"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "405b7bfe9058f12feef67945e2d26364a77f0c222609553ce61597eb169ac0f2"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "957037b78c70994d74feafc0b96f5a7afe82dc41015b98a9570ad029f92cac23"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a59f40ff97d0d380ac460190c91a7649e0533ed77756ec3a08775f2231995e96"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "eae995c86e7c2c91f545f3e1ce90849225dfc8162864adfd33a36bab84a473e7"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ea67af6c75e26e95f0daf7fff91b3e62ac5f709a5884414e2ce9be02c7912be7"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f8b2d9c98e4f9e3bd1ae0b9e244820ee64ad5092e153f8695c3f4329f4dacdce"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6522a49eb956684ad02efd308967eb026944847e405faacfa1c4ff0ba6a4413d"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6304e950db021c7ff6350e4f7cce983d7b77654a35b0b0aadfe7255426cdb812"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 650,
+      "interaction": "Agent Venom cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "1d122a41e6ffb53727bb01dbb88312c059ac0f206633879da4cc629f418534ae"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f774b9d3b3ad88cb19820750b61246f6c84d1b240932a4551e5e0cd1a558c89b"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 1041,
+      "interaction": "Agent Venom cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "806fd2fdc9d23e9d70cbd1ff4cb8a29a8636fd21d8ce81f572b37c167e078dc6"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "96efd3c668cb244bf29f804470d23c2b2de3d482fdc1917d55e389c8d95fa940"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aa28fa5a6be167061a1f2ef43a51ebd2a55f6fd80a83a15483493718b6b7f985"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 611,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a0c635c3fa4ca71b258fb8ba8039a858ae640233db616a4a5c4911357c01da0e"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d7b6b328445fc0aa9aeadb07fc9d22556ad1723ffc7265d681a5d2c90d6a056d"
+    },
+    "agent-venom-marvel-mainstream~agent-venom::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 611,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1757b84033bdf3c919c3a0fbc7dcf01a99ca43c1a489b63051ea3d393c90a464"
+    },
+    "aurora-marvel-mainstream~aurora::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "833d0fc3f85aef18d7de1d0c154aed3ac9b8344e50d6187bed0a7c8e117db2b2"
+    },
+    "aurora-marvel-mainstream~aurora::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6a017571fab80c69dc309aea0453bf8f4de2238bb70357976a643d13831df771"
+    },
+    "aurora-marvel-mainstream~aurora::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c4815a8db603abe63260a7dad608765bd3fbeff361983bfabe712e2502720f37"
+    },
+    "aurora-marvel-mainstream~aurora::aurora-marvel-mainstream~aurora": {
+      "winner": "tie",
+      "leftScore": 488,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a0ae2bb7d3e9e5a17bc535f9ed914c244d6fab25bf28caafeb80e19412f25231"
+    },
+    "aurora-marvel-mainstream~aurora::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "95a087b29b1f6d99c547a9882bf69c62ddfbf2cb9e9d92f430c230f0123c7f7c"
+    },
+    "aurora-marvel-mainstream~aurora::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d4a03b878013a222ed8bf62882c16e23a77a41eccd7553bb33dace03dceb6fde"
+    },
+    "aurora-marvel-mainstream~aurora::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e3d0c698d313082565c72d258aa73c2145bfe664b8fccc3bde783ec6a8cbce6f"
+    },
+    "aurora-marvel-mainstream~aurora::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "85c8e8b9fd87503a7a59cfab3f09d83f2bb607b74e74b9d5fa37009b4db80c0d"
+    },
+    "aurora-marvel-mainstream~aurora::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1e1258607559f351afa7067c5173eb0b55011196ead9f09ff84bf19257e02eb4"
+    },
+    "aurora-marvel-mainstream~aurora::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7c19da86d19a3b594b749da5e0b7c8d892526f24e2366f73be6bc239a97a26ca"
+    },
+    "aurora-marvel-mainstream~aurora::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aef725505fcc107ab54718f1db0834abacac5d0a0b0c0372bc153aac4d0f8efd"
+    },
+    "aurora-marvel-mainstream~aurora::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "98d98e7073239583dd20e292113c5072686c63a0ce59045dad674a3df879c9f2"
+    },
+    "aurora-marvel-mainstream~aurora::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9bc069d46f90f9503b6c1c36d632f4d2fbb5e80737b52da34fbec90e7e4ce017"
+    },
+    "aurora-marvel-mainstream~aurora::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 650,
+      "interaction": "Aurora cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "37c4916e23ee8c1cdbf7fb07155d72ad9894f7acbb8bacaa17ec00749b2a2035"
+    },
+    "aurora-marvel-mainstream~aurora::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "557c02164de2c9009268ad98fbc0e8e5c444937ac64b85d168ca0b073267f631"
+    },
+    "aurora-marvel-mainstream~aurora::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 1041,
+      "interaction": "Aurora cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "494c03d5e8e1a29a8e09a7078b41dbca93636cdd17a8bda3b41640d806b82110"
+    },
+    "aurora-marvel-mainstream~aurora::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6dc6512d64606a62025c4238798e397bdabcc673f62c6b9e51def5e499c8ca2f"
+    },
+    "aurora-marvel-mainstream~aurora::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b50888e7ed48c0cfdc11af2515042bd3d17121c8a5f1a7eda9cf96569be9ea0f"
+    },
+    "aurora-marvel-mainstream~aurora::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 488,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "43470339bc717ad63b3b3a130326b03f58ab13a8a44cd9767bb652e70108eff0"
+    },
+    "aurora-marvel-mainstream~aurora::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6092994a11541ecce4ae3df657fe24b9f31c4145f28ff7b10ed4fab04bd11e68"
+    },
+    "aurora-marvel-mainstream~aurora::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 488,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4c5bf0c19f4e2ae939da52e162ed1e692c3de422d7a8f3ce8abffc558751af36"
+    },
+    "black-canary-dc-post-crisis~post-crisis::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bf3228540be167de3c73e1367da7dfbaeb67a967d9d6a3085ef816c090b25469"
+    },
+    "black-canary-dc-post-crisis~post-crisis::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c0956db08c926d032ed068435b21ec363a4aa144c9072b0679c806208f060f5b"
+    },
+    "black-canary-dc-post-crisis~post-crisis::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2427240858c9d57f949b0a3bfae32816e1ef00fd0113cddf7592b020d1e789a4"
+    },
+    "black-canary-dc-post-crisis~post-crisis::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f02abf9b0923111ffd9e8f9d9a4fc8e5c86cd06ae0a996f4b3185894d3d60d5d"
+    },
+    "black-canary-dc-post-crisis~post-crisis::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "tie",
+      "leftScore": 506,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aa1d8f055a7b23500880e036a9c260a587f6cbbb02a219fef26a7290a0bde3e6"
+    },
+    "black-canary-dc-post-crisis~post-crisis::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6f04bdb28641f93cee55ca6112aedaf3f950fb1d0d64cdd4e2bc8a769059f0eb"
+    },
+    "black-canary-dc-post-crisis~post-crisis::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "097c87865ddae8d233856cc9208af2d4aebd8593ff1420a2454e6b07bfa853c4"
+    },
+    "black-canary-dc-post-crisis~post-crisis::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "39a9121e45ebeaaf777a061478f8d35ffd527923df5ddcfbcb7e7c3692e5539c"
+    },
+    "black-canary-dc-post-crisis~post-crisis::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "91f9d5bfd1a114eb06fceac314435d34c415a75adb7247b12894461d0ba29a00"
+    },
+    "black-canary-dc-post-crisis~post-crisis::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "31050562a48ce0eef01c316d1e6fed07f06ad95b31803a97b4ce75c90e882740"
+    },
+    "black-canary-dc-post-crisis~post-crisis::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5429f8a3e433a27c3e6c76f16275e039be584085a3cafda8cf6f9a275bdb8779"
+    },
+    "black-canary-dc-post-crisis~post-crisis::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e7bf5e4d6ebd6d88dc55aaa5e8041871fedc2950d540ac56f57ce8684513a7b1"
+    },
+    "black-canary-dc-post-crisis~post-crisis::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "94dfdfa426df30a2e71784507efb5f65f5c86a7e56de143c8dc05a7f718a5d4a"
+    },
+    "black-canary-dc-post-crisis~post-crisis::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 650,
+      "interaction": "Black Canary cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "116cdb3330d5b295532ede413aa94aaf435471cad39d6480a97ec5d135ed86e7"
+    },
+    "black-canary-dc-post-crisis~post-crisis::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "228474b26906e6f7540e007709752f97257770083b2f7eb4bad4cf95da690a4d"
+    },
+    "black-canary-dc-post-crisis~post-crisis::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 1041,
+      "interaction": "Black Canary cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "2cc638e93c997fe14a9fecbb6be6e97883fda655bc4cea5ab4a0706d9f902245"
+    },
+    "black-canary-dc-post-crisis~post-crisis::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e31821100d6f9e3392c2bacce0faca68018e76c55af37578dc575b6b902e72a3"
+    },
+    "black-canary-dc-post-crisis~post-crisis::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 286,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "683a00e1ab6cadc4e51df8cce0241008698010a5d7310b0a591bb4df8b1ad4f4"
+    },
+    "black-canary-dc-post-crisis~post-crisis::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 506,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a07ac9df11237e19156bee525d8cfe65a05ec93c3fe6d7bc770f7e31a417ade4"
+    },
+    "black-canary-dc-post-crisis~post-crisis::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "439d168a610906e96329e550e8793321e0daf181743c20a962cc205f266b6a2a"
+    },
+    "black-canary-dc-post-crisis~post-crisis::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 506,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1adda4c86d89c3d9bfd6216e4c9895ea0324ebc31383e4fe073f53375c29fd06"
+    },
+    "dagger-marvel-mainstream~dagger::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "79336ba92e9088e1c3d5cf1eab6589c3fbdeada66c0eb750913dcc875e7a3075"
+    },
+    "dagger-marvel-mainstream~dagger::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 434,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a2803dfb1bb7fee1b9bb0e9eb8b45e56da84c481cbe3051f6c3c9fe9f3b8ed92"
+    },
+    "dagger-marvel-mainstream~dagger::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d90ad7e61b54e3e7907d18268b4bd574de1354ddcad6cb0c191fa7927854abf4"
+    },
+    "dagger-marvel-mainstream~dagger::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c37effbd85e8477e78f1aed2151168a96b28b5cd48339d8a53583ec6f7d22fbc"
+    },
+    "dagger-marvel-mainstream~dagger::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7aa484b94719ab68d1e06c9669f26ad16bf1c2a06c471c03ea3e8066bcda41e8"
+    },
+    "dagger-marvel-mainstream~dagger::dagger-marvel-mainstream~dagger": {
+      "winner": "tie",
+      "leftScore": 689,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3045d286fee49846d225b5797c6ed88d29266ad476526c4ec0627c0cc134e8fb"
+    },
+    "dagger-marvel-mainstream~dagger::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aeac0b41cdac4e7e3f7092ce95a10ff30a8c51a90b86218fe33019128316626f"
+    },
+    "dagger-marvel-mainstream~dagger::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5fb7062be243d670f82c9d238d9e5e3579b8b6c7bb489f1e2273f1173e904c2c"
+    },
+    "dagger-marvel-mainstream~dagger::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fb96b78ffc162863ef22375fc809d7db6b9a99468b2b019e45576b0a9efe8891"
+    },
+    "dagger-marvel-mainstream~dagger::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 689,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2e7b7d1f0c8ce813322ceaf6fbe0b6c6a12d5d04e1557389e9a4ba7d9f822536"
+    },
+    "dagger-marvel-mainstream~dagger::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fca5c243f0fa6536420e4afe00f1ddc120429e0456788c8a06a7a67d080d8ae2"
+    },
+    "dagger-marvel-mainstream~dagger::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1bfdf65dd3c26e44f73a44fdb31fd7e3d424aa7a60086d07ffda1d1a0ca17e22"
+    },
+    "dagger-marvel-mainstream~dagger::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1c3e52d8d07ce765dd52f73f757af05c31d8c053a83e2f84b72c95448f48ab53"
+    },
+    "dagger-marvel-mainstream~dagger::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 689,
+      "rightScore": 499,
+      "interaction": "Dagger cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "e75465fe135024090dc000fd1709d742e09b1f5f2a2a8ff41fdf5d78cfaa404e"
+    },
+    "dagger-marvel-mainstream~dagger::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9192df02c8b4cf738d8cd63ec298ebfd66f2de7b3e306a2356b4d927166baa61"
+    },
+    "dagger-marvel-mainstream~dagger::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 382,
+      "rightScore": 1041,
+      "interaction": "Dagger cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "727e6e63843ba971ca8fa59781dafd7e4e3650b677e27752872e27bd5f300b8d"
+    },
+    "dagger-marvel-mainstream~dagger::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b3da90c82649cdcfb798dfdac8df84681bfa5fda0bd7ff0c15ab80bc71524f0e"
+    },
+    "dagger-marvel-mainstream~dagger::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 286,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4bcbc13556bb130739c64cb9c85f60c6463b741ae56d55b7d0e70d5d33943523"
+    },
+    "dagger-marvel-mainstream~dagger::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 689,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "dade61e34107c2b5392ff13da52bf17a0a541d06cd2f8b8152bd58fa1d15797a"
+    },
+    "dagger-marvel-mainstream~dagger::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 689,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a1960a0d982294c56c3af8cb04e271757c37711bd408f95e8406fd70a126c02c"
+    },
+    "dagger-marvel-mainstream~dagger::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 689,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ec6268ca367bb1ae1d568dca00ff57d3aeca71c50e56619991ce9f2ee303a1ba"
+    },
+    "elektra-marvel-mainstream~elektra::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4f88ee0b7f7a752e517953f9a8d61a92773bf7fbd275321f065e0eb530229de8"
+    },
+    "elektra-marvel-mainstream~elektra::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2f0f991a2e0dddce2b8e4f644b4c60f2dcb0f730ee8fb76e1efce23faefef32c"
+    },
+    "elektra-marvel-mainstream~elektra::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "356e601c1558c5ee130b13680eb9c94a0efec2157a1ad0292eaa40b7477b9569"
+    },
+    "elektra-marvel-mainstream~elektra::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e21fbe482c45fc0458423987f25274ffa5bdfbf91f501cb2151a332e6978144a"
+    },
+    "elektra-marvel-mainstream~elektra::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "24f85403c62301ed6a8e1609282419e87543db14f2bda210ce07d3d4c629ccbb"
+    },
+    "elektra-marvel-mainstream~elektra::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5edb76491939e68737a31ab96a6b3fd70d892b11453445c094663939d7d8b0e7"
+    },
+    "elektra-marvel-mainstream~elektra::elektra-marvel-mainstream~elektra": {
+      "winner": "tie",
+      "leftScore": 514,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3bfaaf2d10b8b018e24fb77e74cb33a865d8f6a971f2745a68ab633354fc6edc"
+    },
+    "elektra-marvel-mainstream~elektra::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d5cf44034e76c93cbfba1232093d13493fcbe1a5bcf44fb6c18eb0bbabe0d0d6"
+    },
+    "elektra-marvel-mainstream~elektra::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c8a8b6cc11e552523441988d3866240a2c5ee296b4639ded2296b07e41cd65fd"
+    },
+    "elektra-marvel-mainstream~elektra::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bcedd318a755f1402c2ecd7b27de26fb9d905ca78ec5bc0c052d9921ce48fa65"
+    },
+    "elektra-marvel-mainstream~elektra::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c63ef2a2bf0b2df80a8ec45f7aca85342bf8c259fed48a1bdfc36ddd36575520"
+    },
+    "elektra-marvel-mainstream~elektra::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "42c030480e44d2d17c1a087f743d3266a27a4dc659a3b1ff698446d47351eb5e"
+    },
+    "elektra-marvel-mainstream~elektra::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5d650c8960f884e94364385a8aa55a4098669df7d696a2a662ac29199d97cf13"
+    },
+    "elektra-marvel-mainstream~elektra::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 650,
+      "interaction": "Elektra cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "d58462157b3a36b3ee478f72bc212721268cfea951571578d0d5a76ffe567c83"
+    },
+    "elektra-marvel-mainstream~elektra::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1f134e5938719080e1be05b1fb13a959ee3503384514757815d5abe25f35889f"
+    },
+    "elektra-marvel-mainstream~elektra::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 1041,
+      "interaction": "Elektra cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "da47437ec5f97f30df7e40f3f19264e8500791825afec0d1344a05c54972e325"
+    },
+    "elektra-marvel-mainstream~elektra::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e541dd7df36ad375457b070eb34e8d438df6c9d9ed30287cddbb75736c736dc6"
+    },
+    "elektra-marvel-mainstream~elektra::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 286,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d14367058231c3a3ccb363b51f9b512543eebd22eb44e5674e61914dffa55fc6"
+    },
+    "elektra-marvel-mainstream~elektra::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 514,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3bf1c5a3d3974282f57f0041fadf33ab94e51cdf8db66c4683077be60c5482c7"
+    },
+    "elektra-marvel-mainstream~elektra::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c0f3f14d4cf1de5e128a0b8d1659930beb8281fa4b30056cebc6bcdcaea08023"
+    },
+    "elektra-marvel-mainstream~elektra::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 514,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fec4a4b30d0fa77b12e5506c862f6566d483e551360fb2bb45964bed94872046"
+    },
+    "escapade-marvel-mainstream~escapade::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 436,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "cd2d7f64324f307e26c969f3697f08374ccfbedd668644148ab296b6af5d58d1"
+    },
+    "escapade-marvel-mainstream~escapade::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1366422efde22035d5f92cf9695ee761ac6d77eec00bdde3c5cdc09ebff1325b"
+    },
+    "escapade-marvel-mainstream~escapade::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d8908608a0d61fab39b4912dd76de5b20e10b19555623a5538adf3ccd0ca9c36"
+    },
+    "escapade-marvel-mainstream~escapade::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "641e85e36b1ad88ee38407cc56982634a935f5c41c80dc75cdffadc48b04e810"
+    },
+    "escapade-marvel-mainstream~escapade::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b5858768319bf87d372b9a856841a64ab7981770514160f311c70af55a77d35d"
+    },
+    "escapade-marvel-mainstream~escapade::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "39b8cafd355575c3d4ab00fd999d465022ce1d76b8d3a482cbed20bd72d2ad63"
+    },
+    "escapade-marvel-mainstream~escapade::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "94b598624284e6f6d021fe360ec8d9c34349225817635fe15891ad09ea635806"
+    },
+    "escapade-marvel-mainstream~escapade::escapade-marvel-mainstream~escapade": {
+      "winner": "tie",
+      "leftScore": 436,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a6fb0b33fdcd5aa2b76fcd8bbb2bc6d116d69ed4945324e8fadaf75219002515"
+    },
+    "escapade-marvel-mainstream~escapade::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "914378502fb2324599675be492e87d8586b5bb40f2bea16521aa2388ad3d04fd"
+    },
+    "escapade-marvel-mainstream~escapade::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fdb624163b3af26e1565fdea98af113b7f58fa47202dfe982e39d9ec1f4f6643"
+    },
+    "escapade-marvel-mainstream~escapade::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 715,
+      "rightScore": 395,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0beaa6b60c46796d556723a2dba94677c3ccf9dca0bb4a34841246c800e94be1"
+    },
+    "escapade-marvel-mainstream~escapade::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bb415cffd5e8453c1eb802dbcb2e8344b33646ba121faa98043ed53e8f557ff5"
+    },
+    "escapade-marvel-mainstream~escapade::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "01912f9f106a31f96f06f0180e0f0904cbd40d3beacc3519d3b0b95aae6db011"
+    },
+    "escapade-marvel-mainstream~escapade::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 650,
+      "interaction": "Escapade cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f1877e3cb606667dd59d0996144957631162e3c42019d968f84e9a269d20f49f"
+    },
+    "escapade-marvel-mainstream~escapade::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "377b76a6678b8d0286c6af802fad4f6f9f3a140a132e037fba233043d528beea"
+    },
+    "escapade-marvel-mainstream~escapade::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 1041,
+      "interaction": "Escapade cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "ed4955adada653e64e0b0d88e17823c2b7075cc9de0912c8ea5607f8e74bba95"
+    },
+    "escapade-marvel-mainstream~escapade::mystique-marvel-mainstream~mystique": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "66847de1a1849940855d77fa4868d0a7d58dfc57853f4a65266ef7bceb0f2e3b"
+    },
+    "escapade-marvel-mainstream~escapade::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 436,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "60c8f464037d85f8494788048da8d3793fde2b3ce4cbd678d650cdd21ef24cad"
+    },
+    "escapade-marvel-mainstream~escapade::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "97a77df147919aeb5c84fbbfe1c498acd7bbbba38a702a367e47141aeac02a03"
+    },
+    "escapade-marvel-mainstream~escapade::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "504c0b52d00569623ae46ead39c944e1981ee6c8b524791f1a389dd88cf36d17"
+    },
+    "escapade-marvel-mainstream~escapade::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 436,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b765c11aadf97f465020e11725ef7338805fd3fd4ff8e1ea4b123293940e2264"
+    },
+    "falcon-marvel-mainstream~falcon::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3a3d5ad0783f400ab3605acdb2e73b85fe12dcb4b54ec24cdea46bcd32200c3e"
+    },
+    "falcon-marvel-mainstream~falcon::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0b063509bbbddfaf96d753a6575e185dd8bbcb804050fab7adb9fa50cb6b851f"
+    },
+    "falcon-marvel-mainstream~falcon::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "77ac852b845a16b43aff9b35552afd92a552968543951ec766e41ce26ccf3b4f"
+    },
+    "falcon-marvel-mainstream~falcon::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3c9df720e3798bc77a9dc22d830cc9c9b9c2ff9da813db3abbc72010280018af"
+    },
+    "falcon-marvel-mainstream~falcon::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c862a2cd9fa844d0eabdfe8f6be9ba32de53c29811e72d9a697979d32bddb9e6"
+    },
+    "falcon-marvel-mainstream~falcon::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2c2b487de59dcb4a2de0633bfd2487ca14346ec060344ed0c09b28fc46085d6e"
+    },
+    "falcon-marvel-mainstream~falcon::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "14f88c49b1e2f6a8287795307db17048875bdc977e2bf9cbf0aa9f0a36d55027"
+    },
+    "falcon-marvel-mainstream~falcon::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ead74c4449e613766e849354aa33ebd3a798cb9bf3940621c9195a061cba6776"
+    },
+    "falcon-marvel-mainstream~falcon::falcon-marvel-mainstream~falcon": {
+      "winner": "tie",
+      "leftScore": 451,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7890f63fe232ef991a3d984c83eff5560780a6d7e27b7c64dd8d7896ecbc7135"
+    },
+    "falcon-marvel-mainstream~falcon::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d46c101ac853c3f8d6760ecb4135c09a9f3358087d5942dac49a1c4440d137bb"
+    },
+    "falcon-marvel-mainstream~falcon::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2a0e42451430186e885128056e44dae80c5ad744e7dee1dcd511723b3c4b5c6d"
+    },
+    "falcon-marvel-mainstream~falcon::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e2053ae7a1681edba5ed7dc81a29a46ae22f91c91cf9e114fce540e9b21a8d9a"
+    },
+    "falcon-marvel-mainstream~falcon::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "65d21a8ccaebd8f1b46c1388af165ca4fbd0746739537a6a55121dbc8d45c392"
+    },
+    "falcon-marvel-mainstream~falcon::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 650,
+      "interaction": "Falcon cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "8db929c91e856195a5c2f4a174e694af06f2adf0c62ee9d6b720300072694d50"
+    },
+    "falcon-marvel-mainstream~falcon::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b96421dce76cdc06bcd9b7455a05710c91c44082caafc9d699d063e876243518"
+    },
+    "falcon-marvel-mainstream~falcon::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 1041,
+      "interaction": "Falcon cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "7fc8465fb693821fcd3ada52c2a1a413089a6c72fa07ab1545c7798b2d705f06"
+    },
+    "falcon-marvel-mainstream~falcon::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "26eb53056148b39a67cb2ac8b63f327f2c9e5b8d79c26ce01c94c24eeb34d14e"
+    },
+    "falcon-marvel-mainstream~falcon::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4997545813cd26d79193bb69cc4c79a6f41a2464d2fbad99a008d104e3196c71"
+    },
+    "falcon-marvel-mainstream~falcon::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 451,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5d72276532a9fa43e942ecc624900e9ca98ec78be3954703236ff825127919ce"
+    },
+    "falcon-marvel-mainstream~falcon::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d5a9b72c692b49fb6fbc5421838f7891b47d748a6f46abb4441279047f7015a5"
+    },
+    "falcon-marvel-mainstream~falcon::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 451,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b0ab9c7d9acfee8a5b2560debce781e6d60d9ca055eac88f8064b6688daefe7b"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1622dac039e7898f013964a4a73d3dd2672efa5edb4a1571911f01c869b1bcb0"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9fbbb73d3cfbab4f7e26dc148cf8277c8698def4cf2072267ea5fc8f8920d11d"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "984522ea1c82622a603238ad1dcb5f0cf8afc7813b3aaf3abda8a014cfe79d4d"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d30df5b62e64b2140e026327cbf041f11aeca8bc27c250c983760b846eb1eb7e"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4e281087501ffff3b046ba38e44dcd95195f309f5d70a02d3c6e06d9967010b8"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::dagger-marvel-mainstream~dagger": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "52c10b801c0287e062b1e58355ae744c4d5cb0bf4509d537a68c4517ed244f26"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "8e34efe4fef931d3c1c7715eafa4aaf497cb837ad7fa334304f2b9713686c201"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "07afbf417c0989dc4529307bc3417fc013fc51a505020afe67e9fed8fd9d29ea"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "02aa36d64e7f49736ab730a3f7603f234196562c141b3135848aae79ba87853a"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "tie",
+      "leftScore": 1054,
+      "rightScore": 1054,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "8b1da0613c446145163d5ec38421866c93a3ff4d4c9c68ab2c13a4310cb6becf"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fc16ff5814b3c4a11ad55bff977815178fd3525cd426729a8677a00ef7738769"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 961,
+      "rightScore": 648,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "dd903a27fc4f203d46ec46ab818828b0cf6ea33db09e3eb73a98d185fda73119"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 961,
+      "rightScore": 871,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b7e2978904cd1168f2e9d30f8b39ba03642f7bd5a279ed48ea4876a247124f6a"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 1054,
+      "rightScore": 812,
+      "interaction": "Falcon cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "9ace849378d9a13f474b8ec3dc02812b3d9954d3b03920c096b81e71e121298c"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1b917504d109edf1ec31237bb1758924428bf6951940a430612bea267d350e87"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 961,
+      "rightScore": 1134,
+      "interaction": "Falcon cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "2f015ed0402873d78c75f49fafda9a627fcf9b72422791a358fa50152681306f"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 961,
+      "rightScore": 537,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ec2610228759d0ef6ee06ced5b143f07e5d577e15949784c67718154ead03d70"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "de6d8921575d4b55824dec8f95d4a52f91887ac8a2fef0d830fb9b1cc31c275f"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c5cfb4941d839d5565b6f78c7acf6ae4de8f218121b19942d9acdd84d11a9e4a"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::us-agent-marvel-mainstream~modern": {
+      "winner": "left",
+      "leftScore": 868,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bfbfd4f4ab20396acbe52526767aca4ce48b95bf913fd7c47d0e3180f5992f4a"
+    },
+    "falcon-sam-wilson-marvel-mainstream~falcon::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 868,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1bcefd97a6375f2d9826c06dc41057386989ecf6d272e9f57f2c523116475608"
+    },
+    "kimura-marvel-mainstream~kimura::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7438899bb354ed38ebd79ea26a13aa74143e2f41a1f7e1ab746373cc7faefcb5"
+    },
+    "kimura-marvel-mainstream~kimura::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ba371a769a7361062659b77ab6d43b24b78fbf71208f559b80e870191d971add"
+    },
+    "kimura-marvel-mainstream~kimura::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c05407893b1288be743286ac8c07b2eec7602c814c30d48e1b0d5197c73a383d"
+    },
+    "kimura-marvel-mainstream~kimura::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f9cd2af2ca48205ff4419d1a8ec4fafe227f0a9addf07b9e38a95fa35ebf02be"
+    },
+    "kimura-marvel-mainstream~kimura::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5808f35b49e064da380c342c515b7856232236db9e424c82a181167ff28afd78"
+    },
+    "kimura-marvel-mainstream~kimura::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e642170f7e5a7d140d00223e791acd40e69faead5e3248dab960197672eee73f"
+    },
+    "kimura-marvel-mainstream~kimura::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "25f75e24cec169c3ffa2283cf9ae7a2b11f1e1b99f4e5a4a8432fceba5f0f4de"
+    },
+    "kimura-marvel-mainstream~kimura::escapade-marvel-mainstream~escapade": {
+      "winner": "right",
+      "leftScore": 395,
+      "rightScore": 715,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2f5881f630873a9b208447600581a01d3aadad8fb6942bdc704940bf20c36add"
+    },
+    "kimura-marvel-mainstream~kimura::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9e58a877eda599b4c700345f16a953cbafe1aae903f605aacd833aea2d3f0bbb"
+    },
+    "kimura-marvel-mainstream~kimura::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1d610e021731fb445112da09fca1f38d89073539a85723b65dda10b0ce17a302"
+    },
+    "kimura-marvel-mainstream~kimura::kimura-marvel-mainstream~kimura": {
+      "winner": "tie",
+      "leftScore": 672,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fd2659ccff33999b50b6294e4d26655e4b7720e343566a9a82ebcda7a4c96d6c"
+    },
+    "kimura-marvel-mainstream~kimura::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "12399e48080b76338ce9c27001ec099f3df0a7198c4ca482279fac474d2400b1"
+    },
+    "kimura-marvel-mainstream~kimura::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "15de2104d5f8d4368c5cd47bb596b15d05f1af00dd6326405f0d1ef356cb3b9f"
+    },
+    "kimura-marvel-mainstream~kimura::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 650,
+      "interaction": "Kimura cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "0fe67abbe48247165137a8ffd54617ede26df3c74daf9706a7b89ebce857d9ac"
+    },
+    "kimura-marvel-mainstream~kimura::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5799c933d5cc8ed79647c43a7eaecc47635b18faa4dcda75b12493ad1adaea27"
+    },
+    "kimura-marvel-mainstream~kimura::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 1041,
+      "interaction": "Kimura cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "b0d8c8976d719c2581c14fca95d93b246a69a3857917b2a7645944b4588947ec"
+    },
+    "kimura-marvel-mainstream~kimura::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d406dd20acf4d1b80cfb88121e7d5c48596794935cfab8805555e69a2cf38076"
+    },
+    "kimura-marvel-mainstream~kimura::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 286,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "14df666d6e0df62d849de3a2b3613b3915496bf5bfcdeb2cd788216a6a3afc56"
+    },
+    "kimura-marvel-mainstream~kimura::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 672,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5ff96640eca22e7c4bb5f8fce7f8bfd174fe13c005dd98c69dc861b885a0b326"
+    },
+    "kimura-marvel-mainstream~kimura::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a49b699f8083ce01f878c55a7a95dfa93f825e867f77553757508a394d65d8bc"
+    },
+    "kimura-marvel-mainstream~kimura::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 672,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "72db978c7b9f84a03e6dfc80b7b470893ba771455822d381d83504652ec595ff"
+    },
+    "kingpin-marvel-mainstream~kingpin::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "94463504efb6222acafa332d34295c8e1ae53698c823ef9ef021f3390a1ad0fe"
+    },
+    "kingpin-marvel-mainstream~kingpin::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c058cd271767b91b579c3d37390a8e482efe12562c1b5c5b9b42ca740a0f04ff"
+    },
+    "kingpin-marvel-mainstream~kingpin::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 555,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d9efa24ecbeb7b3ad09b998d5baf66b0736b28e6193e875ae0a9461bb9871fa9"
+    },
+    "kingpin-marvel-mainstream~kingpin::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6e28e434ace260bed7c87e9019a2ca8a7657c56aea84c32b553b129b6aa373e5"
+    },
+    "kingpin-marvel-mainstream~kingpin::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0b957cdd4aaee8bd099cb68832f98defee40931737053af7c8a5ad788246e628"
+    },
+    "kingpin-marvel-mainstream~kingpin::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 555,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e4626d59a3eae1f7d616da6774e26564045777edb50ad07a3ac1e6c5eebc1413"
+    },
+    "kingpin-marvel-mainstream~kingpin::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "69afa4d05d4006d1e2145d71edd79fe6ac6dc2c6731ad7f61fb01e11ec636ba0"
+    },
+    "kingpin-marvel-mainstream~kingpin::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0d2c4a6bbee2ae549839241e5c2fc65beace25fc68e7d6e77994aa27b1387df0"
+    },
+    "kingpin-marvel-mainstream~kingpin::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "98477959fb3bd1b599d9d4ac059d510cd5893e5562be243170f56e8e6d05c6fc"
+    },
+    "kingpin-marvel-mainstream~kingpin::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 648,
+      "rightScore": 961,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "001edff18bed107ea96c6c5b80d1a2a35682af28169bb3e459927aaf82fe117e"
+    },
+    "kingpin-marvel-mainstream~kingpin::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 555,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7a8aca76903e18caadb7e15a3fde962b616b65c2f5229bbb8cfbb040cc2f2297"
+    },
+    "kingpin-marvel-mainstream~kingpin::kingpin-marvel-mainstream~kingpin": {
+      "winner": "tie",
+      "leftScore": 661,
+      "rightScore": 661,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7ce918c10ff660310c11aa18f03c5f11145ecd23e8f95ed7d8997411a9091d9b"
+    },
+    "kingpin-marvel-mainstream~kingpin::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 648,
+      "rightScore": 871,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "43da08d01daf5adab7aaba3b57cb05f6c06d2c2ce69cad89469efcf220c55bfc"
+    },
+    "kingpin-marvel-mainstream~kingpin::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 648,
+      "rightScore": 743,
+      "interaction": "Kingpin cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "2e7cb92854dad77e0667cef30e6ee7f87aa380791b8dce9ec5f5e45c339d093d"
+    },
+    "kingpin-marvel-mainstream~kingpin::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 600,
+      "rightScore": 677,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2e5b32195b4531ff52009be5d8b707fcdca9cf570002c14e228bf388fcc6cf73"
+    },
+    "kingpin-marvel-mainstream~kingpin::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 648,
+      "rightScore": 1134,
+      "interaction": "Kingpin cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "4bc3fc1e2e60326b533840b096b9bc92b73f14ba6c71ecb6bea03dc8e91ba325"
+    },
+    "kingpin-marvel-mainstream~kingpin::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 648,
+      "rightScore": 537,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f47a38e21116004121de9c012d5917df5eb560c98c8cf9a04cdbea9ec9ba28c3"
+    },
+    "kingpin-marvel-mainstream~kingpin::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9ea659a103ea05bc36e103f864aa0d10ef6b39e6b50cb9e40687315500aab8dc"
+    },
+    "kingpin-marvel-mainstream~kingpin::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 555,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ae278ab28202e7d694f84c965a6501f9100c61366fbd67fd7642cbffb675b66e"
+    },
+    "kingpin-marvel-mainstream~kingpin::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 555,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a6d60f05f661639166d5e13effc1fb9a911e705be5c8e59db361380f6e23c3a9"
+    },
+    "kingpin-marvel-mainstream~kingpin::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 555,
+      "rightScore": 1576,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "13b28a8a24f762ce6e749ae6e049da317696a516614620e0cf67b0ac3a3ea912"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a0a52b482e0388b019b9878b392b86a929e3dfcc8a53aeb3f6cab0508dbb98af"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5f56e7c7f4c07f9e6dc0d39d83e711854af877f35aeffbce204abe57e74bf55a"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "8a7bc9b8b24afa06da89846404349c8a17d16169bf41675082c5beb7844e9312"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b08dd06aaabe91b23364decb33994477151a876533199146704f085456e3a35f"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2c65ecac7b606ba076feb6c249355fa866c40468ff92221fd4aabca3bd801068"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 666,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d3ccbaba3d52622a0d58ef3ea6c6c5581b24b6e6b0f7e6215c0d9eb3e777212d"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "63bf7014e00a83f29822715ed7b96ad0ab51e8ebbfad6506ac566226d8456ed2"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "117f69fedb1c643dcf56186e83695492dcd7ef7aa56b369555d100f1d2301e7d"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "31c25876359a4abaf7c930118bfa06ce3aeaf68184ca3af1c4edc73ac0d90d8d"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 871,
+      "rightScore": 961,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6452964287bcf2e7ee12573841d54632cbb271ae35ab20ebc5d06cf8d9549d98"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 666,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b185587459ca9c48a12f61008b7bffa28ed3c0739aa45acdae98ce63135cd340"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 871,
+      "rightScore": 648,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4acc05ffafe569b0373545762224122307a514203763d0d5cee0a4484868f163"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "tie",
+      "leftScore": 871,
+      "rightScore": 871,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "952f1c613e2bc394e930f3dde0d2ecb31d834c6e1da5680678757270db584d6e"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 871,
+      "rightScore": 743,
+      "interaction": "Lila Cheney cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "958d48e550c0709f2e3c41be0552f525256d3913c4492851f9c1bf6efe29f8b7"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "56251f40460b2356dacdde6a8d26f40d658f4d47307fd5dd8830c115e2183507"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 871,
+      "rightScore": 1134,
+      "interaction": "Lila Cheney cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "648dff12cc9f027ff9c25ae832320fc0394b23eee7c98a1e019239832c433a96"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 871,
+      "rightScore": 537,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "07335a26d628960ac11d979beb0599e8a24e1162242e79ae04b408ce1eb73cba"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fb520176b6ccd034466203868cbc8db6eb382485e9d5a0d4a1506d9755b215ae"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 666,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "dbc94a60f6c5ba1dd56302a6eb2debdc4ce0cde81df368950116349609ca51ca"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 666,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2de31e1906efb5874c1ee93c6bbfcbf4d4cd6fa474a734dbd5156ca33036b5cd"
+    },
+    "lila-cheney-marvel-mainstream~lila-cheney::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 666,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "571d4d2acc949c1b32f6e71ad6243487bd7e2fff114598e26cd3bea22103e9e0"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 416,
+      "interaction": "Captain America cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "b4bc0963a4859039604fee22877a19091ed1511f1d8e5238edff73e66332dd8d"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 443,
+      "interaction": "Captain America cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f41621da6af0825ba66750a75ad7d03695257ffacd3711f3fa876546505bbf9b"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 611,
+      "interaction": "Agent Venom cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "b816e7578dae952962863dff1b5045f9a2cdec9312b7a4adc4432bc236b2c4bc"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 488,
+      "interaction": "Aurora cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f10d2c15dd8bac7ec0a41c6d082918edec36f636869fb02a9fff37db0e701e6a"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 506,
+      "interaction": "Black Canary cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "768de95bf5278d066d4fdcf50847c726261ff1062056eda6fa273ee73271189f"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::dagger-marvel-mainstream~dagger": {
+      "winner": "left",
+      "leftScore": 499,
+      "rightScore": 689,
+      "interaction": "Dagger cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f526815fa6ccff70d2dabc84d4e8918c6ec3ae1e015faebaedabe0ab9915f70b"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 514,
+      "interaction": "Elektra cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "0b7e0a3d6e1a65b053b5e8971605cfc35b130f9c2b3542b08747f1ea585553fb"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 436,
+      "interaction": "Escapade cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "18a36efb783c74ab7b383ee06c6bdfadf7366285d830a1701d84cc20a1e59ebf"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 451,
+      "interaction": "Falcon cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "0797ffa06b51e638a48fdaa6e847eb7d6a021c08faae457b209d97ef8c173e89"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 812,
+      "rightScore": 1054,
+      "interaction": "Falcon cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "ec6d109395b339ebb68fc55c1d3c469da4707023875a498090777321f0349d8a"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 672,
+      "interaction": "Kimura cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f5542583a41a2eaf77126bbce6cf6307e9c3f9dd533417c1c58430a01d5c6f17"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 743,
+      "rightScore": 648,
+      "interaction": "Kingpin cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "3e98337a596225f19cad951ab28b3858d846bc408aae51861d14cc2efbf25fe2"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 743,
+      "rightScore": 871,
+      "interaction": "Lila Cheney cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "1359141f793211f29957e02f085219e68d6c524d5a22d3535bc4b6c0213e7c06"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "tie",
+      "leftScore": 812,
+      "rightScore": 812,
+      "interaction": "Neither combatant can affect the other",
+      "tieBreaker": null,
+      "digest": "d72c97e46e79307b896d98c2f234dfe31f4821d91fc692a3d09bcaa380b170eb"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 625,
+      "interaction": "Luke Cage cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "ef898dd216800a8792f59d3863b8893919ec441d1d80d3f5b4c5e06ac446c64e"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "tie",
+      "leftScore": 743,
+      "rightScore": 1134,
+      "interaction": "Neither combatant can affect the other",
+      "tieBreaker": null,
+      "digest": "6c99843a210c12327cce0d434ec6c8873af536a9475b28760421be4a4fb7eae4"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 743,
+      "rightScore": 537,
+      "interaction": "Mystique cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "651100835f8249e798f41536d91e26030ec5d56f8d62462198173e22c306ce07"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 326,
+      "interaction": "Purple Man cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "ca9a98898e8ec0f20995f591ae71200f280780ad1b6ae48b1a5aa07922029f00"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 441,
+      "interaction": "Quicksilver cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "79233fc2ac69c2a38b4c290b29cda4dbbc6cc90dd66b60306e40984c5a51e50d"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::us-agent-marvel-mainstream~modern": {
+      "winner": "left",
+      "leftScore": 650,
+      "rightScore": 762,
+      "interaction": "U.S. Agent cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "9cec298afed62c17378d8e8d517ccdec8a17a88e361b7a6d33f9344fd72b8916"
+    },
+    "lucia-von-bardas-marvel-mainstream~lucia-von-bardas::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 650,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "da0625c2e22bb5d3293257a91200b3a38733501bfddec164c5d1c0772c1c6cac"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9e3c2ea4e1b4403f18b7c913959d4a16398553cd07e32bb4c27184cd19bde16a"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "043338103ddbdf2121fa52cd8c8c7a4ced7a5d73ec3111378e01f39dc4985fcc"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "8107d340352e3a7b875898ef83e910a26492e59748ccb6746d2ea51ab64a896f"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "359c55254141768b2ee16bfcd82bf59ebc067f9a93e754dcaa9a84f50c88a136"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bbb3dae4d4a71e2d43182abfcc44da42c69ba6661dd21293059b9b45b1809d0e"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "cb4e8df8057f62ed6c201a15e51f10a0b85043329efaf6a7161e653537686add"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fc0477c49b2c38f6fc96bd59a726130e80015d85196e9dbcc141546693f52791"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2ba0eac912e7f401aebe2bd3dd6088bbf5c497e77128f88d3cb1a73234a3aa22"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5c2a33798f8b3743306baa2fdfc9a2866720653c7c9d325af268cf9d69bfeb22"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "73bde6ed1096fbf2dd25d03e41f42efe7899281bc37639028b26e42f1886d4df"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4a0a0ffa09bb9e8c1dc7ee4d115bb86649f878d6a026a1c1aefe91ee6f87bf23"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 677,
+      "rightScore": 600,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "50f9b09503e2e70615939e1213798ca5e583632a2d40b1ff512cf3c76a12c340"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c692e122259235c6a1b7cf27eb80dab214b8efe124d247fecd7eb11186ed0268"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 650,
+      "interaction": "Luke Cage cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "c1292fa70fdf5406838cf303421f62af6c4050f723d1d68f0e1e710c393b37c7"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "tie",
+      "leftScore": 677,
+      "rightScore": 677,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "eafad20037af7d572ae7938439ff3eced055f0d2c4db14b20a086be96f4351d2"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 1041,
+      "interaction": "Luke Cage cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "a5e430e96324cb4716cf2dbff46e41e3c04957da735286e3a361426c9f979e68"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "05ce0872778203245542096487bc7eca8c7457c50b1743caeb8c51b89b40b872"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 286,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1ad5f13dee267118e96525348aa7ee65de2a5202cf1f7f746381e5836fb523cc"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 625,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e4eae479969e19f9f3b1de49fdc3d9874fdfd8ff85d492b9122238895fb33e22"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4b7e18b6b9c53eee083b486d96bb0a3554cf93883cda3f868f05dcbb57cefb51"
+    },
+    "luke-cage-marvel-mainstream~luke-cage::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 625,
+      "rightScore": 1600,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ba4f9cfe88605a21fe55cdf39c80de4430272dc86d50fe590989f480e2741915"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 416,
+      "interaction": "Captain America cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "9f7789ba2692e05db8a4aa5c05ace04dae1a08701aec1a4fb7c1dee13afcc0cc"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 443,
+      "interaction": "Captain America cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "f89c2ecbf8261f14fc9302a56863bd2ab2168b749ddf49364d1f320332d2c17a"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 611,
+      "interaction": "Agent Venom cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "0f916cf2de3c99e4456fcc871418a8281e26a64b9f50a9945f82c401bf2d6c59"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 488,
+      "interaction": "Aurora cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "b6d8cb43e0cf0634c79f8672a0f535b33ff54ce2d267573bef4d86c8967e8542"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 506,
+      "interaction": "Black Canary cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "586164d5a52cf4101233783cd9c187634cae21e0d2e8b6ff57e269eb6c024d5d"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::dagger-marvel-mainstream~dagger": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 382,
+      "interaction": "Dagger cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "783f009269533e997692748a3e8fa4dba171d33d955ecc577ae09d4fd7839cd5"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 514,
+      "interaction": "Elektra cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "5773e122c4c54c1568645be0c9053bff505618e876cbe1a715987ef5c0ad325b"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 436,
+      "interaction": "Escapade cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "64fa7d2edcccfb0b389e44b09d817cc6ca52510d292e18eaa362848091d75652"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 451,
+      "interaction": "Falcon cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "616544351acaed7904627bbf0ca5357ff697297b56daa165898b0d880f1a64e3"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 1134,
+      "rightScore": 961,
+      "interaction": "Falcon cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "e2060d9eee13531c3f39f999fa4b6851f65d1e70248bdeb69c72792627260764"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 672,
+      "interaction": "Kimura cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "cbfc9f00baa05a04f581c872730acbacade7fc394f9b483bf7aac5f440e0ee27"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 1134,
+      "rightScore": 648,
+      "interaction": "Kingpin cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "729ccf2e7f5d4b4ce9a66a65b56a33ce80d1c10170ca51a79982e2f7041025e7"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 1134,
+      "rightScore": 871,
+      "interaction": "Lila Cheney cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "841e99e8fee33c4f7260e1b303dca004059f2ce927cd6eb6f9dfebdb9fbf99d4"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "tie",
+      "leftScore": 1134,
+      "rightScore": 743,
+      "interaction": "Neither combatant can affect the other",
+      "tieBreaker": null,
+      "digest": "beb8b46111b8fbffd9c4672263b8093f7b73eda8fe4603e547923c1d5e379184"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 625,
+      "interaction": "Luke Cage cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "909e2985cc9585d06fe8d36b1dfc33995cd01d154b518c8855c25958873291cc"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "tie",
+      "leftScore": 1134,
+      "rightScore": 1134,
+      "interaction": "Neither combatant can affect the other",
+      "tieBreaker": null,
+      "digest": "c072a3d253e619e9baebb947f634bddc9c6400f581c6198ac2a53e12d9cca1c6"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 1134,
+      "rightScore": 537,
+      "interaction": "Mystique cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "1036f6e6e8550a1ed35731dfec44eb7ef4de22a8cbe56ec0f6ff24d572199526"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 286,
+      "interaction": "Purple Man cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "c277508a539cdd79dc53d8c39d4300f46223b4192a385b988509f2462a469d6b"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 441,
+      "interaction": "Quicksilver cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "3716cda74b30c2974378a7fccbba04ab71cc53805e37bf221fc27f4ad91ff029"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::us-agent-marvel-mainstream~modern": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 762,
+      "interaction": "U.S. Agent cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "0b6e24a2ee28c31ff18e936f7ee93dc6e0184fad17774c0632661492cb9e5419"
+    },
+    "ms-marvel-marvel-mainstream~ms-marvel::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "left",
+      "leftScore": 1041,
+      "rightScore": 1600,
+      "interaction": "Wonder Girl cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "5abf8dec823d6e9109ce47f25dc4f6da107c9cbf060add43d7c2e0cb715fc9e9"
+    },
+    "mystique-marvel-mainstream~mystique::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 444,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "43ab44a0fd3321e41b11ed8ae620115edab7894023502bcaddf4bd96b6aff93e"
+    },
+    "mystique-marvel-mainstream~mystique::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 444,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a54571480eb7c8db8905f18881ea9c6e48e070035fac2e840e2f4b06ba3ee47b"
+    },
+    "mystique-marvel-mainstream~mystique::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e59f6f4943b45cd5c5e56e836b39ca81a0d297a9cbbddea76d61f458bfc51217"
+    },
+    "mystique-marvel-mainstream~mystique::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "233d15a003a3d0e23058c2215675b55a99a7ae99dbbdb34fc4cab0c9fdbd745d"
+    },
+    "mystique-marvel-mainstream~mystique::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0df586c54a5007edfc0e353fb385093d72a14c956e9274d3570fd15e774e7b7a"
+    },
+    "mystique-marvel-mainstream~mystique::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ce9feaa4c74294e136265345558e1c0e2401bc21537d7d95f5e51add4a2385c4"
+    },
+    "mystique-marvel-mainstream~mystique::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3bb4be6548f9458637a9e36f1a998f778110709a099009e4fadf641894395f81"
+    },
+    "mystique-marvel-mainstream~mystique::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 444,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "cb3c98dcfad31b2f76325f916afb45d7a8f206edce16ee57beaf097f916717e0"
+    },
+    "mystique-marvel-mainstream~mystique::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "914bb3b5d25f6f49dda2534470b80831e4662940489582e1200e8f71611842a7"
+    },
+    "mystique-marvel-mainstream~mystique::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 537,
+      "rightScore": 961,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "36accf6116c131e1cc23143d05b6db179a064bbeb03a94b563c8ba33fe6b6218"
+    },
+    "mystique-marvel-mainstream~mystique::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c93074599c2fb274911aebecd207792aaab07991eea12fa59bce35ffe657c178"
+    },
+    "mystique-marvel-mainstream~mystique::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 537,
+      "rightScore": 648,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ec7c1f8425aa7efda7c2d7516e3f1bad04eaf0aad652844ad25840f7fa8d7499"
+    },
+    "mystique-marvel-mainstream~mystique::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 537,
+      "rightScore": 871,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5f0aea8c4ac35255d3a80718b611f726b6542f07c2bee4c507b750aeb6502068"
+    },
+    "mystique-marvel-mainstream~mystique::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 537,
+      "rightScore": 743,
+      "interaction": "Mystique cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "f3d16f1961e0dd9980d5f59fa3084adb3b33cba56974b4524994a8d77bf67240"
+    },
+    "mystique-marvel-mainstream~mystique::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "86433863422ab1d97c9a239a67e47ea08428ead5b63a2c0e1cd3719b426c6472"
+    },
+    "mystique-marvel-mainstream~mystique::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 537,
+      "rightScore": 1134,
+      "interaction": "Mystique cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "a005614e0c6c1885a3180e673f9fd4a77f98d80ef664352be784ab600d028bb3"
+    },
+    "mystique-marvel-mainstream~mystique::mystique-marvel-mainstream~mystique": {
+      "winner": "tie",
+      "leftScore": 537,
+      "rightScore": 537,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "5f431e9e5233b77ae1a5e4f88701ad7448708abbf343a31c9e0e6c391df9dab6"
+    },
+    "mystique-marvel-mainstream~mystique::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 444,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "10a9560a5b951b3940d675c20409c6ccaf4ddaa73d0f3bf69e08ed1eab4cd6df"
+    },
+    "mystique-marvel-mainstream~mystique::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 444,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "578198e777d6c5405ac43fda8fbf552ddb45ca949904d71492a4da61eba75200"
+    },
+    "mystique-marvel-mainstream~mystique::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ce919de42f53129ae196d16bd2e4a897e27b301c6afaafd7daac7fec23be92a0"
+    },
+    "mystique-marvel-mainstream~mystique::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 444,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6da19fb51fe34b63103ecd47fdb54c7ad56cf27b052e4b09c7561ffe919d3189"
+    },
+    "purple-man-marvel-mainstream~purple-man::aaron-fischer-marvel-mainstream~original": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "82ac8ae456dc0ff4ac358bff9697655fc6eacd40ec444a8a13c6f5b2bc547e25"
+    },
+    "purple-man-marvel-mainstream~purple-man::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9d4a4f74ce087d4ea56e21189756f7a67ed59878a37c971996b647815479a021"
+    },
+    "purple-man-marvel-mainstream~purple-man::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "51a5748705f2d205a96004db374724c83c6c04d2396ae9665722150bbc2279ab"
+    },
+    "purple-man-marvel-mainstream~purple-man::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c6edcc67ad2e47d43e9f1004cb5a56557a872b4dafc854b92cf308807f0cd05d"
+    },
+    "purple-man-marvel-mainstream~purple-man::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9d2487cad9596a19f5d07317109816e282a37ea63177ebb7fc699c456f5deab8"
+    },
+    "purple-man-marvel-mainstream~purple-man::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "98dba53038babee3f39ef6d748b189de7888deae2d7c7f9f6ec8b1f43343b8e2"
+    },
+    "purple-man-marvel-mainstream~purple-man::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "af7785f22f82bbcc3431c196386e68e10bec1d3f03394fb872c535dded443090"
+    },
+    "purple-man-marvel-mainstream~purple-man::escapade-marvel-mainstream~escapade": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4fdb4ba92bfc23a3c3473f642b7586045f54ef9826c269d1279699bf9a40a133"
+    },
+    "purple-man-marvel-mainstream~purple-man::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a319295ca7c2eafdf1330579615172388b87fb6abbaf69359f0ec2955ac561e5"
+    },
+    "purple-man-marvel-mainstream~purple-man::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "642af3c2262362dddd54c08229741c7878df252aa5c0dea32ab63a43e55acce3"
+    },
+    "purple-man-marvel-mainstream~purple-man::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "80377f16442e7b2ba446b8ec08330be2fa8c44179b696984c1d9416e24733d88"
+    },
+    "purple-man-marvel-mainstream~purple-man::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b4a9c3d52d938f7734f985ee96ba2ed28a309b084ff233ed0e6af46abdb7cb93"
+    },
+    "purple-man-marvel-mainstream~purple-man::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a116a5af03b96aef5c3bcb30d424a1539ee87e18ec24078a2f3120aad1b336d2"
+    },
+    "purple-man-marvel-mainstream~purple-man::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 650,
+      "interaction": "Purple Man cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "2bcd245bc3af99341df115b21e7e0d24b37c170200dc24ce266d9f5c85825b5a"
+    },
+    "purple-man-marvel-mainstream~purple-man::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "57d1e7808cadcd012d6a1f25abda98c9843876063f9ed168d7f3fd8a23fb7871"
+    },
+    "purple-man-marvel-mainstream~purple-man::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 286,
+      "rightScore": 1041,
+      "interaction": "Purple Man cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "f348605efb95099b5e826fb726a420897ec34f8f7f44af61848eb90e711b2eda"
+    },
+    "purple-man-marvel-mainstream~purple-man::mystique-marvel-mainstream~mystique": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "d0a5a8e6a844f1fe6d8f69757e188e87374846d7fff48e079c66c6d7986ab44a"
+    },
+    "purple-man-marvel-mainstream~purple-man::purple-man-marvel-mainstream~purple-man": {
+      "winner": "tie",
+      "leftScore": 326,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "cf0e20704cfff67e1133abc70d354ab108b3836470d5bec35977d8043c9cfe4c"
+    },
+    "purple-man-marvel-mainstream~purple-man::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ba22b6d1e657767f034235a031167e7e54ea1dca6bfb43aba164253d942896b8"
+    },
+    "purple-man-marvel-mainstream~purple-man::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2f6074676b52815e8438c2f1f4fac102fd2f77141a08fa35d6e1676116406d9d"
+    },
+    "purple-man-marvel-mainstream~purple-man::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 326,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "49acd07bb355070f878d11f7c837b3f0da9ee0b7ba7c0d4547eb4f8d756e6fa4"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 441,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bb61f2352ea2a315c314af3eb3ef969079edf0d52e3c660fcc90573b3d573893"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "875f46e1c6819512138541a607ed754cbb9b364fe593b9ffcf7e26781c7a54ff"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9b81ab5fab8996d07392b1a583793f3d4f610c1572d1ba8ed4df653d9eca8257"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::aurora-marvel-mainstream~aurora": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "af733cbf0f36c7054937610ef4259d4a5dd5bf09919e94d6ec0bc9f8df383418"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b0032002d03a0fdfdd6c098f6d1563af1ae5d2acb98f63556688566afce01b98"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::dagger-marvel-mainstream~dagger": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "46dfacac2dce8475aa9f92e2cac0ee7a3c8006a284732519515c327a1ac89a37"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::elektra-marvel-mainstream~elektra": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ccffa870d69747fd4edf0a3fa790cbb7663bb51033b03f37f0e62b1b36c1e905"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 441,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "bf0b57762832103d914593d07e86af536d05d45469926b6be48a1edc7640a5f9"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::falcon-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f61e31862d7aeae59b9460a64ab363100527b6ba4323afe807b033f1df344b7b"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b58854b54b8713dd6e3620383032508ad42f28e570b99226b936f1852f37c4bd"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::kimura-marvel-mainstream~kimura": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2195a9b40248e2f71280eb73d55369d82925a57b1b281ae7082e4e4ac9fcc84f"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::kingpin-marvel-mainstream~kingpin": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "66f643dd8d44ba045a15f77689fb7c3699799a6fd9ef4d4cc5bd46c2c28a7a59"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "14db5b71a68b904f3db608b22ab66f55ccb96a1f940c0c44e95f07a6c68e000c"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 650,
+      "interaction": "Quicksilver cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "75f13247116ec49fe9bd1989e3c2817dc2d3cd845116fd000f734d60acac026c"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "41405133c3a5a2f5c15ca49e6c076e7a549fdb411e102a8ec953dedb49839f18"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 1041,
+      "interaction": "Quicksilver cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "bb197fcf3dd2ed370456cd890e29245a28cf3ce1198835f1a0fbd57da29e408e"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::mystique-marvel-mainstream~mystique": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1b20c60f78cc92b9087dc8c64d3626201b085b5223d454203a45d73dc75dbbce"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 441,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6fec7a67c53427ae8d9106571910b30288e05a17635b2d0c0ac6f57839202abe"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "tie",
+      "leftScore": 441,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "df1f60f2789ff74e33479aa960b694eca3da60d944a699deb0f5300ee4a923a1"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::us-agent-marvel-mainstream~modern": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "c156a8dd4752a8adf6b31e021cb8a5d33216f0bdfd5c09ccf3acfe8919c677a1"
+    },
+    "quicksilver-marvel-ultimate~quicksilver::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 441,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "98a236aa55fb6ef2d07e49720442a09fca3defc59634d7775a1fea46cca1fe2b"
+    },
+    "us-agent-marvel-mainstream~modern::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "0078f419d9dc3e2f231eaf4c26ca1f739b21dcf36f74174f37da1d92d91472c4"
+    },
+    "us-agent-marvel-mainstream~modern::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "ffc30dc2a03650ea045e9e2d221e1109901f448761551b28ae5d2e2bcac1b91a"
+    },
+    "us-agent-marvel-mainstream~modern::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "b421a7016f2feff1404e802d699aa0d4cf3cc5365d8ab6b9b71dc1f1dcd39ebe"
+    },
+    "us-agent-marvel-mainstream~modern::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "afa275bedd994b0981d8dc547b7d6463d59529b39b7ace7a9cfdeaaa80a5857c"
+    },
+    "us-agent-marvel-mainstream~modern::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9b12b83438cc00d2c92674832587c6c40a7e9ec1b0c949c76165ed6ab3e6affe"
+    },
+    "us-agent-marvel-mainstream~modern::dagger-marvel-mainstream~dagger": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "1d9f22afc2d0f5f97efca78131bce549eb54d295364295f619f7676d32474e17"
+    },
+    "us-agent-marvel-mainstream~modern::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "fbb926c4aa7988b32662cf54f486f2ae822a88d1fa9eb78856dbc3e9f0907cc5"
+    },
+    "us-agent-marvel-mainstream~modern::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "daf7a7abc0a775a9b5facc7b5ff269f48f0088af4c9ade200bf78309c4d1a146"
+    },
+    "us-agent-marvel-mainstream~modern::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9d5e136b92ec43cb311808b762e033ea2eb54774d3e911ac67c7322deb37a82d"
+    },
+    "us-agent-marvel-mainstream~modern::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "right",
+      "leftScore": 762,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3d6a22247999055690032d7f0cf12033f6953e06c27867c36ff87a2e8e52402d"
+    },
+    "us-agent-marvel-mainstream~modern::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "2f364e5f02fb52eb530466d2888bdb9c963652410907b0c20dbd8f7fe697b237"
+    },
+    "us-agent-marvel-mainstream~modern::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "9bca9ee654bda26611407485f4c82d9f065db9e4f8f8936c5595ea569059d3fa"
+    },
+    "us-agent-marvel-mainstream~modern::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4fa26f92999d887bcd5d7a7f802634c41b15c22b4c2afb4cc78882802e97031f"
+    },
+    "us-agent-marvel-mainstream~modern::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "right",
+      "leftScore": 762,
+      "rightScore": 650,
+      "interaction": "U.S. Agent cannot affect Lucia von Bardas",
+      "tieBreaker": null,
+      "digest": "be2ced0f37ba726e4f4f56710dcb5ef54e57f96eb0996d13f53f1087d977aeaa"
+    },
+    "us-agent-marvel-mainstream~modern::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "a53b45cda657f10e843d0a435228a5ba869d23273ae4be5cbf6c0eb36b77d727"
+    },
+    "us-agent-marvel-mainstream~modern::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 762,
+      "rightScore": 1041,
+      "interaction": "U.S. Agent cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "c79861454543fb2dbaba7135612db008c594985d8d5a7396b5b4982aaebd47ce"
+    },
+    "us-agent-marvel-mainstream~modern::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f5f029f77faf26c8dde7a68e5e3fd0faf5b4126b89896d923b4b862754697a1b"
+    },
+    "us-agent-marvel-mainstream~modern::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "4dc358f696aaa4d5e6f8e70c23ecec6a3698f7cd649723d96d36a334eac2b884"
+    },
+    "us-agent-marvel-mainstream~modern::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 762,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "674a52ebb3dd22a8edd87ddd6f0306ff1d6cbd8bea37ce5e103aa449628fe4a9"
+    },
+    "us-agent-marvel-mainstream~modern::us-agent-marvel-mainstream~modern": {
+      "winner": "tie",
+      "leftScore": 762,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "84cdf6ad1868e88128fef61c7de1831c1f0d3d829e20581a61a4a1dc63bed79e"
+    },
+    "us-agent-marvel-mainstream~modern::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "right",
+      "leftScore": 762,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "cd6d240397df6b0de72e2b79bc194a472fc79d80040fdba9d07b7803df3df9f4"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::aaron-fischer-marvel-mainstream~original": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 416,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "81165732f7f6ae49ba2e337e193c661d23c86a88ca29020acee45bc8028b6305"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::aaron-fischer-marvel-mainstream~post-alchemax-enhancement": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 443,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "96e4c9a53e8923b55a1a98f373cfffe603a276cfd5e633bd49bf8d8c53ef23de"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::agent-venom-marvel-mainstream~agent-venom": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 611,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "061563902812f026ce40893aea49fe8e770f96b4fd6ed712f52d58bd5cf02fb7"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::aurora-marvel-mainstream~aurora": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 488,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "3f1bcc3e27633f27c8189a46a7ff6e45751481a0ee006948450c51a50ff700b5"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::black-canary-dc-post-crisis~post-crisis": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 506,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aacd83bd5ef5a6f38232d55eefd72a223ee4cf6d3b820bec9ee0c0dc9ef5b162"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::dagger-marvel-mainstream~dagger": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 689,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7bcd059de7f98efbd77957df1aea1274fbf2e84790acb63ffb3a894a23b7d2b7"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::elektra-marvel-mainstream~elektra": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 514,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "59e6fdcc7095370e98439bd0cde177e0fd957b1781c0cf8c329c007aaa02a8de"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::escapade-marvel-mainstream~escapade": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 436,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "34ed594dcf14178e26475db585e1d13a4ae2f28103b806796335de6c5e0cd736"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::falcon-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 451,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "6b770b1eead4715fcd7150317946b45f3f982612dc988bda1dc2e8da642488e0"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::falcon-sam-wilson-marvel-mainstream~falcon": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 868,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "aee36270a187f2248b36c06592096f84555ab9f4bb86c4c4d49045d1dd6ecb75"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::kimura-marvel-mainstream~kimura": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 672,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "091655b8e6ecb4394af1b269818a0b1a73f2cfc0b4f05ef64c5f64eb430e5223"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::kingpin-marvel-mainstream~kingpin": {
+      "winner": "left",
+      "leftScore": 1576,
+      "rightScore": 555,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "14a42da1e7ff88c8c6151b0efe7950ae01c4c6972bffd40eaa7ac40c6164f23e"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::lila-cheney-marvel-mainstream~lila-cheney": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 666,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "e821093a55c1b41d72df23228c110d37cbbe34274b2d0799a48301f4863f8df7"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::lucia-von-bardas-marvel-mainstream~lucia-von-bardas": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 650,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "f42eb302d06fcb9a6597e89bbae1a49e69c1dea6c12dd8ab7a4b7ade5ca37698"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::luke-cage-marvel-mainstream~luke-cage": {
+      "winner": "left",
+      "leftScore": 1600,
+      "rightScore": 625,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "8facbb6735aa2c033dd2f59aac89153ce97c1ba17162a23fbdf75f5348e01b4e"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::ms-marvel-marvel-mainstream~ms-marvel": {
+      "winner": "right",
+      "leftScore": 1600,
+      "rightScore": 1041,
+      "interaction": "Wonder Girl cannot affect Ms. Marvel",
+      "tieBreaker": null,
+      "digest": "fe0134042a8da6422460788bc390ebd62eef2f1c75bd3ae10cb67625c1795c76"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::mystique-marvel-mainstream~mystique": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 444,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "debb02ccdad41da861bb5660bbd432c7b8da71c579ded4642325f7deca997e2a"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::purple-man-marvel-mainstream~purple-man": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 326,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "62a0a17acd46e04278c1b3a25226f6f05d67029559a1dd93d505365306fc349c"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::quicksilver-marvel-ultimate~quicksilver": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 441,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "7c1f44127ac52074c5fdf5b8e4c484569b8fd57a120b388f8ad967394ce9b6b4"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::us-agent-marvel-mainstream~modern": {
+      "winner": "left",
+      "leftScore": 1616,
+      "rightScore": 762,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "eeef0a482e1515907dfabc7eef75254ec0470c62c380ec0454df1382fe923c72"
+    },
+    "wonder-girl-dc-post-flashpoint~wonder-girl::wonder-girl-dc-post-flashpoint~wonder-girl": {
+      "winner": "tie",
+      "leftScore": 1616,
+      "rightScore": 1616,
+      "interaction": null,
+      "tieBreaker": null,
+      "digest": "512c5e1e747e1d7aebb54c4c0b293ae341d1af79d81a001e040b5a2c5d1b56e0"
+    }
+  }
+}
