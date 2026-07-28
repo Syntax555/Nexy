@@ -19,6 +19,7 @@ import type { DialogImage } from "../components/ImageDialog.js";
 import { ImageDialog } from "../components/ImageDialog.js";
 import { RulesDialog } from "../components/RulesDialog.js";
 import { ThemeToggle } from "../components/ThemeToggle.js";
+import { assetUrl } from "./assets.js";
 import { buildRoster, validSelection } from "./roster.js";
 import {
   readMatchupUrl,
@@ -356,10 +357,22 @@ export function App() {
         ) : null}
 
         <footer class="site-footer">
-          <p>Nexy Battle Lab · deterministic ruleset v1</p>
-          <button class="text-button" type="button" onClick={() => setRulesOpen(true)}>
-            Read the rules
-          </button>
+          <div class="site-footer__copy">
+            <p>Nexy Battle Lab · deterministic ruleset v1</p>
+            <small>
+              Unofficial, non-commercial fan project. Not affiliated with or
+              endorsed by any rights holder. Third-party characters and marks
+              belong to their respective owners.
+            </small>
+          </div>
+          <div class="site-footer__actions">
+            <button class="text-button" type="button" onClick={() => setRulesOpen(true)}>
+              Read the rules
+            </button>
+            <a class="site-footer__link" href={assetUrl("legal.html")}>
+              Legal &amp; removal requests
+            </a>
+          </div>
         </footer>
       </main>
 

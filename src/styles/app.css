@@ -971,6 +971,45 @@
     color: var(--ink-soft);
     font-size: 0.72rem;
   }
+
+  .site-footer__copy {
+    display: grid;
+    max-width: 78ch;
+    gap: 7px;
+  }
+
+  .site-footer__copy p {
+    color: var(--ink);
+    font-weight: 800;
+  }
+
+  .site-footer__copy small {
+    color: var(--ink-soft);
+    font-size: 0.67rem;
+    line-height: 1.55;
+  }
+
+  .site-footer__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .site-footer__link {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .site-footer .text-button:hover,
+  .site-footer__link:hover {
+    color: var(--left);
+  }
 }
 
 @layer utilities {
@@ -1105,6 +1144,13 @@
       align-items: start;
       flex-direction: column;
       justify-content: center;
+      padding-block: 24px;
+    }
+
+    .site-footer__actions {
+      align-items: start;
+      flex-direction: column;
+      gap: 2px;
     }
   }
 

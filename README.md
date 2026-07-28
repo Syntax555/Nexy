@@ -23,6 +23,22 @@ runtime.
 The production build uses `/Nexy/` as its base path so scripts, styles, images,
 and shared matchup URLs work from the GitHub Pages project URL.
 
+## Intellectual property
+
+Nexy is an unofficial, non-commercial fan project and is not affiliated with,
+sponsored by, endorsed by, or approved by Marvel, DC, or any other rights
+holder. Character names, likenesses, artwork, logos, trademarks, story
+elements, and other third-party material remain subject to the rights of their
+respective owners.
+
+The website includes a visible
+[Legal & removal requests](https://syntax555.github.io/Nexy/legal.html) notice.
+Rights holders or their authorized representatives can request review,
+correction, or removal through the repository's
+[GitHub issues](https://github.com/Syntax555/Nexy/issues). A disclaimer is not a
+substitute for permission or a license, so contributors must not add third-party
+artwork unless they have documented authorization for its public web use.
+
 ## Gameplay model
 
 Nexy is a transparent matchup comparator rather than a turn-based combat

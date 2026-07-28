@@ -19,3 +19,9 @@ images:
 
 Run `pnpm images:build` to create the optimized 160 px and 640 px WebP
 variants. Never edit `public/images/generated/` by hand.
+
+Only add artwork you created, artwork in the public domain, or artwork covered
+by a documented license or permission that allows this public web use. Keep the
+source, rights holder, license or permission terms, and acquisition date in
+your project records. Attribution and non-commercial use alone do not create
+permission.

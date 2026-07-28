@@ -114,6 +114,16 @@ describe("Nexy application", () => {
     expect(screen.getByRole("button", { name: /copy battle link/i })).toBeTruthy();
   });
 
+  it("shows the legal notice and links to the rights-holder page", () => {
+    render(<App />);
+
+    expect(screen.getByText(/unofficial, non-commercial fan project/i)).toBeTruthy();
+    const legalLink = screen.getByRole("link", {
+      name: /legal & removal requests/i
+    });
+    expect(legalLink.getAttribute("href")).toMatch(/\/legal\.html$/);
+  });
+
   it("browses media, publisher, and universe progressively before filtering metadata", async () => {
     const { container } = render(<App />);
     const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');

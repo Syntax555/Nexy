@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090b12">
+    <meta name="color-scheme" content="dark light">
+    <meta
+      name="description"
+      content="Nexy Battle Lab legal, intellectual-property, and rights-holder request notice."
+    >
+    <link rel="canonical" href="https://syntax555.github.io/Nexy/legal.html">
+    <title>Legal &amp; IP notice | Nexy Battle Lab</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --canvas: #090b12;
+        --surface: #121722;
+        --surface-raised: #181e2b;
+        --ink: #f7f9fc;
+        --ink-soft: #aeb7c7;
+        --line: rgba(188, 201, 222, 0.18);
+        --cyan: #4bdcff;
+        --magenta: #ff4e91;
+        --gold: #fff3b0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--canvas);
+        color: var(--ink);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at 16% 8%, rgba(75, 220, 255, 0.12), transparent 30rem),
+          radial-gradient(circle at 86% 34%, rgba(255, 78, 145, 0.09), transparent 34rem),
+          var(--canvas);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .site-header,
+      main,
+      footer {
+        width: min(1040px, calc(100% - 40px));
+        margin-inline: auto;
+      }
+
+      .site-header {
+        display: flex;
+        min-height: 86px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .brand__mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid rgba(75, 220, 255, 0.5);
+        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(75, 220, 255, 0.24), rgba(255, 78, 145, 0.13));
+        font-family: "Arial Black", Impact, sans-serif;
+        font-style: italic;
+      }
+
+      .site-header > span,
+      .eyebrow {
+        color: var(--cyan);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      main {
+        padding-block: clamp(56px, 10vw, 112px);
+      }
+
+      h1 {
+        max-width: 12ch;
+        margin: 12px 0 0;
+        font-family: "Arial Black", Impact, sans-serif;
+        font-size: clamp(3rem, 9vw, 6.8rem);
+        line-height: 0.88;
+        letter-spacing: -0.055em;
+        text-transform: uppercase;
+      }
+
+      .lede {
+        max-width: 68ch;
+        margin: 24px 0 0;
+        color: var(--ink-soft);
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        line-height: 1.75;
+      }
+
+      .notice-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 42px;
+      }
+
+      .notice-card {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        padding: clamp(20px, 4vw, 30px);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(18, 23, 34, 0.88);
+      }
+
+      .notice-card h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .notice-card p {
+        margin: 0;
+        color: var(--ink-soft);
+        line-height: 1.7;
+      }
+
+      .notice-card--request {
+        border-color: rgba(75, 220, 255, 0.34);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-raised);
+        font-size: 0.82rem;
+        font-weight: 850;
+        text-decoration: none;
+      }
+
+      .button--primary {
+        border-color: transparent;
+        background: var(--ink);
+        color: var(--canvas);
+      }
+
+      .button:hover {
+        border-color: rgba(75, 220, 255, 0.55);
+      }
+
+      .button:focus-visible,
+      .brand:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 4px;
+      }
+
+      .legal-note {
+        margin: 18px 0 0;
+        padding: 18px 20px;
+        border-left: 3px solid var(--gold);
+        background: rgba(255, 243, 176, 0.07);
+        color: var(--ink-soft);
+        line-height: 1.7;
+      }
+
+      footer {
+        display: flex;
+        min-height: 104px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--ink-soft);
+        font-size: 0.75rem;
+      }
+
+      footer a {
+        font-weight: 800;
+      }
+
+      @media (max-width: 700px) {
+        .notice-grid {
+          grid-template-columns: 1fr;
+        }
+
+        footer {
+          align-items: start;
+          flex-direction: column;
+          justify-content: center;
+          padding-block: 24px;
+        }
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          color-scheme: light;
+          --canvas: #f3f6fb;
+          --surface: #ffffff;
+          --surface-raised: #e9eef7;
+          --ink: #121722;
+          --ink-soft: #4c586d;
+          --line: rgba(30, 44, 67, 0.18);
+        }
+
+        body {
+          background:
+            radial-gradient(circle at 16% 8%, rgba(0, 139, 178, 0.1), transparent 30rem),
+            radial-gradient(circle at 86% 34%, rgba(200, 30, 97, 0.07), transparent 34rem),
+            var(--canvas);
+        }
+
+        .notice-card {
+          background: rgba(255, 255, 255, 0.88);
+        }
+      }
+
+      @media (forced-colors: active) {
+        .brand__mark,
+        .notice-card,
+        .button,
+        .legal-note {
+          border-color: CanvasText;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/Nexy/" aria-label="Return to Nexy Battle Lab">
+        <span class="brand__mark" aria-hidden="true">N</span>
+        <span>Nexy Battle Lab</span>
+      </a>
+      <span>Legal &amp; IP</span>
+    </header>
+
+    <main>
+      <span class="eyebrow">Unofficial fan project</span>
+      <h1>Legal &amp; IP notice</h1>
+      <p class="lede">
+        This page explains Nexy's relationship to the characters and other
+        third-party material shown on the site, and provides a direct route for
+        rights-holder requests.
+      </p>
+
+      <div class="notice-grid">
+        <section class="notice-card">
+          <h2>No affiliation or endorsement</h2>
+          <p>
+            Nexy is an independent, unofficial, currently non-commercial fan
+            project created for informational and entertainment purposes. It is
+            not affiliated with, sponsored by, endorsed by, or approved by
+            Marvel, DC, or any other publisher, studio, creator, or rights holder.
+          </p>
+        </section>
+
+        <section class="notice-card">
+          <h2>Third-party rights</h2>
+          <p>
+            Character names, likenesses, images, artwork, logos, trademarks,
+            story elements, and other third-party material remain subject to the
+            rights of their respective owners. Nexy claims no ownership of that
+            third-party material.
+          </p>
+        </section>
+
+        <section class="notice-card">
+          <h2>No blanket legal exception</h2>
+          <p>
+            No blanket claim of fair use or any other copyright exception is
+            made. Whether a particular use is permitted depends on the material,
+            how it is used, the applicable law, and the circumstances. This
+            notice does not grant a license, waive anyone's rights, or guarantee
+            that a particular use is legally permitted.
+          </p>
+        </section>
+
+        <section class="notice-card notice-card--request">
+          <h2>Rights-holder requests</h2>
+          <p>
+            If you own, or are authorized to act for the owner of, material shown
+            here and want it reviewed, corrected, or removed, open a request that
+            identifies the material, its exact location, the rights involved,
+            your authority to make the request, and the requested action. Do not
+            post confidential or sensitive documents in a public issue.
+          </p>
+          <div class="actions">
+            <a
+              class="button button--primary"
+              href="https://github.com/Syntax555/Nexy/issues/new?title=Rights-holder%20request"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open a rights-holder request
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <p class="legal-note">
+        Good-faith requests will be reviewed promptly, and material will be
+        removed or replaced where appropriate. This notice is not legal advice;
+        consult a qualified intellectual-property lawyer for advice about a
+        specific situation.
+      </p>
+    </main>
+
+    <footer>
+      <span>Nexy Battle Lab · unofficial fan project</span>
+      <a href="/Nexy/">Return to the Battle Lab</a>
+    </footer>
+  </body>
+</html>
