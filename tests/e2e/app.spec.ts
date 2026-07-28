@@ -70,6 +70,9 @@ async function expectNoHorizontalOverflow(page: Page): Promise<void> {
 test("loads every core asset and resolves a complete battle", async ({ page }) => {
   const runtimeErrors: string[] = [];
   const failedResponses: string[] = [];
+  await page.addInitScript(() => {
+    window.localStorage.setItem("nexy-theme", "light");
+  });
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
   page.on("response", (response) => {
     if (

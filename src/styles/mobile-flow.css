@@ -51,7 +51,7 @@
   }
 
   .mobile-matchup-tab small {
-    color: var(--ink-faint);
+    color: var(--ink-soft);
     font-size: 0.75rem;
     font-weight: 900;
     letter-spacing: 0.08em;
