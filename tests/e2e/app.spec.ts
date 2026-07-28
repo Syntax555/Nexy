@@ -8,7 +8,17 @@ async function chooseComboboxOption(
 ): Promise<void> {
   const combobox = picker.getByRole("combobox", { name: label });
   await combobox.fill(search);
+  const listbox = picker.getByRole("listbox", { name: label });
+  await expect(listbox).toBeVisible();
+  await expect(
+    listbox.getByRole("option", { name: search, exact: true })
+  ).toBeVisible();
   await combobox.press("Enter");
+  await expect(combobox).toHaveValue(search);
+  await combobox.evaluate(() => new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => resolve());
+  }));
+  await expect(combobox).toBeFocused();
 }
 
 async function selectFighter(
@@ -76,6 +86,28 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
   await selectFighter(rightPicker, "Dagger", /^Dagger,/);
 
+  const visibleProfileImage = page.locator(".profile-visual img:visible").first();
+  await expect(visibleProfileImage).toBeVisible();
+  await expect.poll(() => visibleProfileImage.evaluate((image) => {
+    const element = image as HTMLImageElement;
+    return element.complete && element.naturalWidth > 0;
+  })).toBe(true);
+  await expect(
+    page.locator(
+      '.profile-artwork-disclosure[data-rights-status="unverified-third-party"]:visible'
+    ).first()
+  ).toContainText("Source file page: VS Battles Wiki");
+
+  await page.locator('button[aria-label^="View full image of"]:visible').first().click();
+  const imageDialog = page.locator("dialog.image-modal");
+  await expect(imageDialog).toBeVisible();
+  await expect(
+    imageDialog.locator(
+      '.artwork-disclosure[data-rights-status="unverified-third-party"]'
+    )
+  ).toContainText("no image licence claimed");
+  await imageDialog.getByRole("button", { name: "Close image" }).click();
+
   const analyze = page.getByRole("button", { name: /Analyze battle/ });
   await expect(analyze).toBeEnabled();
   await analyze.click();
@@ -83,6 +115,20 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
     page.getByRole("heading", { level: 2, name: "Battle report" })
   ).toBeVisible();
   await expect(page.getByText("Ranked comparison")).toBeVisible();
+  await page.getByRole("heading", { level: 2, name: "Combatants" }).click();
+  const combatantImages = page.locator(".combatant-card__image img");
+  await expect(combatantImages).toHaveCount(2);
+  await expect.poll(() => combatantImages.evaluateAll((images) =>
+    images.every((image) => {
+      const element = image as HTMLImageElement;
+      return element.complete && element.naturalWidth > 0;
+    })
+  )).toBe(true);
+  await expect(
+    page.locator(
+      '.combatant-card .artwork-disclosure[data-rights-status="unverified-third-party"]'
+    )
+  ).toHaveCount(2);
 
   const interactionAccessibility = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -105,7 +151,17 @@ test("browses the roster through media, publisher, and universe", async ({
     .withTags(["wcag2a", "wcag2aa"])
     .analyze();
   expect(openListboxAccessibility.violations).toEqual([]);
+  await expect(
+    leftPicker
+      .getByRole("listbox", { name: "Media" })
+      .getByRole("option", { name: "Comics", exact: true })
+  ).toBeVisible();
   await mediaCombobox.press("Enter");
+  await expect(mediaCombobox).toHaveValue("Comics");
+  await mediaCombobox.evaluate(() => new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => resolve());
+  }));
+  await expect(mediaCombobox).toBeFocused();
   await expect(
     leftPicker.getByRole("combobox", { name: "Publisher / origin" })
   ).toBeEnabled();

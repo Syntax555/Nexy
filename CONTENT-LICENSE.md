@@ -35,10 +35,18 @@ The CC BY-SA statement above does **not** apply to:
 Fandom's licensing policy says non-text media must not be assumed to use the
 wiki text licence. Every image therefore carries a separate rights status and
 source record. An `unverified-third-party` status is not permission or a
-licence. Nexy's production build withholds every image with that status. Only
-records marked as original, licensed, public-domain, or covered by documented
-permission are included in the deployed image output. The deployed site
-exposes a machine-readable
+licence.
+
+At the repository operator's direction, an individual unverified image can be
+displayed only when its metadata explicitly sets `publish_unverified: true`.
+That flag records a publication choice; it does not change the rights status,
+claim fair use, prove ownership, or grant a licence. These images are paired
+with a visible link to the exact VS Battles Wiki file page, an unverified-rights
+warning, and a removal-request route. A source link is attribution and
+provenance, not permission.
+
+Unverified records without that explicit flag remain excluded from the
+deployed image output. The deployed site exposes a machine-readable
 [image rights manifest](https://syntax555.github.io/Nexy/image-rights.json).
 
 ## Corrections and rights requests

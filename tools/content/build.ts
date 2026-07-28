@@ -475,6 +475,7 @@ class SemanticValidator {
           image.image,
           character.entry_id,
           image.rights_status === "unverified-third-party"
+            && image.publish_unverified !== true
         );
       });
       this.#validatePowerRefs(`${formContext}.power_refs`, form.power_refs);
@@ -513,7 +514,9 @@ class SemanticValidator {
       }
       if (!isRecord(value)) return;
 
-      const allowMissing = property(value, "rights_status") === "unverified-third-party";
+      const allowMissing =
+        property(value, "rights_status") === "unverified-third-party"
+        && property(value, "publish_unverified") !== true;
       for (const [key, item] of Object.entries(value)) {
         const itemContext = `${context}.${key}`;
         if (key === "image" && typeof item === "string") {
@@ -969,6 +972,7 @@ class SemanticValidator {
               image,
               undefined,
               property(imageUpdate, "rights_status") === "unverified-third-party"
+                && property(imageUpdate, "publish_unverified") !== true
             );
           }
         }

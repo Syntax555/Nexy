@@ -398,6 +398,48 @@
   .image-modal__panel > strong {
     color: var(--ink-soft);
   }
+
+  .artwork-disclosure {
+    display: inline-flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 3px 8px;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    color: var(--ink-soft);
+    font-size: 0.58rem;
+    font-weight: 800;
+    line-height: 1.35;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .artwork-disclosure small {
+    color: var(--ink-faint);
+    font-size: inherit;
+  }
+
+  .artwork-disclosure[data-rights-status="unverified-third-party"] {
+    border-color: rgba(var(--gold-rgb), 0.34);
+  }
+
+  .artwork-disclosure:hover {
+    border-color: rgba(var(--left-rgb), 0.52);
+    color: var(--ink);
+  }
+
+  .artwork-disclosure:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .image-modal__disclosure {
+    max-width: min(100%, 620px);
+  }
 }
 
 @layer utilities {

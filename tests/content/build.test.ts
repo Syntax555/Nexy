@@ -115,6 +115,7 @@ describe("content compiler", () => {
           && form.images.every((image) =>
             image.source_url.startsWith("https://")
             && image.rights_status === "unverified-third-party"
+            && image.publish_unverified === true
             && Boolean(image.rights_holder)
           )
         )

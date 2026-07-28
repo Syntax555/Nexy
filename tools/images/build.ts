@@ -12,8 +12,9 @@ import sharp from "sharp";
 
 import {
   collectImageRightsRecords,
+  generatedVariantPaths,
   isRightsRecordPublishable,
-  publishableImagePaths
+  publishedImageSourcePaths
 } from "./publish-policy.js";
 
 const sourceRoot = path.resolve("public/images/characters");
@@ -66,11 +67,11 @@ async function buildVariant(source: string, width: (typeof widths)[number]): Pro
 }
 
 const data: unknown = JSON.parse(await readFile(dataSource, "utf8"));
-const publishablePaths = publishableImagePaths(data);
+const publishedSourcePaths = publishedImageSourcePaths(data);
 const files = [...await imageFiles(sourceRoot)]
   .filter((file) => {
     const relative = path.relative(path.resolve("public"), file).replaceAll(path.sep, "/");
-    return publishablePaths.has(relative);
+    return publishedSourcePaths.has(relative);
   })
   .sort((left, right) => left.localeCompare(right));
 const destinations = new Map<string, string>();
@@ -108,20 +109,23 @@ await rename(`${socialOutput}.next`, socialOutput);
 
 const rightsRecords = collectImageRightsRecords(data).map((record) => ({
   ...record,
-  published: isRightsRecordPublishable(record)
+  published: isRightsRecordPublishable(record),
+  published_variants: isRightsRecordPublishable(record)
+    ? generatedVariantPaths(record.image)
+    : []
 }));
 await writeFile(
   rightsManifestOutput,
   `${JSON.stringify({
     generated_on: new Date().toISOString().slice(0, 10),
-    policy: "Only original, licensed, public-domain, or permission-backed images are published.",
+    policy: "Verified images are published normally. An unverified-third-party image is published only when its record explicitly sets publish_unverified=true; that setting is an operator display choice, not evidence of ownership, permission, or a licence.",
     records: rightsRecords
   }, null, 2)}\n`,
   "utf8"
 );
 
 console.log(
-  `Optimized ${files.length} approved character images into ${files.length * widths.length} variants, `
-  + `withheld ${rightsRecords.filter((record) => !record.published).length} unverified records, `
+  `Optimized ${files.length} enabled character images into ${files.length * widths.length} variants, `
+  + `left ${rightsRecords.filter((record) => !record.published).length} image records unpublished, `
   + "and rebuilt the social card."
 );

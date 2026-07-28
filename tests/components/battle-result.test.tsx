@@ -66,6 +66,19 @@ describe("BattleResult", () => {
       [...container.querySelectorAll(".combatant-card h3")]
         .map((element) => element.textContent)
     ).toEqual([leftLabel, rightLabel]);
+    const artworkDisclosures = [
+      ...container.querySelectorAll<HTMLAnchorElement>(
+        '.combatant-card .artwork-disclosure[data-rights-status="unverified-third-party"]'
+      )
+    ];
+    expect(artworkDisclosures).toHaveLength(2);
+    expect(artworkDisclosures.map((link) => link.href)).toEqual([
+      report.left.image?.source_url,
+      report.right.image?.source_url
+    ]);
+    expect(artworkDisclosures.every((link) =>
+      link.textContent?.includes("no image licence claimed")
+    )).toBe(true);
     expect(
       [...container.querySelectorAll(".capability-column > h3")]
         .map((element) => element.textContent)

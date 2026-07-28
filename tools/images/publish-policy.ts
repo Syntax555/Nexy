@@ -4,13 +4,14 @@ export interface ImageRightsRecord {
   readonly image: string;
   readonly source_url: string;
   readonly rights_status: string;
+  readonly publish_unverified?: boolean;
   readonly creator?: string | null;
   readonly rights_holder?: string | null;
   readonly license?: string | null;
   readonly reviewed_on?: string | null;
 }
 
-const publicDisplayStatuses = new Set([
+const verifiedPublicDisplayStatuses = new Set([
   "original",
   "licensed",
   "public-domain",
@@ -31,6 +32,14 @@ function optionalString(
   return typeof value === "string" || value === null ? value : undefined;
 }
 
+function optionalBoolean(
+  record: Readonly<Record<string, unknown>>,
+  key: string
+): boolean | undefined {
+  const value = Reflect.get(record, key);
+  return typeof value === "boolean" ? value : undefined;
+}
+
 function asRightsRecord(value: unknown): ImageRightsRecord | null {
   if (!isRecord(value)) return null;
   const image = Reflect.get(value, "image");
@@ -48,10 +57,12 @@ function asRightsRecord(value: unknown): ImageRightsRecord | null {
   const rightsHolder = optionalString(value, "rights_holder");
   const license = optionalString(value, "license");
   const reviewedOn = optionalString(value, "reviewed_on");
+  const publishUnverified = optionalBoolean(value, "publish_unverified");
   return {
     image: image.replaceAll("\\", "/"),
     source_url: sourceUrl,
     rights_status: rightsStatus,
+    ...(publishUnverified === undefined ? {} : { publish_unverified: publishUnverified }),
     ...(creator === undefined ? {} : { creator }),
     ...(rightsHolder === undefined ? {} : { rights_holder: rightsHolder }),
     ...(license === undefined ? {} : { license }),
@@ -86,7 +97,11 @@ export function collectImageRightsRecords(
 export function isRightsRecordPublishable(
   record: ImageRightsRecord
 ): boolean {
-  return publicDisplayStatuses.has(record.rights_status);
+  return verifiedPublicDisplayStatuses.has(record.rights_status)
+    || (
+      record.rights_status === "unverified-third-party"
+      && record.publish_unverified === true
+    );
 }
 
 export function generatedVariantPaths(image: string): readonly string[] {
@@ -106,7 +121,7 @@ export function generatedVariantPaths(image: string): readonly string[] {
   );
 }
 
-export function publishableImagePaths(data: unknown): ReadonlySet<string> {
+export function publishedImageSourcePaths(data: unknown): ReadonlySet<string> {
   const recordsByImage = new Map<string, ImageRightsRecord[]>();
   for (const record of collectImageRightsRecords(data)) {
     const records = recordsByImage.get(record.image) ?? [];
@@ -118,6 +133,13 @@ export function publishableImagePaths(data: unknown): ReadonlySet<string> {
   for (const [image, records] of recordsByImage) {
     if (!records.every(isRightsRecordPublishable)) continue;
     paths.add(image);
+  }
+  return paths;
+}
+
+export function publishedImageVariantPaths(data: unknown): ReadonlySet<string> {
+  const paths = new Set<string>();
+  for (const image of publishedImageSourcePaths(data)) {
     generatedVariantPaths(image).forEach((variant) => paths.add(variant));
   }
   return paths;

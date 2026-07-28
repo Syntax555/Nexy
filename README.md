@@ -40,10 +40,13 @@ correction, or removal through the repository's
 [rights-holder request form](https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml).
 VS Battles Wiki-derived text and structured data attribution is documented in
 [CONTENT-LICENSE.md](CONTENT-LICENSE.md). A disclaimer is not a substitute for
-permission or a license. The build therefore withholds images marked
-`unverified-third-party` from the deployed site and publishes only artwork
-marked as original, licensed, public-domain, or covered by documented
-permission. The generated
+permission or a licence. At the repository operator's direction, the current
+character artwork is displayed while remaining honestly marked
+`unverified-third-party`. Every such image requires an explicit per-record
+`publish_unverified: true` opt-in and is paired with its exact source-file link,
+an unverified-rights warning, and the removal route. The flag is a publication
+choice, not evidence of ownership, permission, fair use, or a licence. Future
+unverified images remain withheld unless explicitly opted in. The generated
 [image rights manifest](https://syntax555.github.io/Nexy/image-rights.json)
 records the source, status, review date, and publication decision for each
 image reference.
@@ -195,8 +198,11 @@ pnpm character:new -- \
 ```
 
 That scaffold uses `unverified-third-party`, so the file is recorded but not
-published. Change the status only after documenting a licence, permission,
-public-domain basis, or original authorship.
+published by default. If the repository operator deliberately chooses to show
+that exact unverified image, add `publish_unverified: true` to its image record.
+Doing so enables the warning-backed display but does not change its rights
+status or create a licence. Prefer replacing it with documented licensed,
+permitted, public-domain, or original artwork.
 
 Simple ranked statistics can use a catalog ID directly:
 
@@ -235,7 +241,7 @@ pnpm content:build
 
 Do not edit the generated JSON by hand. Change the YAML source and rebuild it.
 
-Generate approved 160 px roster thumbnails, approved 640 px profile images,
+Generate enabled 160 px roster thumbnails, enabled 640 px profile images,
 the public image-rights manifest, and the optimized 1200 x 630 social card:
 
 ```bash
@@ -243,9 +249,11 @@ pnpm images:build
 ```
 
 Generated image variants are written below `public/images/generated/`. The
-production post-build removes originals and variants that are not approved by
-the rights metadata before GitHub Pages uploads `dist/`. The social-card source
-is `content/images/og-source.png`; its generated public file is `public/og.png`.
+production post-build removes all full-size character sources and unpublished
+variants from `dist/` before GitHub Pages uploads it; the 160 px and 640 px
+variants are the only character image files needed by the website. The
+social-card source is `content/images/og-source.png`; its generated public file
+is `public/og.png`.
 
 ## Validation and tests
 

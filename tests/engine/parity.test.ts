@@ -59,6 +59,7 @@ const provenanceOnlyFields = new Set([
   "source_ids",
   "source_url",
   "rights_status",
+  "publish_unverified",
   "creator",
   "rights_holder",
   "license",

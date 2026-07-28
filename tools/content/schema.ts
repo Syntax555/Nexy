@@ -84,6 +84,7 @@ const imageFields = {
   image: nonEmptyStringSchema,
   source_url: httpsUrlSchema,
   rights_status: imageRightsStatusSchema,
+  publish_unverified: z.boolean().optional(),
   creator: optionalNullableStringSchema,
   rights_holder: optionalNullableStringSchema,
   license: optionalNullableStringSchema,
@@ -93,6 +94,7 @@ const imageFields = {
 function validateImageRights(
   image: {
     readonly rights_status: z.infer<typeof imageRightsStatusSchema>;
+    readonly publish_unverified?: boolean | undefined;
     readonly creator?: string | null | undefined;
     readonly rights_holder?: string | null | undefined;
     readonly license?: string | null | undefined;
@@ -114,6 +116,16 @@ function validateImageRights(
       code: "custom",
       path: ["rights_holder"],
       message: "is required when rights_status is unverified-third-party"
+    });
+  }
+  if (
+    image.publish_unverified !== undefined
+    && image.rights_status !== "unverified-third-party"
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["publish_unverified"],
+      message: "is only valid when rights_status is unverified-third-party"
     });
   }
   if (image.rights_status === "permission" && !image.rights_holder) {

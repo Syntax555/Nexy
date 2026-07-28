@@ -17,7 +17,12 @@ describe("legal notice", () => {
     expect(page).toMatch(/data attribution/i);
     expect(page).toContain("CONTENT-LICENSE.md");
     expect(page).toContain("image-rights.json");
-    expect(page).toMatch(/withholds artwork/i);
+    expect(page).toMatch(/direct source-file link/i);
+    expect(page).toMatch(/they are not a licence/i);
+    expect(page).toMatch(/rights remain unverified/i);
+    expect(page).toContain(
+      "https://support.fandom.com/hc/en-us/articles/360035075654-I-want-to-reuse-text-or-images-from-a-Fandom-wiki"
+    );
     expect(page).toContain(
       "https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml"
     );

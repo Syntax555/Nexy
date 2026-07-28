@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/preact";
+import { cleanup, fireEvent, render, screen } from "@testing-library/preact";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { buildRoster } from "../../src/app/roster.js";
@@ -25,13 +25,14 @@ describe("CharacterProfile", () => {
         stat.id === firstStat.id ? { ...stat, note } : stat
       )
     };
+    const onOpenImage = vi.fn();
     const { container } = render(
       <CharacterProfile
         side="left"
         rosterCharacter={rosterCharacter}
         profile={profile}
         onFormChange={vi.fn()}
-        onOpenImage={vi.fn()}
+        onOpenImage={onOpenImage}
       />
     );
 
@@ -58,5 +59,23 @@ describe("CharacterProfile", () => {
     expect(sourceDisclosure?.textContent).toContain(
       `Rights holder record: ${profile.image?.rights_holder}`
     );
+
+    const artworkDisclosure = container.querySelector<HTMLAnchorElement>(
+      '.profile-artwork-disclosure[data-rights-status="unverified-third-party"]'
+    );
+    expect(artworkDisclosure?.href).toBe(profile.image?.source_url);
+    expect(artworkDisclosure?.textContent).toContain("Source file page: VS Battles Wiki");
+    expect(artworkDisclosure?.textContent)
+      .toContain("Rights unverified · no image licence claimed");
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: `View full image of ${profile.character.name}`
+      })
+    );
+    expect(onOpenImage).toHaveBeenCalledWith(expect.objectContaining({
+      src: expect.stringContaining("-640.webp"),
+      rightsRecord: profile.image
+    }));
   });
 });

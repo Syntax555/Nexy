@@ -284,6 +284,12 @@
     font-size: 0.58rem;
   }
 
+  .combatant-card__artwork {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+  }
+
   .combatant-card__image {
     display: grid;
     height: 180px;
@@ -295,6 +301,10 @@
     height: 100%;
     object-fit: contain;
     object-position: center bottom;
+  }
+
+  .combatant-card__artwork .artwork-disclosure {
+    justify-self: center;
   }
 
   .capability-column {

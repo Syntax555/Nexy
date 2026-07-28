@@ -706,6 +706,7 @@ export function activeImage(
   const rightsHolder = optionalStringField(winner, "rights_holder");
   const license = optionalStringField(winner, "license");
   const reviewedOn = optionalStringField(winner, "reviewed_on");
+  const publishUnverified = booleanField(winner, "publish_unverified");
 
   return {
     name: optionalStringField(winner, "name") || baseImage?.name || "",
@@ -716,6 +717,7 @@ export function activeImage(
       || baseImage?.rights_status
       || "unverified-third-party"
     ) as ImageRightsStatus,
+    ...(publishUnverified ? { publish_unverified: true } : {}),
     ...(creator ? { creator } : {}),
     ...(rightsHolder ? { rights_holder: rightsHolder } : {}),
     ...(license ? { license } : {}),

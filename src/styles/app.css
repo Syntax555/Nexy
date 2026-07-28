@@ -460,6 +460,13 @@
     text-transform: uppercase;
   }
 
+  .roster-artwork-note {
+    padding: 0 18px 10px;
+    color: var(--ink-faint);
+    font-size: 0.57rem;
+    line-height: 1.45;
+  }
+
   .roster-list {
     display: grid;
     min-height: 160px;
@@ -653,6 +660,12 @@
     z-index: 2;
     top: 14px;
     right: 14px;
+  }
+
+  .profile-artwork-disclosure {
+    max-width: calc(100% - 28px);
+    justify-self: center;
+    margin-top: 10px;
   }
 
   .profile-content {

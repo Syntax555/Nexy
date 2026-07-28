@@ -60,6 +60,11 @@ export interface ImageRef {
   readonly image: string;
   readonly source_url: string;
   readonly rights_status: ImageRightsStatus;
+  /**
+   * Explicit operator choice to display an unverified image with a warning.
+   * This is a publication setting, not evidence of a licence or permission.
+   */
+  readonly publish_unverified?: boolean;
   readonly creator?: string | null;
   readonly rights_holder?: string | null;
   readonly license?: string | null;

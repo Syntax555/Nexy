@@ -1,8 +1,9 @@
-import { assetUrl, characterImageVariant } from "../app/assets.js";
-import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
+import { characterImageVariant } from "../app/assets.js";
+import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter } from "../app/roster.js";
 import type { CharacterProfile as CharacterProfileData } from "../domain/index.js";
 import type { DialogImage } from "./ImageDialog.js";
+import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
 import { CharacterImage } from "./CharacterImage.js";
 
 interface CharacterProfileProps {
@@ -47,7 +48,7 @@ export function CharacterProfile({
   }
 
   const imageRecord = profile.image;
-  const displayImage = isImageApprovedForPublicDisplay(imageRecord)
+  const displayImage = isImageEnabledForPublicDisplay(imageRecord)
     ? imageRecord
     : null;
   const imageTitle = displayImage
@@ -73,9 +74,10 @@ export function CharacterProfile({
               aria-label={`View full image of ${profile.character.name}`}
               onClick={() => {
                 onOpenImage({
-                  src: assetUrl(displayImage.image),
+                  src: characterImageVariant(displayImage.image, 640),
                   alt: imageTitle,
-                  title: imageTitle
+                  title: imageTitle,
+                  rightsRecord: displayImage
                 });
               }}
             >
@@ -94,6 +96,12 @@ export function CharacterProfile({
           </span>
         )}
       </div>
+      {displayImage ? (
+        <ArtworkDisclosure
+          image={displayImage}
+          className="profile-artwork-disclosure"
+        />
+      ) : null}
 
       <div class="profile-content">
         <div class="profile-identity">
@@ -180,7 +188,9 @@ export function CharacterProfile({
                     {imageRecord.reviewed_on ? ` · Reviewed ${imageRecord.reviewed_on}` : ""}
                     {!displayImage
                       ? " · Not published pending documented rights"
-                      : ""}
+                      : imageRecord.rights_status === "unverified-third-party"
+                        ? " · Public display enabled with an unverified-rights warning; no image licence claimed"
+                        : ""}
                   </li>
                 </ul>
               </section>

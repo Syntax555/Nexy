@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "preact/hooks";
 
+import type { ImageRef } from "../domain/index.js";
+import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
+
 export interface DialogImage {
   readonly src: string;
   readonly alt: string;
   readonly title: string;
+  readonly rightsRecord?: ImageRef;
 }
 
 interface ImageDialogProps {
@@ -38,6 +42,12 @@ export function ImageDialog({ image, onClose }: ImageDialogProps) {
         </button>
         {image ? <img src={image.src} alt={image.alt} decoding="async" /> : null}
         <strong>{image?.title}</strong>
+        {image?.rightsRecord ? (
+          <ArtworkDisclosure
+            image={image.rightsRecord}
+            className="image-modal__disclosure"
+          />
+        ) : null}
       </div>
     </dialog>
   );

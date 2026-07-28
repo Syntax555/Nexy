@@ -1,7 +1,7 @@
 import { readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 
-import { publishableImagePaths } from "./publish-policy.js";
+import { publishedImageVariantPaths } from "./publish-policy.js";
 
 const projectRoot = path.resolve(".");
 const distRoot = path.join(projectRoot, "dist");
@@ -33,7 +33,7 @@ async function filesBelow(directory: string): Promise<readonly string[]> {
 async function stripDirectory(
   directory: string,
   publicPrefix: string,
-  approvedPaths: ReadonlySet<string>
+  publishedPaths: ReadonlySet<string>
 ): Promise<number> {
   const relativeRoot = path.relative(distRoot, directory);
   if (
@@ -48,7 +48,7 @@ async function stripDirectory(
   for (const file of await filesBelow(directory)) {
     const relative = path.relative(directory, file).replaceAll(path.sep, "/");
     const publicPath = `${publicPrefix}/${relative}`;
-    if (approvedPaths.has(publicPath)) continue;
+    if (publishedPaths.has(publicPath)) continue;
     await rm(file);
     removed += 1;
   }
@@ -56,18 +56,19 @@ async function stripDirectory(
 }
 
 const data: unknown = JSON.parse(await readFile(dataPath, "utf8"));
-const approvedPaths = publishableImagePaths(data);
+const publishedVariantPaths = publishedImageVariantPaths(data);
 const removedOriginals = await stripDirectory(
   path.join(distRoot, "images", "characters"),
   "images/characters",
-  approvedPaths
+  new Set()
 );
-const removedVariants = await stripDirectory(
+const removedUnpublishedVariants = await stripDirectory(
   path.join(distRoot, "images", "generated"),
   "images/generated",
-  approvedPaths
+  publishedVariantPaths
 );
 
 console.log(
-  `Withheld ${removedOriginals} unapproved source assets and ${removedVariants} unapproved generated assets from dist.`
+  `Removed ${removedOriginals} full-size source assets and `
+  + `${removedUnpublishedVariants} unpublished generated assets from dist.`
 );

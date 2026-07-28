@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { characterImageVariant } from "../app/assets.js";
-import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
+import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter, RosterTier } from "../app/roster.js";
 import type {
   BattleSelection,
@@ -539,16 +539,23 @@ export function FighterPicker({
               </button>
             ) : <span>Ruleset v1</span>}
           </div>
+          <p
+            class="roster-artwork-note"
+            id={`${side}-roster-artwork-note`}
+          >
+            Third-party artwork may have unverified rights. Select a fighter
+            for its exact source record.
+          </p>
 
           <div
             class="roster-list"
             role="list"
             aria-label="Characters"
-            aria-describedby={`${side}-rendered-roster-count`}
+            aria-describedby={`${side}-rendered-roster-count ${side}-roster-artwork-note`}
           >
             {renderedRoster.map((item) => {
               const image = item.defaultProfile.image;
-              const displayImage = isImageApprovedForPublicDisplay(image)
+              const displayImage = isImageEnabledForPublicDisplay(image)
                 ? image
                 : null;
               return (

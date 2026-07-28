@@ -22,6 +22,7 @@ keys:
         image: "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
         source_url: "https://vsbattles.fandom.com/wiki/File:Falcon_MC_Classic_TR.gif"
         rights_status: unverified-third-party
+        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:

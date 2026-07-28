@@ -1,5 +1,5 @@
 import { characterImageVariant } from "../app/assets.js";
-import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
+import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
 import type {
   BattleReport,
   CharacterProfile,
@@ -7,6 +7,7 @@ import type {
   Side,
   Winner
 } from "../domain/index.js";
+import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
 import { CharacterImage } from "./CharacterImage.js";
 
 interface BattleResultProps {
@@ -72,7 +73,7 @@ function CombatantCard({
   readonly profile: CharacterProfile;
   readonly label: string;
 }) {
-  const image = isImageApprovedForPublicDisplay(profile.image)
+  const image = isImageEnabledForPublicDisplay(profile.image)
     ? profile.image
     : null;
   return (
@@ -89,17 +90,22 @@ function CombatantCard({
           <li>{profile.stats.length} ranked stats</li>
         </ul>
       </div>
-      <div class="combatant-card__image">
+      <div class="combatant-card__artwork">
+        <div class="combatant-card__image">
+          {image ? (
+            <CharacterImage
+              src={characterImageVariant(image.image, 640)}
+              alt={`${label} — ${image.name}`}
+            />
+          ) : (
+            <span class="image-fallback" aria-hidden="true">
+              {profile.character.name.charAt(0)}
+            </span>
+          )}
+        </div>
         {image ? (
-          <CharacterImage
-            src={characterImageVariant(image.image, 640)}
-            alt={`${label} — ${image.name}`}
-          />
-        ) : (
-          <span class="image-fallback" aria-hidden="true">
-            {profile.character.name.charAt(0)}
-          </span>
-        )}
+          <ArtworkDisclosure image={image} />
+        ) : null}
       </div>
     </article>
   );
