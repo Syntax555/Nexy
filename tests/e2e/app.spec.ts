@@ -23,9 +23,29 @@ async function selectFighter(
 async function expectNoHorizontalOverflow(page: Page): Promise<void> {
   const dimensions = await page.evaluate(() => ({
     documentWidth: document.documentElement.scrollWidth,
-    viewportWidth: document.documentElement.clientWidth
+    viewportWidth: document.documentElement.clientWidth,
+    overflowingElements: Array.from(document.body.querySelectorAll("*"))
+      .map((element) => {
+        const bounds = element.getBoundingClientRect();
+        return {
+          element: `${element.tagName.toLowerCase()}${
+            element.id ? `#${element.id}` : ""
+          }${
+            element.classList.length > 0
+              ? `.${Array.from(element.classList).join(".")}`
+              : ""
+          }`,
+          left: Math.round(bounds.left),
+          right: Math.round(bounds.right)
+        };
+      })
+      .filter(({ left, right }) => left < -1 || right > document.documentElement.clientWidth + 1)
+      .slice(0, 10)
   }));
-  expect(dimensions.documentWidth).toBeLessThanOrEqual(
+  expect(
+    dimensions.documentWidth,
+    `Overflowing elements: ${JSON.stringify(dimensions.overflowingElements)}`
+  ).toBeLessThanOrEqual(
     dimensions.viewportWidth + 1
   );
 }
