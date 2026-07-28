@@ -37,5 +37,8 @@ describe("CharacterProfile", () => {
 
     expect(screen.getByText(note).classList.contains("profile-stat__note")).toBe(true);
     expect(container.querySelector(".fighter-profile[aria-live]")).toBeNull();
+    expect(screen.getByText(`Media: ${rosterCharacter.media}`)).toBeTruthy();
+    expect(screen.getByText(`Publisher: ${rosterCharacter.origin}`)).toBeTruthy();
+    expect(screen.getByText(`Universe: ${rosterCharacter.verse}`)).toBeTruthy();
   });
 });

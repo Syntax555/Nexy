@@ -135,12 +135,12 @@ export function FighterPicker({
     roster.map((item) => ({ id: item.mediaId, label: item.media }))
   ), [roster]);
   const originOptions = useMemo(() => sortedUniqueOptions(
-    roster
+    media === "all" ? [] : roster
       .filter((item) => media === "all" || item.mediaId === media)
       .map((item) => ({ id: item.originId, label: item.origin }))
   ), [media, roster]);
   const verseOptions = useMemo(() => sortedUniqueOptions(
-    roster
+    origin === "all" ? [] : roster
       .filter((item) => media === "all" || item.mediaId === media)
       .filter((item) => origin === "all" || item.originId === origin)
       .map((item) => ({ id: item.verseId, label: item.verse }))
@@ -214,6 +214,23 @@ export function FighterPicker({
   const selectedCharacter = selection
     ? roster.find((item) => item.id === selection.characterId) ?? null
     : null;
+  const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
+  const selectedOrigin = originOptions.find((option) => option.id === origin) ?? null;
+  const selectedVerse = verseOptions.find((option) => option.id === verse) ?? null;
+  const browsePathLevel = verse !== "all"
+    ? "universe"
+    : origin !== "all"
+      ? "publisher"
+      : media !== "all"
+        ? "media"
+        : "all";
+  const browsePathStatus = selectedVerse && selectedOrigin && selectedMedia
+    ? `${selectedMedia.label} → ${selectedOrigin.label} → ${selectedVerse.label}`
+    : selectedOrigin && selectedMedia
+      ? `${selectedMedia.label} → ${selectedOrigin.label}. Choose a universe.`
+      : selectedMedia
+        ? `${selectedMedia.label} selected. Choose a publisher or origin.`
+        : "Choose media, then publisher or origin, then universe.";
 
   useEffect(() => {
     if (side !== "left") return;
@@ -260,8 +277,6 @@ export function FighterPicker({
   };
 
   const activeMetadataFilterCount = [
-    media,
-    origin,
     gender,
     age,
     tier,
@@ -332,50 +347,32 @@ export function FighterPicker({
             {side === "left" ? <kbd aria-hidden="true">/</kbd> : null}
           </label>
 
-          <div class="filter-primary">
-            <label class="filter-field">
-              <span>Order</span>
-              <select
-                value={sortOrder}
-                onChange={(event) => setSortOrder(event.currentTarget.value as SortOrder)}
-              >
-                <option value="name">Name A–Z</option>
-                <option value="name-desc">Name Z–A</option>
-                <option value="tier-desc">Highest tier</option>
-                <option value="tier-asc">Lowest tier</option>
-              </select>
-            </label>
-            <label class="filter-field">
-              <span>Universe</span>
-              <select
-                value={verse}
-                onChange={(event) => {
-                  setVerse(event.currentTarget.value);
-                  resetMetadataFilters();
-                }}
-              >
-                <option value="all">All universes</option>
-                {verseOptions.map((option) => (
-                  <option value={option.id} key={option.id}>{option.label}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <details class="filter-panel">
-            <summary>
-              <span>More filters</span>
-              <small>
-                {activeMetadataFilterCount > 0
-                  ? `${activeMetadataFilterCount} active`
-                  : "Media, age, tier, class"}
-              </small>
-            </summary>
-            <div class="filter-grid">
-              <label class="filter-field">
-                <span>Media</span>
+          <fieldset
+            class="roster-path"
+            data-browse-path
+            data-browse-level={browsePathLevel}
+          >
+            <legend class="roster-path__legend">Browse by universe</legend>
+            <p
+              class="roster-path__status"
+              id={`${side}-browse-path-status`}
+              data-browse-path-status
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {browsePathStatus}
+            </p>
+            <div class="roster-path__steps">
+              <label class="filter-field roster-path__step" data-browse-step="media">
+                <span>
+                  <b class="roster-path__step-number" aria-hidden="true">1</b>
+                  Media
+                </span>
                 <select
                   value={media}
+                  aria-label="Media"
+                  aria-describedby={`${side}-browse-path-status`}
                   onChange={(event) => {
                     setMedia(event.currentTarget.value);
                     setOrigin("all");
@@ -389,22 +386,85 @@ export function FighterPicker({
                   ))}
                 </select>
               </label>
-              <label class="filter-field">
-                <span>Origin</span>
+              <label class="filter-field roster-path__step" data-browse-step="publisher">
+                <span>
+                  <b class="roster-path__step-number" aria-hidden="true">2</b>
+                  Publisher / origin
+                </span>
                 <select
                   value={origin}
+                  disabled={media === "all"}
+                  aria-label="Publisher / origin"
+                  aria-describedby={`${side}-browse-path-status`}
                   onChange={(event) => {
                     setOrigin(event.currentTarget.value);
                     setVerse("all");
                     resetMetadataFilters();
                   }}
                 >
-                  <option value="all">All origins</option>
+                  <option value="all">
+                    {selectedMedia
+                      ? `All ${selectedMedia.label} publishers / origins`
+                      : "Choose media first"}
+                  </option>
                   {originOptions.map((option) => (
                     <option value={option.id} key={option.id}>{option.label}</option>
                   ))}
                 </select>
               </label>
+              <label class="filter-field roster-path__step" data-browse-step="universe">
+                <span>
+                  <b class="roster-path__step-number" aria-hidden="true">3</b>
+                  Universe / verse
+                </span>
+                <select
+                  value={verse}
+                  disabled={origin === "all"}
+                  aria-label="Universe / verse"
+                  aria-describedby={`${side}-browse-path-status`}
+                  onChange={(event) => {
+                    setVerse(event.currentTarget.value);
+                    resetMetadataFilters();
+                  }}
+                >
+                  <option value="all">
+                    {selectedOrigin
+                      ? `All ${selectedOrigin.label} universes`
+                      : "Choose publisher / origin first"}
+                  </option>
+                  {verseOptions.map((option) => (
+                    <option value={option.id} key={option.id}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="filter-primary filter-primary--order">
+            <label class="filter-field">
+              <span>Order</span>
+              <select
+                value={sortOrder}
+                onChange={(event) => setSortOrder(event.currentTarget.value as SortOrder)}
+              >
+                <option value="name">Name A–Z</option>
+                <option value="name-desc">Name Z–A</option>
+                <option value="tier-desc">Highest tier</option>
+                <option value="tier-asc">Lowest tier</option>
+              </select>
+            </label>
+          </div>
+
+          <details class="filter-panel">
+            <summary>
+              <span>More filters</span>
+              <small>
+                {activeMetadataFilterCount > 0
+                  ? `${activeMetadataFilterCount} active`
+                  : "Gender, age, tier, class"}
+              </small>
+            </summary>
+            <div class="filter-grid">
               <label class="filter-field">
                 <span>Gender</span>
                 <select value={gender} onChange={(event) => setGender(event.currentTarget.value)}>
@@ -469,7 +529,7 @@ export function FighterPicker({
                   <button
                     class="roster-card"
                     type="button"
-                    aria-label={`${item.name}, ${item.identity}, ${item.verse}, tier ${item.tier}`}
+                    aria-label={`${item.name}, ${item.identity}, ${item.media}, ${item.origin}, ${item.verse}, tier ${item.tier}`}
                     aria-pressed={selection?.characterId === item.id}
                     onClick={() => onSelect(item.defaultSelection)}
                   >
@@ -489,7 +549,7 @@ export function FighterPicker({
                       <strong>{item.name}</strong>
                       <small>
                         {item.identity !== item.name ? `${item.identity} · ` : ""}
-                        {item.verse}
+                        {item.origin} / {item.verse}
                         {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
                       </small>
                     </span>

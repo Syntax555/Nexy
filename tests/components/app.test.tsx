@@ -114,7 +114,7 @@ describe("Nexy application", () => {
     expect(screen.getByRole("button", { name: /copy battle link/i })).toBeTruthy();
   });
 
-  it("filters the roster by legacy metadata and supports descending names", async () => {
+  it("browses media, publisher, and universe progressively before filtering metadata", async () => {
     const { container } = render(<App />);
     const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
     if (!leftPicker) throw new Error("Expected the left fighter picker.");
@@ -125,6 +125,69 @@ describe("Nexy application", () => {
 
     expect(count.getAttribute("aria-live")).toBe("polite");
     expect(count.textContent).toContain("20 of 20 fighters");
+
+    const mediaSelect = picker.getByLabelText("Media") as HTMLSelectElement;
+    const originSelect = picker.getByLabelText("Publisher / origin") as HTMLSelectElement;
+    const universeSelect = picker.getByLabelText("Universe / verse") as HTMLSelectElement;
+    const browsePath = leftPicker.querySelector<HTMLElement>("[data-browse-path]");
+    const browseStatus = leftPicker.querySelector<HTMLElement>("[data-browse-path-status]");
+    if (!browsePath || !browseStatus) throw new Error("Expected the progressive browse path.");
+
+    expect(originSelect.disabled).toBe(true);
+    expect(universeSelect.disabled).toBe(true);
+    expect([...originSelect.options].map((option) => option.textContent)).toEqual([
+      "Choose media first"
+    ]);
+    expect([...universeSelect.options].map((option) => option.textContent)).toEqual([
+      "Choose publisher / origin first"
+    ]);
+    expect(browsePath.dataset.browseLevel).toBe("all");
+
+    fireEvent.change(mediaSelect, { target: { value: "comics" } });
+    expect(originSelect.disabled).toBe(false);
+    expect(universeSelect.disabled).toBe(true);
+    expect(browseStatus.textContent).toContain("Comics selected");
+    expect(browsePath.dataset.browseLevel).toBe("media");
+    expect([...originSelect.options].map((option) => option.textContent)).toEqual([
+      "All Comics publishers / origins",
+      "DC Comics",
+      "Marvel Comics"
+    ]);
+
+    fireEvent.change(originSelect, { target: { value: "dc-comics" } });
+    expect(universeSelect.disabled).toBe(false);
+    expect(browseStatus.textContent).toContain("Comics → DC Comics");
+    expect(browsePath.dataset.browseLevel).toBe("publisher");
+    expect([...universeSelect.options].map((option) => option.textContent)).toEqual([
+      "All DC Comics universes",
+      "Post-Crisis",
+      "Post-Flashpoint"
+    ]);
+    await waitFor(() => {
+      expect(count.textContent).toContain("2 of 20 fighters");
+    });
+
+    fireEvent.change(universeSelect, { target: { value: "dc-post-flashpoint" } });
+    expect(browseStatus.textContent).toBe("Comics → DC Comics → Post-Flashpoint");
+    expect(browsePath.dataset.browseLevel).toBe("universe");
+    await waitFor(() => {
+      expect(count.textContent).toContain("1 of 20 fighters");
+    });
+    const filteredFighter = leftPicker.querySelector<HTMLButtonElement>(".roster-card");
+    expect(filteredFighter?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
+    expect(filteredFighter?.getAttribute("aria-label")).toContain(
+      "Comics, DC Comics, Post-Flashpoint"
+    );
+    expect(filteredFighter?.textContent).toContain("DC Comics / Post-Flashpoint");
+
+    fireEvent.change(mediaSelect, { target: { value: "all" } });
+    expect(originSelect.value).toBe("all");
+    expect(originSelect.disabled).toBe(true);
+    expect(universeSelect.value).toBe("all");
+    expect(universeSelect.disabled).toBe(true);
+    await waitFor(() => {
+      expect(count.textContent).toContain("20 of 20 fighters");
+    });
 
     const filterSummary = picker.getByText("More filters").closest("summary");
     if (!filterSummary) throw new Error("Expected the filter disclosure.");
@@ -178,21 +241,21 @@ describe("Nexy application", () => {
     ).toMatch(/^Wonder Girl,/);
 
     fireEvent.change(picker.getByLabelText("Tier"), { target: { value: "all" } });
-    fireEvent.change(picker.getByLabelText("Media"), {
+    fireEvent.change(mediaSelect, {
       target: { value: "comics" }
     });
-    fireEvent.change(picker.getByLabelText("Origin"), {
+    fireEvent.change(originSelect, {
       target: { value: "dc-comics" }
     });
     await waitFor(() => {
       expect(count.textContent).toContain("2 of 20 fighters");
     });
     expect(
-      [...(picker.getByLabelText("Universe") as HTMLSelectElement).options]
-        .map((option) => option.textContent)
-    ).toEqual(["All universes", "Post-Crisis", "Post-Flashpoint"]);
+      [...universeSelect.options].map((option) => option.textContent)
+    ).toEqual(["All DC Comics universes", "Post-Crisis", "Post-Flashpoint"]);
 
-    fireEvent.change(picker.getByLabelText("Origin"), { target: { value: "all" } });
+    fireEvent.change(originSelect, { target: { value: "all" } });
+    expect(universeSelect.disabled).toBe(true);
     fireEvent.change(picker.getByLabelText("Order"), {
       target: { value: "name-desc" }
     });
@@ -201,6 +264,29 @@ describe("Nexy application", () => {
         leftPicker.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")
       ).toMatch(/^Wonder Girl,/);
     });
+  });
+
+  it("keeps the selected fighter while the browse path changes", () => {
+    const { container } = render(<App />);
+    const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
+    if (!leftPicker) throw new Error("Expected the left fighter picker.");
+
+    const picker = within(leftPicker);
+    const firstFighter = leftPicker.querySelector<HTMLButtonElement>(".roster-card");
+    if (!firstFighter) throw new Error("Expected a roster entry.");
+
+    fireEvent.click(firstFighter);
+    const selectedName = picker.getByRole("heading", { level: 2 }).textContent;
+
+    fireEvent.change(picker.getByLabelText("Media"), {
+      target: { value: "comics" }
+    });
+    fireEvent.change(picker.getByLabelText("Publisher / origin"), {
+      target: { value: "dc-comics" }
+    });
+
+    expect(picker.getByRole("heading", { level: 2 }).textContent).toBe(selectedName);
+    expect(picker.getByRole("button", { name: "Clear" })).toBeTruthy();
   });
 
   it("keeps focus in a picker when clear and reset controls unmount", async () => {

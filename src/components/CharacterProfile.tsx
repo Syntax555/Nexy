@@ -104,7 +104,9 @@ export function CharacterProfile({
         </label>
 
         <ul class="profile-meta" aria-label="Character details">
-          <li>{rosterCharacter.verse}</li>
+          <li>Media: {rosterCharacter.media}</li>
+          <li>Publisher: {rosterCharacter.origin}</li>
+          <li>Universe: {rosterCharacter.verse}</li>
           {profile.details.map((detail) => <li key={detail}>{detail}</li>)}
         </ul>
 

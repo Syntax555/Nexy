@@ -92,6 +92,16 @@
     border: 0;
   }
 
+  select {
+    color-scheme: inherit;
+  }
+
+  select option,
+  select optgroup {
+    background-color: var(--surface);
+    color: var(--ink);
+  }
+
   button:focus-visible,
   input:focus-visible,
   select:focus-visible,
@@ -448,6 +458,13 @@
     summary,
     dialog {
       border-color: CanvasText;
+    }
+
+    select,
+    select option,
+    select optgroup {
+      background-color: Canvas;
+      color: CanvasText;
     }
 
     button:focus-visible,

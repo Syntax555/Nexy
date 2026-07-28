@@ -203,13 +203,15 @@
   .fighter-picker__body {
     display: grid;
     grid-template-columns: minmax(230px, 0.82fr) minmax(260px, 1.18fr);
+    align-items: stretch;
     min-height: 560px;
   }
 
   .roster-browser {
-    display: grid;
+    display: flex;
     min-width: 0;
-    align-content: start;
+    min-height: 0;
+    flex-direction: column;
     border-right: 1px solid var(--line);
   }
 
@@ -281,6 +283,71 @@
 
   .filter-primary {
     padding: 4px 18px 12px;
+  }
+
+  .filter-primary--order {
+    grid-template-columns: 1fr;
+    padding-top: 0;
+  }
+
+  .roster-path {
+    min-width: 0;
+    margin: 0 18px 12px;
+    padding: 3px 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface-soft);
+  }
+
+  .roster-path__legend {
+    padding: 0 5px;
+    color: var(--fighter);
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .roster-path__status {
+    min-height: 2.6em;
+    margin: 2px 1px 9px;
+    color: var(--ink-soft);
+    font-size: 0.63rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .roster-path__steps {
+    display: grid;
+    gap: 8px;
+  }
+
+  .roster-path__step > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .roster-path__step-number {
+    display: inline-grid;
+    width: 18px;
+    height: 18px;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--ink-faint);
+    font-size: 0.55rem;
+    line-height: 1;
+  }
+
+  [data-browse-level="all"] [data-browse-step="media"] .roster-path__step-number,
+  [data-browse-level="media"] [data-browse-step="media"] .roster-path__step-number,
+  [data-browse-level="publisher"] [data-browse-step="media"] .roster-path__step-number,
+  [data-browse-level="publisher"] [data-browse-step="publisher"] .roster-path__step-number,
+  [data-browse-level="universe"] .roster-path__step-number {
+    border-color: rgba(var(--fighter-rgb), 0.55);
+    background: rgba(var(--fighter-rgb), 0.12);
+    color: var(--fighter);
   }
 
   .filter-panel {
@@ -364,10 +431,18 @@
     padding: 0 34px 0 12px;
     border: 1px solid var(--line);
     border-radius: 10px;
-    background: var(--surface-soft);
+    background: var(--surface-raised);
     color: var(--ink);
     font-size: 0.76rem;
     font-weight: 750;
+  }
+
+  .filter-field select:disabled {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: not-allowed;
+    opacity: 1;
   }
 
   .roster-meta {
@@ -384,7 +459,9 @@
 
   .roster-list {
     display: grid;
-    max-height: 348px;
+    min-height: 160px;
+    flex: 1 1 0;
+    align-content: start;
     padding: 0 10px 10px;
     overflow: auto;
     scrollbar-color: var(--line-strong) transparent;
@@ -948,6 +1025,8 @@
     }
 
     .roster-list {
+      min-height: 0;
+      flex: 0 1 auto;
       max-height: 280px;
     }
 
@@ -999,6 +1078,10 @@
     .filter-primary,
     .filter-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-primary--order {
+      grid-template-columns: 1fr;
     }
 
     .profile-stats {
