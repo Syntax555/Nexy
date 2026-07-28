@@ -16,6 +16,8 @@ runtime.
 - **Vite 8** for fast development and optimized static production bundles
 - **YAML + Zod** for readable source data with structural and semantic validation
 - **Vitest** for engine, content-pipeline, search, URL-state, and component tests
+- **Playwright + axe-core** for Chromium, Firefox, WebKit, mobile, responsive,
+  and automated WCAG browser checks
 - **Sharp** for build-time character thumbnails, profile images, and social-card
   optimization
 - **GitHub Actions + GitHub Pages** for validation and static deployment
@@ -35,9 +37,16 @@ The website includes a visible
 [Legal & removal requests](https://syntax555.github.io/Nexy/legal.html) notice.
 Rights holders or their authorized representatives can request review,
 correction, or removal through the repository's
-[GitHub issues](https://github.com/Syntax555/Nexy/issues). A disclaimer is not a
-substitute for permission or a license, so contributors must not add third-party
-artwork unless they have documented authorization for its public web use.
+[rights-holder request form](https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml).
+VS Battles Wiki-derived text and structured data attribution is documented in
+[CONTENT-LICENSE.md](CONTENT-LICENSE.md). A disclaimer is not a substitute for
+permission or a license. The build therefore withholds images marked
+`unverified-third-party` from the deployed site and publishes only artwork
+marked as original, licensed, public-domain, or covered by documented
+permission. The generated
+[image rights manifest](https://syntax555.github.io/Nexy/image-rights.json)
+records the source, status, review date, and publication decision for each
+image reference.
 
 ## Gameplay model
 
@@ -124,17 +133,17 @@ The preview is available at `http://127.0.0.1:4173/Nexy/`.
 Start with the TypeScript scaffolder:
 
 ```bash
-pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --identity "Ororo Munroe" --verse marvel-mainstream --gender female
+pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --identity "Ororo Munroe" --verse marvel-mainstream --gender female --source-url "https://vsbattles.fandom.com/wiki/Storm_(Marvel_Comics)"
 ```
 
 Preview the YAML without writing anything:
 
 ```bash
-pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --verse marvel-mainstream --dry-run
+pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --verse marvel-mainstream --source-url "https://vsbattles.fandom.com/wiki/Storm_(Marvel_Comics)" --dry-run
 ```
 
-The command validates the verse and gender IDs, refuses to overwrite an
-existing entry, and creates:
+`--source-url` is required. The command validates the source URL, verse, and
+gender IDs, refuses to overwrite an existing entry, and creates:
 
 ```text
 content/characters/storm-marvel-mainstream.yaml
@@ -143,8 +152,8 @@ public/images/characters/storm-marvel-mainstream/
 
 Next:
 
-1. Put verified artwork in the generated image directory.
-2. Add the image reference to the relevant form.
+1. Research and verify the profile source and authored statistics.
+2. Add artwork only when you can document its source and public-use rights.
 3. Replace the scaffold statistics with researched values.
 4. Reference reusable catalog IDs from `content/catalogs/`.
 5. Run `pnpm content:build` and then `pnpm check`.
@@ -159,12 +168,35 @@ A local image reference is relative to `public/`:
 images:
   - name: "Classic suit"
     image: "images/characters/storm-marvel-mainstream/classic.webp"
+    source_url: "https://example.com/original-file-page"
+    rights_status: licensed
+    rights_holder: "Example rights holder"
+    license: "CC BY 4.0"
+    reviewed_on: "2026-07-28"
 ```
 
 Local artwork must remain inside the matching character directory. Validation
 rejects missing files, parent-directory traversal, backslashes, and references
 to another character's directory. WebP is recommended for source artwork, but
 PNG, JPEG, AVIF, and WebP are accepted by the image build.
+
+The scaffolder can create an unverified image record when all three image
+flags are provided together:
+
+```bash
+pnpm character:new -- \
+  --id storm-marvel-mainstream \
+  --name "Storm" \
+  --verse marvel-mainstream \
+  --source-url "https://vsbattles.fandom.com/wiki/Storm_(Marvel_Comics)" \
+  --image storm.webp \
+  --image-source-url "https://vsbattles.fandom.com/wiki/File:Example.png" \
+  --image-rights-holder "Unverified; Marvel and/or the original artist"
+```
+
+That scaffold uses `unverified-third-party`, so the file is recorded but not
+published. Change the status only after documenting a licence, permission,
+public-domain basis, or original authorship.
 
 Simple ranked statistics can use a catalog ID directly:
 
@@ -203,16 +235,17 @@ pnpm content:build
 
 Do not edit the generated JSON by hand. Change the YAML source and rebuild it.
 
-Generate 160 px roster thumbnails, 640 px profile images, and the optimized
-1200 x 630 social card:
+Generate approved 160 px roster thumbnails, approved 640 px profile images,
+the public image-rights manifest, and the optimized 1200 x 630 social card:
 
 ```bash
 pnpm images:build
 ```
 
 Generated image variants are written below `public/images/generated/`. The
-social-card source is `content/images/og-source.png`; its generated public file
-is `public/og.png`.
+production post-build removes originals and variants that are not approved by
+the rights metadata before GitHub Pages uploads `dist/`. The social-card source
+is `content/images/og-source.png`; its generated public file is `public/og.png`.
 
 ## Validation and tests
 
@@ -223,6 +256,7 @@ pnpm typecheck        # Strict TypeScript checks
 pnpm test             # Run the test suite once
 pnpm test:watch       # Run affected tests while developing
 pnpm test:coverage    # Run tests with coverage enforcement
+pnpm test:e2e         # Build and test in five desktop/mobile browser projects
 pnpm build            # Compile content/images and create dist/
 pnpm check            # Validate content, typecheck, test, and production-build
 ```
@@ -243,10 +277,10 @@ its own source and generation notes.
 
 ## GitHub Pages deployment
 
-The workflow in `.github/workflows/ci.yml` runs `pnpm check` for pull requests,
-pushes to `main`, and manual runs. A successful `main` run uploads `dist/` and
-deploys it with the official GitHub Pages actions. Pull requests validate the
-same code without deploying.
+The workflow in `.github/workflows/ci.yml` runs `pnpm check` plus real-browser
+Playwright and axe-core tests for pull requests, pushes to `main`, and manual
+runs. A successful `main` run uploads `dist/` and deploys it with the official
+GitHub Pages actions. Pull requests validate the same code without deploying.
 
 In the repository settings, configure **Pages > Build and deployment > Source**
 to **GitHub Actions**. No Jekyll theme, Pages gem, or branch-generated `_site/`

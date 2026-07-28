@@ -14,8 +14,12 @@ describe("legal notice", () => {
     expect(page).toMatch(/not affiliated with, sponsored by, endorsed by, or approved by/i);
     expect(page).toMatch(/no blanket claim of fair use/i);
     expect(page).toMatch(/does not grant a license/i);
+    expect(page).toMatch(/data attribution/i);
+    expect(page).toContain("CONTENT-LICENSE.md");
+    expect(page).toContain("image-rights.json");
+    expect(page).toMatch(/withholds artwork/i);
     expect(page).toContain(
-      "https://github.com/Syntax555/Nexy/issues/new?title=Rights-holder%20request"
+      "https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml"
     );
     expect(page).not.toMatch(/no copyright infringement intended/i);
   });

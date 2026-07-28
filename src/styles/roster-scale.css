@@ -1,0 +1,225 @@
+@layer reset, tokens, base, components, layout, battle, utilities;
+
+@layer utilities {
+  .searchable-select {
+    position: relative;
+  }
+
+  .searchable-select > label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-faint);
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .searchable-select__control {
+    position: relative;
+  }
+
+  .searchable-select__control input {
+    width: 100%;
+    height: 44px;
+    padding: 0 72px 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface-raised);
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 750;
+    text-overflow: ellipsis;
+  }
+
+  .searchable-select__control input::placeholder {
+    color: var(--ink-soft);
+    opacity: 1;
+  }
+
+  .searchable-select__control input:focus {
+    border-color: rgba(var(--fighter-rgb), 0.72);
+    outline: 2px solid rgba(var(--fighter-rgb), 0.2);
+    outline-offset: 1px;
+  }
+
+  .searchable-select[data-disabled="true"] .searchable-select__control input {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: not-allowed;
+    opacity: 1;
+  }
+
+  .searchable-select__chevron {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-56%);
+    color: var(--ink-soft);
+    font-size: 1rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .searchable-select__clear {
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    display: grid;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    transform: translateY(-50%);
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .searchable-select__clear:hover {
+    background: var(--surface-soft);
+    color: var(--fighter);
+  }
+
+  .searchable-select__popover {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 5px);
+    right: 0;
+    left: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-large);
+  }
+
+  .searchable-select__list {
+    max-height: min(280px, 42vh);
+    padding: 5px;
+    overflow-y: auto;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  .searchable-select__option {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 750;
+    line-height: 1.25;
+  }
+
+  .searchable-select__option[data-active="true"] {
+    background: rgba(var(--fighter-rgb), 0.12);
+    color: var(--ink);
+  }
+
+  .searchable-select__option[aria-selected="true"] {
+    color: var(--fighter);
+  }
+
+  .searchable-select__option b {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+  }
+
+  .searchable-select__empty {
+    padding: 18px 10px;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .searchable-select__more {
+    width: calc(100% - 10px);
+    min-height: 44px;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    border: 1px solid rgba(var(--fighter-rgb), 0.3);
+    border-radius: 7px;
+    background: rgba(var(--fighter-rgb), 0.07);
+    color: var(--fighter);
+    font-size: 0.67rem;
+    font-weight: 850;
+  }
+
+  .searchable-select__more:hover {
+    background: rgba(var(--fighter-rgb), 0.13);
+  }
+
+  .searchable-select__result-count {
+    display: block;
+    padding: 7px 10px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 0.58rem;
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  .roster-list__more {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 12px 10px 18px;
+    text-align: center;
+  }
+
+  .roster-list__more button {
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid rgba(var(--fighter-rgb), 0.38);
+    border-radius: 10px;
+    background: rgba(var(--fighter-rgb), 0.08);
+    color: var(--fighter);
+    font-size: 0.72rem;
+    font-weight: 850;
+  }
+
+  .roster-list__more button:hover {
+    background: rgba(var(--fighter-rgb), 0.14);
+  }
+
+  .roster-list__more small {
+    color: var(--ink-faint);
+    font-size: 0.6rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 820px) {
+    .searchable-select__popover {
+      position: fixed;
+      z-index: 100;
+      top: auto;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      left: 12px;
+    }
+
+    .searchable-select__list {
+      max-height: min(420px, 58vh);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .searchable-select__option[data-active="true"],
+    .roster-list__more button {
+      border: 1px solid Highlight;
+    }
+  }
+}

@@ -7,6 +7,13 @@ age:
 classification_ids:
   - human
   - mutate
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Purple Man"
+    url: "https://vsbattles.fandom.com/wiki/Purple_Man"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: purple-man
     names:
@@ -14,6 +21,12 @@ keys:
     images:
       - name: "Purple Man"
         image: "images/characters/purple-man-marvel-mainstream/purple-man.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Purple_Man.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: mind-manipulation
         effects:

@@ -37,6 +37,7 @@ function publicProfile(
     resistanceRefs: view.resistanceRefs,
     effects: view.effects,
     ...(view.image ? { image: view.image } : {}),
+    sources: view.sources,
     names: view.names,
     details: view.details,
     stats: view.stats,

@@ -44,6 +44,14 @@ jobs:
           VITE_BASE_PATH: /Nexy/
         run: pnpm check
 
+      - name: Install browser test engines
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Run real-browser accessibility and responsive tests
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:4173/Nexy/
+        run: pnpm exec playwright test
+
       - name: Upload GitHub Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4

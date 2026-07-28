@@ -84,7 +84,7 @@
   .arena-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
-    align-items: start;
+    align-items: stretch;
     gap: 14px;
   }
 
@@ -132,6 +132,7 @@
   .fighter-picker {
     --fighter: var(--left);
     --fighter-rgb: var(--left-rgb);
+    height: 100%;
     overflow: clip;
     border: 1px solid var(--line);
     border-radius: var(--radius-large);

@@ -8,6 +8,13 @@ classification_ids:
   - half-human
   - half-falcon
   - superhero
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Falcon (Joaquin Torres)"
+    url: "https://vsbattles.fandom.com/wiki/Falcon_(Joaqu%C3%ADn_Torres)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: falcon
     names:
@@ -15,6 +22,12 @@ keys:
     images:
       - name: "Falcon"
         image: "images/characters/falcon-marvel-mainstream/falcon.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Falcon_Joaqu%C3%ACn_MC_TR.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: flight
       - id: martial-arts-mastery

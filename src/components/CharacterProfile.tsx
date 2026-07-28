@@ -1,4 +1,5 @@
 import { assetUrl, characterImageVariant } from "../app/assets.js";
+import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter } from "../app/roster.js";
 import type { CharacterProfile as CharacterProfileData } from "../domain/index.js";
 import type { DialogImage } from "./ImageDialog.js";
@@ -17,6 +18,13 @@ function capabilityCount(profile: CharacterProfileData): number {
     (total, section) => total + section.items.length,
     0
   );
+}
+
+function rightsStatusLabel(status: string): string {
+  return status
+    .split("-")
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
 }
 
 export function CharacterProfile({
@@ -38,20 +46,24 @@ export function CharacterProfile({
     );
   }
 
-  const image = profile.image;
-  const imageTitle = image
-    ? `${profile.character.name} — ${image.name}`
+  const imageRecord = profile.image;
+  const displayImage = isImageApprovedForPublicDisplay(imageRecord)
+    ? imageRecord
+    : null;
+  const imageTitle = displayImage
+    ? `${profile.character.name} — ${displayImage.name}`
     : profile.character.name;
   const aliases = profile.names.filter((name) => name !== profile.character.name);
   const totalCapabilities = capabilityCount(profile);
+  const sourceCount = profile.sources.length + (imageRecord ? 1 : 0);
 
   return (
     <article class="fighter-profile">
       <div class="profile-visual">
-        {image ? (
+        {displayImage ? (
           <>
             <CharacterImage
-              src={characterImageVariant(image.image, 640)}
+              src={characterImageVariant(displayImage.image, 640)}
               alt={imageTitle}
               loading="eager"
             />
@@ -61,7 +73,7 @@ export function CharacterProfile({
               aria-label={`View full image of ${profile.character.name}`}
               onClick={() => {
                 onOpenImage({
-                  src: assetUrl(image.image),
+                  src: assetUrl(displayImage.image),
                   alt: imageTitle,
                   title: imageTitle
                 });
@@ -71,7 +83,13 @@ export function CharacterProfile({
             </button>
           </>
         ) : (
-          <span class="image-fallback" role="img" aria-label="Image unavailable">
+          <span
+            class="image-fallback"
+            role="img"
+            aria-label={imageRecord
+              ? `${profile.character.name} artwork withheld pending rights verification`
+              : "Image unavailable"}
+          >
             {profile.character.name.charAt(0)}
           </span>
         )}
@@ -119,6 +137,56 @@ export function CharacterProfile({
             </li>
           ))}
         </ul>
+
+        <details class="profile-details profile-sources">
+          <summary>
+            Sources
+            <span>{sourceCount} {sourceCount === 1 ? "entry" : "entries"}</span>
+          </summary>
+          <div class="profile-sections">
+            <section>
+              <h4>Character data</h4>
+              <ul>
+                {profile.sources.map((source) => (
+                  <li key={source.id}>
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      {source.name}
+                    </a>
+                    {" — "}
+                    {source.publisher}
+                    {" · "}
+                    License: {source.license}
+                    {" · "}
+                    Accessed {source.accessed_on}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            {imageRecord ? (
+              <section>
+                <h4>Character image record</h4>
+                <ul>
+                  <li>
+                    <a href={imageRecord.source_url} target="_blank" rel="noopener noreferrer">
+                      Source page
+                    </a>
+                    {" — "}
+                    Rights status: {rightsStatusLabel(imageRecord.rights_status)}
+                    {imageRecord.rights_holder
+                      ? ` · Rights holder record: ${imageRecord.rights_holder}`
+                      : ""}
+                    {imageRecord.creator ? ` · Creator: ${imageRecord.creator}` : ""}
+                    {imageRecord.license ? ` · License: ${imageRecord.license}` : ""}
+                    {imageRecord.reviewed_on ? ` · Reviewed ${imageRecord.reviewed_on}` : ""}
+                    {!displayImage
+                      ? " · Not published pending documented rights"
+                      : ""}
+                  </li>
+                </ul>
+              </section>
+            ) : null}
+          </div>
+        </details>
 
         {totalCapabilities > 0 ? (
           <details class="profile-details">

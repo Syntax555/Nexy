@@ -2,6 +2,7 @@ import type {
   CharacterForm,
   Effect,
   ImageRef,
+  ImageRightsStatus,
   PowerRef,
   PowerTargetRef,
   RankedStatInput,
@@ -701,10 +702,24 @@ export function activeImage(
     }
     return current;
   });
+  const creator = optionalStringField(winner, "creator");
+  const rightsHolder = optionalStringField(winner, "rights_holder");
+  const license = optionalStringField(winner, "license");
+  const reviewedOn = optionalStringField(winner, "reviewed_on");
 
   return {
     name: optionalStringField(winner, "name") || baseImage?.name || "",
-    image: stringField(winner, "image")
+    image: stringField(winner, "image"),
+    source_url: optionalStringField(winner, "source_url") || baseImage?.source_url || "",
+    rights_status: (
+      optionalStringField(winner, "rights_status")
+      || baseImage?.rights_status
+      || "unverified-third-party"
+    ) as ImageRightsStatus,
+    ...(creator ? { creator } : {}),
+    ...(rightsHolder ? { rights_holder: rightsHolder } : {}),
+    ...(license ? { license } : {}),
+    ...(reviewedOn ? { reviewed_on: reviewedOn } : {})
   };
 }
 

@@ -1,6 +1,7 @@
 import type {
   CharacterEntry,
   CharacterForm,
+  ContentSource,
   Effect,
   ImageRef,
   PowerRef,
@@ -106,6 +107,7 @@ export interface CharacterProfile {
   readonly resistanceRefs: readonly ResistanceRef[];
   readonly effects: readonly Effect[];
   readonly image?: ImageRef;
+  readonly sources: readonly ContentSource[];
   readonly names: readonly string[];
   readonly details: readonly string[];
   readonly stats: readonly ProfileStat[];

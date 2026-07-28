@@ -14,6 +14,13 @@ export interface NewCharacterOptions {
   readonly gender: string;
   readonly form: string;
   readonly identity: string;
+  readonly sourceUrl: string;
+  readonly sourceName?: string;
+  readonly sourcePublisher?: string;
+  readonly sourceLicense?: string;
+  readonly imageFile?: string;
+  readonly imageSourceUrl?: string;
+  readonly imageRightsHolder?: string;
   readonly dryRun: boolean;
 }
 
@@ -22,12 +29,24 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 function usage(): string {
   return [
     "Usage:",
-    "  pnpm character:new -- --id storm-marvel-mainstream --name \"Storm\" --verse marvel-mainstream [options]",
+    "  pnpm character:new -- --id storm-marvel-mainstream --name \"Storm\" --verse marvel-mainstream --source-url URL [options]",
     "",
     "Options:",
     "  --gender ID       Gender catalog id (default: unknown)",
     "  --form ID         Initial form id (default: base)",
     "  --identity NAME   Civilian/alternate identity (defaults to --name)",
+    "  --source-url URL  Required HTTPS profile/data source",
+    "  --source-name NAME",
+    "                    Source label (defaults to a VS Battles Wiki profile label)",
+    "  --source-publisher NAME",
+    "                    Source publisher (default: VS Battles Wiki (Fandom))",
+    "  --source-license NAME",
+    "                    Source licence (default: CC BY-SA 3.0 wiki text only)",
+    "  --image FILE      Optional image filename placed under the new image directory",
+    "  --image-source-url URL",
+    "                    Required source page when --image is provided",
+    "  --image-rights-holder NAME",
+    "                    Required named rights holder when --image is provided",
     "  --dry-run         Print YAML without writing files",
     "  --help            Show this help"
   ].join("\n");
@@ -57,7 +76,21 @@ function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
     }
 
     const key = argument.slice(2);
-    if (!["id", "name", "verse", "gender", "form", "identity"].includes(key)) {
+    if (![
+      "id",
+      "name",
+      "verse",
+      "gender",
+      "form",
+      "identity",
+      "source-url",
+      "source-name",
+      "source-publisher",
+      "source-license",
+      "image",
+      "image-source-url",
+      "image-rights-holder"
+    ].includes(key)) {
       throw new Error(`Unknown option ${argument}\n\n${usage()}`);
     }
     const value = args[index + 1];
@@ -69,9 +102,20 @@ function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
     index += 1;
   }
 
-  const missing = ["id", "name", "verse"].filter((key) => !values.get(key));
+  const missing = ["id", "name", "verse", "source-url"].filter((key) => !values.get(key));
   if (missing.length > 0) {
     throw new Error(`Missing required option(s): ${missing.map((key) => `--${key}`).join(", ")}\n\n${usage()}`);
+  }
+
+  const imageOptions = [
+    values.get("image"),
+    values.get("image-source-url"),
+    values.get("image-rights-holder")
+  ];
+  if (imageOptions.some(Boolean) && !imageOptions.every(Boolean)) {
+    throw new Error(
+      "--image, --image-source-url, and --image-rights-holder must be provided together"
+    );
   }
 
   const name = values.get("name")!;
@@ -82,6 +126,23 @@ function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
     gender: values.get("gender") ?? "unknown",
     form: values.get("form") ?? "base",
     identity: values.get("identity") ?? name,
+    sourceUrl: values.get("source-url")!,
+    ...(values.get("source-name")
+      ? { sourceName: values.get("source-name")! }
+      : {}),
+    ...(values.get("source-publisher")
+      ? { sourcePublisher: values.get("source-publisher")! }
+      : {}),
+    ...(values.get("source-license")
+      ? { sourceLicense: values.get("source-license")! }
+      : {}),
+    ...(values.get("image")
+      ? {
+          imageFile: values.get("image")!,
+          imageSourceUrl: values.get("image-source-url")!,
+          imageRightsHolder: values.get("image-rights-holder")!
+        }
+      : {}),
     dryRun
   };
 }
@@ -103,6 +164,25 @@ export async function createCharacter(
   if (!idResult.success) throw new Error(`--id ${idResult.error.issues[0]?.message ?? "is invalid"}`);
   const formResult = slugSchema.safeParse(options.form);
   if (!formResult.success) throw new Error(`--form ${formResult.error.issues[0]?.message ?? "is invalid"}`);
+  if (
+    options.imageFile
+    && (
+      path.basename(options.imageFile) !== options.imageFile
+      || !/\.(?:avif|jpe?g|png|webp)$/i.test(options.imageFile)
+    )
+  ) {
+    throw new Error(
+      "--image must be an AVIF, JPEG, PNG, or WebP filename without directories"
+    );
+  }
+  if (
+    Boolean(options.imageFile)
+    !== Boolean(options.imageSourceUrl && options.imageRightsHolder)
+  ) {
+    throw new Error(
+      "imageFile, imageSourceUrl, and imageRightsHolder must be provided together"
+    );
+  }
 
   const compiled = await compileContent({ root: projectRoot, check: true });
   const verses = new Set(compiled.data.options.verses.map((entry) => entry.id));
@@ -117,6 +197,8 @@ export async function createCharacter(
     throw new Error(`Character ${options.id} already exists`);
   }
 
+  const reviewedOn = new Date().toISOString().slice(0, 10);
+  const sourceId = "vs-battles-wiki-profile";
   const character = {
     name: options.name,
     verse_id: options.verse,
@@ -126,12 +208,33 @@ export async function createCharacter(
       unknown: true
     },
     classification_ids: [],
+    sources: [
+      {
+        id: sourceId,
+        name: options.sourceName ?? `VS Battles Wiki profile: ${options.name}`,
+        url: options.sourceUrl,
+        publisher: options.sourcePublisher ?? "VS Battles Wiki (Fandom)",
+        license: options.sourceLicense
+          ?? "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+        accessed_on: reviewedOn
+      }
+    ],
     keys: [
       {
         key: options.form,
         name: "Base",
         names: [options.identity],
-        images: [],
+        images: options.imageFile
+          ? [{
+              name: "Base",
+              image: `images/characters/${options.id}/${options.imageFile}`,
+              source_url: options.imageSourceUrl!,
+              rights_status: "unverified-third-party" as const,
+              rights_holder: options.imageRightsHolder!,
+              reviewed_on: reviewedOn
+            }]
+          : [],
+        source_ids: [sourceId],
         attack_potency: "human",
         combat_speed: "average-human",
         lifting_strength: "average-human",
@@ -180,7 +283,10 @@ async function runCli(): Promise<void> {
 
   console.log(`Created ${path.relative(root, result.entryPath).replaceAll(path.sep, "/")}`);
   console.log(`Created ${path.relative(root, result.imageDirectory).replaceAll(path.sep, "/")}/`);
-  console.log("Next: add images and verified abilities/stats, then run pnpm content:build && pnpm check");
+  console.log(
+    "Next: verify source and image-rights metadata, add documented abilities/stats, "
+    + "then run pnpm content:build && pnpm check"
+  );
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";

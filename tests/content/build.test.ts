@@ -100,6 +100,26 @@ describe("content compiler", () => {
     expect(localImages.length).toBeGreaterThan(0);
     expect(localImages.every((image) => image.startsWith("images/characters/"))).toBe(true);
     expect(localImages.some((image) => image.startsWith("assets/"))).toBe(false);
+    expect(
+      first.data.characters.every((character) =>
+        character.sources.length > 0
+        && character.sources.every((source) =>
+          source.url.startsWith("https://")
+          && source.accessed_on === "2026-07-28"
+        )
+        && character.keys.every((form) =>
+          form.source_ids.length > 0
+          && form.source_ids.every((sourceId) =>
+            character.sources.some((source) => source.id === sourceId)
+          )
+          && form.images.every((image) =>
+            image.source_url.startsWith("https://")
+            && image.rights_status === "unverified-third-party"
+            && Boolean(image.rights_holder)
+          )
+        )
+      )
+    ).toBe(true);
   });
 
   it("does not rewrite output in check mode and writes canonical JSON in build mode", async () => {
@@ -239,10 +259,8 @@ describe("content compiler", () => {
       "characters",
       "agent-venom-marvel-mainstream"
     );
-    await cp(
-      path.join(imageDirectory, "agent-venom.webp"),
-      path.join(imageDirectory, "agent-venom.gif")
-    );
+    await mkdir(imageDirectory, { recursive: true });
+    await writeFile(path.join(imageDirectory, "agent-venom.gif"), "test", "utf8");
     const character = await readFile(characterPath, "utf8");
     await writeFile(
       characterPath,
@@ -258,6 +276,148 @@ describe("content compiler", () => {
       errors: expect.arrayContaining([
         expect.stringContaining(
           "local image must use AVIF, JPEG, PNG, or WebP"
+        )
+      ])
+    });
+  });
+
+  it("rejects unknown and duplicate character source references", async () => {
+    const root = await temporaryProject();
+    const characterPath = path.join(
+      root,
+      "content",
+      "characters",
+      "agent-venom-marvel-mainstream.yaml"
+    );
+    const character = await readFile(characterPath, "utf8");
+    await writeFile(
+      characterPath,
+      character
+        .replace(
+          '    accessed_on: "2026-07-28"\nkeys:',
+          [
+            '    accessed_on: "2026-07-28"',
+            "  - id: vs-battles-wiki-profile",
+            '    name: "Duplicate source"',
+            '    url: "https://example.com/duplicate"',
+            '    publisher: "Example"',
+            '    license: "Example licence"',
+            '    accessed_on: "2026-07-28"',
+            "keys:"
+          ].join("\n")
+        )
+        .replace(
+          "      - vs-battles-wiki-profile\n    power_refs:",
+          "      - missing-profile\n    power_refs:"
+        ),
+      "utf8"
+    );
+
+    await expect(compileContent({ root, check: true })).rejects.toMatchObject({
+      name: "ContentValidationError",
+      errors: expect.arrayContaining([
+        expect.stringContaining("duplicate character source id vs-battles-wiki-profile"),
+        expect.stringContaining('unknown character source id "missing-profile"')
+      ])
+    });
+  });
+
+  it("rejects invalid provenance URLs, dates, and conditional image rights fields", async () => {
+    const root = await temporaryProject();
+    const agentPath = path.join(
+      root,
+      "content",
+      "characters",
+      "agent-venom-marvel-mainstream.yaml"
+    );
+    const agent = await readFile(agentPath, "utf8");
+    await writeFile(
+      agentPath,
+      agent
+        .replace(
+          "https://vsbattles.fandom.com/wiki/Agent_Venom",
+          "http://vsbattles.fandom.com/wiki/Agent_Venom"
+        )
+        .replace('accessed_on: "2026-07-28"', 'accessed_on: "2026-02-30"'),
+      "utf8"
+    );
+
+    const auroraPath = path.join(
+      root,
+      "content",
+      "characters",
+      "aurora-marvel-mainstream.yaml"
+    );
+    const aurora = await readFile(auroraPath, "utf8");
+    await writeFile(
+      auroraPath,
+      aurora
+        .replace(
+          "https://vsbattles.fandom.com/wiki/File:Aurora-Render.png",
+          "http://vsbattles.fandom.com/wiki/File:Aurora-Render.png"
+        )
+        .replace(
+          "        rights_status: unverified-third-party",
+          "        rights_status: licensed"
+        )
+        .replace('        rights_holder: "Unknown / respective rights holders"\n', ""),
+      "utf8"
+    );
+
+    const daggerPath = path.join(
+      root,
+      "content",
+      "characters",
+      "dagger-marvel-mainstream.yaml"
+    );
+    const dagger = await readFile(daggerPath, "utf8");
+    await writeFile(
+      daggerPath,
+      dagger.replace('        rights_holder: "Unknown / respective rights holders"\n', ""),
+      "utf8"
+    );
+
+    let failure: unknown;
+    try {
+      await compileContent({ root, check: true });
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(failure).toBeInstanceOf(ContentValidationError);
+    const messages = (failure as ContentValidationError).errors.join("\n");
+    expect(messages).toContain("must use HTTPS");
+    expect(messages).toContain("must be a valid calendar date");
+    expect(messages).toContain("is required when rights_status is licensed");
+    expect(messages).toContain(
+      "is required when rights_status is unverified-third-party"
+    );
+  });
+
+  it("requires every verse to reference an origin in the same media", async () => {
+    const root = await temporaryProject();
+    const mediaPath = path.join(root, "content", "catalogs", "media.yaml");
+    await writeFile(
+      mediaPath,
+      `${await readFile(mediaPath, "utf8")}\n- id: animation\n  name: \"Animation\"\n`,
+      "utf8"
+    );
+    const versesPath = path.join(root, "content", "catalogs", "verses.yaml");
+    const verses = await readFile(versesPath, "utf8");
+    await writeFile(
+      versesPath,
+      verses.replace(
+        "- id: marvel-mainstream\n  name: \"Mainstream\"\n  media_id: comics",
+        "- id: marvel-mainstream\n  name: \"Mainstream\"\n  media_id: animation"
+      ),
+      "utf8"
+    );
+
+    await expect(compileContent({ root, check: true })).rejects.toMatchObject({
+      name: "ContentValidationError",
+      errors: expect.arrayContaining([
+        expect.stringContaining(
+          'media_id: "animation" must match origin "marvel-comics" media_id "comics"'
         )
       ])
     });
@@ -498,11 +658,17 @@ describe("new character CLI", () => {
       gender: "unknown",
       form: "base",
       identity: "Compiler Test",
+      sourceUrl: "https://vsbattles.fandom.com/wiki/Compiler_Test",
       dryRun: true
     });
 
     expect(result.yaml).toContain("name: Compiler Test");
     expect(result.yaml).toContain("verse_id: marvel-mainstream");
+    expect(result.yaml).toContain("id: vs-battles-wiki-profile");
+    expect(result.yaml).toContain(
+      "url: https://vsbattles.fandom.com/wiki/Compiler_Test"
+    );
+    expect(result.yaml).toContain("source_ids:");
     expect(await exists(result.entryPath)).toBe(false);
     expect(await exists(result.imageDirectory)).toBe(false);
   });
@@ -517,6 +683,14 @@ describe("new character CLI", () => {
       "Spawned Compiler Test",
       "--verse",
       "marvel-mainstream",
+      "--source-url",
+      "https://vsbattles.fandom.com/wiki/Spawned_Compiler_Test",
+      "--image",
+      "base.webp",
+      "--image-source-url",
+      "https://vsbattles.fandom.com/wiki/File:Spawned_Compiler_Test.webp",
+      "--image-rights-holder",
+      "Example Rights Holder",
       "--dry-run"
     ]);
 
@@ -524,6 +698,8 @@ describe("new character CLI", () => {
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain("name: Spawned Compiler Test");
     expect(result.stdout).toContain("verse_id: marvel-mainstream");
+    expect(result.stdout).toContain("rights_status: unverified-third-party");
+    expect(result.stdout).toContain("rights_holder: Example Rights Holder");
     expect(await exists(path.join(projectRoot, "content", "characters", `${id}.yaml`))).toBe(false);
   });
 });

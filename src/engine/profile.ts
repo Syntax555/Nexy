@@ -3,6 +3,7 @@ import type {
   CharacterEntry,
   CharacterForm,
   CharacterProfile,
+  ContentSource,
   PowerRef,
   ResistanceRef
 } from "../domain/index.js";
@@ -88,6 +89,19 @@ function characterDetails(context: GameContext, character: CharacterEntry): read
     if (classification) details.push(stringField(classification, "name"));
   });
   return details;
+}
+
+function sourcesForForm(
+  character: CharacterEntry,
+  form: CharacterForm
+) {
+  const sourcesById = new Map(
+    arrayField<ContentSource>(character, "sources").map((source) => [source.id, source])
+  );
+  return arrayField<string>(form, "source_ids").flatMap((sourceId) => {
+    const source = sourcesById.get(sourceId);
+    return source ? [source] : [];
+  });
 }
 
 function itemStatus(
@@ -271,6 +285,7 @@ export function prepareCharacterProfile(
     resistanceRefs: resolvedResistances,
     effects,
     ...(image ? { image } : {}),
+    sources: sourcesForForm(character, form),
     names: [...form.names],
     details: characterDetails(context, character),
     stats: statsForForm(context, effectiveKey),

@@ -301,6 +301,23 @@ class SemanticValidator {
     this.#options.verses.forEach((entry, index) => {
       this.#checkRef(`options.verses[${index}].media_id`, property(entry, "media_id"), "media");
       this.#checkRef(`options.verses[${index}].source_id`, property(entry, "source_id"), "origins");
+      const sourceId = stringProperty(entry, "source_id");
+      const verseMediaId = stringProperty(entry, "media_id");
+      const origin = sourceId
+        ? this.#options.origins.find((candidate) => candidate.id === sourceId)
+        : undefined;
+      const originMediaId = origin ? stringProperty(origin, "media_id") : undefined;
+      if (
+        sourceId
+        && verseMediaId
+        && originMediaId
+        && verseMediaId !== originMediaId
+      ) {
+        this.errors.push(
+          `options.verses[${index}].media_id: ${JSON.stringify(verseMediaId)} must match `
+          + `origin ${JSON.stringify(sourceId)} media_id ${JSON.stringify(originMediaId)}`
+        );
+      }
     });
     this.#options.classifications.forEach((entry, index) => {
       this.#checkRefList(
@@ -424,6 +441,15 @@ class SemanticValidator {
       this.errors.push(`${context}.age: cannot contain a value while unknown is true`);
     }
 
+    const sourceIds = new Set<string>();
+    character.sources.forEach((source, sourceIndex) => {
+      const sourceContext = `${context}.sources[${sourceIndex}].id`;
+      if (sourceIds.has(source.id)) {
+        this.errors.push(`${sourceContext}: duplicate character source id ${source.id}`);
+      }
+      sourceIds.add(source.id);
+    });
+
     const seenForms = new Set<string>();
     character.keys.forEach((form, formIndex) => {
       const formContext = `${context}.keys[${formIndex}]`;
@@ -432,11 +458,23 @@ class SemanticValidator {
       }
       seenForms.add(form.key);
 
+      const seenFormSourceIds = new Set<string>();
+      form.source_ids.forEach((sourceId, sourceIndex) => {
+        const sourceContext = `${formContext}.source_ids[${sourceIndex}]`;
+        if (seenFormSourceIds.has(sourceId)) {
+          this.errors.push(`${sourceContext}: duplicate source id ${sourceId}`);
+        } else if (!sourceIds.has(sourceId)) {
+          this.errors.push(`${sourceContext}: unknown character source id ${JSON.stringify(sourceId)}`);
+        }
+        seenFormSourceIds.add(sourceId);
+      });
+
       form.images.forEach((image, imageIndex) => {
         this.#validateImage(
           `${formContext}.images[${imageIndex}].image`,
           image.image,
-          character.entry_id
+          character.entry_id,
+          image.rights_status === "unverified-third-party"
         );
       });
       this.#validatePowerRefs(`${formContext}.power_refs`, form.power_refs);
@@ -475,10 +513,11 @@ class SemanticValidator {
       }
       if (!isRecord(value)) return;
 
+      const allowMissing = property(value, "rights_status") === "unverified-third-party";
       for (const [key, item] of Object.entries(value)) {
         const itemContext = `${context}.${key}`;
         if (key === "image" && typeof item === "string") {
-          this.#validateImage(itemContext, item);
+          this.#validateImage(itemContext, item, undefined, allowMissing);
         } else {
           visit(item, itemContext);
         }
@@ -925,7 +964,12 @@ class SemanticValidator {
           if (typeof image !== "string" || image.length === 0) {
             this.errors.push(`${effectContext}.image_update.image: must be a non-empty string`);
           } else {
-            this.#validateImage(`${effectContext}.image_update.image`, image);
+            this.#validateImage(
+              `${effectContext}.image_update.image`,
+              image,
+              undefined,
+              property(imageUpdate, "rights_status") === "unverified-third-party"
+            );
           }
         }
       }
@@ -964,7 +1008,12 @@ class SemanticValidator {
     });
   }
 
-  #validateImage(context: string, imagePath: string, entryId?: string): void {
+  #validateImage(
+    context: string,
+    imagePath: string,
+    entryId?: string,
+    allowMissing = false
+  ): void {
     if (externalAssetPattern.test(imagePath)) return;
 
     const normalized = normalizeImagePath(imagePath);
@@ -997,7 +1046,7 @@ class SemanticValidator {
       this.errors.push(`${context}: local image escapes public/`);
       return;
     }
-    this.#requireFile(context, absolutePath, normalized);
+    if (!allowMissing) this.#requireFile(context, absolutePath, normalized);
   }
 
   #requireFile(context: string, absolutePath: string, displayPath: string): void {

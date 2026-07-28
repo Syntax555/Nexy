@@ -6,6 +6,13 @@ age:
   unknown: true
 classification_ids:
   - human
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Falcon (Marvel Comics)"
+    url: "https://vsbattles.fandom.com/wiki/Falcon_(Marvel_Comics)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: falcon
     names:
@@ -13,6 +20,12 @@ keys:
     images:
       - name: "Falcon"
         image: "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Falcon_MC_Classic_TR.gif"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: martial-arts-mastery
         martial_arts_degree_id: expert

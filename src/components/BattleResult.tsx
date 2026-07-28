@@ -1,4 +1,5 @@
 import { characterImageVariant } from "../app/assets.js";
+import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
 import type {
   BattleReport,
   CharacterProfile,
@@ -71,7 +72,9 @@ function CombatantCard({
   readonly profile: CharacterProfile;
   readonly label: string;
 }) {
-  const image = profile.image;
+  const image = isImageApprovedForPublicDisplay(profile.image)
+    ? profile.image
+    : null;
   return (
     <article class="combatant-card">
       <div class="combatant-card__copy">

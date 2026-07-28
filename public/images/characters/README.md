@@ -25,3 +25,9 @@ by a documented license or permission that allows this public web use. Keep the
 source, rights holder, license or permission terms, and acquisition date in
 your project records. Attribution and non-commercial use alone do not create
 permission.
+
+Every image reference must include its source URL, rights status, and review
+date. The build records `unverified-third-party` files in
+`public/image-rights.json` but excludes them and their generated variants from
+the deployed `dist/`. Because this repository itself is public, unverified
+source files should still be replaced or removed once the review is complete.

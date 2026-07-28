@@ -16,6 +16,16 @@
         "captains-network",
         "vigilante"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Captain America (Aaron Fischer)",
+          "url": "https://vsbattles.fandom.com/wiki/Captain_America_(Aaron_Fischer)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "original",
@@ -26,8 +36,15 @@
           "images": [
             {
               "name": "Original",
-              "image": "images/characters/aaron-fischer-marvel-mainstream/original.webp"
+              "image": "images/characters/aaron-fischer-marvel-mainstream/original.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -102,8 +119,15 @@
           "images": [
             {
               "name": "Post-Alchemax Enhancement",
-              "image": "images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp"
+              "image": "images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_AA_MC_TR.webp",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -191,6 +215,16 @@
         "human",
         "symbiote"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Agent Venom",
+          "url": "https://vsbattles.fandom.com/wiki/Agent_Venom",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "agent-venom",
@@ -200,8 +234,15 @@
           "images": [
             {
               "name": "Agent Venom",
-              "image": "images/characters/agent-venom-marvel-mainstream/agent-venom.webp"
+              "image": "images/characters/agent-venom-marvel-mainstream/agent-venom.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Eugene_Thompson_(Earth-12131).png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -312,6 +353,16 @@
       "classification_ids": [
         "mutant"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Aurora (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Aurora_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "aurora",
@@ -321,8 +372,15 @@
           "images": [
             {
               "name": "Aurora",
-              "image": "images/characters/aurora-marvel-mainstream/aurora.webp"
+              "image": "images/characters/aurora-marvel-mainstream/aurora.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Aurora-Render.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -414,6 +472,16 @@
         "justice-league",
         "vigilante"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Black Canary (Post-Crisis)",
+          "url": "https://vsbattles.fandom.com/wiki/Black_Canary_(Post-Crisis)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "post-crisis",
@@ -423,8 +491,15 @@
           "images": [
             {
               "name": "Post-Crisis",
-              "image": "images/characters/black-canary-dc-post-crisis/black-canary.webp"
+              "image": "images/characters/black-canary-dc-post-crisis/black-canary.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Black_Canary_02.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -503,6 +578,16 @@
         "human",
         "mutate"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Dagger (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Dagger_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "dagger",
@@ -512,8 +597,15 @@
           "images": [
             {
               "name": "Dagger",
-              "image": "images/characters/dagger-marvel-mainstream/dagger.png"
+              "image": "images/characters/dagger-marvel-mainstream/dagger.png",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Dagger_Tam.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -654,6 +746,16 @@
         "mercenary",
         "ninja"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Elektra (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Elektra_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "elektra",
@@ -663,8 +765,15 @@
           "images": [
             {
               "name": "Elektra",
-              "image": "images/characters/elektra-marvel-mainstream/elektra.webp"
+              "image": "images/characters/elektra-marvel-mainstream/elektra.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:ElektraRender.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -792,6 +901,16 @@
         "new-mutants",
         "superhero"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Escapade (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Escapade_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "escapade",
@@ -801,8 +920,15 @@
           "images": [
             {
               "name": "Escapade",
-              "image": "images/characters/escapade-marvel-mainstream/escapade.webp"
+              "image": "images/characters/escapade-marvel-mainstream/escapade.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Escapade_MC_TR.webp",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -939,6 +1065,16 @@
         "half-falcon",
         "superhero"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Falcon (Joaquin Torres)",
+          "url": "https://vsbattles.fandom.com/wiki/Falcon_(Joaqu%C3%ADn_Torres)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "falcon",
@@ -948,8 +1084,15 @@
           "images": [
             {
               "name": "Falcon",
-              "image": "images/characters/falcon-marvel-mainstream/falcon.webp"
+              "image": "images/characters/falcon-marvel-mainstream/falcon.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Falcon_Joaqu%C3%ACn_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1020,6 +1163,16 @@
       "classification_ids": [
         "human"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Falcon (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Falcon_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "falcon",
@@ -1029,8 +1182,15 @@
           "images": [
             {
               "name": "Falcon",
-              "image": "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp"
+              "image": "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Falcon_MC_Classic_TR.gif",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1112,6 +1272,16 @@
         "facility",
         "mercenary"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Kimura (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Kimura_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "kimura",
@@ -1121,8 +1291,15 @@
           "images": [
             {
               "name": "Kimura",
-              "image": "images/characters/kimura-marvel-mainstream/kimura.webp"
+              "image": "images/characters/kimura-marvel-mainstream/kimura.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Kimura_M_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1199,6 +1376,16 @@
       "classification_ids": [
         "human"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Kingpin (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Kingpin_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "kingpin",
@@ -1208,8 +1395,15 @@
           "images": [
             {
               "name": "Kingpin",
-              "image": "images/characters/kingpin-marvel-mainstream/kingpin.webp"
+              "image": "images/characters/kingpin-marvel-mainstream/kingpin.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Wilson_Fisk_Modern_Render.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1291,6 +1485,16 @@
         "human",
         "mutate"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Lila Cheney",
+          "url": "https://vsbattles.fandom.com/wiki/Lila_Cheney",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "lila-cheney",
@@ -1300,8 +1504,15 @@
           "images": [
             {
               "name": "Lila Cheney",
-              "image": "images/characters/lila-cheney-marvel-mainstream/lila-cheney.webp"
+              "image": "images/characters/lila-cheney-marvel-mainstream/lila-cheney.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Lila_Cheney_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1401,6 +1612,16 @@
         "human",
         "cyborg"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Lucia von Bardas (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Lucia_von_Bardas_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "lucia-von-bardas",
@@ -1410,8 +1631,15 @@
           "images": [
             {
               "name": "Lucia von Bardas",
-              "image": "images/characters/lucia-von-bardas-marvel-mainstream/lucia-von-bardas.webp"
+              "image": "images/characters/lucia-von-bardas-marvel-mainstream/lucia-von-bardas.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Lucia_von_Bardas_MC_TR.webp",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1524,6 +1752,16 @@
         "mutate",
         "vigilante"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Luke Cage (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Luke_Cage_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "luke-cage",
@@ -1533,8 +1771,15 @@
           "images": [
             {
               "name": "Luke Cage",
-              "image": "images/characters/luke-cage-marvel-mainstream/luke-cage.webp"
+              "image": "images/characters/luke-cage-marvel-mainstream/luke-cage.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Luke_Cage_M_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1630,6 +1875,16 @@
         "half-human",
         "half-inhuman"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Ms. Marvel (Kamala Khan)",
+          "url": "https://vsbattles.fandom.com/wiki/Ms._Marvel_(Kamala_Khan)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "ms-marvel",
@@ -1639,8 +1894,15 @@
           "images": [
             {
               "name": "Destined One Suit",
-              "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+              "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1773,6 +2035,16 @@
         "human",
         "mutate"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Mystique (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/Mystique_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "mystique",
@@ -1782,8 +2054,15 @@
           "images": [
             {
               "name": "Mystique",
-              "image": "images/characters/mystique-marvel-mainstream/mystique.webp"
+              "image": "images/characters/mystique-marvel-mainstream/mystique.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:4296511-raven_darkholme_(earth-616)_from_all-new_x-men_vol_1_7_001.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1893,6 +2172,16 @@
         "human",
         "mutate"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Purple Man",
+          "url": "https://vsbattles.fandom.com/wiki/Purple_Man",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "purple-man",
@@ -1902,8 +2191,15 @@
           "images": [
             {
               "name": "Purple Man",
-              "image": "images/characters/purple-man-marvel-mainstream/purple-man.webp"
+              "image": "images/characters/purple-man-marvel-mainstream/purple-man.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Purple_Man.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -1999,6 +2295,16 @@
         "human",
         "superhero"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Quicksilver (Ultimate)",
+          "url": "https://vsbattles.fandom.com/wiki/Quicksilver_(Ultimate)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "quicksilver",
@@ -2008,8 +2314,15 @@
           "images": [
             {
               "name": "Quicksilver",
-              "image": "images/characters/quicksilver-marvel-ultimate/quicksilver.webp"
+              "image": "images/characters/quicksilver-marvel-ultimate/quicksilver.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Ultquicksilver.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -2081,6 +2394,16 @@
         "human",
         "mutate"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: U.S. Agent (Marvel Comics)",
+          "url": "https://vsbattles.fandom.com/wiki/U.S._Agent_(Marvel_Comics)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "modern",
@@ -2090,8 +2413,15 @@
           "images": [
             {
               "name": "Modern",
-              "image": "images/characters/us-agent-marvel-mainstream/modern.webp"
+              "image": "images/characters/us-agent-marvel-mainstream/modern.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:US_Agent_M_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -2171,6 +2501,16 @@
       "classification_ids": [
         "amazon"
       ],
+      "sources": [
+        {
+          "id": "vs-battles-wiki-profile",
+          "name": "VS Battles Wiki profile: Yara Flor (Post-Flashpoint)",
+          "url": "https://vsbattles.fandom.com/wiki/Yara_Flor_(Post-Flashpoint)",
+          "publisher": "VS Battles Wiki (Fandom)",
+          "license": "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+          "accessed_on": "2026-07-28"
+        }
+      ],
       "keys": [
         {
           "key": "wonder-girl",
@@ -2180,8 +2520,15 @@
           "images": [
             {
               "name": "Wonder Girl",
-              "image": "images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp"
+              "image": "images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Yara_Elecriticity_1.webp",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28"
             }
+          ],
+          "source_ids": [
+            "vs-battles-wiki-profile"
           ],
           "power_refs": [
             {
@@ -3292,6 +3639,10 @@
             "image_update": {
               "name": "Destined One Suit",
               "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp",
+              "source_url": "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png",
+              "rights_status": "unverified-third-party",
+              "rights_holder": "Unknown / respective rights holders",
+              "reviewed_on": "2026-07-28",
               "priority": 10
             }
           }

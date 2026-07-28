@@ -28,6 +28,20 @@ const optionalBooleanSchema = z.boolean().nullable().optional();
 const integerSchema = z.number().int();
 const nonnegativeIntegerSchema = integerSchema.nonnegative();
 const positiveIntegerSchema = integerSchema.positive();
+const httpsUrlSchema = z
+  .string()
+  .url()
+  .refine((value) => new URL(value).protocol === "https:", "must use HTTPS");
+const isoDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "must use YYYY-MM-DD")
+  .refine((value) => {
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year ?? 0, (month ?? 0) - 1, day));
+    return date.getUTCFullYear() === year
+      && date.getUTCMonth() === (month ?? 0) - 1
+      && date.getUTCDate() === day;
+  }, "must be a valid calendar date");
 
 export const rankedStatNames = [
   "attack_potency",
@@ -57,15 +71,92 @@ export const rankedStatSchema = z.union([
   })
 ]);
 
-export const imageRefSchema = z.strictObject({
-  name: nonEmptyStringSchema,
-  image: nonEmptyStringSchema
-});
+const imageRightsStatusSchema = z.enum([
+  "original",
+  "licensed",
+  "public-domain",
+  "permission",
+  "unverified-third-party"
+]);
 
-const imageUpdateSchema = z.strictObject({
+const imageFields = {
   name: nonEmptyStringSchema,
   image: nonEmptyStringSchema,
-  priority: integerSchema.nullable().optional()
+  source_url: httpsUrlSchema,
+  rights_status: imageRightsStatusSchema,
+  creator: optionalNullableStringSchema,
+  rights_holder: optionalNullableStringSchema,
+  license: optionalNullableStringSchema,
+  reviewed_on: isoDateSchema
+} as const;
+
+function validateImageRights(
+  image: {
+    readonly rights_status: z.infer<typeof imageRightsStatusSchema>;
+    readonly creator?: string | null | undefined;
+    readonly rights_holder?: string | null | undefined;
+    readonly license?: string | null | undefined;
+  },
+  context: z.RefinementCtx
+): void {
+  if (
+    (image.rights_status === "licensed" || image.rights_status === "public-domain")
+    && !image.license
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["license"],
+      message: `is required when rights_status is ${image.rights_status}`
+    });
+  }
+  if (image.rights_status === "unverified-third-party" && !image.rights_holder) {
+    context.addIssue({
+      code: "custom",
+      path: ["rights_holder"],
+      message: "is required when rights_status is unverified-third-party"
+    });
+  }
+  if (image.rights_status === "permission" && !image.rights_holder) {
+    context.addIssue({
+      code: "custom",
+      path: ["rights_holder"],
+      message: "is required when rights_status is permission"
+    });
+  }
+  if (image.rights_status === "permission" && !image.license) {
+    context.addIssue({
+      code: "custom",
+      path: ["license"],
+      message: "must identify the documented permission when rights_status is permission"
+    });
+  }
+  if (image.rights_status === "original" && !image.creator) {
+    context.addIssue({
+      code: "custom",
+      path: ["creator"],
+      message: "is required when rights_status is original"
+    });
+  }
+}
+
+export const imageRefSchema = z
+  .strictObject(imageFields)
+  .superRefine(validateImageRights);
+
+const imageUpdateSchema = z
+  .strictObject({
+    ...imageFields,
+    priority: integerSchema.nullable().optional()
+  })
+  .superRefine(validateImageRights);
+
+export const contentSourceSchema = z.strictObject({
+  id: slugSchema,
+  name: nonEmptyStringSchema,
+  url: httpsUrlSchema,
+  publisher: nonEmptyStringSchema,
+  license: nonEmptyStringSchema,
+  accessed_on: isoDateSchema
 });
 
 const statEffectsSchema = z.strictObject({
@@ -183,6 +274,7 @@ export const characterFormSchema = z.strictObject({
   name: optionalNullableStringSchema,
   names: stringListSchema.min(1),
   images: z.array(imageRefSchema),
+  source_ids: slugListSchema.min(1),
   power_refs: z.array(powerRefSchema).nullable().optional(),
   resistance_refs: z.array(resistanceRefSchema).nullable().optional(),
   attack_potency: rankedStatSchema,
@@ -214,6 +306,7 @@ export const characterSchema = z.strictObject({
     display: optionalNullableStringSchema
   }),
   classification_ids: slugListSchema,
+  sources: z.array(contentSourceSchema).min(1),
   keys: z.array(characterFormSchema).min(1)
 });
 
@@ -226,13 +319,13 @@ const mediaSchema = z.strictObject(namedOptionFields);
 
 const originSchema = z.strictObject({
   ...namedOptionFields,
-  media_id: optionalNullableStringSchema
+  media_id: slugSchema
 });
 
 const verseSchema = z.strictObject({
   ...namedOptionFields,
-  media_id: optionalNullableStringSchema,
-  source_id: optionalNullableStringSchema
+  media_id: slugSchema,
+  source_id: slugSchema
 });
 
 const classificationSchema = z.strictObject({

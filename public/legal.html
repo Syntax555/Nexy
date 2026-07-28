@@ -144,6 +144,10 @@
         border-color: rgba(75, 220, 255, 0.34);
       }
 
+      .notice-card--wide {
+        grid-column: 1 / -1;
+      }
+
       .actions {
         display: flex;
         flex-wrap: wrap;
@@ -301,6 +305,43 @@
           </p>
         </section>
 
+        <section class="notice-card">
+          <h2>Data attribution</h2>
+          <p>
+            Character statistics, ability selections, and related profile data
+            are adapted from the linked VS Battles Wiki profile pages. Fandom
+            generally licenses wiki text under CC BY-SA 3.0, so those text and
+            structured-data adaptations are attributed to their source pages and
+            offered under the same licence. This does not cover images or other
+            non-text media.
+          </p>
+          <div class="actions">
+            <a
+              class="button"
+              href="https://github.com/Syntax555/Nexy/blob/main/CONTENT-LICENSE.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Read content attribution
+            </a>
+          </div>
+        </section>
+
+        <section class="notice-card">
+          <h2>Artwork publication controls</h2>
+          <p>
+            Images copied from a wiki are not assumed to use the wiki text
+            licence. Nexy's build withholds artwork whose rights are still
+            unverified and publishes an image only after its record identifies
+            an original-work, licence, public-domain, or permission basis.
+          </p>
+          <div class="actions">
+            <a class="button" href="image-rights.json">
+              Inspect the image rights manifest
+            </a>
+          </div>
+        </section>
+
         <section class="notice-card notice-card--request">
           <h2>Rights-holder requests</h2>
           <p>
@@ -313,7 +354,7 @@
           <div class="actions">
             <a
               class="button button--primary"
-              href="https://github.com/Syntax555/Nexy/issues/new?title=Rights-holder%20request"
+              href="https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml"
               target="_blank"
               rel="noreferrer"
             >

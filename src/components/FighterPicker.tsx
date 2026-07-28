@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { characterImageVariant } from "../app/assets.js";
+import { isImageApprovedForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter, RosterTier } from "../app/roster.js";
 import type {
   BattleSelection,
   CharacterProfile as CharacterProfileData
 } from "../domain/index.js";
-import { createSearchIndex, searchIndex } from "../search/search.js";
+import { getCachedSearchIndex, searchIndex } from "../search/search.js";
+import "../styles/roster-scale.css";
 import type { DialogImage } from "./ImageDialog.js";
 import { CharacterImage } from "./CharacterImage.js";
 import { CharacterProfile } from "./CharacterProfile.js";
+import { SearchableSelect } from "./SearchableSelect.js";
 
 type SortOrder = "name" | "name-desc" | "tier-desc" | "tier-asc";
 type AgeFilter =
@@ -33,6 +36,9 @@ interface AgeGroup {
   readonly min?: number;
   readonly max?: number;
 }
+
+const ROSTER_PAGE_SIZE = 60;
+const rosterSearchText = (item: RosterCharacter): string => item.searchText;
 
 const ageGroups: readonly AgeGroup[] = [
   { id: "under-13", label: "Under 13", min: 0, max: 12 },
@@ -124,11 +130,12 @@ export function FighterPicker({
   const [tier, setTier] = useState("all");
   const [classification, setClassification] = useState("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("name");
+  const [visibleLimit, setVisibleLimit] = useState(ROSTER_PAGE_SIZE);
   const searchRef = useRef<HTMLInputElement>(null);
   const fighterNumber = side === "left" ? "01" : "02";
   const accentName = side === "left" ? "Cyan corner" : "Magenta corner";
   const searchIndexForRoster = useMemo(
-    () => createSearchIndex(roster, (item) => item.searchText),
+    () => getCachedSearchIndex(roster, rosterSearchText),
     [roster]
   );
   const mediaOptions = useMemo(() => sortedUniqueOptions(
@@ -145,10 +152,11 @@ export function FighterPicker({
       .filter((item) => origin === "all" || item.originId === origin)
       .map((item) => ({ id: item.verseId, label: item.verse }))
   ), [media, origin, roster]);
-  const locationRoster = useMemo(() => roster
-    .filter((item) => media === "all" || item.mediaId === media)
-    .filter((item) => origin === "all" || item.originId === origin)
-    .filter((item) => verse === "all" || item.verseId === verse),
+  const locationRoster = useMemo(() => roster.filter((item) =>
+    (media === "all" || item.mediaId === media)
+    && (origin === "all" || item.originId === origin)
+    && (verse === "all" || item.verseId === verse)
+  ),
   [media, origin, roster, verse]);
   const genders = useMemo(() => sortedUniqueOptions(
     locationRoster.map((item) => ({ id: item.genderId, label: item.gender }))
@@ -171,19 +179,20 @@ export function FighterPicker({
 
   const visibleRoster = useMemo(() => {
     const matched = searchIndex(searchIndexForRoster, query)
-      .filter((item) => media === "all" || item.mediaId === media)
-      .filter((item) => origin === "all" || item.originId === origin)
-      .filter((item) => verse === "all" || item.verseId === verse)
-      .filter((item) => gender === "all" || item.genderId === gender)
       .filter((item) =>
-        age === "all" || ageMatchesGroup(item.ageFilterValues, age)
-      )
-      .filter((item) =>
-        tier === "all" || item.tiers.some((candidate) => candidate.value === tier)
-      )
-      .filter((item) =>
-        classification === "all"
-        || item.classificationFilterIds.includes(classification)
+        (media === "all" || item.mediaId === media)
+        && (origin === "all" || item.originId === origin)
+        && (verse === "all" || item.verseId === verse)
+        && (gender === "all" || item.genderId === gender)
+        && (age === "all" || ageMatchesGroup(item.ageFilterValues, age))
+        && (
+          tier === "all"
+          || item.tiers.some((candidate) => candidate.value === tier)
+        )
+        && (
+          classification === "all"
+          || item.classificationFilterIds.includes(classification)
+        )
       );
 
     return [...matched].sort((left, right) => {
@@ -214,6 +223,21 @@ export function FighterPicker({
   const selectedCharacter = selection
     ? roster.find((item) => item.id === selection.characterId) ?? null
     : null;
+  const renderedRoster = useMemo(() => {
+    const page = visibleRoster.slice(0, visibleLimit);
+    if (!selection || page.some((item) => item.id === selection.characterId)) {
+      return page;
+    }
+
+    const selectedMatch = visibleRoster.find(
+      (item) => item.id === selection.characterId
+    );
+    return selectedMatch && page.length > 0
+      ? [selectedMatch, ...page.slice(0, page.length - 1)]
+      : page;
+  }, [selection, visibleLimit, visibleRoster]);
+  const shownRosterCount = Math.min(visibleLimit, visibleRoster.length);
+  const remainingRosterCount = Math.max(0, visibleRoster.length - shownRosterCount);
   const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
   const selectedOrigin = originOptions.find((option) => option.id === origin) ?? null;
   const selectedVerse = verseOptions.find((option) => option.id === verse) ?? null;
@@ -231,6 +255,21 @@ export function FighterPicker({
       : selectedMedia
         ? `${selectedMedia.label} selected. Choose a publisher or origin.`
         : "Choose media, then publisher or origin, then universe.";
+
+  useEffect(() => {
+    setVisibleLimit(ROSTER_PAGE_SIZE);
+  }, [
+    age,
+    classification,
+    gender,
+    media,
+    origin,
+    query,
+    roster,
+    sortOrder,
+    tier,
+    verse
+  ]);
 
   useEffect(() => {
     if (side !== "left") return;
@@ -364,79 +403,59 @@ export function FighterPicker({
               {browsePathStatus}
             </p>
             <div class="roster-path__steps">
-              <label class="filter-field roster-path__step" data-browse-step="media">
-                <span>
-                  <b class="roster-path__step-number" aria-hidden="true">1</b>
-                  Media
-                </span>
-                <select
-                  value={media}
-                  aria-label="Media"
-                  aria-describedby={`${side}-browse-path-status`}
-                  onChange={(event) => {
-                    setMedia(event.currentTarget.value);
-                    setOrigin("all");
-                    setVerse("all");
-                    resetMetadataFilters();
-                  }}
-                >
-                  <option value="all">All media</option>
-                  {mediaOptions.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
-                  ))}
-                </select>
-              </label>
-              <label class="filter-field roster-path__step" data-browse-step="publisher">
-                <span>
-                  <b class="roster-path__step-number" aria-hidden="true">2</b>
-                  Publisher / origin
-                </span>
-                <select
-                  value={origin}
-                  disabled={media === "all"}
-                  aria-label="Publisher / origin"
-                  aria-describedby={`${side}-browse-path-status`}
-                  onChange={(event) => {
-                    setOrigin(event.currentTarget.value);
-                    setVerse("all");
-                    resetMetadataFilters();
-                  }}
-                >
-                  <option value="all">
-                    {selectedMedia
-                      ? `All ${selectedMedia.label} publishers / origins`
-                      : "Choose media first"}
-                  </option>
-                  {originOptions.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
-                  ))}
-                </select>
-              </label>
-              <label class="filter-field roster-path__step" data-browse-step="universe">
-                <span>
-                  <b class="roster-path__step-number" aria-hidden="true">3</b>
-                  Universe / verse
-                </span>
-                <select
-                  value={verse}
-                  disabled={origin === "all"}
-                  aria-label="Universe / verse"
-                  aria-describedby={`${side}-browse-path-status`}
-                  onChange={(event) => {
-                    setVerse(event.currentTarget.value);
-                    resetMetadataFilters();
-                  }}
-                >
-                  <option value="all">
-                    {selectedOrigin
-                      ? `All ${selectedOrigin.label} universes`
-                      : "Choose publisher / origin first"}
-                  </option>
-                  {verseOptions.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
-                  ))}
-                </select>
-              </label>
+              <SearchableSelect
+                id={`${side}-media-filter`}
+                label="Media"
+                step={1}
+                browseStep="media"
+                value={media}
+                options={mediaOptions}
+                allLabel="All media"
+                describedBy={`${side}-browse-path-status`}
+                onChange={(value) => {
+                  setMedia(value);
+                  setOrigin("all");
+                  setVerse("all");
+                  resetMetadataFilters();
+                }}
+              />
+              <SearchableSelect
+                id={`${side}-origin-filter`}
+                label="Publisher / origin"
+                step={2}
+                browseStep="publisher"
+                value={origin}
+                options={originOptions}
+                allLabel={selectedMedia
+                  ? `All ${selectedMedia.label} publishers / origins`
+                  : "All publishers / origins"}
+                disabled={media === "all"}
+                disabledHint="Choose media first"
+                describedBy={`${side}-browse-path-status`}
+                onChange={(value) => {
+                  setOrigin(value);
+                  setVerse("all");
+                  resetMetadataFilters();
+                }}
+              />
+              <SearchableSelect
+                id={`${side}-verse-filter`}
+                label="Universe / verse"
+                step={3}
+                browseStep="universe"
+                value={verse}
+                options={verseOptions}
+                allLabel={selectedOrigin
+                  ? `All ${selectedOrigin.label} universes`
+                  : "All universes"}
+                disabled={origin === "all"}
+                disabledHint="Choose publisher / origin first"
+                describedBy={`${side}-browse-path-status`}
+                onChange={(value) => {
+                  setVerse(value);
+                  resetMetadataFilters();
+                }}
+              />
             </div>
           </fieldset>
 
@@ -521,9 +540,17 @@ export function FighterPicker({
             ) : <span>Ruleset v1</span>}
           </div>
 
-          <div class="roster-list" role="list" aria-label="Characters">
-            {visibleRoster.map((item) => {
+          <div
+            class="roster-list"
+            role="list"
+            aria-label="Characters"
+            aria-describedby={`${side}-rendered-roster-count`}
+          >
+            {renderedRoster.map((item) => {
               const image = item.defaultProfile.image;
+              const displayImage = isImageApprovedForPublicDisplay(image)
+                ? image
+                : null;
               return (
                 <div class="roster-entry" role="listitem" key={item.id}>
                   <button
@@ -534,9 +561,9 @@ export function FighterPicker({
                     onClick={() => onSelect(item.defaultSelection)}
                   >
                     <span class="roster-card__portrait">
-                      {image ? (
+                      {displayImage ? (
                         <CharacterImage
-                          src={characterImageVariant(image.image, 160)}
+                          src={characterImageVariant(displayImage.image, 160)}
                           alt=""
                         />
                       ) : (
@@ -558,6 +585,25 @@ export function FighterPicker({
                 </div>
               );
             })}
+            {remainingRosterCount > 0 ? (
+              <div class="roster-list__more" role="listitem">
+                <button
+                  type="button"
+                  aria-label={`Show next ${Math.min(
+                    ROSTER_PAGE_SIZE,
+                    remainingRosterCount
+                  )} fighters`}
+                  onClick={() => setVisibleLimit((current) =>
+                    Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length)
+                  )}
+                >
+                  Show more fighters
+                </button>
+                <small>
+                  Showing {shownRosterCount} of {visibleRoster.length} matching fighters
+                </small>
+              </div>
+            ) : null}
             {visibleRoster.length === 0 ? (
               <div class="roster-empty">
                 <strong>No fighters found</strong>
@@ -568,6 +614,14 @@ export function FighterPicker({
               </div>
             ) : null}
           </div>
+          <span
+            id={`${side}-rendered-roster-count`}
+            class="visually-hidden"
+            role="status"
+            aria-live="polite"
+          >
+            Showing {shownRosterCount} of {visibleRoster.length} matching fighters.
+          </span>
         </aside>
 
         <CharacterProfile

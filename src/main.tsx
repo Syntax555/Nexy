@@ -5,6 +5,7 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/app.css";
 import "./styles/battle.css";
+import "./styles/mobile-flow.css";
 
 const root = document.querySelector<HTMLElement>("#app");
 

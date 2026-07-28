@@ -6,6 +6,13 @@ age:
   unknown: false
 classification_ids:
   - amazon
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Yara Flor (Post-Flashpoint)"
+    url: "https://vsbattles.fandom.com/wiki/Yara_Flor_(Post-Flashpoint)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: wonder-girl
     names:
@@ -13,6 +20,12 @@ keys:
     images:
       - name: "Wonder Girl"
         image: "images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Yara_Elecriticity_1.webp"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: martial-arts-mastery
       - id: weapon-mastery

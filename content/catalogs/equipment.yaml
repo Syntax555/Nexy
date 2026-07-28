@@ -219,6 +219,10 @@
     - image_update:
         name: "Destined One Suit"
         image: "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
         priority: 10
 - id: gravity-gauntlets
   name: "Gravity Gauntlets"

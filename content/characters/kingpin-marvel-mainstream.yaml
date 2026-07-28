@@ -7,6 +7,13 @@ age:
   display: "Middle aged"
 classification_ids:
   - human
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Kingpin (Marvel Comics)"
+    url: "https://vsbattles.fandom.com/wiki/Kingpin_(Marvel_Comics)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: kingpin
     names:
@@ -14,6 +21,12 @@ keys:
     images:
       - name: "Kingpin"
         image: "images/characters/kingpin-marvel-mainstream/kingpin.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Wilson_Fisk_Modern_Render.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: martial-arts-mastery
         martial_arts_degree_id: expert

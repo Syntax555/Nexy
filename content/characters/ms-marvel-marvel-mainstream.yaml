@@ -8,6 +8,13 @@ age:
 classification_ids:
   - half-human
   - half-inhuman
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Ms. Marvel (Kamala Khan)"
+    url: "https://vsbattles.fandom.com/wiki/Ms._Marvel_(Kamala_Khan)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: ms-marvel
     names:
@@ -15,6 +22,12 @@ keys:
     images:
       - name: "Destined One Suit"
         image: "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: martial-arts-mastery
       - id: time-travel

@@ -8,6 +8,13 @@ age:
 classification_ids:
   - human
   - mutate
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Dagger (Marvel Comics)"
+    url: "https://vsbattles.fandom.com/wiki/Dagger_(Marvel_Comics)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: dagger
     names:
@@ -15,6 +22,12 @@ keys:
     images:
       - name: "Dagger"
         image: "images/characters/dagger-marvel-mainstream/dagger.png"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Dagger_Tam.png"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: acrobatics
         acrobatics_degree_id: expert

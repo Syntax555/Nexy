@@ -6,10 +6,13 @@ dist/
 coverage/
 .vite/
 *.tsbuildinfo
+playwright-report/
+test-results/
 
-# Rebuilt image output (source artwork remains tracked)
+# Rebuilt image output and generated rights manifest
 public/images/generated/
 public/og.png
+public/image-rights.json
 
 # Local scratch files and logs
 tmp/

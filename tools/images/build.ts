@@ -1,12 +1,27 @@
-import { mkdir, readdir, rename, rm } from "node:fs/promises";
+import {
+  mkdir,
+  readFile,
+  readdir,
+  rename,
+  rm,
+  writeFile
+} from "node:fs/promises";
 import path from "node:path";
 
 import sharp from "sharp";
+
+import {
+  collectImageRightsRecords,
+  isRightsRecordPublishable,
+  publishableImagePaths
+} from "./publish-policy.js";
 
 const sourceRoot = path.resolve("public/images/characters");
 const outputRoot = path.resolve("public/images/generated");
 const socialSource = path.resolve("content/images/og-source.png");
 const socialOutput = path.resolve("public/og.png");
+const dataSource = path.resolve("src/generated/nexy-data.json");
+const rightsManifestOutput = path.resolve("public/image-rights.json");
 const widths = [160, 640] as const;
 
 async function imageFiles(directory: string): Promise<readonly string[]> {
@@ -50,9 +65,14 @@ async function buildVariant(source: string, width: (typeof widths)[number]): Pro
     .toFile(destination);
 }
 
-const files = [...await imageFiles(sourceRoot)].sort((left, right) =>
-  left.localeCompare(right)
-);
+const data: unknown = JSON.parse(await readFile(dataSource, "utf8"));
+const publishablePaths = publishableImagePaths(data);
+const files = [...await imageFiles(sourceRoot)]
+  .filter((file) => {
+    const relative = path.relative(path.resolve("public"), file).replaceAll(path.sep, "/");
+    return publishablePaths.has(relative);
+  })
+  .sort((left, right) => left.localeCompare(right));
 const destinations = new Map<string, string>();
 for (const source of files) {
   for (const width of widths) {
@@ -86,6 +106,22 @@ await sharp(socialSource)
 await rm(socialOutput, { force: true });
 await rename(`${socialOutput}.next`, socialOutput);
 
+const rightsRecords = collectImageRightsRecords(data).map((record) => ({
+  ...record,
+  published: isRightsRecordPublishable(record)
+}));
+await writeFile(
+  rightsManifestOutput,
+  `${JSON.stringify({
+    generated_on: new Date().toISOString().slice(0, 10),
+    policy: "Only original, licensed, public-domain, or permission-backed images are published.",
+    records: rightsRecords
+  }, null, 2)}\n`,
+  "utf8"
+);
+
 console.log(
-  `Optimized ${files.length} character images into ${files.length * widths.length} variants and rebuilt the social card.`
+  `Optimized ${files.length} approved character images into ${files.length * widths.length} variants, `
+  + `withheld ${rightsRecords.filter((record) => !record.published).length} unverified records, `
+  + "and rebuilt the social card."
 );

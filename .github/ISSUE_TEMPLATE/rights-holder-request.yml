@@ -1,0 +1,64 @@
+name: Rights-holder request
+description: Request attribution correction, review, replacement, or removal of material.
+title: "Rights-holder request: "
+labels:
+  - rights-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form only for non-confidential information. GitHub issues are public.
+        If sensitive evidence is needed, describe the request without posting that evidence
+        and ask the project operator to arrange a private contact method.
+
+  - type: input
+    id: material_url
+    attributes:
+      label: Exact Nexy URL
+      description: Link to the page or shared matchup where the material appears.
+      placeholder: https://syntax555.github.io/Nexy/
+    validations:
+      required: true
+
+  - type: textarea
+    id: material
+    attributes:
+      label: Material concerned
+      description: Identify the character, image, text, or other material precisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rights
+    attributes:
+      label: Rights and authority
+      description: Describe the relevant work or right and whether you are the owner or an authorised representative. Do not post confidential documents.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: requested_action
+    attributes:
+      label: Requested action
+      options:
+        - Remove the material
+        - Replace the material
+        - Correct attribution
+        - Correct factual information
+        - Review and contact me
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional non-confidential details
+      description: Include any context or public evidence that will help review the request.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I confirm this request is made in good faith and the information provided is accurate to the best of my knowledge.
+          required: true

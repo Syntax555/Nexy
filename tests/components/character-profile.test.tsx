@@ -40,5 +40,23 @@ describe("CharacterProfile", () => {
     expect(screen.getByText(`Media: ${rosterCharacter.media}`)).toBeTruthy();
     expect(screen.getByText(`Publisher: ${rosterCharacter.origin}`)).toBeTruthy();
     expect(screen.getByText(`Universe: ${rosterCharacter.verse}`)).toBeTruthy();
+
+    const source = profile.sources[0];
+    if (!source) {
+      throw new Error("The component test requires a resolved profile source.");
+    }
+    const sourceDisclosure = container.querySelector(".profile-sources");
+    const sourceLink = sourceDisclosure?.querySelector<HTMLAnchorElement>(
+      `a[href="${source.url}"]`
+    );
+    expect(sourceLink?.textContent).toBe(source.name);
+    expect(sourceDisclosure?.textContent).toContain(`License: ${source.license}`);
+    expect(sourceDisclosure?.textContent).toContain(`Accessed ${source.accessed_on}`);
+    expect(sourceDisclosure?.textContent).toContain(
+      `Rights status: Unverified Third Party`
+    );
+    expect(sourceDisclosure?.textContent).toContain(
+      `Rights holder record: ${profile.image?.rights_holder}`
+    );
   });
 });

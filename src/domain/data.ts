@@ -48,13 +48,35 @@ export type RankedStatEffects = Partial<
   Readonly<Record<RankedStatName, RankedStatInput | null>>
 >;
 
+export type ImageRightsStatus =
+  | "original"
+  | "licensed"
+  | "public-domain"
+  | "permission"
+  | "unverified-third-party";
+
 export interface ImageRef {
   readonly name: string;
   readonly image: string;
+  readonly source_url: string;
+  readonly rights_status: ImageRightsStatus;
+  readonly creator?: string | null;
+  readonly rights_holder?: string | null;
+  readonly license?: string | null;
+  readonly reviewed_on?: string | null;
 }
 
 export interface ImageUpdate extends ImageRef {
   readonly priority?: number | null;
+}
+
+export interface ContentSource {
+  readonly id: Id;
+  readonly name: string;
+  readonly url: string;
+  readonly publisher: string;
+  readonly license: string;
+  readonly accessed_on: string;
 }
 
 export interface StatModifierFloorEffect {
@@ -181,6 +203,7 @@ export interface CharacterForm {
   readonly name?: string | null;
   readonly names: readonly string[];
   readonly images: readonly ImageRef[];
+  readonly source_ids: readonly Id[];
 
   readonly power_refs?: readonly PowerRef[] | null;
   readonly resistance_refs?: readonly ResistanceRef[] | null;
@@ -219,6 +242,7 @@ export interface CharacterEntry {
   readonly gender_id: Id;
   readonly age: CharacterAge;
   readonly classification_ids: readonly Id[];
+  readonly sources: readonly ContentSource[];
   readonly keys: readonly CharacterForm[];
   readonly age_filter_values?: readonly AgeFilterValue[];
 }
@@ -233,12 +257,12 @@ export interface MediaOption extends NamedOption {}
 export interface GenderOption extends NamedOption {}
 
 export interface OriginOption extends NamedOption {
-  readonly media_id?: Id | null;
+  readonly media_id: Id;
 }
 
 export interface VerseOption extends NamedOption {
-  readonly media_id?: Id | null;
-  readonly source_id?: Id | null;
+  readonly media_id: Id;
+  readonly source_id: Id;
 }
 
 export interface ClassificationOption extends NamedOption {

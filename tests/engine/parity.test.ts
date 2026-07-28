@@ -55,6 +55,16 @@ const scopedPowerTarget = {
   magic_level_id: "master-sorcerers"
 } satisfies PowerTargetRef;
 
+const provenanceOnlyFields = new Set([
+  "source_ids",
+  "source_url",
+  "rights_status",
+  "creator",
+  "rights_holder",
+  "license",
+  "reviewed_on"
+]);
+
 function selectionFromId(id: string) {
   const [characterId, formId, ...unexpected] = id.split("~");
   if (!characterId || !formId || unexpected.length > 0) {
@@ -71,7 +81,10 @@ function semanticCanonicalize(value: unknown): unknown {
 
   return Object.fromEntries(
     Object.keys(value)
-      .filter((key) => Reflect.get(value, key) !== undefined)
+      .filter((key) =>
+        !provenanceOnlyFields.has(key)
+        && Reflect.get(value, key) !== undefined
+      )
       .sort()
       .map((key) => [
         key,

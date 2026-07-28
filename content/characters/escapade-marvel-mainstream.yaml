@@ -10,6 +10,13 @@ classification_ids:
   - avengers-academy
   - new-mutants
   - superhero
+sources:
+  - id: vs-battles-wiki-profile
+    name: "VS Battles Wiki profile: Escapade (Marvel Comics)"
+    url: "https://vsbattles.fandom.com/wiki/Escapade_(Marvel_Comics)"
+    publisher: "VS Battles Wiki (Fandom)"
+    license: "CC BY-SA 3.0 (wiki text only; third-party media excluded)"
+    accessed_on: "2026-07-28"
 keys:
   - key: escapade
     names:
@@ -17,6 +24,12 @@ keys:
     images:
       - name: "Escapade"
         image: "images/characters/escapade-marvel-mainstream/escapade.webp"
+        source_url: "https://vsbattles.fandom.com/wiki/File:Escapade_MC_TR.webp"
+        rights_status: unverified-third-party
+        rights_holder: "Unknown / respective rights holders"
+        reviewed_on: "2026-07-28"
+    source_ids:
+      - vs-battles-wiki-profile
     power_refs:
       - id: acrobatics
       - id: martial-arts-mastery
