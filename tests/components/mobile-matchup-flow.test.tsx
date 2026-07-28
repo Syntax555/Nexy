@@ -14,7 +14,7 @@ function installMatchMedia(initialMatches: boolean): MatchMediaController {
   const legacyListeners = new Set<(event: MediaQueryListEvent) => void>();
   const mediaQuery = {
     matches: initialMatches,
-    media: "(max-width: 819px)",
+    media: "(max-width: 1180px)",
     onchange: null,
     addEventListener: (
       type: string,
@@ -70,7 +70,7 @@ describe("mobile matchup flow", () => {
     }
   });
 
-  it("stages the two pickers, advances automatically, and exposes the ready action", async () => {
+  it("stages the two pickers and advances only through the explicit next-fighter action", async () => {
     installMatchMedia(true);
     const { container } = render(<App />);
     const leftPanel = container.querySelector<HTMLElement>("#mobile-fighter-left-panel");
@@ -88,17 +88,32 @@ describe("mobile matchup flow", () => {
 
     const leftFighter = leftPanel.querySelector<HTMLButtonElement>(".roster-card");
     if (!leftFighter) throw new Error("Expected a left-side roster entry.");
+    leftFighter.focus();
     fireEvent.click(leftFighter);
 
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: /fighter 01: .+, chosen/i })).toBeTruthy();
+    });
+    expect(leftPanel.hidden).toBe(false);
+    expect(rightPanel.hidden).toBe(true);
+    expect(leftTab.getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(leftFighter);
+    expect(flowStatus.textContent).toMatch(
+      /fighter 01 selected\. choose fighter 02/i
+    );
+
+    const chooseSecondFighter = screen.getByRole("button", {
+      name: "Choose Fighter 02"
+    });
+    fireEvent.click(chooseSecondFighter);
     await waitFor(() => {
       expect(rightPanel.hidden).toBe(false);
       expect(leftPanel.hidden).toBe(true);
       expect(rightTab.getAttribute("aria-selected")).toBe("true");
-      expect(document.activeElement).toBe(rightTab);
+      expect(document.activeElement).toBe(
+        rightPanel.querySelector("#right-picker-title")
+      );
     });
-    expect(flowStatus.textContent).toMatch(
-      /fighter 01 selected\. choose fighter 02/i
-    );
 
     const rightFighter = rightPanel.querySelector<HTMLButtonElement>(".roster-card");
     if (!rightFighter) throw new Error("Expected a right-side roster entry.");
@@ -107,7 +122,10 @@ describe("mobile matchup flow", () => {
     await waitFor(() => {
       expect(flowStatus.textContent).toMatch(/matchup ready/i);
     });
-    const analyze = screen.getByRole("button", { name: /analyze battle/i }) as HTMLButtonElement;
+    const analyze = screen.getByRole("button", {
+      name: "Analyze battle",
+      exact: true
+    }) as HTMLButtonElement;
     expect(analyze.disabled).toBe(false);
 
     fireEvent.click(screen.getByRole("tab", { name: /fighter 01:/i }));

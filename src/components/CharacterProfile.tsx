@@ -57,6 +57,9 @@ export function CharacterProfile({
   const aliases = profile.names.filter((name) => name !== profile.character.name);
   const totalCapabilities = capabilityCount(profile);
   const sourceCount = profile.sources.length + (imageRecord ? 1 : 0);
+  const formName = profile.key.name
+    || profile.key.names[0]
+    || profile.key.key;
 
   return (
     <article class="fighter-profile">
@@ -114,20 +117,27 @@ export function CharacterProfile({
           </p>
         </div>
 
-        <label class="form-select">
-          <span>Combat form</span>
-          <select
-            value={profile.key.key}
-            aria-label={`Form for ${profile.character.name}`}
-            onChange={(event) => onFormChange(event.currentTarget.value)}
-          >
-            {rosterCharacter.character.keys.map((form) => (
-              <option value={form.key} key={form.key}>
-                {form.name || form.names[0] || form.key}
-              </option>
-            ))}
-          </select>
-        </label>
+        {rosterCharacter.character.keys.length > 1 ? (
+          <label class="form-select">
+            <span>Combat form</span>
+            <select
+              value={profile.key.key}
+              aria-label={`Form for ${profile.character.name}`}
+              onChange={(event) => onFormChange(event.currentTarget.value)}
+            >
+              {rosterCharacter.character.keys.map((form) => (
+                <option value={form.key} key={form.key}>
+                  {form.name || form.names[0] || form.key}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <div class="form-select form-select--static">
+            <span>Combat form</span>
+            <strong>{formName}</strong>
+          </div>
+        )}
 
         <ul class="profile-meta" aria-label="Character details">
           <li>Media: {rosterCharacter.media}</li>

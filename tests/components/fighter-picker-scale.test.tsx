@@ -85,5 +85,6 @@ describe("large roster rendering", () => {
       '.roster-card[aria-pressed="true"]'
     );
     expect(selectedCard?.getAttribute("aria-label")).toMatch(/^Scale Fighter 125,/);
+    expect(container.querySelector(".roster-card")).toBe(selectedCard);
   });
 });

@@ -36,7 +36,11 @@ export function ActionDock({
   const ready = Boolean(left && right);
 
   return (
-    <div class="action-dock" aria-label="Matchup controls">
+    <div
+      class="action-dock"
+      data-ready={ready ? "true" : "false"}
+      aria-label="Matchup controls"
+    >
       <FighterSummary side="Fighter 01" profile={left} />
       <button
         class="icon-button swap-button"

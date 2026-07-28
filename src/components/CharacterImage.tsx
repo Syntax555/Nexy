@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 interface CharacterImageProps {
   readonly src: string;
@@ -11,11 +11,10 @@ export function CharacterImage({
   alt,
   loading = "lazy"
 }: CharacterImageProps) {
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    setFailed(false);
-  }, [src]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const failed = failedSrc === src;
+  const loaded = loadedSrc === src;
 
   if (failed || !src) {
     if (!alt) {
@@ -30,11 +29,14 @@ export function CharacterImage({
 
   return (
     <img
+      class="character-image"
       src={src}
       alt={alt}
       loading={loading}
       decoding="async"
-      onError={() => setFailed(true)}
+      data-loaded={loaded ? "true" : "false"}
+      onLoad={() => setLoadedSrc(src)}
+      onError={() => setFailedSrc(src)}
     />
   );
 }

@@ -91,6 +91,12 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  const chooseSecondFighter = page.getByRole("button", {
+    name: "Choose Fighter 02"
+  });
+  if (await chooseSecondFighter.isVisible()) {
+    await chooseSecondFighter.click();
+  }
   await selectFighter(rightPicker, "Dagger", /^Dagger,/);
 
   const visibleProfileImage = page.locator(".profile-visual img:visible").first();
@@ -115,7 +121,7 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   ).toContainText("no image licence claimed");
   await imageDialog.getByRole("button", { name: "Close image" }).click();
 
-  const analyze = page.getByRole("button", { name: /Analyze battle/ });
+  const analyze = page.getByRole("button", { name: /Analyze battle/ }).first();
   await expect(analyze).toBeEnabled();
   await analyze.click();
   await expect(
@@ -240,7 +246,7 @@ test("supports 200% text without page-level horizontal scrolling", async ({
   ).toBeVisible();
 });
 
-test("mobile flow advances from Fighter 01 to Fighter 02", async ({
+test("mobile flow advances only after the explicit Fighter 02 action", async ({
   page
 }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile-"), "Mobile-only flow");
@@ -249,11 +255,26 @@ test("mobile flow advances from Fighter 01 to Fighter 02", async ({
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
 
+  const firstTab = page.getByRole("tab", { name: /Fighter 01/ });
   const secondTab = page.getByRole("tab", { name: /Fighter 02/ });
+  await expect(firstTab).toHaveAttribute("aria-selected", "true");
+  await expect(firstTab).toHaveAccessibleName(/Captain America, chosen/);
+  await expect(
+    page.locator("#mobile-fighter-left-panel")
+  ).not.toHaveAttribute("hidden", "");
+  await expect(
+    page.locator("#mobile-fighter-right-panel")
+  ).toHaveAttribute("hidden", "");
+
+  await page.getByRole("button", { name: "Choose Fighter 02" }).click();
   await expect(secondTab).toHaveAttribute("aria-selected", "true");
+  await expect(
+    page.getByRole("heading", { name: "Select fighter", level: 2 })
+  ).toBeFocused();
   await expect(
     page.locator("#mobile-fighter-right-panel")
   ).not.toHaveAttribute("hidden", "");
+  await expect(page.locator("#mobile-fighter-right-panel")).toBeInViewport();
 });
 
 test("desktop fighter cards stay equal height after one selection", async ({
@@ -264,6 +285,12 @@ test("desktop fighter cards stay equal height after one selection", async ({
 
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
+  const [initialLeftBox, initialRightBox] = await Promise.all([
+    leftPicker.boundingBox(),
+    rightPicker.boundingBox()
+  ]);
+  expect(initialLeftBox).not.toBeNull();
+  expect(initialRightBox).not.toBeNull();
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
 
   const [leftBox, rightBox] = await Promise.all([
@@ -274,6 +301,10 @@ test("desktop fighter cards stay equal height after one selection", async ({
   expect(rightBox).not.toBeNull();
   expect(Math.abs((leftBox?.height ?? 0) - (rightBox?.height ?? 0)))
     .toBeLessThanOrEqual(1);
+  expect(Math.abs((leftBox?.height ?? 0) - (initialLeftBox?.height ?? 0)))
+    .toBeLessThanOrEqual(1);
+  expect(Math.abs((rightBox?.height ?? 0) - (initialRightBox?.height ?? 0)))
+    .toBeLessThanOrEqual(1);
 });
 
 test("forced-colors mode preserves selected-state affordances", async ({
@@ -283,9 +314,40 @@ test("forced-colors mode preserves selected-state affordances", async ({
   test.skip(browserName !== "chromium", "Forced colors emulation is Chromium-only");
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("./");
-  await expect(page.getByRole("button", { name: /Switch to/ })).toBeVisible();
-  await page.keyboard.press("Tab");
-  await expect(page.locator(":focus")).toBeVisible();
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  await leftPicker.getByRole("searchbox", { name: "Search characters" }).fill("");
+
+  const selectedCard = leftPicker.locator('.roster-card[aria-pressed="true"]');
+  const unselectedCard = leftPicker.locator('.roster-card[aria-pressed="false"]').first();
+  await expect(selectedCard).toBeVisible();
+  await expect(selectedCard).toHaveAttribute("aria-pressed", "true");
+  await expect(unselectedCard).toBeVisible();
+  await leftPicker.getByRole("searchbox", { name: "Search characters" }).focus();
+
+  const [selectedStyle, unselectedStyle] = await Promise.all([
+    selectedCard.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderColor,
+        boxShadow: style.boxShadow,
+        color: style.color,
+        outline: `${style.outlineStyle} ${style.outlineWidth} ${style.outlineColor}`
+      };
+    }),
+    unselectedCard.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderColor,
+        boxShadow: style.boxShadow,
+        color: style.color,
+        outline: `${style.outlineStyle} ${style.outlineWidth} ${style.outlineColor}`
+      };
+    })
+  ]);
+  expect(selectedStyle).not.toEqual(unselectedStyle);
 });
 
 test("legal page remains reachable and accessible", async ({ page }) => {

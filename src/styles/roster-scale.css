@@ -3,6 +3,7 @@
 @layer utilities {
   .searchable-select {
     position: relative;
+    min-width: 0;
   }
 
   .searchable-select > label {
@@ -18,11 +19,15 @@
 
   .searchable-select__control {
     position: relative;
+    width: 100%;
+    min-width: 0;
   }
 
   .searchable-select__trigger {
     display: flex;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     min-height: 44px;
     align-items: center;
     padding: 0 72px 0 12px;

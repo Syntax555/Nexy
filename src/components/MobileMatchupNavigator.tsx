@@ -2,7 +2,7 @@ import { useEffect, useState } from "preact/hooks";
 
 export type MobileFighterSide = "left" | "right";
 
-export const MOBILE_MATCHUP_QUERY = "(max-width: 819px)";
+export const MOBILE_MATCHUP_QUERY = "(max-width: 1180px)";
 
 interface MobileMatchupNavigatorProps {
   readonly activeSide: MobileFighterSide;
@@ -10,6 +10,7 @@ interface MobileMatchupNavigatorProps {
   readonly leftName: string | null;
   readonly rightName: string | null;
   readonly onActivate: (side: MobileFighterSide) => void;
+  readonly onAnalyze: () => void;
 }
 
 function queryMatches(query: string): boolean {
@@ -53,18 +54,32 @@ export function MobileMatchupNavigator({
   isMobile,
   leftName,
   rightName,
-  onActivate
+  onActivate,
+  onAnalyze
 }: MobileMatchupNavigatorProps) {
   const ready = Boolean(leftName && rightName);
   const nextSide = (side: MobileFighterSide): MobileFighterSide =>
     side === "left" ? "right" : "left";
 
-  const activateAndFocus = (side: MobileFighterSide): void => {
+  const activateAndFocus = (
+    side: MobileFighterSide,
+    focusTarget: "tab" | "heading" = "tab"
+  ): void => {
     onActivate(side);
     window.requestAnimationFrame(() => {
-      document.querySelector<HTMLButtonElement>(
-        `[data-mobile-fighter-tab="${side}"]`
-      )?.focus();
+      const reducedMotion = typeof window.matchMedia === "function"
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.querySelector<HTMLElement>(
+        `#mobile-fighter-${side}-panel`
+      )?.scrollIntoView?.({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start"
+      });
+      document.querySelector<HTMLElement>(
+        focusTarget === "heading"
+          ? `#${side}-picker-title`
+          : `[data-mobile-fighter-tab="${side}"]`
+      )?.focus({ preventScroll: true });
     });
   };
 
@@ -93,6 +108,11 @@ export function MobileMatchupNavigator({
       : rightName
         ? "Fighter 02 selected. Choose Fighter 01."
         : "Choose Fighter 01, then Fighter 02.";
+  const nextIncompleteSide: MobileFighterSide | null = !leftName
+    ? "left"
+    : !rightName
+      ? "right"
+      : null;
 
   return (
     <nav
@@ -112,7 +132,7 @@ export function MobileMatchupNavigator({
           tabIndex={activeSide === "left" ? 0 : -1}
           data-mobile-fighter-tab="left"
           data-complete={leftName ? "true" : "false"}
-          onClick={() => onActivate("left")}
+          onClick={() => activateAndFocus("left")}
           onKeyDown={(event) => handleKeyDown(event, "left")}
         >
           <span aria-hidden="true">01</span>
@@ -133,7 +153,7 @@ export function MobileMatchupNavigator({
           tabIndex={activeSide === "right" ? 0 : -1}
           data-mobile-fighter-tab="right"
           data-complete={rightName ? "true" : "false"}
-          onClick={() => onActivate("right")}
+          onClick={() => activateAndFocus("right")}
           onKeyDown={(event) => handleKeyDown(event, "right")}
         >
           <span aria-hidden="true">02</span>
@@ -143,14 +163,29 @@ export function MobileMatchupNavigator({
           </span>
         </button>
       </div>
-      <p
+      <div
         class="mobile-matchup-status"
         data-ready={ready ? "true" : "false"}
-        role="status"
-        aria-live="polite"
       >
-        {status}
-      </p>
+        <p role="status" aria-live="polite">{status}</p>
+        {ready ? (
+          <button
+            class="mobile-matchup-action"
+            type="button"
+            onClick={onAnalyze}
+          >
+            Analyze battle
+          </button>
+        ) : nextIncompleteSide && nextIncompleteSide !== activeSide ? (
+          <button
+            class="mobile-matchup-action"
+            type="button"
+            onClick={() => activateAndFocus(nextIncompleteSide, "heading")}
+          >
+            Choose Fighter {nextIncompleteSide === "left" ? "01" : "02"}
+          </button>
+        ) : null}
+      </div>
     </nav>
   );
 }

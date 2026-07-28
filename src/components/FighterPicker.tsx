@@ -57,7 +57,7 @@ interface FighterPickerProps {
   readonly profile: CharacterProfileData | null;
   readonly onSelect: (selection: BattleSelection) => void;
   readonly onClear: () => void;
-  readonly onRandom: () => void;
+  readonly onRandom: (candidates: readonly RosterCharacter[]) => void;
   readonly onOpenImage: (image: DialogImage) => void;
 }
 
@@ -132,6 +132,7 @@ export function FighterPicker({
   const [sortOrder, setSortOrder] = useState<SortOrder>("name");
   const [visibleLimit, setVisibleLimit] = useState(ROSTER_PAGE_SIZE);
   const searchRef = useRef<HTMLInputElement>(null);
+  const rosterListRef = useRef<HTMLDivElement>(null);
   const fighterNumber = side === "left" ? "01" : "02";
   const accentName = side === "left" ? "Cyan corner" : "Magenta corner";
   const searchIndexForRoster = useMemo(
@@ -223,19 +224,33 @@ export function FighterPicker({
   const selectedCharacter = selection
     ? roster.find((item) => item.id === selection.characterId) ?? null
     : null;
+  const selectedOutsideFilters = Boolean(
+    selectedCharacter
+    && !visibleRoster.some((item) => item.id === selectedCharacter.id)
+  );
+  const randomAvailable = selection
+    ? visibleRoster.some((item) => item.id !== selection.characterId)
+    : visibleRoster.length > 0;
   const renderedRoster = useMemo(() => {
     const page = visibleRoster.slice(0, visibleLimit);
-    if (!selection || page.some((item) => item.id === selection.characterId)) {
+    if (
+      !selectedCharacter
+      || page.some((item) => item.id === selectedCharacter.id)
+    ) {
       return page;
     }
 
-    const selectedMatch = visibleRoster.find(
-      (item) => item.id === selection.characterId
-    );
-    return selectedMatch && page.length > 0
-      ? [selectedMatch, ...page.slice(0, page.length - 1)]
-      : page;
-  }, [selection, visibleLimit, visibleRoster]);
+    if (selectedOutsideFilters) return [selectedCharacter, ...page];
+    return [
+      selectedCharacter,
+      ...page.slice(0, Math.max(0, page.length - 1))
+    ];
+  }, [
+    selectedCharacter,
+    selectedOutsideFilters,
+    visibleLimit,
+    visibleRoster
+  ]);
   const shownRosterCount = Math.min(visibleLimit, visibleRoster.length);
   const remainingRosterCount = Math.max(0, visibleRoster.length - shownRosterCount);
   const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
@@ -258,6 +273,7 @@ export function FighterPicker({
 
   useEffect(() => {
     setVisibleLimit(ROSTER_PAGE_SIZE);
+    if (rosterListRef.current) rosterListRef.current.scrollTop = 0;
   }, [
     age,
     classification,
@@ -348,7 +364,12 @@ export function FighterPicker({
           </p>
         </div>
         <div class="fighter-picker__actions">
-          <button class="text-button" type="button" onClick={onRandom}>
+          <button
+            class="text-button"
+            type="button"
+            disabled={!randomAvailable}
+            onClick={() => onRandom(visibleRoster)}
+          >
             Random
           </button>
           {selection ? (
@@ -360,7 +381,7 @@ export function FighterPicker({
                 focusSearchAfterRender();
               }}
             >
-              Clear
+              Remove fighter
             </button>
           ) : null}
         </div>
@@ -546,26 +567,43 @@ export function FighterPicker({
             Third-party artwork may have unverified rights. Select a fighter
             for its exact source record.
           </p>
+          {selectedOutsideFilters ? (
+            <p
+              class="roster-selection-note"
+              id={`${side}-roster-selection-note`}
+              role="status"
+            >
+              Selected fighter shown outside the current filters.
+            </p>
+          ) : null}
 
           <div
+            ref={rosterListRef}
             class="roster-list"
             role="list"
             aria-label="Characters"
-            aria-describedby={`${side}-rendered-roster-count ${side}-roster-artwork-note`}
+            aria-describedby={[
+              `${side}-rendered-roster-count`,
+              `${side}-roster-artwork-note`,
+              selectedOutsideFilters ? `${side}-roster-selection-note` : ""
+            ].filter(Boolean).join(" ")}
           >
             {renderedRoster.map((item) => {
               const image = item.defaultProfile.image;
               const displayImage = isImageEnabledForPublicDisplay(image)
                 ? image
                 : null;
+              const isSelected = selection?.characterId === item.id;
               return (
                 <div class="roster-entry" role="listitem" key={item.id}>
                   <button
                     class="roster-card"
                     type="button"
                     aria-label={`${item.name}, ${item.identity}, ${item.media}, ${item.origin}, ${item.verse}, tier ${item.tier}`}
-                    aria-pressed={selection?.characterId === item.id}
-                    onClick={() => onSelect(item.defaultSelection)}
+                    aria-pressed={isSelected}
+                    onClick={() => {
+                      if (!isSelected) onSelect(item.defaultSelection);
+                    }}
                   >
                     <span class="roster-card__portrait">
                       {displayImage ? (
@@ -587,7 +625,14 @@ export function FighterPicker({
                         {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
                       </small>
                     </span>
-                    <span class="tier-badge">{item.tier}</span>
+                    <span class="roster-card__badges">
+                      <span class="tier-badge">{item.tier}</span>
+                      {isSelected ? (
+                        <span class="roster-card__selected" aria-hidden="true">
+                          <span>✓</span> Selected
+                        </span>
+                      ) : null}
+                    </span>
                   </button>
                 </div>
               );
@@ -628,10 +673,14 @@ export function FighterPicker({
             aria-live="polite"
           >
             Showing {shownRosterCount} of {visibleRoster.length} matching fighters.
+            {selectedOutsideFilters ? " Plus the selected fighter outside the filters." : ""}
           </span>
         </aside>
 
         <CharacterProfile
+          key={selection
+            ? selection.characterId
+            : `${side}:empty`}
           side={side}
           rosterCharacter={selectedCharacter}
           profile={profile}

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
 import { cleanup } from "@testing-library/preact";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../../src/app/App.js";
 import { nexyData } from "../../src/data/nexy.js";
@@ -36,12 +36,23 @@ function firstTwoSelections(): readonly [
 
 describe("Nexy application", () => {
   beforeEach(() => {
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      dispatchEvent: () => true
+    }));
     window.history.replaceState(null, "", "/Nexy/");
     document.documentElement.dataset.theme = "dark";
   });
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   it("selects two roster entries and produces a battle report", async () => {
@@ -310,7 +321,7 @@ describe("Nexy application", () => {
     fireEvent.click(picker.getByRole("option", { name: "DC Comics" }));
 
     expect(picker.getByRole("heading", { level: 2 }).textContent).toBe(selectedName);
-    expect(picker.getByRole("button", { name: "Clear" })).toBeTruthy();
+    expect(picker.getByRole("button", { name: "Remove fighter" })).toBeTruthy();
   });
 
   it("keeps focus in a picker when clear and reset controls unmount", async () => {
@@ -326,9 +337,9 @@ describe("Nexy application", () => {
     if (!firstFighter) throw new Error("Expected a roster entry.");
 
     fireEvent.click(firstFighter);
-    fireEvent.click(picker.getByRole("button", { name: "Clear" }));
+    fireEvent.click(picker.getByRole("button", { name: "Remove fighter" }));
     await waitFor(() => {
-      expect(picker.queryByRole("button", { name: "Clear" })).toBeNull();
+      expect(picker.queryByRole("button", { name: "Remove fighter" })).toBeNull();
       expect(document.activeElement).toBe(search);
     });
 

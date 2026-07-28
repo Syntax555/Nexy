@@ -25,7 +25,11 @@ import {
 import { RulesDialog } from "../components/RulesDialog.js";
 import { ThemeToggle } from "../components/ThemeToggle.js";
 import { assetUrl } from "./assets.js";
-import { buildRoster, validSelection } from "./roster.js";
+import {
+  buildRoster,
+  validSelection,
+  type RosterCharacter
+} from "./roster.js";
 import {
   readMatchupUrl,
   writeMatchupUrl,
@@ -205,7 +209,7 @@ export function App() {
         window.requestAnimationFrame(() => {
           document.querySelector<HTMLButtonElement>(
             `[data-mobile-fighter-tab="${side}"]`
-          )?.focus();
+          )?.focus({ preventScroll: true });
         });
       }
       return;
@@ -217,7 +221,8 @@ export function App() {
     ) {
       const side = lastFocusedPicker.current;
       window.requestAnimationFrame(() => {
-        document.querySelector<HTMLElement>(`#${side}-picker-title`)?.focus();
+        document.querySelector<HTMLElement>(`#${side}-picker-title`)
+          ?.focus({ preventScroll: true });
       });
     }
   }, [isMobileMatchup]);
@@ -257,25 +262,17 @@ export function App() {
     if (side === "left") setLeft(selection);
     else setRight(selection);
     setShowBattle(false);
-
-    if (
-      isMobileMatchup
-      && side === "left"
-      && selection
-      && selection.characterId !== left?.characterId
-    ) {
-      setActiveMobileSide("right");
-      lastFocusedPicker.current = "right";
-      window.requestAnimationFrame(() => {
-        document.querySelector<HTMLButtonElement>(
-          '[data-mobile-fighter-tab="right"]'
-        )?.focus();
-      });
-    }
   };
 
-  const chooseRandom = (side: "left" | "right"): void => {
-    const candidate = roster[randomIndex(roster.length)];
+  const chooseRandom = (
+    side: "left" | "right",
+    candidates: readonly RosterCharacter[]
+  ): void => {
+    const current = side === "left" ? left : right;
+    const alternatives = current
+      ? candidates.filter((candidate) => candidate.id !== current.characterId)
+      : candidates;
+    const candidate = alternatives[randomIndex(alternatives.length)];
     if (candidate) updateSelection(side, candidate.defaultSelection);
   };
 
@@ -376,6 +373,7 @@ export function App() {
               lastFocusedPicker.current = side;
               setActiveMobileSide(side);
             }}
+            onAnalyze={analyze}
           />
           <div
             id="mobile-fighter-left-panel"
@@ -394,7 +392,7 @@ export function App() {
               profile={leftProfile}
               onSelect={(selection) => updateSelection("left", selection)}
               onClear={() => updateSelection("left", null)}
-              onRandom={() => chooseRandom("left")}
+              onRandom={(candidates) => chooseRandom("left", candidates)}
               onOpenImage={setDialogImage}
             />
           </div>
@@ -416,7 +414,7 @@ export function App() {
               profile={rightProfile}
               onSelect={(selection) => updateSelection("right", selection)}
               onClear={() => updateSelection("right", null)}
-              onRandom={() => chooseRandom("right")}
+              onRandom={(candidates) => chooseRandom("right", candidates)}
               onOpenImage={setDialogImage}
             />
           </div>
