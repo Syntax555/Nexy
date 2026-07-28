@@ -20,31 +20,41 @@
     position: relative;
   }
 
-  .searchable-select__control input {
+  .searchable-select__trigger {
+    display: flex;
     width: 100%;
-    height: 44px;
+    min-height: 44px;
+    align-items: center;
     padding: 0 72px 0 12px;
     border: 1px solid var(--line);
     border-radius: 10px;
     background: var(--surface-raised);
     color: var(--ink);
+    cursor: pointer;
     font-size: 0.76rem;
     font-weight: 750;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .searchable-select__trigger > span {
+    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .searchable-select__control input::placeholder {
-    color: var(--ink-soft);
-    opacity: 1;
+  .searchable-select__trigger:hover:not(:disabled) {
+    border-color: rgba(var(--fighter-rgb), 0.52);
+    background: var(--surface-soft);
   }
 
-  .searchable-select__control input:focus {
+  .searchable-select__trigger:focus-visible {
     border-color: rgba(var(--fighter-rgb), 0.72);
     outline: 2px solid rgba(var(--fighter-rgb), 0.2);
     outline-offset: 1px;
   }
 
-  .searchable-select[data-disabled="true"] .searchable-select__control input {
+  .searchable-select[data-disabled="true"] .searchable-select__trigger {
     border-color: var(--line);
     background: var(--surface);
     color: var(--ink-soft);
@@ -99,6 +109,35 @@
     border-radius: 10px;
     background: var(--surface-raised);
     box-shadow: var(--shadow-large);
+  }
+
+  .searchable-select__search-wrap {
+    display: block;
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .searchable-select__search {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .searchable-select__search::placeholder {
+    color: var(--ink-soft);
+    opacity: 1;
+  }
+
+  .searchable-select__search:focus {
+    border-color: rgba(var(--fighter-rgb), 0.72);
+    outline: 2px solid rgba(var(--fighter-rgb), 0.2);
+    outline-offset: 1px;
   }
 
   .searchable-select__list {
@@ -209,6 +248,7 @@
       right: 12px;
       bottom: max(12px, env(safe-area-inset-bottom));
       left: 12px;
+      max-height: calc(100dvh - 24px - env(safe-area-inset-bottom));
     }
 
     .searchable-select__list {
@@ -217,6 +257,8 @@
   }
 
   @media (forced-colors: active) {
+    .searchable-select__trigger:focus-visible,
+    .searchable-select__search:focus,
     .searchable-select__option[data-active="true"],
     .roster-list__more button {
       border: 1px solid Highlight;

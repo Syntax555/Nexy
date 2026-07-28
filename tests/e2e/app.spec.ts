@@ -1,24 +1,31 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-async function chooseComboboxOption(
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function hierarchyTrigger(picker: Locator, label: string): Locator {
+  return picker.getByRole("button", {
+    name: new RegExp(`^${escapeRegExp(label)}:`)
+  });
+}
+
+async function chooseListOption(
   picker: Locator,
   label: string,
-  search: string
+  option: string
 ): Promise<void> {
-  const combobox = picker.getByRole("combobox", { name: label });
-  await combobox.fill(search);
+  const trigger = hierarchyTrigger(picker, label);
+  await trigger.click();
   const listbox = picker.getByRole("listbox", { name: label });
   await expect(listbox).toBeVisible();
   await expect(
-    listbox.getByRole("option", { name: search, exact: true })
+    listbox.getByRole("option", { name: option, exact: true })
   ).toBeVisible();
-  await combobox.press("Enter");
-  await expect(combobox).toHaveValue(search);
-  await combobox.evaluate(() => new Promise<void>((resolve) => {
-    window.requestAnimationFrame(() => resolve());
-  }));
-  await expect(combobox).toBeFocused();
+  await listbox.getByRole("option", { name: option, exact: true }).click();
+  await expect(trigger).toHaveAccessibleName(`${label}: ${option}`);
+  await expect(trigger).toBeFocused();
 }
 
 async function selectFighter(
@@ -144,34 +151,56 @@ test("browses the roster through media, publisher, and universe", async ({
   await page.goto("./");
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
 
-  const mediaCombobox = leftPicker.getByRole("combobox", { name: "Media" });
-  await mediaCombobox.fill("Comics");
-  await expect(leftPicker.getByRole("listbox", { name: "Media" })).toBeVisible();
+  const mediaTrigger = hierarchyTrigger(leftPicker, "Media");
+  await expect(mediaTrigger).toHaveAccessibleName("Media: All media");
+  await mediaTrigger.click();
+  const mediaListbox = leftPicker.getByRole("listbox", { name: "Media" });
+  await expect(mediaListbox).toBeVisible();
+  await expect(mediaListbox.getByRole("option")).toHaveCount(2);
+  await expect(mediaListbox.getByRole("option", {
+    name: "All media",
+    exact: true
+  })).toBeVisible();
+  await expect(mediaListbox.getByRole("option", {
+    name: "Comics",
+    exact: true
+  })).toBeVisible();
+  await expect(leftPicker.getByRole("searchbox", {
+    name: "Search Media choices"
+  })).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
   const openListboxAccessibility = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])
     .analyze();
   expect(openListboxAccessibility.violations).toEqual([]);
+  await mediaListbox.getByRole("option", { name: "Comics", exact: true }).click();
+  await expect(mediaTrigger).toHaveAccessibleName("Media: Comics");
+  await expect(mediaTrigger).toBeFocused();
   await expect(
-    leftPicker
-      .getByRole("listbox", { name: "Media" })
-      .getByRole("option", { name: "Comics", exact: true })
-  ).toBeVisible();
-  await mediaCombobox.press("Enter");
-  await expect(mediaCombobox).toHaveValue("Comics");
-  await mediaCombobox.evaluate(() => new Promise<void>((resolve) => {
-    window.requestAnimationFrame(() => resolve());
-  }));
-  await expect(mediaCombobox).toBeFocused();
-  await expect(
-    leftPicker.getByRole("combobox", { name: "Publisher / origin" })
+    hierarchyTrigger(leftPicker, "Publisher / origin")
   ).toBeEnabled();
 
-  await chooseComboboxOption(leftPicker, "Publisher / origin", "Marvel Comics");
+  const publisherTrigger = hierarchyTrigger(leftPicker, "Publisher / origin");
+  await publisherTrigger.focus();
+  await publisherTrigger.press("Enter");
+  const publisherListbox = leftPicker.getByRole("listbox", {
+    name: "Publisher / origin"
+  });
+  await expect(publisherListbox).toBeFocused();
+  await publisherListbox.press("End");
   await expect(
-    leftPicker.getByRole("combobox", { name: "Universe / verse" })
+    publisherListbox.getByRole("option", { name: "Marvel Comics", exact: true })
+  ).toHaveAttribute("data-active", "true");
+  await publisherListbox.press("Enter");
+  await expect(publisherTrigger).toHaveAccessibleName(
+    "Publisher / origin: Marvel Comics"
+  );
+  await expect(publisherTrigger).toBeFocused();
+  await expect(
+    hierarchyTrigger(leftPicker, "Universe / verse")
   ).toBeEnabled();
 
-  await chooseComboboxOption(leftPicker, "Universe / verse", "Mainstream");
+  await chooseListOption(leftPicker, "Universe / verse", "Mainstream");
   await expect(leftPicker.locator("[data-browse-path-status]")).toContainText(
     "Comics → Marvel Comics → Mainstream"
   );

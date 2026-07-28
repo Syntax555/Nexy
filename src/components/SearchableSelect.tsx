@@ -22,6 +22,7 @@ interface SearchableSelectProps {
 }
 
 const MAX_VISIBLE_OPTIONS = 50;
+const SEARCH_THRESHOLD = 8;
 
 export function SearchableSelect({
   id,
@@ -37,9 +38,10 @@ export function SearchableSelect({
   onChange
 }: SearchableSelectProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const listboxRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [edited, setEdited] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [optionLimit, setOptionLimit] = useState(MAX_VISIBLE_OPTIONS);
@@ -49,6 +51,7 @@ export function SearchableSelect({
     () => [{ id: "all", label: allLabel }, ...options],
     [allLabel, options]
   );
+  const isSearchable = options.length > SEARCH_THRESHOLD;
   const searchableChoices = useMemo(
     () => choices.map((option) => ({
       option,
@@ -62,15 +65,17 @@ export function SearchableSelect({
   );
   const selected = choices.find((option) => option.id === value) ?? choices[0];
   const filteredChoices = useMemo(
-    () => edited
+    () => queryTokens.length > 0
       ? searchableChoices
         .filter(({ text }) => queryTokens.every((token) => text.includes(token)))
         .map(({ option }) => option)
       : choices,
-    [choices, edited, queryTokens, searchableChoices]
+    [choices, queryTokens, searchableChoices]
   );
   const orderedChoices = useMemo(() => {
-    if (edited || !selected || selected.id === "all") return filteredChoices;
+    if (queryTokens.length > 0 || !selected || selected.id === "all") {
+      return filteredChoices;
+    }
     const selectedIndex = filteredChoices.findIndex((option) => option.id === selected.id);
     return selectedIndex > 0
       ? [
@@ -78,23 +83,29 @@ export function SearchableSelect({
         ...filteredChoices.filter((option) => option.id !== selected.id)
       ]
       : filteredChoices;
-  }, [edited, filteredChoices, selected]);
+  }, [filteredChoices, queryTokens.length, selected]);
   const shownChoices = orderedChoices.slice(0, optionLimit);
   const remainingChoiceCount = Math.max(0, orderedChoices.length - shownChoices.length);
-  const inputValue = open && edited ? query : value === "all" ? "" : selected?.label ?? "";
   const activeChoice = shownChoices[activeIndex];
+  const displayValue = disabled
+    ? disabledHint
+    : selected?.label ?? allLabel;
   const statusText = open
-    ? filteredChoices.length > shownChoices.length
-      ? `Showing ${shownChoices.length} of ${filteredChoices.length} matching choices. Keep typing to narrow the list.`
-      : `${filteredChoices.length} matching ${filteredChoices.length === 1 ? "choice" : "choices"}.`
+    ? queryTokens.length > 0
+      ? filteredChoices.length > shownChoices.length
+        ? `Showing ${shownChoices.length} of ${filteredChoices.length} matching choices. Keep typing to narrow the list.`
+        : `${filteredChoices.length} matching ${filteredChoices.length === 1 ? "choice" : "choices"}.`
+      : filteredChoices.length > shownChoices.length
+        ? `Showing ${shownChoices.length} of ${filteredChoices.length} choices. Use search to narrow the list.`
+        : `${filteredChoices.length} ${filteredChoices.length === 1 ? "choice" : "choices"} available.`
     : value === "all"
-      ? `${choices.length} choices available.`
+      ? `${choices.length} ${choices.length === 1 ? "choice" : "choices"} available.`
       : `${selected?.label ?? value} selected.`;
 
   useEffect(() => {
     setActiveIndex(0);
     setOptionLimit(MAX_VISIBLE_OPTIONS);
-  }, [edited, query, options, allLabel]);
+  }, [query, options, allLabel]);
 
   useEffect(() => {
     if (!open) return;
@@ -102,7 +113,6 @@ export function SearchableSelect({
     const closeOnOutsidePointer = (event: PointerEvent): void => {
       if (event.target instanceof Node && rootRef.current?.contains(event.target)) return;
       setOpen(false);
-      setEdited(false);
       setQuery("");
     };
 
@@ -113,33 +123,104 @@ export function SearchableSelect({
   useEffect(() => {
     if (!disabled) return;
     setOpen(false);
-    setEdited(false);
     setQuery("");
   }, [disabled]);
 
-  const openChoices = (): void => {
+  useEffect(() => {
+    if (!open || !activeChoice) return;
+    const activeOption = document.getElementById(`${id}-option-${activeIndex}`);
+    activeOption?.scrollIntoView?.({ block: "nearest" });
+  }, [activeChoice, activeIndex, id, open]);
+
+  const focusAfterRender = (
+    target: "listbox" | "search" | "trigger"
+  ): void => {
+    window.requestAnimationFrame(() => {
+      if (target === "listbox") {
+        listboxRef.current?.focus({ preventScroll: true });
+        return;
+      }
+      if (target === "search") {
+        searchRef.current?.focus({ preventScroll: true });
+        return;
+      }
+      triggerRef.current?.focus({ preventScroll: true });
+    });
+  };
+
+  const openChoices = (
+    focusTarget?: "listbox" | "search"
+  ): void => {
     if (disabled) return;
-    if (open) return;
-    setOpen(true);
-    setEdited(false);
     setQuery("");
     setOptionLimit(MAX_VISIBLE_OPTIONS);
-    const selectedIndex = shownChoices.findIndex((option) => option.id === value);
-    setActiveIndex(Math.max(0, selectedIndex));
+    setActiveIndex(0);
+    if (!open) setOpen(true);
+    if (focusTarget) focusAfterRender(focusTarget);
   };
 
   const choose = (option: SearchableSelectOption): void => {
     onChange(option.id);
     setOpen(false);
-    setEdited(false);
     setQuery("");
-    window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    focusAfterRender("trigger");
   };
 
-  const closeChoices = (): void => {
+  const closeChoices = (restoreFocus = false): void => {
     setOpen(false);
-    setEdited(false);
     setQuery("");
+    if (restoreFocus) focusAfterRender("trigger");
+  };
+
+  const moveActive = (direction: 1 | -1): void => {
+    if (
+      direction === 1
+      && activeIndex === shownChoices.length - 1
+      && remainingChoiceCount > 0
+    ) {
+      setOptionLimit((limit) => Math.min(
+        limit + MAX_VISIBLE_OPTIONS,
+        filteredChoices.length
+      ));
+      setActiveIndex((current) => current + 1);
+      return;
+    }
+
+    setActiveIndex((current) => {
+      if (shownChoices.length === 0) return 0;
+      return (current + direction + shownChoices.length) % shownChoices.length;
+    });
+  };
+
+  const handleListboxKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeChoices(true);
+      return;
+    }
+
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      moveActive(event.key === "ArrowDown" ? 1 : -1);
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      setActiveIndex(0);
+      return;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      setActiveIndex(Math.max(0, shownChoices.length - 1));
+      return;
+    }
+
+    if ((event.key === "Enter" || event.key === " ") && activeChoice) {
+      event.preventDefault();
+      choose(activeChoice);
+    }
   };
 
   return (
@@ -159,95 +240,54 @@ export function SearchableSelect({
         {label}
       </label>
       <div class="searchable-select__control">
-        <input
-          ref={inputRef}
+        <button
+          ref={triggerRef}
           id={id}
-          type="text"
-          role="combobox"
-          aria-label={label}
-          aria-autocomplete="list"
+          class="searchable-select__trigger"
+          type="button"
+          aria-label={`${label}: ${displayValue}`}
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls={listboxId}
-          aria-activedescendant={open && activeChoice
-            ? `${id}-option-${activeIndex}`
-            : undefined}
           aria-describedby={[describedBy, countId].filter(Boolean).join(" ")}
-          autocomplete="off"
           disabled={disabled}
-          value={inputValue}
-          placeholder={disabled ? disabledHint : allLabel}
-          onFocus={(event) => {
-            openChoices();
-            event.currentTarget.select();
-          }}
           onClick={() => {
-            if (!open) openChoices();
-          }}
-          onInput={(event) => {
-            setQuery(event.currentTarget.value);
-            setEdited(true);
-            setOpen(true);
-            setActiveIndex(0);
+            if (open) {
+              closeChoices();
+            } else {
+              openChoices(isSearchable ? "search" : "listbox");
+            }
           }}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               if (!open) return;
               event.preventDefault();
-              setOpen(false);
-              setEdited(false);
-              setQuery("");
+              closeChoices(true);
               return;
             }
 
             if (event.key === "ArrowDown" || event.key === "ArrowUp") {
               event.preventDefault();
               if (!open) {
-                openChoices();
+                openChoices("listbox");
                 return;
               }
-              const direction = event.key === "ArrowDown" ? 1 : -1;
-              if (
-                direction === 1
-                && activeIndex === shownChoices.length - 1
-                && remainingChoiceCount > 0
-              ) {
-                setOptionLimit((limit) => Math.min(
-                  limit + MAX_VISIBLE_OPTIONS,
-                  filteredChoices.length
-                ));
-                setActiveIndex((current) => current + 1);
-                return;
-              }
-              setActiveIndex((current) => {
-                if (shownChoices.length === 0) return 0;
-                return (current + direction + shownChoices.length) % shownChoices.length;
-              });
+              moveActive(event.key === "ArrowDown" ? 1 : -1);
               return;
             }
 
-            if (event.key === "Home" && open) {
-              event.preventDefault();
-              setActiveIndex(0);
-              return;
-            }
-
-            if (event.key === "End" && open) {
-              event.preventDefault();
-              setActiveIndex(Math.max(0, shownChoices.length - 1));
-              return;
-            }
-
-            if (event.key === "Enter") {
+            if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
               if (!open) {
-                openChoices();
+                openChoices(isSearchable ? "search" : "listbox");
               } else if (activeChoice) {
                 choose(activeChoice);
               }
             }
           }}
-        />
+        >
+          <span>{displayValue}</span>
+        </button>
         <span class="searchable-select__chevron" aria-hidden="true">⌄</span>
         {value !== "all" && !disabled ? (
           <button
@@ -258,11 +298,8 @@ export function SearchableSelect({
             onClick={() => {
               onChange("all");
               setOpen(false);
-              setEdited(false);
               setQuery("");
-              window.requestAnimationFrame(() =>
-                inputRef.current?.focus({ preventScroll: true })
-              );
+              focusAfterRender("trigger");
             }}
           >
             ×
@@ -272,7 +309,58 @@ export function SearchableSelect({
 
       {open ? (
         <div class="searchable-select__popover">
-          <div id={listboxId} class="searchable-select__list" role="listbox" aria-label={label}>
+          {isSearchable ? (
+            <label class="searchable-select__search-wrap">
+              <span class="visually-hidden">Search {label} choices</span>
+              <input
+                ref={searchRef}
+                class="searchable-select__search"
+                type="search"
+                value={query}
+                placeholder={`Search ${label.toLocaleLowerCase()}…`}
+                autocomplete="off"
+                aria-controls={listboxId}
+                aria-describedby={countId}
+                onInput={(event) => {
+                  setQuery(event.currentTarget.value);
+                  setActiveIndex(0);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    closeChoices(true);
+                    return;
+                  }
+                  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    if (shownChoices.length > 0) {
+                      setActiveIndex(event.key === "ArrowDown"
+                        ? 0
+                        : shownChoices.length - 1);
+                      focusAfterRender("listbox");
+                    }
+                    return;
+                  }
+                  if (event.key === "Enter" && activeChoice) {
+                    event.preventDefault();
+                    focusAfterRender("listbox");
+                  }
+                }}
+              />
+            </label>
+          ) : null}
+          <div
+            ref={listboxRef}
+            id={listboxId}
+            class="searchable-select__list"
+            role="listbox"
+            aria-label={label}
+            aria-activedescendant={activeChoice
+              ? `${id}-option-${activeIndex}`
+              : undefined}
+            tabIndex={-1}
+            onKeyDown={handleListboxKeyDown}
+          >
             {shownChoices.map((option, index) => (
               <div
                 id={`${id}-option-${index}`}
@@ -299,12 +387,21 @@ export function SearchableSelect({
             <button
               class="searchable-select__more"
               type="button"
+              onKeyDown={(event) => {
+                if (event.key !== "Escape") return;
+                event.preventDefault();
+                closeChoices(true);
+              }}
               onClick={() => {
                 setOptionLimit((limit) => Math.min(
                   limit + MAX_VISIBLE_OPTIONS,
                   filteredChoices.length
                 ));
-                inputRef.current?.focus({ preventScroll: true });
+                if (isSearchable) {
+                  searchRef.current?.focus({ preventScroll: true });
+                } else {
+                  listboxRef.current?.focus({ preventScroll: true });
+                }
               }}
             >
               Show next {Math.min(MAX_VISIBLE_OPTIONS, remainingChoiceCount)} choices

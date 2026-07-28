@@ -136,15 +136,17 @@ describe("Nexy application", () => {
     expect(count.getAttribute("aria-live")).toBe("polite");
     expect(count.textContent).toContain("20 of 20 fighters");
 
-    const mediaSelect = picker.getByRole("combobox", { name: "Media" }) as HTMLInputElement;
-    const originSelect = picker.getByRole("combobox", {
-      name: "Publisher / origin"
-    }) as HTMLInputElement;
-    const universeSelect = picker.getByRole("combobox", {
-      name: "Universe / verse"
-    }) as HTMLInputElement;
-    const choosePathOption = (control: HTMLInputElement, option: string): void => {
-      fireEvent.focus(control);
+    const mediaSelect = picker.getByRole("button", {
+      name: /^Media:/
+    }) as HTMLButtonElement;
+    const originSelect = picker.getByRole("button", {
+      name: /^Publisher \/ origin:/
+    }) as HTMLButtonElement;
+    const universeSelect = picker.getByRole("button", {
+      name: /^Universe \/ verse:/
+    }) as HTMLButtonElement;
+    const choosePathOption = (control: HTMLButtonElement, option: string): void => {
+      fireEvent.click(control);
       fireEvent.click(picker.getByRole("option", { name: option }));
     };
     const openChoiceLabels = (label: string): readonly string[] =>
@@ -157,8 +159,8 @@ describe("Nexy application", () => {
 
     expect(originSelect.disabled).toBe(true);
     expect(universeSelect.disabled).toBe(true);
-    expect(originSelect.placeholder).toBe("Choose media first");
-    expect(universeSelect.placeholder).toBe("Choose publisher / origin first");
+    expect(originSelect.textContent).toBe("Choose media first");
+    expect(universeSelect.textContent).toBe("Choose publisher / origin first");
     expect(browsePath.dataset.browseLevel).toBe("all");
 
     choosePathOption(mediaSelect, "Comics");
@@ -166,7 +168,7 @@ describe("Nexy application", () => {
     expect(universeSelect.disabled).toBe(true);
     expect(browseStatus.textContent).toContain("Comics selected");
     expect(browsePath.dataset.browseLevel).toBe("media");
-    fireEvent.focus(originSelect);
+    fireEvent.click(originSelect);
     expect(openChoiceLabels("Publisher / origin")).toEqual([
       "All Comics publishers / origins",
       "DC Comics",
@@ -177,7 +179,7 @@ describe("Nexy application", () => {
     expect(universeSelect.disabled).toBe(false);
     expect(browseStatus.textContent).toContain("Comics → DC Comics");
     expect(browsePath.dataset.browseLevel).toBe("publisher");
-    fireEvent.focus(universeSelect);
+    fireEvent.click(universeSelect);
     expect(openChoiceLabels("Universe / verse")).toEqual([
       "All DC Comics universes",
       "Post-Crisis",
@@ -201,9 +203,9 @@ describe("Nexy application", () => {
     expect(filteredFighter?.textContent).toContain("DC Comics / Post-Flashpoint");
 
     fireEvent.click(picker.getByRole("button", { name: "Clear Media" }));
-    expect(originSelect.value).toBe("");
+    expect(originSelect.textContent).toBe("Choose media first");
     expect(originSelect.disabled).toBe(true);
-    expect(universeSelect.value).toBe("");
+    expect(universeSelect.textContent).toBe("Choose publisher / origin first");
     expect(universeSelect.disabled).toBe(true);
     await waitFor(() => {
       expect(count.textContent).toContain("20 of 20 fighters");
@@ -266,7 +268,7 @@ describe("Nexy application", () => {
     await waitFor(() => {
       expect(count.textContent).toContain("2 of 20 fighters");
     });
-    fireEvent.focus(universeSelect);
+    fireEvent.click(universeSelect);
     expect(openChoiceLabels("Universe / verse")).toEqual([
       "All DC Comics universes",
       "Post-Crisis",
@@ -298,11 +300,13 @@ describe("Nexy application", () => {
     fireEvent.click(firstFighter);
     const selectedName = picker.getByRole("heading", { level: 2 }).textContent;
 
-    const media = picker.getByRole("combobox", { name: "Media" });
-    fireEvent.focus(media);
+    const media = picker.getByRole("button", { name: /^Media:/ });
+    fireEvent.click(media);
     fireEvent.click(picker.getByRole("option", { name: "Comics" }));
-    const publisher = picker.getByRole("combobox", { name: "Publisher / origin" });
-    fireEvent.focus(publisher);
+    const publisher = picker.getByRole("button", {
+      name: /^Publisher \/ origin:/
+    });
+    fireEvent.click(publisher);
     fireEvent.click(picker.getByRole("option", { name: "DC Comics" }));
 
     expect(picker.getByRole("heading", { level: 2 }).textContent).toBe(selectedName);

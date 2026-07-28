@@ -1,6 +1,12 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/preact";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor
+} from "@testing-library/preact";
 import { useState } from "preact/hooks";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { SearchableSelect } from "../../src/components/SearchableSelect.js";
 
@@ -29,27 +35,73 @@ function ControlledSelect() {
 describe("SearchableSelect", () => {
   afterEach(cleanup);
 
-  it("filters choices and supports keyboard selection and clearing", () => {
+  it("opens a short menu as a complete list and supports selection and clearing", async () => {
     render(<ControlledSelect />);
-    const combobox = screen.getByRole("combobox", { name: "Media" });
+    const trigger = screen.getByRole("button", { name: "Media: All media" });
 
-    fireEvent.focus(combobox);
-    expect(screen.getByRole("listbox", { name: "Media" })).toBeTruthy();
+    expect(trigger.getAttribute("aria-haspopup")).toBe("listbox");
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("searchbox", {
+      name: "Search Media choices"
+    })).toBeNull();
 
-    fireEvent.input(combobox, { target: { value: "mov" } });
-    expect(screen.getAllByRole("option")).toHaveLength(1);
-    expect(screen.getByRole("option").textContent).toContain("Movies");
-    expect(screen.getAllByText("1 matching choice.")).toHaveLength(2);
+    fireEvent.click(trigger);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    const listbox = screen.getByRole("listbox", { name: "Media" });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(listbox);
+    });
+    expect(
+      screen.getAllByRole("option").map((option) =>
+        option.textContent?.replace("✓", "")
+      )
+    ).toEqual(["All media", "Comics", "Video games", "Movies"]);
+    expect(screen.queryByRole("searchbox", {
+      name: "Search Media choices"
+    })).toBeNull();
 
-    fireEvent.keyDown(combobox, { key: "Enter" });
-    expect((combobox as HTMLInputElement).value).toBe("Movies");
+    fireEvent.click(screen.getByRole("option", { name: "Movies" }));
     expect(screen.queryByRole("listbox", { name: "Media" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Media: Movies" })).toBeTruthy();
+    await waitFor(() => {
+      expect(document.activeElement).toBe(trigger);
+    });
 
     fireEvent.click(screen.getByRole("button", { name: "Clear Media" }));
-    expect((combobox as HTMLInputElement).value).toBe("");
+    expect(screen.getByRole("button", { name: "Media: All media" })).toBeTruthy();
   });
 
-  it("closes on Escape and exposes downstream disabled guidance", () => {
+  it("supports keyboard navigation and restores trigger focus", async () => {
+    render(<ControlledSelect />);
+    const trigger = screen.getByRole("button", { name: "Media: All media" });
+
+    trigger.focus();
+    fireEvent.keyDown(trigger, { key: "Enter" });
+    const listbox = screen.getByRole("listbox", { name: "Media" });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(listbox);
+    });
+
+    fireEvent.keyDown(listbox, { key: "ArrowDown" });
+    fireEvent.keyDown(listbox, { key: "Enter" });
+    expect(screen.getByRole("button", { name: "Media: Comics" })).toBeTruthy();
+    await waitFor(() => {
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    fireEvent.keyDown(trigger, { key: " " });
+    const reopenedListbox = screen.getByRole("listbox", { name: "Media" });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(reopenedListbox);
+    });
+    fireEvent.keyDown(reopenedListbox, { key: "Escape" });
+    expect(screen.queryByRole("listbox", { name: "Media" })).toBeNull();
+    await waitFor(() => {
+      expect(document.activeElement).toBe(trigger);
+    });
+  });
+
+  it("closes when focus leaves and exposes downstream disabled guidance", async () => {
     const onChange = vi.fn();
     const { rerender } = render(
       <>
@@ -66,15 +118,17 @@ describe("SearchableSelect", () => {
         <button type="button">After control</button>
       </>
     );
-    const combobox = screen.getByRole("combobox", { name: "Publisher / origin" });
+    const trigger = screen.getByRole("button", {
+      name: "Publisher / origin: All publishers"
+    });
 
-    fireEvent.focus(combobox);
-    fireEvent.keyDown(combobox, { key: "Escape" });
-    expect(screen.queryByRole("listbox")).toBeNull();
-
-    fireEvent.focus(combobox);
+    fireEvent.click(trigger);
+    const listbox = screen.getByRole("listbox");
+    await waitFor(() => {
+      expect(document.activeElement).toBe(listbox);
+    });
     const afterControl = screen.getByRole("button", { name: "After control" });
-    fireEvent.focusOut(combobox, { relatedTarget: afterControl });
+    fireEvent.focusOut(listbox, { relatedTarget: afterControl });
     fireEvent.focus(afterControl);
     expect(screen.queryByRole("listbox")).toBeNull();
 
@@ -93,14 +147,14 @@ describe("SearchableSelect", () => {
       />
     );
 
-    const disabled = screen.getByRole("combobox", {
-      name: "Publisher / origin"
-    }) as HTMLInputElement;
+    const disabled = screen.getByRole("button", {
+      name: "Publisher / origin: Choose media first"
+    }) as HTMLButtonElement;
     expect(disabled.disabled).toBe(true);
-    expect(disabled.placeholder).toBe("Choose media first");
+    expect(disabled.textContent).toBe("Choose media first");
   });
 
-  it("caps a broad menu while reporting the complete result count", () => {
+  it("adds search only to broad menus and reports the complete result count", async () => {
     const manyOptions = Array.from({ length: 75 }, (_, index) => ({
       id: `option-${index}`,
       label: `Universe ${String(index + 1).padStart(3, "0")}`
@@ -118,16 +172,41 @@ describe("SearchableSelect", () => {
       />
     );
 
-    fireEvent.focus(screen.getByRole("combobox", { name: "Universe / verse" }));
+    fireEvent.click(screen.getByRole("button", {
+      name: "Universe / verse: All universes"
+    }));
+    const search = screen.getByRole("searchbox", {
+      name: "Search Universe / verse choices"
+    });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(search);
+    });
     expect(screen.getAllByRole("option")).toHaveLength(50);
     expect(
       screen.getAllByText(
-        "Showing 50 of 76 matching choices. Keep typing to narrow the list."
+        "Showing 50 of 76 choices. Use search to narrow the list."
       )
     ).toHaveLength(2);
 
+    fireEvent.input(search, { target: { value: "Universe 075" } });
+    expect(screen.getAllByRole("option")).toHaveLength(1);
+    expect(screen.getByRole("option").textContent).toContain("Universe 075");
+    expect(screen.getAllByText("1 matching choice.")).toHaveLength(2);
+
+    fireEvent.keyDown(search, { key: "Enter" });
+    await waitFor(() => {
+      expect(document.activeElement).toBe(
+        screen.getByRole("listbox", { name: "Universe / verse" })
+      );
+    });
+    expect(screen.getByRole("listbox", {
+      name: "Universe / verse"
+    })).toBeTruthy();
+
+    search.focus();
+    fireEvent.input(search, { target: { value: "" } });
     fireEvent.click(screen.getByRole("button", { name: "Show next 26 choices" }));
     expect(screen.getAllByRole("option")).toHaveLength(76);
-    expect(screen.getAllByText("76 matching choices.")).toHaveLength(2);
+    expect(screen.getAllByText("76 choices available.")).toHaveLength(2);
   });
 });
