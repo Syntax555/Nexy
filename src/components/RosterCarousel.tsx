@@ -86,13 +86,25 @@ export function RosterCarousel({
         .find((item) => item.dataset.characterId === featuredCharacter.id);
       if (!list || !entry) return;
 
-      const targetLeft = entry.offsetLeft - ((list.clientWidth - entry.offsetWidth) / 2);
+      const listBounds = list.getBoundingClientRect();
+      const entryBounds = entry.getBoundingClientRect();
+      const centeredLeft = list.scrollLeft
+        + (entryBounds.left + (entryBounds.width / 2))
+        - (listBounds.left + (listBounds.width / 2));
+      const targetLeft = Math.max(
+        0,
+        Math.min(centeredLeft, list.scrollWidth - list.clientWidth)
+      );
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (typeof list.scrollTo === "function") {
-        list.scrollTo({
-          left: targetLeft,
-          behavior: reducedMotion ? "auto" : "smooth"
-        });
+        try {
+          list.scrollTo({
+            left: targetLeft,
+            behavior: reducedMotion ? "auto" : "smooth"
+          });
+        } catch {
+          list.scrollLeft = targetLeft;
+        }
       } else {
         list.scrollLeft = targetLeft;
       }

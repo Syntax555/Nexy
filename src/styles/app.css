@@ -1264,7 +1264,9 @@
       align-items: stretch;
       gap: 14px;
       padding: 4px calc((100% - var(--carousel-slide-width)) / 2) 12px;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-inline: contain;
       scroll-behavior: smooth;
       scroll-padding-inline: calc((100% - var(--carousel-slide-width)) / 2);
       scroll-snap-type: x mandatory;
@@ -1604,7 +1606,9 @@
       gap: 12px;
       max-height: none;
       padding: 4px calc((100% - var(--carousel-slide-width)) / 2) 12px;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-inline: contain;
       scroll-behavior: smooth;
       scroll-padding-inline: calc((100% - var(--carousel-slide-width)) / 2);
       scroll-snap-type: x mandatory;

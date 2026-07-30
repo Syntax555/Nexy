@@ -34,6 +34,7 @@ async function selectFighter(
   buttonName: RegExp
 ): Promise<void> {
   await picker.getByRole("searchbox", { name: "Search characters" }).fill(query);
+  await expect(picker.locator(".roster-card")).toHaveCount(1);
   await picker.getByRole("button", { name: buttonName }).click();
 }
 
@@ -280,6 +281,42 @@ test("mobile flow advances only after the explicit Fighter 02 action", async ({
   await expect(page.locator("#mobile-fighter-right-panel")).toBeInViewport();
 });
 
+test("mobile spotlight track follows the featured fighter", async ({
+  page
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile-"), "Mobile-only layout");
+  await page.goto("./");
+
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  const track = leftPicker.getByRole("list", { name: "Characters" });
+  const featuredCard = leftPicker.locator('.roster-card[aria-current="true"]');
+  const nextArrow = leftPicker.locator(".roster-carousel__arrow--next");
+
+  await expect(featuredCard).toHaveAccessibleName(/^Agent Venom,/);
+  const scrollLeftBefore = await track.evaluate((element) => element.scrollLeft);
+
+  await nextArrow.click();
+  await expect(featuredCard).toHaveAccessibleName(/^Aurora,/);
+  await expect.poll(
+    () => track.evaluate(
+      (element, previousScrollLeft) => element.scrollLeft - previousScrollLeft,
+      scrollLeftBefore
+    ),
+    { message: "the mobile carousel track should follow its featured fighter" }
+  ).toBeGreaterThan(100);
+  await expect.poll(async () => {
+    const [trackBox, cardBox] = await Promise.all([
+      track.boundingBox(),
+      featuredCard.boundingBox()
+    ]);
+    if (!trackBox || !cardBox) return Number.POSITIVE_INFINITY;
+    return Math.abs(
+      (trackBox.x + (trackBox.width / 2))
+      - (cardBox.x + (cardBox.width / 2))
+    );
+  }).toBeLessThanOrEqual(3);
+});
+
 test("desktop spotlight carousel previews fighters before a stable master-detail view", async ({
   page
 }, testInfo) => {
@@ -428,6 +465,7 @@ test("forced-colors mode preserves selected-state affordances", async ({
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
   await leftPicker.getByRole("searchbox", { name: "Search characters" }).fill("");
+  await expect(leftPicker.locator(".roster-card")).toHaveCount(20);
 
   const selectedCard = leftPicker.locator('.roster-card[aria-pressed="true"]');
   const unselectedCard = leftPicker.locator('.roster-card[aria-pressed="false"]').first();
