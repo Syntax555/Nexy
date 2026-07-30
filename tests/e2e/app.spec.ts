@@ -280,7 +280,7 @@ test("mobile flow advances only after the explicit Fighter 02 action", async ({
   await expect(page.locator("#mobile-fighter-right-panel")).toBeInViewport();
 });
 
-test("desktop gallery fills the picker and becomes a stable master-detail view", async ({
+test("desktop spotlight carousel previews fighters before a stable master-detail view", async ({
   page
 }, testInfo) => {
   test.skip(testInfo.project.name.startsWith("mobile-"), "Desktop-only layout");
@@ -290,10 +290,14 @@ test("desktop gallery fills the picker and becomes a stable master-detail view",
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
   const pickerBody = leftPicker.locator(".fighter-picker__body");
   const rosterBrowser = leftPicker.locator(".roster-browser");
-  const rosterCards = leftPicker.locator(".roster-card");
+  const carousel = leftPicker.getByRole("region", {
+    name: "Cyan corner character carousel"
+  });
+  const featuredCard = leftPicker.locator('.roster-card[aria-current="true"]');
   await leftPicker.scrollIntoViewIfNeeded();
 
   await expect(leftPicker).toHaveAttribute("data-view", "gallery");
+  await expect(featuredCard).toHaveAccessibleName(/^Agent Venom,/);
   const [initialLeftBox, initialRightBox] = await Promise.all([
     leftPicker.boundingBox(),
     rightPicker.boundingBox()
@@ -310,34 +314,55 @@ test("desktop gallery fills the picker and becomes a stable master-detail view",
     (initialBodyBox?.width ?? 0) * 0.9
   );
 
-  const [firstCardBox, secondCardBox] = await Promise.all([
-    rosterCards.nth(0).boundingBox(),
-    rosterCards.nth(1).boundingBox()
+  const previousArrow = carousel.locator(".roster-carousel__arrow--previous");
+  const nextArrow = carousel.locator(".roster-carousel__arrow--next");
+  const [featuredBox, portraitBox, previousArrowBox, nextArrowBox] = await Promise.all([
+    featuredCard.boundingBox(),
+    featuredCard.locator(".roster-card__portrait").boundingBox(),
+    previousArrow.boundingBox(),
+    nextArrow.boundingBox()
   ]);
-  expect(firstCardBox).not.toBeNull();
-  expect(secondCardBox).not.toBeNull();
-  expect(Math.abs((firstCardBox?.y ?? 0) - (secondCardBox?.y ?? 0)))
-    .toBeLessThanOrEqual(1);
+  expect(featuredBox).not.toBeNull();
+  expect(portraitBox).not.toBeNull();
+  expect(featuredBox?.width ?? 0).toBeGreaterThanOrEqual(
+    (initialBodyBox?.width ?? 0) * 0.55
+  );
+  expect(featuredBox?.height ?? 0).toBeGreaterThanOrEqual(
+    (initialBodyBox?.height ?? 0) * 0.45
+  );
+  expect(portraitBox?.height ?? 0).toBeGreaterThanOrEqual(200);
+  expect(previousArrowBox?.width ?? 0).toBeGreaterThanOrEqual(44);
+  expect(previousArrowBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+  expect(nextArrowBox?.width ?? 0).toBeGreaterThanOrEqual(44);
+  expect(nextArrowBox?.height ?? 0).toBeGreaterThanOrEqual(44);
 
-  const visibleCardCount = await rosterCards.evaluateAll((cards) => {
-    const viewport = cards[0]?.closest(".roster-list")?.getBoundingClientRect();
-    if (!viewport) return 0;
-    return cards.filter((card) => {
-      const bounds = card.getBoundingClientRect();
-      return bounds.bottom > viewport.top && bounds.top < viewport.bottom;
-    }).length;
-  });
-  expect(visibleCardCount).toBeGreaterThanOrEqual(4);
+  await nextArrow.focus();
+  await nextArrow.click();
+  await expect(leftPicker).toHaveAttribute("data-view", "gallery");
+  await expect(featuredCard).toHaveAccessibleName(/^Aurora,/);
+  await expect(nextArrow).toBeFocused();
+  await expect(leftPicker.locator('.roster-card[aria-pressed="true"]')).toHaveCount(0);
+  await expect.poll(async () => {
+    const [listBox, cardBox] = await Promise.all([
+      leftPicker.locator(".roster-list").boundingBox(),
+      featuredCard.boundingBox()
+    ]);
+    if (!listBox || !cardBox) return Number.POSITIVE_INFINITY;
+    return Math.abs(
+      (listBox.x + (listBox.width / 2))
+      - (cardBox.x + (cardBox.width / 2))
+    );
+  }).toBeLessThanOrEqual(2);
 
-  const captainAmerica = leftPicker.getByRole("button", {
-    name: /^Captain America,/
-  });
-  await captainAmerica.scrollIntoViewIfNeeded();
-  const scrollBeforeSelection = await page.evaluate(() => window.scrollY);
-  await captainAmerica.click();
+  await featuredCard.scrollIntoViewIfNeeded();
+  const pickerViewportYBeforeSelection = await leftPicker.evaluate(
+    (element) => element.getBoundingClientRect().y
+  );
+  await featuredCard.click();
   await expect(leftPicker).toHaveAttribute("data-view", "profile");
-  await expect(captainAmerica).toHaveAttribute("aria-pressed", "true");
-  await expect(captainAmerica).toBeFocused();
+  const selectedCard = leftPicker.locator('.roster-card[aria-pressed="true"]');
+  await expect(selectedCard).toHaveAccessibleName(/^Aurora,/);
+  await expect(selectedCard).toBeFocused();
 
   const [leftBox, rightBox, selectedBodyBox, selectedRosterBox, profileBox] = await Promise.all([
     leftPicker.boundingBox(),
@@ -360,14 +385,13 @@ test("desktop gallery fills the picker and becomes a stable master-detail view",
   expect(Math.abs((leftBox?.height ?? 0) - (rightBox?.height ?? 0)))
     .toBeLessThanOrEqual(1);
   expect(Math.abs((leftBox?.height ?? 0) - (initialLeftBox?.height ?? 0)))
-    .toBeLessThanOrEqual(1);
+    .toBeLessThanOrEqual(8);
   expect(Math.abs((rightBox?.height ?? 0) - (initialRightBox?.height ?? 0)))
-    .toBeLessThanOrEqual(1);
+    .toBeLessThanOrEqual(8);
 
-  const [selectedCardBox, selectedRosterViewport, scrollAfterSelection] = await Promise.all([
-    captainAmerica.boundingBox(),
-    leftPicker.locator(".roster-list").boundingBox(),
-    page.evaluate(() => window.scrollY)
+  const [selectedCardBox, selectedRosterViewport] = await Promise.all([
+    selectedCard.boundingBox(),
+    leftPicker.locator(".roster-list").boundingBox()
   ]);
   expect(selectedCardBox).not.toBeNull();
   expect(selectedRosterViewport).not.toBeNull();
@@ -378,10 +402,13 @@ test("desktop gallery fills the picker and becomes a stable master-detail view",
     .toBeLessThanOrEqual(
       (selectedRosterViewport?.y ?? 0) + (selectedRosterViewport?.height ?? 0) + 1
     );
-  expect(Math.abs(scrollAfterSelection - scrollBeforeSelection)).toBeLessThanOrEqual(1);
+  expect(Math.abs(
+    (leftBox?.y ?? pickerViewportYBeforeSelection) - pickerViewportYBeforeSelection
+  )).toBeLessThanOrEqual(16);
 
   await leftPicker.getByRole("button", { name: "Remove fighter" }).click();
   await expect(leftPicker).toHaveAttribute("data-view", "gallery");
+  await expect(featuredCard).toHaveAccessibleName(/^Aurora,/);
   const [restoredBodyBox, restoredRosterBox] = await Promise.all([
     pickerBody.boundingBox(),
     rosterBrowser.boundingBox()

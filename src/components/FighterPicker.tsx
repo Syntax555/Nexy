@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
-import { characterImageVariant } from "../app/assets.js";
-import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter, RosterTier } from "../app/roster.js";
 import type {
   BattleSelection,
@@ -10,8 +8,8 @@ import type {
 import { getCachedSearchIndex, searchIndex } from "../search/search.js";
 import "../styles/roster-scale.css";
 import type { DialogImage } from "./ImageDialog.js";
-import { CharacterImage } from "./CharacterImage.js";
 import { CharacterProfile } from "./CharacterProfile.js";
+import { RosterCarousel } from "./RosterCarousel.js";
 import { SearchableSelect } from "./SearchableSelect.js";
 
 type SortOrder = "name" | "name-desc" | "tier-desc" | "tier-asc";
@@ -132,7 +130,6 @@ export function FighterPicker({
   const [sortOrder, setSortOrder] = useState<SortOrder>("name");
   const [visibleLimit, setVisibleLimit] = useState(ROSTER_PAGE_SIZE);
   const searchRef = useRef<HTMLInputElement>(null);
-  const rosterListRef = useRef<HTMLDivElement>(null);
   const fighterNumber = side === "left" ? "01" : "02";
   const accentName = side === "left" ? "Cyan corner" : "Magenta corner";
   const searchIndexForRoster = useMemo(
@@ -253,6 +250,7 @@ export function FighterPicker({
   ]);
   const shownRosterCount = Math.min(visibleLimit, visibleRoster.length);
   const remainingRosterCount = Math.max(0, visibleRoster.length - shownRosterCount);
+  const galleryActive = !(selectedCharacter && profile);
   const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
   const selectedOrigin = originOptions.find((option) => option.id === origin) ?? null;
   const selectedVerse = verseOptions.find((option) => option.id === verse) ?? null;
@@ -273,7 +271,6 @@ export function FighterPicker({
 
   useEffect(() => {
     setVisibleLimit(ROSTER_PAGE_SIZE);
-    if (rosterListRef.current) rosterListRef.current.scrollTop = 0;
   }, [
     age,
     classification,
@@ -304,29 +301,6 @@ export function FighterPicker({
     window.addEventListener("keydown", focusSearch);
     return () => window.removeEventListener("keydown", focusSearch);
   }, [side]);
-
-  useEffect(() => {
-    if (!selection) return;
-
-    const frame = window.requestAnimationFrame(() => {
-      const list = rosterListRef.current;
-      const selectedCard = list?.querySelector<HTMLElement>(
-        '.roster-card[aria-pressed="true"]'
-      );
-      if (!list || !selectedCard) return;
-
-      selectedCard.focus({ preventScroll: true });
-      const listBounds = list.getBoundingClientRect();
-      const cardBounds = selectedCard.getBoundingClientRect();
-      if (cardBounds.top < listBounds.top) {
-        list.scrollTop -= listBounds.top - cardBounds.top;
-      } else if (cardBounds.bottom > listBounds.bottom) {
-        list.scrollTop += cardBounds.bottom - listBounds.bottom;
-      }
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [selection?.characterId]);
 
   const focusSearchAfterRender = (): void => {
     window.requestAnimationFrame(() => {
@@ -371,12 +345,24 @@ export function FighterPicker({
     || classification !== "all"
     || sortOrder !== "name"
   );
+  const rosterResetKey = [
+    query,
+    media,
+    origin,
+    verse,
+    gender,
+    age,
+    tier,
+    classification,
+    sortOrder,
+    String(roster.length)
+  ].join("\u0000");
 
   return (
     <section
       class="fighter-picker"
       data-side={side}
-      data-view={selectedCharacter && profile ? "profile" : "gallery"}
+      data-view={galleryActive ? "gallery" : "profile"}
       aria-labelledby={`${side}-picker-title`}
     >
       <header class="fighter-picker__header">
@@ -605,95 +591,28 @@ export function FighterPicker({
             </p>
           ) : null}
 
-          <div
-            ref={rosterListRef}
-            class="roster-list"
-            role="list"
-            aria-label="Characters"
-            aria-describedby={[
+          <RosterCarousel
+            side={side}
+            accentName={accentName}
+            items={renderedRoster}
+            selection={selection}
+            galleryActive={galleryActive}
+            shownRosterCount={shownRosterCount}
+            visibleRosterCount={visibleRoster.length}
+            remainingRosterCount={remainingRosterCount}
+            nextPageSize={Math.min(ROSTER_PAGE_SIZE, remainingRosterCount)}
+            resetKey={rosterResetKey}
+            describedBy={[
               `${side}-rendered-roster-count`,
               `${side}-roster-artwork-note`,
               selectedOutsideFilters ? `${side}-roster-selection-note` : ""
             ].filter(Boolean).join(" ")}
-          >
-            {renderedRoster.map((item) => {
-              const image = item.defaultProfile.image;
-              const displayImage = isImageEnabledForPublicDisplay(image)
-                ? image
-                : null;
-              const isSelected = selection?.characterId === item.id;
-              return (
-                <div class="roster-entry" role="listitem" key={item.id}>
-                  <button
-                    class="roster-card"
-                    type="button"
-                    aria-label={`${item.name}, ${item.identity}, ${item.media}, ${item.origin}, ${item.verse}, tier ${item.tier}`}
-                    aria-pressed={isSelected}
-                    onClick={() => {
-                      if (!isSelected) onSelect(item.defaultSelection);
-                    }}
-                  >
-                    <span class="roster-card__portrait">
-                      {displayImage ? (
-                        <CharacterImage
-                          src={characterImageVariant(displayImage.image, 160)}
-                          alt=""
-                        />
-                      ) : (
-                        <span class="image-fallback" aria-hidden="true">
-                          {item.name.charAt(0)}
-                        </span>
-                      )}
-                    </span>
-                    <span class="roster-card__copy">
-                      <strong>{item.name}</strong>
-                      <small>
-                        {item.identity !== item.name ? `${item.identity} · ` : ""}
-                        {item.origin} / {item.verse}
-                        {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
-                      </small>
-                    </span>
-                    <span class="roster-card__badges">
-                      <span class="tier-badge">{item.tier}</span>
-                      {isSelected ? (
-                        <span class="roster-card__selected" aria-hidden="true">
-                          <span>✓</span> Selected
-                        </span>
-                      ) : null}
-                    </span>
-                  </button>
-                </div>
-              );
-            })}
-            {remainingRosterCount > 0 ? (
-              <div class="roster-list__more" role="listitem">
-                <button
-                  type="button"
-                  aria-label={`Show next ${Math.min(
-                    ROSTER_PAGE_SIZE,
-                    remainingRosterCount
-                  )} fighters`}
-                  onClick={() => setVisibleLimit((current) =>
-                    Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length)
-                  )}
-                >
-                  Show more fighters
-                </button>
-                <small>
-                  Showing {shownRosterCount} of {visibleRoster.length} matching fighters
-                </small>
-              </div>
-            ) : null}
-            {visibleRoster.length === 0 ? (
-              <div class="roster-empty">
-                <strong>No fighters found</strong>
-                <span>Try a shorter search or reset the filters.</span>
-                <button class="text-button" type="button" onClick={resetFilters}>
-                  Reset filters
-                </button>
-              </div>
-            ) : null}
-          </div>
+            onSelect={onSelect}
+            onResetFilters={resetFilters}
+            onShowMore={() => setVisibleLimit((current) =>
+              Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length)
+            )}
+          />
           <span
             id={`${side}-rendered-roster-count`}
             class="visually-hidden"

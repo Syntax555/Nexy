@@ -136,6 +136,7 @@
     --fighter: var(--left);
     --fighter-rgb: var(--left-rgb);
     height: 100%;
+    container-type: inline-size;
     overflow: clip;
     border: 1px solid var(--line);
     border-radius: var(--radius-large);
@@ -213,6 +214,7 @@
     grid-template-columns: minmax(230px, 0.82fr) minmax(260px, 1.18fr);
     align-items: stretch;
     min-height: 560px;
+    overflow-anchor: none;
   }
 
   .fighter-picker[data-view="gallery"] .fighter-picker__body {
@@ -490,6 +492,16 @@
     font-size: 0.64rem;
     font-weight: 800;
     line-height: 1.4;
+  }
+
+  .roster-carousel {
+    display: contents;
+  }
+
+  .roster-carousel__arrow,
+  .roster-carousel__status,
+  .roster-card__cta {
+    display: none;
   }
 
   .roster-list {
@@ -1157,7 +1169,7 @@
         "filters filters"
         "meta artwork"
         "selection selection"
-        "list list";
+        "carousel carousel";
       grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
       grid-template-columns: minmax(0, 1fr) minmax(180px, 0.42fr);
       align-content: stretch;
@@ -1224,56 +1236,140 @@
       grid-area: selection;
     }
 
+    .fighter-picker[data-view="gallery"] .roster-carousel {
+      position: relative;
+      display: grid;
+      min-width: 0;
+      min-height: 0;
+      grid-area: carousel;
+      grid-template-rows: minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "track"
+        "status"
+        "more";
+      padding: 0 10px 12px;
+      overflow: hidden;
+    }
+
     .fighter-picker[data-view="gallery"] .roster-list {
-      grid-area: list;
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 8px;
-      padding: 0 18px 18px;
-      scrollbar-gutter: stable;
+      --carousel-slide-width: min(480px, 68cqw);
+
+      display: grid;
+      min-height: 0;
+      grid-area: track;
+      grid-auto-columns: var(--carousel-slide-width);
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      grid-template-rows: minmax(0, 1fr);
+      align-items: stretch;
+      gap: 14px;
+      padding: 4px calc((100% - var(--carousel-slide-width)) / 2) 12px;
+      overflow: hidden;
+      scroll-behavior: smooth;
+      scroll-padding-inline: calc((100% - var(--carousel-slide-width)) / 2);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      touch-action: pan-y;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-entry {
+      height: 100%;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card {
-      min-height: 98px;
-      grid-template-rows: minmax(0, 1fr) auto;
-      grid-template-columns: 72px minmax(0, 1fr);
-      gap: 7px 10px;
-      padding: 8px;
-      border-color: var(--line);
+      width: 100%;
+      height: 100%;
+      min-height: 330px;
+      grid-template-rows: minmax(220px, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr);
+      align-content: stretch;
+      align-items: center;
+      gap: 9px 12px;
+      padding: 12px;
+      border-color: rgba(var(--fighter-rgb), 0.48);
+      border-radius: 18px;
       background:
-        linear-gradient(135deg, rgba(var(--fighter-rgb), 0.055), transparent 56%),
+        linear-gradient(180deg, rgba(var(--fighter-rgb), 0.12), transparent 48%),
         var(--surface-soft);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-entry:not([data-featured="true"]) {
+      pointer-events: none;
+    }
+
+    .fighter-picker[data-view="gallery"]
+    .roster-entry:not([data-featured="true"]) .roster-card {
+      transform: scale(0.9);
+      border-color: var(--line);
+      box-shadow: none;
+      opacity: 0.38;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card:hover {
-      border-color: rgba(var(--fighter-rgb), 0.55);
+      transform: translateY(-2px);
+      border-color: rgba(var(--fighter-rgb), 0.8);
       background:
-        linear-gradient(135deg, rgba(var(--fighter-rgb), 0.12), transparent 60%),
+        linear-gradient(180deg, rgba(var(--fighter-rgb), 0.18), transparent 52%),
         var(--surface-soft);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.24);
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__portrait {
-      width: 72px;
-      height: 80px;
-      grid-row: 1 / -1;
-      border-color: rgba(var(--fighter-rgb), 0.2);
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      grid-row: 1;
+      grid-column: 1 / -1;
+      overflow: hidden;
+      border-color: rgba(var(--fighter-rgb), 0.22);
+      border-radius: 14px;
       background:
-        radial-gradient(circle at 50% 70%, rgba(var(--fighter-rgb), 0.15), transparent 58%),
+        linear-gradient(180deg, transparent 68%, rgba(var(--fighter-rgb), 0.1)),
+        radial-gradient(circle at 50% 72%, rgba(var(--fighter-rgb), 0.22), transparent 57%),
         var(--surface-raised);
     }
 
+    .fighter-picker[data-view="gallery"] .roster-card__portrait::after {
+      position: absolute;
+      right: 12%;
+      bottom: 10px;
+      left: 12%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--fighter-rgb), 0.45), transparent);
+      content: "";
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-card__portrait img {
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 14px 15px rgba(0, 0, 0, 0.3));
+    }
+
     .fighter-picker[data-view="gallery"] .roster-card__copy {
-      align-self: end;
+      align-self: center;
+      gap: 4px;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__copy strong {
-      font-size: 0.82rem;
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2vw, 1.28rem);
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__copy small {
       display: -webkit-box;
       overflow: hidden;
-      line-height: 1.35;
+      font-size: 0.68rem;
+      line-height: 1.4;
       text-overflow: ellipsis;
       white-space: normal;
       -webkit-box-orient: vertical;
@@ -1281,14 +1377,117 @@
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__badges {
+      position: absolute;
+      z-index: 2;
+      top: 22px;
+      right: 22px;
       grid-auto-flow: column;
-      justify-content: start;
-      justify-items: start;
+      justify-content: end;
+      justify-items: end;
     }
 
-    .fighter-picker[data-view="gallery"] .roster-list__more,
-    .fighter-picker[data-view="gallery"] .roster-empty {
+    .fighter-picker[data-view="gallery"] .roster-card__cta {
+      display: flex;
+      min-height: 40px;
+      grid-row: 3;
       grid-column: 1 / -1;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--fighter);
+      color: var(--surface);
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow {
+      position: absolute;
+      z-index: 4;
+      top: calc(50% - 46px);
+      display: grid;
+      width: 48px;
+      min-width: 48px;
+      height: 48px;
+      min-height: 48px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(var(--fighter-rgb), 0.62);
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+      box-shadow: var(--shadow-small);
+      color: var(--fighter);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow:hover:not(:disabled) {
+      transform: scale(1.06);
+      border-color: var(--fighter);
+      background: var(--surface-raised);
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow:disabled {
+      border-color: var(--line);
+      color: var(--ink-faint);
+      opacity: 0.56;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow span {
+      transform: translateY(-2px);
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow--previous {
+      left: 18px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow--next {
+      right: 18px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status {
+      display: grid;
+      min-width: 0;
+      grid-area: status;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px 0;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status p {
+      display: flex;
+      min-width: 0;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status strong {
+      overflow: hidden;
+      color: var(--fighter);
+      font-size: 0.72rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status span,
+    .fighter-picker[data-view="gallery"] .roster-carousel__status small {
+      color: var(--ink-faint);
+      font-size: 0.58rem;
+      font-weight: 800;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-list__more {
+      grid-area: more;
+      padding: 8px 10px 0;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel[data-empty="true"] .roster-list {
+      display: block;
+      padding: 0;
     }
 
     .fighter-profile {
@@ -1376,44 +1575,131 @@
       border-bottom: 0;
     }
 
+    .fighter-picker[data-view="gallery"] .roster-carousel {
+      position: relative;
+      display: grid;
+      width: 100%;
+      height: clamp(480px, 70dvh, 570px);
+      min-height: 480px;
+      grid-template-rows: minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "track"
+        "status"
+        "more";
+      padding: 0 8px 14px;
+      overflow: hidden;
+    }
+
     .fighter-picker[data-view="gallery"] .roster-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      --carousel-slide-width: min(330px, 84cqw);
+
+      display: grid;
+      min-height: 0;
+      grid-area: track;
+      grid-auto-columns: var(--carousel-slide-width);
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      grid-template-rows: minmax(0, 1fr);
+      align-items: stretch;
+      gap: 12px;
       max-height: none;
-      padding: 0 18px 18px;
-      overflow: visible;
+      padding: 4px calc((100% - var(--carousel-slide-width)) / 2) 12px;
+      overflow: hidden;
+      scroll-behavior: smooth;
+      scroll-padding-inline: calc((100% - var(--carousel-slide-width)) / 2);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      touch-action: pan-y;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-entry {
+      height: 100%;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card {
-      min-height: 176px;
-      grid-template-rows: 112px auto auto;
+      width: 100%;
+      height: 100%;
+      min-height: 390px;
+      grid-template-rows: minmax(265px, 1fr) auto auto;
       grid-template-columns: minmax(0, 1fr);
-      align-content: start;
-      align-items: start;
-      gap: 7px;
-      padding: 8px;
-      border-color: var(--line);
+      align-content: stretch;
+      align-items: center;
+      gap: 8px 10px;
+      padding: 10px;
+      border-color: rgba(var(--fighter-rgb), 0.5);
+      border-radius: 17px;
       background:
-        linear-gradient(145deg, rgba(var(--fighter-rgb), 0.065), transparent 58%),
+        linear-gradient(180deg, rgba(var(--fighter-rgb), 0.12), transparent 48%),
         var(--surface-soft);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-entry:not([data-featured="true"]) {
+      pointer-events: none;
+    }
+
+    .fighter-picker[data-view="gallery"]
+    .roster-entry:not([data-featured="true"]) .roster-card {
+      transform: scale(0.91);
+      border-color: var(--line);
+      box-shadow: none;
+      opacity: 0.36;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__portrait {
+      position: relative;
       width: 100%;
-      height: 112px;
+      height: 100%;
+      min-height: 265px;
+      grid-row: 1;
+      grid-column: 1 / -1;
+      overflow: hidden;
+      border-color: rgba(var(--fighter-rgb), 0.22);
+      border-radius: 13px;
       background:
-        radial-gradient(circle at 50% 72%, rgba(var(--fighter-rgb), 0.16), transparent 58%),
+        linear-gradient(180deg, transparent 68%, rgba(var(--fighter-rgb), 0.1)),
+        radial-gradient(circle at 50% 72%, rgba(var(--fighter-rgb), 0.22), transparent 57%),
         var(--surface-raised);
     }
 
+    .fighter-picker[data-view="gallery"] .roster-card__portrait::after {
+      position: absolute;
+      right: 12%;
+      bottom: 9px;
+      left: 12%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--fighter-rgb), 0.45), transparent);
+      content: "";
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-card__portrait img {
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.3));
+    }
+
     .fighter-picker[data-view="gallery"] .roster-card__copy {
-      width: 100%;
+      align-self: center;
+      gap: 4px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-card__copy strong {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__copy small {
       display: -webkit-box;
       overflow: hidden;
-      line-height: 1.35;
+      line-height: 1.4;
       text-overflow: ellipsis;
       white-space: normal;
       -webkit-box-orient: vertical;
@@ -1421,14 +1707,107 @@
     }
 
     .fighter-picker[data-view="gallery"] .roster-card__badges {
+      position: absolute;
+      z-index: 2;
+      top: 18px;
+      right: 18px;
       grid-auto-flow: column;
-      justify-content: start;
-      justify-items: start;
+      justify-content: end;
+      justify-items: end;
     }
 
-    .fighter-picker[data-view="gallery"] .roster-list__more,
-    .fighter-picker[data-view="gallery"] .roster-empty {
+    .fighter-picker[data-view="gallery"] .roster-card__cta {
+      display: flex;
+      min-height: 44px;
+      grid-row: 3;
       grid-column: 1 / -1;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--fighter);
+      color: var(--surface);
+      font-size: 0.72rem;
+      font-weight: 950;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow {
+      position: absolute;
+      z-index: 4;
+      top: calc(50% - 54px);
+      display: grid;
+      width: 46px;
+      min-width: 46px;
+      height: 46px;
+      min-height: 46px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(var(--fighter-rgb), 0.62);
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
+      box-shadow: var(--shadow-small);
+      color: var(--fighter);
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow span {
+      transform: translateY(-2px);
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow--previous {
+      left: 12px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__arrow--next {
+      right: 12px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status {
+      display: grid;
+      grid-area: status;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 8px 0;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status p {
+      display: flex;
+      min-width: 0;
+      align-items: baseline;
+      gap: 7px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status strong {
+      overflow: hidden;
+      color: var(--fighter);
+      font-size: 0.75rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel__status span,
+    .fighter-picker[data-view="gallery"] .roster-carousel__status small {
+      color: var(--ink-faint);
+      font-size: 0.63rem;
+      font-weight: 800;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-list__more {
+      grid-area: more;
+      padding-top: 8px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel[data-empty="true"] {
+      height: auto;
+      min-height: 220px;
+    }
+
+    .fighter-picker[data-view="gallery"] .roster-carousel[data-empty="true"] .roster-list {
+      display: block;
+      padding: 0;
     }
 
     .fighter-profile--empty {
@@ -1540,8 +1919,16 @@
 
   @media (forced-colors: active) {
     .roster-card[aria-pressed="true"],
+    .roster-card[aria-current="true"],
+    .roster-carousel__arrow,
     .roster-selection-note {
       border-color: Highlight;
+    }
+
+    .roster-card__cta {
+      border: 1px solid Highlight;
+      background: ButtonFace !important;
+      color: ButtonText !important;
     }
 
     .roster-card__selected > span {

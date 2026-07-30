@@ -60,7 +60,116 @@ function ControlledPicker({
 describe("fighter selection flow", () => {
   afterEach(cleanup);
 
-  it("turns the full roster gallery into a focused profile without duplicating fighters", async () => {
+  it("previews the circular spotlight carousel before committing a fighter", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+    const carousel = picker.getByRole("region", {
+      name: "Cyan corner character carousel"
+    });
+    const featuredCard = () => container.querySelector<HTMLButtonElement>(
+      '.roster-card[aria-current="true"]'
+    );
+
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Agent Venom,/);
+    });
+    expect(picker.getByRole("heading", { name: "Select fighter", level: 2 }))
+      .toBeTruthy();
+    expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
+
+    const next = within(carousel).getByRole("button", {
+      name: "Next fighter: Aurora"
+    });
+    next.focus();
+    fireEvent.click(next);
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Aurora,/);
+      expect(document.activeElement).toBe(next);
+    });
+    expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
+
+    fireEvent.click(within(carousel).getByRole("button", {
+      name: "Previous fighter: Agent Venom"
+    }));
+    fireEvent.click(within(carousel).getByRole("button", {
+      name: "Previous fighter: Wonder Girl"
+    }));
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
+      expect(carousel.textContent).toContain("20 of 20");
+    });
+
+    const wonderGirl = featuredCard();
+    if (!wonderGirl) throw new Error("Expected Wonder Girl to be featured.");
+    wonderGirl.focus();
+    fireEvent.keyDown(wonderGirl, { key: "ArrowRight" });
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Agent Venom,/);
+      expect(document.activeElement).toBe(featuredCard());
+    });
+
+    fireEvent.keyDown(featuredCard() as HTMLButtonElement, { key: "End" });
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
+    });
+    fireEvent.keyDown(featuredCard() as HTMLButtonElement, { key: "Home" });
+    await waitFor(() => {
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Agent Venom,/);
+    });
+  });
+
+  it("supports swipe previews and disables navigation for one matching fighter", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+    const list = picker.getByRole("list", { name: "Characters" });
+    const featuredName = () => container.querySelector<HTMLButtonElement>(
+      '.roster-card[aria-current="true"]'
+    )?.getAttribute("aria-label");
+
+    await waitFor(() => expect(featuredName()).toMatch(/^Agent Venom,/));
+    fireEvent.pointerDown(list, {
+      pointerId: 1,
+      clientX: 250,
+      clientY: 200
+    });
+    fireEvent.pointerUp(list, {
+      pointerId: 1,
+      clientX: 150,
+      clientY: 205
+    });
+    await waitFor(() => expect(featuredName()).toMatch(/^Aurora,/));
+    expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
+
+    fireEvent.pointerDown(list, {
+      pointerId: 2,
+      clientX: 180,
+      clientY: 180
+    });
+    fireEvent.pointerUp(list, {
+      pointerId: 2,
+      clientX: 170,
+      clientY: 90
+    });
+    expect(featuredName()).toMatch(/^Aurora,/);
+
+    fireEvent.input(
+      picker.getByRole("searchbox", { name: "Search characters" }),
+      { target: { value: "Wonder Girl" } }
+    );
+    await waitFor(() => {
+      expect(featuredName()).toMatch(/^Wonder Girl,/);
+      expect(
+        picker.getByRole("button", { name: "Previous fighter: Wonder Girl" })
+          .getAttribute("disabled")
+      ).not.toBeNull();
+      expect(
+        picker.getByRole("button", { name: "Next fighter: Wonder Girl" })
+          .getAttribute("disabled")
+      ).not.toBeNull();
+    });
+  });
+
+  it("turns the spotlight carousel into a focused profile without duplicating fighters", async () => {
     const { container } = render(<ControlledPicker />);
     const picker = within(container as HTMLElement);
     const pickerElement = container.querySelector<HTMLElement>(".fighter-picker");
