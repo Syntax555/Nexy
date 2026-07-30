@@ -60,6 +60,44 @@ function ControlledPicker({
 describe("fighter selection flow", () => {
   afterEach(cleanup);
 
+  it("turns the full roster gallery into a focused profile without duplicating fighters", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+    const pickerElement = container.querySelector<HTMLElement>(".fighter-picker");
+    const characterList = picker.getByRole("list", { name: "Characters" });
+    const captainAmerica = picker.getByRole("button", {
+      name: /^Captain America,/
+    });
+
+    expect(pickerElement?.dataset.view).toBe("gallery");
+    expect(within(characterList).getAllByRole("button")).toHaveLength(roster.length);
+    expect(
+      picker.getAllByRole("button", { name: /^Captain America,/ })
+    ).toHaveLength(1);
+
+    captainAmerica.focus();
+    fireEvent.click(captainAmerica);
+
+    await waitFor(() => {
+      expect(pickerElement?.dataset.view).toBe("profile");
+      expect(captainAmerica.getAttribute("aria-pressed")).toBe("true");
+      expect(document.activeElement).toBe(captainAmerica);
+    });
+    expect(
+      picker.getByRole("heading", { name: "Captain America", level: 3 })
+    ).toBeTruthy();
+
+    fireEvent.click(
+      picker.getByRole("button", { name: "Remove fighter" })
+    );
+    await waitFor(() => {
+      expect(pickerElement?.dataset.view).toBe("gallery");
+      expect(
+        picker.getByRole("searchbox", { name: "Search characters" })
+      ).toBe(document.activeElement);
+    });
+  });
+
   it("pins the selected fighter above results when it is outside the active filters", async () => {
     const captainAmerica = rosterCharacter("Captain America");
     const { container } = render(

@@ -42,7 +42,9 @@ function Picker({
       side="left"
       roster={roster}
       selection={selection}
-      profile={null}
+      profile={selection
+        ? roster.find((item) => item.id === selectedId)?.defaultProfile ?? null
+        : null}
       onSelect={() => undefined}
       onClear={() => undefined}
       onRandom={() => undefined}

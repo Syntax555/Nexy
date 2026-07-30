@@ -305,6 +305,29 @@ export function FighterPicker({
     return () => window.removeEventListener("keydown", focusSearch);
   }, [side]);
 
+  useEffect(() => {
+    if (!selection) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const list = rosterListRef.current;
+      const selectedCard = list?.querySelector<HTMLElement>(
+        '.roster-card[aria-pressed="true"]'
+      );
+      if (!list || !selectedCard) return;
+
+      selectedCard.focus({ preventScroll: true });
+      const listBounds = list.getBoundingClientRect();
+      const cardBounds = selectedCard.getBoundingClientRect();
+      if (cardBounds.top < listBounds.top) {
+        list.scrollTop -= listBounds.top - cardBounds.top;
+      } else if (cardBounds.bottom > listBounds.bottom) {
+        list.scrollTop += cardBounds.bottom - listBounds.bottom;
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [selection?.characterId]);
+
   const focusSearchAfterRender = (): void => {
     window.requestAnimationFrame(() => {
       searchRef.current?.focus({ preventScroll: true });
@@ -350,7 +373,12 @@ export function FighterPicker({
   );
 
   return (
-    <section class="fighter-picker" data-side={side} aria-labelledby={`${side}-picker-title`}>
+    <section
+      class="fighter-picker"
+      data-side={side}
+      data-view={selectedCharacter && profile ? "profile" : "gallery"}
+      aria-labelledby={`${side}-picker-title`}
+    >
       <header class="fighter-picker__header">
         <div>
           <span class="eyebrow">{accentName} · Fighter {fighterNumber}</span>

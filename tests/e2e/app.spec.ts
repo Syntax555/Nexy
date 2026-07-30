@@ -280,7 +280,7 @@ test("mobile flow advances only after the explicit Fighter 02 action", async ({
   await expect(page.locator("#mobile-fighter-right-panel")).toBeInViewport();
 });
 
-test("desktop fighter cards stay equal height after one selection", async ({
+test("desktop gallery fills the picker and becomes a stable master-detail view", async ({
   page
 }, testInfo) => {
   test.skip(testInfo.project.name.startsWith("mobile-"), "Desktop-only layout");
@@ -288,26 +288,107 @@ test("desktop fighter cards stay equal height after one selection", async ({
 
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
+  const pickerBody = leftPicker.locator(".fighter-picker__body");
+  const rosterBrowser = leftPicker.locator(".roster-browser");
+  const rosterCards = leftPicker.locator(".roster-card");
+  await leftPicker.scrollIntoViewIfNeeded();
+
+  await expect(leftPicker).toHaveAttribute("data-view", "gallery");
   const [initialLeftBox, initialRightBox] = await Promise.all([
     leftPicker.boundingBox(),
     rightPicker.boundingBox()
   ]);
+  const [initialBodyBox, initialRosterBox] = await Promise.all([
+    pickerBody.boundingBox(),
+    rosterBrowser.boundingBox()
+  ]);
   expect(initialLeftBox).not.toBeNull();
   expect(initialRightBox).not.toBeNull();
-  await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  expect(initialBodyBox).not.toBeNull();
+  expect(initialRosterBox).not.toBeNull();
+  expect(initialRosterBox?.width ?? 0).toBeGreaterThanOrEqual(
+    (initialBodyBox?.width ?? 0) * 0.9
+  );
 
-  const [leftBox, rightBox] = await Promise.all([
+  const [firstCardBox, secondCardBox] = await Promise.all([
+    rosterCards.nth(0).boundingBox(),
+    rosterCards.nth(1).boundingBox()
+  ]);
+  expect(firstCardBox).not.toBeNull();
+  expect(secondCardBox).not.toBeNull();
+  expect(Math.abs((firstCardBox?.y ?? 0) - (secondCardBox?.y ?? 0)))
+    .toBeLessThanOrEqual(1);
+
+  const visibleCardCount = await rosterCards.evaluateAll((cards) => {
+    const viewport = cards[0]?.closest(".roster-list")?.getBoundingClientRect();
+    if (!viewport) return 0;
+    return cards.filter((card) => {
+      const bounds = card.getBoundingClientRect();
+      return bounds.bottom > viewport.top && bounds.top < viewport.bottom;
+    }).length;
+  });
+  expect(visibleCardCount).toBeGreaterThanOrEqual(4);
+
+  const captainAmerica = leftPicker.getByRole("button", {
+    name: /^Captain America,/
+  });
+  await captainAmerica.scrollIntoViewIfNeeded();
+  const scrollBeforeSelection = await page.evaluate(() => window.scrollY);
+  await captainAmerica.click();
+  await expect(leftPicker).toHaveAttribute("data-view", "profile");
+  await expect(captainAmerica).toHaveAttribute("aria-pressed", "true");
+  await expect(captainAmerica).toBeFocused();
+
+  const [leftBox, rightBox, selectedBodyBox, selectedRosterBox, profileBox] = await Promise.all([
     leftPicker.boundingBox(),
-    rightPicker.boundingBox()
+    rightPicker.boundingBox(),
+    pickerBody.boundingBox(),
+    rosterBrowser.boundingBox(),
+    leftPicker.locator(".fighter-profile:not(.fighter-profile--empty)").boundingBox()
   ]);
   expect(leftBox).not.toBeNull();
   expect(rightBox).not.toBeNull();
+  expect(selectedBodyBox).not.toBeNull();
+  expect(selectedRosterBox).not.toBeNull();
+  expect(profileBox).not.toBeNull();
+  expect(selectedRosterBox?.width ?? 0).toBeLessThanOrEqual(
+    (selectedBodyBox?.width ?? 0) * 0.55
+  );
+  expect(profileBox?.width ?? 0).toBeGreaterThanOrEqual(
+    (selectedBodyBox?.width ?? 0) * 0.45
+  );
   expect(Math.abs((leftBox?.height ?? 0) - (rightBox?.height ?? 0)))
     .toBeLessThanOrEqual(1);
   expect(Math.abs((leftBox?.height ?? 0) - (initialLeftBox?.height ?? 0)))
     .toBeLessThanOrEqual(1);
   expect(Math.abs((rightBox?.height ?? 0) - (initialRightBox?.height ?? 0)))
     .toBeLessThanOrEqual(1);
+
+  const [selectedCardBox, selectedRosterViewport, scrollAfterSelection] = await Promise.all([
+    captainAmerica.boundingBox(),
+    leftPicker.locator(".roster-list").boundingBox(),
+    page.evaluate(() => window.scrollY)
+  ]);
+  expect(selectedCardBox).not.toBeNull();
+  expect(selectedRosterViewport).not.toBeNull();
+  expect(selectedCardBox?.y ?? 0).toBeGreaterThanOrEqual(
+    (selectedRosterViewport?.y ?? 0) - 1
+  );
+  expect((selectedCardBox?.y ?? 0) + (selectedCardBox?.height ?? 0))
+    .toBeLessThanOrEqual(
+      (selectedRosterViewport?.y ?? 0) + (selectedRosterViewport?.height ?? 0) + 1
+    );
+  expect(Math.abs(scrollAfterSelection - scrollBeforeSelection)).toBeLessThanOrEqual(1);
+
+  await leftPicker.getByRole("button", { name: "Remove fighter" }).click();
+  await expect(leftPicker).toHaveAttribute("data-view", "gallery");
+  const [restoredBodyBox, restoredRosterBox] = await Promise.all([
+    pickerBody.boundingBox(),
+    rosterBrowser.boundingBox()
+  ]);
+  expect(restoredRosterBox?.width ?? 0).toBeGreaterThanOrEqual(
+    (restoredBodyBox?.width ?? 0) * 0.9
+  );
 });
 
 test("forced-colors mode preserves selected-state affordances", async ({
