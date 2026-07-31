@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  createSearchIndex,
-  normalizeSearchText,
-  searchIndex
-} from "../../src/search/search.js";
+import { createSearchIndex, normalizeSearchText, searchIndex } from "../../src/search/search.js";
 
 const fighters = [
   { id: "agent-venom", text: 'Agent Venom Eugene "Flash" Thompson Symbiote' },
@@ -25,10 +21,7 @@ describe("roster search", () => {
       { id: "cjk", text: "孙悟空" },
       { id: "arabic", text: "ليلى ٢" }
     ];
-    const internationalIndex = createSearchIndex(
-      international,
-      (fighter) => fighter.text
-    );
+    const internationalIndex = createSearchIndex(international, (fighter) => fighter.text);
 
     expect(searchIndex(internationalIndex, "Жанна")[0]?.id).toBe("cyrillic");
     expect(searchIndex(internationalIndex, "悟空")[0]?.id).toBe("cjk");

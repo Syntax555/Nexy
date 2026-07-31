@@ -60,9 +60,7 @@ describe("Nexy application", () => {
     expect((screen.getByRole("main") as HTMLElement).tabIndex).toBe(-1);
     const pickers = container.querySelectorAll<HTMLElement>(".fighter-picker");
     const [leftSelection, rightSelection] = firstTwoSelections();
-    const characters = Array.isArray(nexyData.characters)
-      ? nexyData.characters
-      : Object.values(nexyData.characters);
+    const characters = Array.isArray(nexyData.characters) ? nexyData.characters : Object.values(nexyData.characters);
     const leftCharacter = characters.find(
       (character) => (character.entry_id || character.id) === leftSelection.characterId
     );
@@ -77,12 +75,8 @@ describe("Nexy application", () => {
     const leftPicker = pickers[0];
     const rightPicker = pickers[1];
 
-    fireEvent.click(
-      within(leftPicker).getByRole("button", { name: new RegExp(leftCharacter.name, "i") })
-    );
-    fireEvent.click(
-      within(rightPicker).getByRole("button", { name: new RegExp(rightCharacter.name, "i") })
-    );
+    fireEvent.click(within(leftPicker).getByRole("button", { name: new RegExp(leftCharacter.name, "i") }));
+    fireEvent.click(within(rightPicker).getByRole("button", { name: new RegExp(rightCharacter.name, "i") }));
 
     const analyze = screen.getByRole("button", { name: /analyze battle/i }) as HTMLButtonElement;
     expect(analyze.disabled).toBe(false);
@@ -95,6 +89,8 @@ describe("Nexy application", () => {
     expect(container.querySelector(".capability-tag details")).toBeTruthy();
     await waitFor(() => {
       expect(window.location.search).toContain("battle=1");
+      expect(window.location.search).toContain("ruleset=1");
+      expect(window.location.search).toContain(`data=${nexyData.meta.content_revision}`);
     });
 
     analyze.focus();
@@ -104,9 +100,7 @@ describe("Nexy application", () => {
     fireEvent.click(screen.getByRole("button", { name: /edit matchup/i }));
     await waitFor(() => {
       expect(screen.queryByRole("heading", { name: "Battle report" })).toBeNull();
-      expect(document.activeElement).toBe(
-        within(leftPicker).getByRole("heading", { level: 2 })
-      );
+      expect(document.activeElement).toBe(within(leftPicker).getByRole("heading", { level: 2 }));
     });
   });
 
@@ -123,6 +117,9 @@ describe("Nexy application", () => {
 
     expect(await screen.findByRole("heading", { name: "Battle report" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /copy battle link/i })).toBeTruthy();
+    expect(screen.getByText("Shared-link compatibility notice")).toBeTruthy();
+    expect(screen.getByText(/legacy matchup link/i)).toBeTruthy();
+    expect(window.location.search).not.toContain("ruleset=");
   });
 
   it("shows the legal notice and links to the rights-holder page", () => {
@@ -191,11 +188,7 @@ describe("Nexy application", () => {
     expect(browseStatus.textContent).toContain("Comics → DC Comics");
     expect(browsePath.dataset.browseLevel).toBe("publisher");
     fireEvent.click(universeSelect);
-    expect(openChoiceLabels("Universe / verse")).toEqual([
-      "All DC Comics universes",
-      "Post-Crisis",
-      "Post-Flashpoint"
-    ]);
+    expect(openChoiceLabels("Universe / verse")).toEqual(["All DC Comics universes", "Post-Crisis", "Post-Flashpoint"]);
     await waitFor(() => {
       expect(count.textContent).toContain("2 of 20 fighters");
     });
@@ -208,9 +201,7 @@ describe("Nexy application", () => {
     });
     const filteredFighter = leftPicker.querySelector<HTMLButtonElement>(".roster-card");
     expect(filteredFighter?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
-    expect(filteredFighter?.getAttribute("aria-label")).toContain(
-      "Comics, DC Comics, Post-Flashpoint"
-    );
+    expect(filteredFighter?.getAttribute("aria-label")).toContain("Comics, DC Comics, Post-Flashpoint");
     expect(filteredFighter?.textContent).toContain("DC Comics / Post-Flashpoint");
 
     fireEvent.click(picker.getByRole("button", { name: "Clear Media" }));
@@ -230,27 +221,15 @@ describe("Nexy application", () => {
     await waitFor(() => {
       expect(count.textContent).toContain("3 of 20 fighters");
     });
-    expect(
-      leftPicker.querySelector<HTMLButtonElement>(
-        '.roster-card[aria-label*="Joaqu"]'
-      )
-    ).toBeTruthy();
-    expect(
-      leftPicker.querySelector<HTMLButtonElement>(
-        '.roster-card[aria-label^="Ms. Marvel"]'
-      )
-    ).toBeTruthy();
+    expect(leftPicker.querySelector<HTMLButtonElement>('.roster-card[aria-label*="Joaqu"]')).toBeTruthy();
+    expect(leftPicker.querySelector<HTMLButtonElement>('.roster-card[aria-label^="Ms. Marvel"]')).toBeTruthy();
 
     fireEvent.change(picker.getByLabelText("Age"), { target: { value: "all" } });
     fireEvent.change(picker.getByLabelText("Classification"), {
       target: { value: "human" }
     });
     await waitFor(() => {
-      expect(
-        leftPicker.querySelector<HTMLButtonElement>(
-          '.roster-card[aria-label*="Joaqu"]'
-        )
-      ).toBeTruthy();
+      expect(leftPicker.querySelector<HTMLButtonElement>('.roster-card[aria-label*="Joaqu"]')).toBeTruthy();
     });
 
     fireEvent.change(picker.getByLabelText("Classification"), {
@@ -258,20 +237,16 @@ describe("Nexy application", () => {
     });
     fireEvent.change(picker.getByLabelText("Tier"), { target: { value: "9-C" } });
     await waitFor(() => {
-      expect(
-        leftPicker.querySelector<HTMLButtonElement>(
-          '.roster-card[aria-label^="Captain America"]'
-        )
-      ).toBeTruthy();
+      expect(leftPicker.querySelector<HTMLButtonElement>('.roster-card[aria-label^="Captain America"]')).toBeTruthy();
     });
 
     fireEvent.change(picker.getByLabelText("Tier"), { target: { value: "2-A" } });
     await waitFor(() => {
       expect(count.textContent).toContain("1 of 20 fighters");
     });
-    expect(
-      leftPicker.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")
-    ).toMatch(/^Wonder Girl,/);
+    expect(leftPicker.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")).toMatch(
+      /^Wonder Girl,/
+    );
 
     fireEvent.change(picker.getByLabelText("Tier"), { target: { value: "all" } });
     choosePathOption(mediaSelect, "Comics");
@@ -280,11 +255,7 @@ describe("Nexy application", () => {
       expect(count.textContent).toContain("2 of 20 fighters");
     });
     fireEvent.click(universeSelect);
-    expect(openChoiceLabels("Universe / verse")).toEqual([
-      "All DC Comics universes",
-      "Post-Crisis",
-      "Post-Flashpoint"
-    ]);
+    expect(openChoiceLabels("Universe / verse")).toEqual(["All DC Comics universes", "Post-Crisis", "Post-Flashpoint"]);
     fireEvent.keyDown(universeSelect, { key: "Escape" });
 
     fireEvent.click(picker.getByRole("button", { name: "Clear Publisher / origin" }));
@@ -293,9 +264,9 @@ describe("Nexy application", () => {
       target: { value: "name-desc" }
     });
     await waitFor(() => {
-      expect(
-        leftPicker.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")
-      ).toMatch(/^Wonder Girl,/);
+      expect(leftPicker.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")).toMatch(
+        /^Wonder Girl,/
+      );
     });
   });
 

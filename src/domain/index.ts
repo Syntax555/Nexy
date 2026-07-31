@@ -1,3 +1,8 @@
+export {
+  CATALOG_NAMES,
+  type CatalogName
+} from "./catalogs.js";
+
 export type {
   AbsorptionEffect,
   AbilityModifierOption,
@@ -12,6 +17,7 @@ export type {
   ContentSource,
   CoreRankedStatName,
   DegreeOption,
+  DerivedPowerEvaluationStage,
   DerivedPowerRequirement,
   DerivedPowerRule,
   Effect,
@@ -29,9 +35,11 @@ export type {
   MediaOption,
   NamedOption,
   NexyData,
+  NexyDataMeta,
   NexyOptions,
   NonPhysicalInteractionEffect,
   OpponentStatSwapEffect,
+  OptionalSpeedStatName,
   OriginOption,
   PowerNullificationEffect,
   PowerOption,
@@ -81,3 +89,8 @@ export type {
   VerdictKind,
   Winner
 } from "./reports.js";
+
+export {
+  RULESET_VERSION,
+  type RulesetVersion
+} from "./version.js";

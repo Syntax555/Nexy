@@ -53,23 +53,22 @@ export function SearchableSelect({
   );
   const isSearchable = options.length > SEARCH_THRESHOLD;
   const searchableChoices = useMemo(
-    () => choices.map((option) => ({
-      option,
-      text: normalizeSearchText(option.label)
-    })),
+    () =>
+      choices.map((option) => ({
+        option,
+        text: normalizeSearchText(option.label)
+      })),
     [choices]
   );
-  const queryTokens = useMemo(
-    () => normalizeSearchText(query).split(/\s+/).filter(Boolean),
-    [query]
-  );
+  const queryTokens = useMemo(() => normalizeSearchText(query).split(/\s+/).filter(Boolean), [query]);
   const selected = choices.find((option) => option.id === value) ?? choices[0];
   const filteredChoices = useMemo(
-    () => queryTokens.length > 0
-      ? searchableChoices
-        .filter(({ text }) => queryTokens.every((token) => text.includes(token)))
-        .map(({ option }) => option)
-      : choices,
+    () =>
+      queryTokens.length > 0
+        ? searchableChoices
+            .filter(({ text }) => queryTokens.every((token) => text.includes(token)))
+            .map(({ option }) => option)
+        : choices,
     [choices, queryTokens, searchableChoices]
   );
   const orderedChoices = useMemo(() => {
@@ -78,18 +77,13 @@ export function SearchableSelect({
     }
     const selectedIndex = filteredChoices.findIndex((option) => option.id === selected.id);
     return selectedIndex > 0
-      ? [
-        selected,
-        ...filteredChoices.filter((option) => option.id !== selected.id)
-      ]
+      ? [selected, ...filteredChoices.filter((option) => option.id !== selected.id)]
       : filteredChoices;
   }, [filteredChoices, queryTokens.length, selected]);
   const shownChoices = orderedChoices.slice(0, optionLimit);
   const remainingChoiceCount = Math.max(0, orderedChoices.length - shownChoices.length);
   const activeChoice = shownChoices[activeIndex];
-  const displayValue = disabled
-    ? disabledHint
-    : selected?.label ?? allLabel;
+  const displayValue = disabled ? disabledHint : (selected?.label ?? allLabel);
   const statusText = open
     ? queryTokens.length > 0
       ? filteredChoices.length > shownChoices.length
@@ -103,6 +97,9 @@ export function SearchableSelect({
       : `${selected?.label ?? value} selected.`;
 
   useEffect(() => {
+    void query;
+    void options;
+    void allLabel;
     setActiveIndex(0);
     setOptionLimit(MAX_VISIBLE_OPTIONS);
   }, [query, options, allLabel]);
@@ -132,9 +129,7 @@ export function SearchableSelect({
     activeOption?.scrollIntoView?.({ block: "nearest" });
   }, [activeChoice, activeIndex, id, open]);
 
-  const focusAfterRender = (
-    target: "listbox" | "search" | "trigger"
-  ): void => {
+  const focusAfterRender = (target: "listbox" | "search" | "trigger"): void => {
     window.requestAnimationFrame(() => {
       if (target === "listbox") {
         listboxRef.current?.focus({ preventScroll: true });
@@ -148,9 +143,7 @@ export function SearchableSelect({
     });
   };
 
-  const openChoices = (
-    focusTarget?: "listbox" | "search"
-  ): void => {
+  const openChoices = (focusTarget?: "listbox" | "search"): void => {
     if (disabled) return;
     setQuery("");
     setOptionLimit(MAX_VISIBLE_OPTIONS);
@@ -173,15 +166,8 @@ export function SearchableSelect({
   };
 
   const moveActive = (direction: 1 | -1): void => {
-    if (
-      direction === 1
-      && activeIndex === shownChoices.length - 1
-      && remainingChoiceCount > 0
-    ) {
-      setOptionLimit((limit) => Math.min(
-        limit + MAX_VISIBLE_OPTIONS,
-        filteredChoices.length
-      ));
+    if (direction === 1 && activeIndex === shownChoices.length - 1 && remainingChoiceCount > 0) {
+      setOptionLimit((limit) => Math.min(limit + MAX_VISIBLE_OPTIONS, filteredChoices.length));
       setActiveIndex((current) => current + 1);
       return;
     }
@@ -236,7 +222,9 @@ export function SearchableSelect({
       }}
     >
       <label for={id}>
-        <b class="roster-path__step-number" aria-hidden="true">{step}</b>
+        <b class="roster-path__step-number" aria-hidden="true">
+          {step}
+        </b>
         {label}
       </label>
       <div class="searchable-select__control">
@@ -288,7 +276,9 @@ export function SearchableSelect({
         >
           <span>{displayValue}</span>
         </button>
-        <span class="searchable-select__chevron" aria-hidden="true">⌄</span>
+        <span class="searchable-select__chevron" aria-hidden="true">
+          ⌄
+        </span>
         {value !== "all" && !disabled ? (
           <button
             class="searchable-select__clear"
@@ -334,9 +324,7 @@ export function SearchableSelect({
                   if (event.key === "ArrowDown" || event.key === "ArrowUp") {
                     event.preventDefault();
                     if (shownChoices.length > 0) {
-                      setActiveIndex(event.key === "ArrowDown"
-                        ? 0
-                        : shownChoices.length - 1);
+                      setActiveIndex(event.key === "ArrowDown" ? 0 : shownChoices.length - 1);
                       focusAfterRender("listbox");
                     }
                     return;
@@ -355,9 +343,7 @@ export function SearchableSelect({
             class="searchable-select__list"
             role="listbox"
             aria-label={label}
-            aria-activedescendant={activeChoice
-              ? `${id}-option-${activeIndex}`
-              : undefined}
+            aria-activedescendant={activeChoice ? `${id}-option-${activeIndex}` : undefined}
             tabIndex={-1}
             onKeyDown={handleListboxKeyDown}
           >
@@ -367,10 +353,16 @@ export function SearchableSelect({
                 class="searchable-select__option"
                 role="option"
                 aria-selected={option.id === value}
+                tabIndex={-1}
                 data-active={index === activeIndex ? "true" : "false"}
                 key={option.id}
                 onMouseDown={(event) => event.preventDefault()}
                 onMouseEnter={() => setActiveIndex(index)}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  choose(option);
+                }}
                 onClick={() => choose(option)}
               >
                 <span>{option.label}</span>
@@ -378,9 +370,7 @@ export function SearchableSelect({
               </div>
             ))}
             {shownChoices.length === 0 ? (
-              <div class="searchable-select__empty">
-                No matching choices. Try a shorter search.
-              </div>
+              <div class="searchable-select__empty">No matching choices. Try a shorter search.</div>
             ) : null}
           </div>
           {remainingChoiceCount > 0 ? (
@@ -393,10 +383,7 @@ export function SearchableSelect({
                 closeChoices(true);
               }}
               onClick={() => {
-                setOptionLimit((limit) => Math.min(
-                  limit + MAX_VISIBLE_OPTIONS,
-                  filteredChoices.length
-                ));
+                setOptionLimit((limit) => Math.min(limit + MAX_VISIBLE_OPTIONS, filteredChoices.length));
                 if (isSearchable) {
                   searchRef.current?.focus({ preventScroll: true });
                 } else {

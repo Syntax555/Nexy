@@ -132,9 +132,7 @@
     gap: 6px;
     border-right: 1px solid var(--line);
     border-left: 1px solid var(--line);
-    background:
-      radial-gradient(circle, rgba(var(--gold-rgb), 0.1), transparent 68%),
-      var(--surface-soft);
+    background: radial-gradient(circle, rgba(var(--gold-rgb), 0.1), transparent 68%), var(--surface-soft);
     text-align: center;
   }
 
@@ -162,28 +160,47 @@
   }
 
   .comparison-list {
-    display: grid;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
     border-top: 1px solid var(--line);
   }
 
   .comparison-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(170px, 0.34fr) minmax(0, 1fr);
-    min-height: 92px;
+    height: 92px;
+  }
+
+  .comparison-row > * {
     border-bottom: 1px solid var(--line);
   }
 
-  .comparison-row:last-child {
+  .comparison-row:last-child > * {
     border-bottom: 0;
   }
 
   .comparison-row__side,
   .comparison-row__label {
-    display: grid;
     min-width: 0;
-    align-content: center;
-    gap: 5px;
     padding: 18px 22px;
+    vertical-align: middle;
+  }
+
+  .comparison-row__side {
+    width: 33%;
+  }
+
+  .comparison-row__label {
+    width: 34%;
+  }
+
+  .comparison-row__side > *,
+  .comparison-row__label > * {
+    display: block;
+  }
+
+  .comparison-row__side > * + *,
+  .comparison-row__label > * + * {
+    margin-top: 5px;
   }
 
   .comparison-row__side:last-child {
@@ -454,7 +471,33 @@
     }
 
     .comparison-row {
+      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      height: auto;
+      min-height: 146px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comparison-list,
+    .comparison-list tbody {
+      display: block;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: 0;
+    }
+
+    .comparison-row > * {
+      display: grid;
+      width: auto;
+      align-content: center;
+      gap: 5px;
+      border-bottom: 0;
+    }
+
+    .comparison-row__side > * + *,
+    .comparison-row__label > * + * {
+      margin-top: 0;
     }
 
     .comparison-row__label {

@@ -96,11 +96,7 @@ export const statusLabels: Readonly<Record<StatusCode, string>> = {
   resisted: "Resisted"
 };
 
-export function status(
-  code: StatusCode,
-  reason = "",
-  causedBy?: CapabilityIdentity
-): EngineStatus {
+export function status(code: StatusCode, reason = "", causedBy?: CapabilityIdentity): EngineStatus {
   return {
     code,
     label: statusLabels[code],
@@ -110,7 +106,5 @@ export function status(
 }
 
 export function record(value: unknown): Readonly<Record<string, unknown>> {
-  return typeof value === "object" && value !== null
-    ? value as Readonly<Record<string, unknown>>
-    : {};
+  return typeof value === "object" && value !== null ? (value as Readonly<Record<string, unknown>>) : {};
 }

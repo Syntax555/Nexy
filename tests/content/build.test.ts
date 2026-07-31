@@ -1,23 +1,13 @@
-import {
-  access,
-  cp,
-  mkdir,
-  mkdtemp,
-  readFile,
-  rm,
-  writeFile
-} from "node:fs/promises";
+import { access, cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import {
-  compileContent,
-  ContentValidationError
-} from "../../tools/content/build.js";
+import { catalogNames, compileContent, ContentValidationError } from "../../tools/content/build.js";
 import { createCharacter } from "../../tools/content/new-character.js";
+import { CATALOG_NAMES } from "../../src/domain/catalogs.js";
 
 const projectRoot = process.cwd();
 const temporaryRoots: string[] = [];
@@ -76,12 +66,14 @@ async function runCharacterCli(
 }
 
 afterEach(async () => {
-  await Promise.all(
-    temporaryRoots.splice(0).map((root) => rm(root, { force: true, recursive: true }))
-  );
+  await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { force: true, recursive: true })));
 });
 
 describe("content compiler", () => {
+  it("uses the shared domain catalog contract", () => {
+    expect(catalogNames).toBe(CATALOG_NAMES);
+  });
+
   it("validates the repository content deterministically", async () => {
     const first = await compileContent({ root: projectRoot, check: true });
     const second = await compileContent({ root: projectRoot, check: true });
@@ -90,6 +82,10 @@ describe("content compiler", () => {
     expect(first.formCount).toBe(21);
     expect(first.json).toBe(second.json);
     expect(first.wroteOutput).toBe(false);
+    expect(first.data.meta).toEqual({
+      schema_version: 1,
+      content_revision: expect.stringMatching(/^[a-f0-9]{64}$/)
+    });
     expect(first.data.characters.map((character) => character.entry_id)).toEqual(
       [...first.data.characters.map((character) => character.entry_id)].sort()
     );
@@ -101,24 +97,24 @@ describe("content compiler", () => {
     expect(localImages.every((image) => image.startsWith("images/characters/"))).toBe(true);
     expect(localImages.some((image) => image.startsWith("assets/"))).toBe(false);
     expect(
-      first.data.characters.every((character) =>
-        character.sources.length > 0
-        && character.sources.every((source) =>
-          source.url.startsWith("https://")
-          && source.accessed_on === "2026-07-28"
-        )
-        && character.keys.every((form) =>
-          form.source_ids.length > 0
-          && form.source_ids.every((sourceId) =>
-            character.sources.some((source) => source.id === sourceId)
+      first.data.characters.every(
+        (character) =>
+          character.sources.length > 0 &&
+          character.sources.every(
+            (source) => source.url.startsWith("https://") && source.accessed_on === "2026-07-28"
+          ) &&
+          character.keys.every(
+            (form) =>
+              form.source_ids.length > 0 &&
+              form.source_ids.every((sourceId) => character.sources.some((source) => source.id === sourceId)) &&
+              form.images.every(
+                (image) =>
+                  image.source_url.startsWith("https://") &&
+                  image.rights_status === "unverified-third-party" &&
+                  image.publish_unverified !== true &&
+                  Boolean(image.rights_holder)
+              )
           )
-          && form.images.every((image) =>
-            image.source_url.startsWith("https://")
-            && image.rights_status === "unverified-third-party"
-            && image.publish_unverified === true
-            && Boolean(image.rights_holder)
-          )
-        )
       )
     ).toBe(true);
   });
@@ -137,18 +133,27 @@ describe("content compiler", () => {
     expect(await readFile(outputPath, "utf8")).toBe(built.json);
   });
 
+  it("changes the deterministic content revision when authored content changes", async () => {
+    const root = await temporaryProject();
+    const outputPath = path.join(root, "src", "generated", "nexy-data.json");
+    const first = await compileContent({ root, outputPath });
+    const entryPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
+    const source = await readFile(entryPath, "utf8");
+    await writeFile(entryPath, source.replace('name: "Agent Venom"', 'name: "Agent Venom Updated"'), "utf8");
+
+    const second = await compileContent({ root, outputPath });
+
+    expect(second.data.meta.content_revision).not.toBe(first.data.meta.content_revision);
+  });
+
   it("rejects missing generated data in check mode", async () => {
     const root = await temporaryProject();
     const outputPath = path.join(root, "src", "generated", "nexy-data.json");
     await rm(outputPath);
 
-    await expect(
-      compileContent({ root, check: true, outputPath })
-    ).rejects.toMatchObject({
+    await expect(compileContent({ root, check: true, outputPath })).rejects.toMatchObject({
       name: "ContentValidationError",
-      errors: expect.arrayContaining([
-        expect.stringContaining("generated data is missing")
-      ])
+      errors: expect.arrayContaining([expect.stringContaining("generated data is missing")])
     });
     expect(await exists(outputPath)).toBe(false);
   });
@@ -157,35 +162,24 @@ describe("content compiler", () => {
     const root = await temporaryProject();
     const outputPath = path.join(root, "src", "generated", "nexy-data.json");
     await mkdir(path.dirname(outputPath), { recursive: true });
-    await writeFile(outputPath, "{\"stale\":true}\n", "utf8");
+    await writeFile(outputPath, '{"stale":true}\n', "utf8");
 
-    await expect(
-      compileContent({ root, check: true, outputPath })
-    ).rejects.toMatchObject({
+    await expect(compileContent({ root, check: true, outputPath })).rejects.toMatchObject({
       name: "ContentValidationError",
-      errors: expect.arrayContaining([
-        expect.stringContaining("generated data is stale")
-      ])
+      errors: expect.arrayContaining([expect.stringContaining("generated data is stale")])
     });
-    expect(await readFile(outputPath, "utf8")).toBe("{\"stale\":true}\n");
+    expect(await readFile(outputPath, "utf8")).toBe('{"stale":true}\n');
   });
 
   it("rejects duplicate YAML keys with a filename and line", async () => {
     const root = await temporaryProject();
-    const entryPath = path.join(
-      root,
-      "content",
-      "characters",
-      "agent-venom-marvel-mainstream.yaml"
-    );
+    const entryPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
     const source = await readFile(entryPath, "utf8");
     await writeFile(entryPath, `${source}\nname: Duplicate\n`, "utf8");
 
     await expect(compileContent({ root, check: true })).rejects.toMatchObject({
       name: "ContentValidationError",
-      errors: expect.arrayContaining([
-        expect.stringContaining("Map keys must be unique")
-      ])
+      errors: expect.arrayContaining([expect.stringContaining("Map keys must be unique")])
     });
   });
 
@@ -207,12 +201,7 @@ describe("content compiler", () => {
 
   it("rejects unknown references, rank gaps, and character image escapes", async () => {
     const root = await temporaryProject();
-    const characterPath = path.join(
-      root,
-      "content",
-      "characters",
-      "agent-venom-marvel-mainstream.yaml"
-    );
+    const characterPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
     const character = await readFile(characterPath, "utf8");
     await writeFile(
       characterPath,
@@ -238,28 +227,15 @@ describe("content compiler", () => {
 
     expect(failure).toBeInstanceOf(ContentValidationError);
     const messages = (failure as ContentValidationError).errors.join("\n");
-    expect(messages).toContain("unknown verses id \"missing-verse\"");
+    expect(messages).toContain('unknown verses id "missing-verse"');
     expect(messages).toContain("values must be contiguous");
-    expect(messages).toContain(
-      "local image must stay under images/characters/agent-venom-marvel-mainstream/"
-    );
+    expect(messages).toContain("local image must stay under images/characters/agent-venom-marvel-mainstream/");
   });
 
   it("rejects local image formats that the optimization build cannot process", async () => {
     const root = await temporaryProject();
-    const characterPath = path.join(
-      root,
-      "content",
-      "characters",
-      "agent-venom-marvel-mainstream.yaml"
-    );
-    const imageDirectory = path.join(
-      root,
-      "public",
-      "images",
-      "characters",
-      "agent-venom-marvel-mainstream"
-    );
+    const characterPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
+    const imageDirectory = path.join(root, "content", "images", "characters", "agent-venom-marvel-mainstream");
     await mkdir(imageDirectory, { recursive: true });
     await writeFile(path.join(imageDirectory, "agent-venom.gif"), "test", "utf8");
     const character = await readFile(characterPath, "utf8");
@@ -274,22 +250,32 @@ describe("content compiler", () => {
 
     await expect(compileContent({ root, check: true })).rejects.toMatchObject({
       name: "ContentValidationError",
-      errors: expect.arrayContaining([
-        expect.stringContaining(
-          "local image must use AVIF, JPEG, PNG, or WebP"
-        )
-      ])
+      errors: expect.arrayContaining([expect.stringContaining("local image must use AVIF, JPEG, PNG, or WebP")])
+    });
+  });
+
+  it("rejects remote character images instead of loading them in visitors' browsers", async () => {
+    const root = await temporaryProject();
+    const characterPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
+    const character = await readFile(characterPath, "utf8");
+    await writeFile(
+      characterPath,
+      character.replace(
+        "images/characters/agent-venom-marvel-mainstream/agent-venom.webp",
+        "https://images.example.com/agent-venom.webp"
+      ),
+      "utf8"
+    );
+
+    await expect(compileContent({ root, check: true })).rejects.toMatchObject({
+      name: "ContentValidationError",
+      errors: expect.arrayContaining([expect.stringContaining("remote and data image URLs are not supported")])
     });
   });
 
   it("rejects unknown and duplicate character source references", async () => {
     const root = await temporaryProject();
-    const characterPath = path.join(
-      root,
-      "content",
-      "characters",
-      "agent-venom-marvel-mainstream.yaml"
-    );
+    const characterPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
     const character = await readFile(characterPath, "utf8");
     await writeFile(
       characterPath,
@@ -307,10 +293,7 @@ describe("content compiler", () => {
             "keys:"
           ].join("\n")
         )
-        .replace(
-          "      - vs-battles-wiki-profile\n    power_refs:",
-          "      - missing-profile\n    power_refs:"
-        ),
+        .replace("      - vs-battles-wiki-profile\n    power_refs:", "      - missing-profile\n    power_refs:"),
       "utf8"
     );
 
@@ -325,30 +308,17 @@ describe("content compiler", () => {
 
   it("rejects invalid provenance URLs, dates, and conditional image rights fields", async () => {
     const root = await temporaryProject();
-    const agentPath = path.join(
-      root,
-      "content",
-      "characters",
-      "agent-venom-marvel-mainstream.yaml"
-    );
+    const agentPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
     const agent = await readFile(agentPath, "utf8");
     await writeFile(
       agentPath,
       agent
-        .replace(
-          "https://vsbattles.fandom.com/wiki/Agent_Venom",
-          "http://vsbattles.fandom.com/wiki/Agent_Venom"
-        )
+        .replace("https://vsbattles.fandom.com/wiki/Agent_Venom", "http://vsbattles.fandom.com/wiki/Agent_Venom")
         .replace('accessed_on: "2026-07-28"', 'accessed_on: "2026-02-30"'),
       "utf8"
     );
 
-    const auroraPath = path.join(
-      root,
-      "content",
-      "characters",
-      "aurora-marvel-mainstream.yaml"
-    );
+    const auroraPath = path.join(root, "content", "characters", "aurora-marvel-mainstream.yaml");
     const aurora = await readFile(auroraPath, "utf8");
     await writeFile(
       auroraPath,
@@ -357,20 +327,12 @@ describe("content compiler", () => {
           "https://vsbattles.fandom.com/wiki/File:Aurora-Render.png",
           "http://vsbattles.fandom.com/wiki/File:Aurora-Render.png"
         )
-        .replace(
-          "        rights_status: unverified-third-party",
-          "        rights_status: licensed"
-        )
+        .replace("        rights_status: unverified-third-party", "        rights_status: licensed")
         .replace('        rights_holder: "Unknown / respective rights holders"\n', ""),
       "utf8"
     );
 
-    const daggerPath = path.join(
-      root,
-      "content",
-      "characters",
-      "dagger-marvel-mainstream.yaml"
-    );
+    const daggerPath = path.join(root, "content", "characters", "dagger-marvel-mainstream.yaml");
     const dagger = await readFile(daggerPath, "utf8");
     await writeFile(
       daggerPath,
@@ -390,26 +352,20 @@ describe("content compiler", () => {
     expect(messages).toContain("must use HTTPS");
     expect(messages).toContain("must be a valid calendar date");
     expect(messages).toContain("is required when rights_status is licensed");
-    expect(messages).toContain(
-      "is required when rights_status is unverified-third-party"
-    );
+    expect(messages).toContain("is required when rights_status is unverified-third-party");
   });
 
   it("requires every verse to reference an origin in the same media", async () => {
     const root = await temporaryProject();
     const mediaPath = path.join(root, "content", "catalogs", "media.yaml");
-    await writeFile(
-      mediaPath,
-      `${await readFile(mediaPath, "utf8")}\n- id: animation\n  name: \"Animation\"\n`,
-      "utf8"
-    );
+    await writeFile(mediaPath, `${await readFile(mediaPath, "utf8")}\n- id: animation\n  name: "Animation"\n`, "utf8");
     const versesPath = path.join(root, "content", "catalogs", "verses.yaml");
     const verses = await readFile(versesPath, "utf8");
     await writeFile(
       versesPath,
       verses.replace(
-        "- id: marvel-mainstream\n  name: \"Mainstream\"\n  media_id: comics",
-        "- id: marvel-mainstream\n  name: \"Mainstream\"\n  media_id: animation"
+        '- id: marvel-mainstream\n  name: "Mainstream"\n  media_id: comics',
+        '- id: marvel-mainstream\n  name: "Mainstream"\n  media_id: animation'
       ),
       "utf8"
     );
@@ -417,9 +373,7 @@ describe("content compiler", () => {
     await expect(compileContent({ root, check: true })).rejects.toMatchObject({
       name: "ContentValidationError",
       errors: expect.arrayContaining([
-        expect.stringContaining(
-          'media_id: "animation" must match origin "marvel-comics" media_id "comics"'
-        )
+        expect.stringContaining('media_id: "animation" must match origin "marvel-comics" media_id "comics"')
       ])
     });
   });
@@ -428,11 +382,7 @@ describe("content compiler", () => {
     const root = await temporaryProject();
     const mediaPath = path.join(root, "content", "catalogs", "media.yaml");
     const media = await readFile(mediaPath, "utf8");
-    await writeFile(
-      mediaPath,
-      media.replace('name: "Comics"', 'name: "Comics"\n  display_nmae: "Typo"'),
-      "utf8"
-    );
+    await writeFile(mediaPath, media.replace('name: "Comics"', 'name: "Comics"\n  display_nmae: "Typo"'), "utf8");
 
     const powersPath = path.join(root, "content", "catalogs", "powers.yaml");
     const powers = await readFile(powersPath, "utf8");
@@ -461,7 +411,7 @@ describe("content compiler", () => {
     const powersPath = path.join(root, "content", "catalogs", "powers.yaml");
     const powers = await readFile(powersPath, "utf8");
     const targeted = powers.replace(
-      /          - id: regeneration\r?\n        max_target_type_rank: 4/,
+      / {10}- id: regeneration\r?\n {8}max_target_type_rank: 4/,
       [
         "          - id: light-manipulation",
         "            source_variant: dagger-lightforce",
@@ -483,7 +433,7 @@ describe("content compiler", () => {
     const powersPath = path.join(root, "content", "catalogs", "powers.yaml");
     const powers = await readFile(powersPath, "utf8");
     const targeted = powers.replace(
-      /          - id: regeneration\r?\n        max_target_type_rank: 4/,
+      / {10}- id: regeneration\r?\n {8}max_target_type_rank: 4/,
       [
         "          - id: light-manipulation",
         "            source_variant: missing-light-variant",
@@ -504,42 +454,67 @@ describe("content compiler", () => {
     expect(failure).toBeInstanceOf(ContentValidationError);
     const messages = (failure as ContentValidationError).errors.join("\n");
     expect(messages).toContain('unknown magic_levels id "missing-magic-level"');
-    expect(messages).toContain(
-      'unknown variant "missing-light-variant" for power "light-manipulation"'
+    expect(messages).toContain('unknown variant "missing-light-variant" for power "light-manipulation"');
+  });
+
+  it("rejects ambiguous power scopes and unsupported ruleset-v1 semantics", async () => {
+    const root = await temporaryProject();
+    const characterPath = path.join(root, "content", "characters", "agent-venom-marvel-mainstream.yaml");
+    const character = await readFile(characterPath, "utf8");
+    const duplicatePower = character.replace(
+      "      - id: healing",
+      ["      - id: healing", "      - id: healing", "        effects: []"].join("\n")
     );
+    expect(duplicatePower).not.toBe(character);
+    await writeFile(characterPath, duplicatePower, "utf8");
+
+    const resistancesPath = path.join(root, "content", "catalogs", "resistances.yaml");
+    const resistances = await readFile(resistancesPath, "utf8");
+    const unsupportedEffectResistance = resistances.replace(
+      "  resists_effect_ids: []",
+      "  resists_effect_ids:\n    - statistic-reduction"
+    );
+    expect(unsupportedEffectResistance).not.toBe(resistances);
+    await writeFile(resistancesPath, unsupportedEffectResistance, "utf8");
+
+    const derivedPath = path.join(root, "content", "catalogs", "derived_power_rules.yaml");
+    const derived = await readFile(derivedPath, "utf8");
+    const unsupportedDerivedStage = derived
+      .replace("  evaluation_stage: base", "  evaluation_stage: effective")
+      .replace("  evaluation_stage: base\n  min_matches: 1", "  min_matches: 1");
+    expect(unsupportedDerivedStage).not.toBe(derived);
+    await writeFile(derivedPath, unsupportedDerivedStage, "utf8");
+
+    let failure: unknown;
+    try {
+      await compileContent({ root, check: true });
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(failure).toBeInstanceOf(ContentValidationError);
+    const messages = (failure as ContentValidationError).errors.join("\n");
+    expect(messages).toContain("duplicate power capability scope");
+    expect(messages).toContain("resists_effect_ids: effect-id resistance is not supported by ruleset v1");
+    expect(messages).toContain("evaluation_stage: effective derived-power evaluation is not supported by ruleset v1");
+    expect(messages).toContain("evaluation_stage: must be explicitly set to base for ruleset v1");
   });
 
   it("rejects invalid numeric, enum, and boolean catalog values", async () => {
     const root = await temporaryProject();
-    const derivedPath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "derived_power_rules.yaml"
-    );
+    const derivedPath = path.join(root, "content", "catalogs", "derived_power_rules.yaml");
     const derived = await readFile(derivedPath, "utf8");
     await writeFile(
       derivedPath,
-      derived
-        .replace("min_matches: 2", 'min_matches: "two"')
-        .replace("comparison: at-least", "comparison: above"),
+      derived.replace("min_matches: 2", 'min_matches: "two"').replace("comparison: at-least", "comparison: above"),
       "utf8"
     );
 
     const equipmentPath = path.join(root, "content", "catalogs", "equipment.yaml");
     const equipment = await readFile(equipmentPath, "utf8");
-    await writeFile(
-      equipmentPath,
-      equipment.replace("priority: 10", 'priority: "high"'),
-      "utf8"
-    );
+    await writeFile(equipmentPath, equipment.replace("priority: 10", 'priority: "high"'), "utf8");
 
-    const classificationsPath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "classifications.yaml"
-    );
+    const classificationsPath = path.join(root, "content", "catalogs", "classifications.yaml");
     const classifications = await readFile(classificationsPath, "utf8");
     await writeFile(
       classificationsPath,
@@ -564,25 +539,11 @@ describe("content compiler", () => {
 
   it("rejects typos in closed catalog vocabularies", async () => {
     const root = await temporaryProject();
-    const abilityPath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "ability_modifiers.yaml"
-    );
+    const abilityPath = path.join(root, "content", "catalogs", "ability_modifiers.yaml");
     const abilities = await readFile(abilityPath, "utf8");
-    await writeFile(
-      abilityPath,
-      abilities.replace("availability: always", "availability: alway"),
-      "utf8"
-    );
+    await writeFile(abilityPath, abilities.replace("availability: always", "availability: alway"), "utf8");
 
-    const liftingPath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "lifting_strength_tiers.yaml"
-    );
+    const liftingPath = path.join(root, "content", "catalogs", "lifting_strength_tiers.yaml");
     const lifting = await readFile(liftingPath, "utf8");
     await writeFile(
       liftingPath,
@@ -592,12 +553,7 @@ describe("content compiler", () => {
       "utf8"
     );
 
-    const naturePath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "magic_natures.yaml"
-    );
+    const naturePath = path.join(root, "content", "catalogs", "magic_natures.yaml");
     const nature = await readFile(naturePath, "utf8");
     await writeFile(
       naturePath,
@@ -625,26 +581,13 @@ describe("content compiler", () => {
 
   it("rejects derived rules that require more matches than requirements", async () => {
     const root = await temporaryProject();
-    const derivedPath = path.join(
-      root,
-      "content",
-      "catalogs",
-      "derived_power_rules.yaml"
-    );
+    const derivedPath = path.join(root, "content", "catalogs", "derived_power_rules.yaml");
     const derived = await readFile(derivedPath, "utf8");
-    await writeFile(
-      derivedPath,
-      derived.replace("min_matches: 2", "min_matches: 5"),
-      "utf8"
-    );
+    await writeFile(derivedPath, derived.replace("min_matches: 2", "min_matches: 5"), "utf8");
 
     await expect(compileContent({ root, check: true })).rejects.toMatchObject({
       name: "ContentValidationError",
-      errors: expect.arrayContaining([
-        expect.stringContaining(
-          "min_matches: 5 cannot exceed requirements.length (4)"
-        )
-      ])
+      errors: expect.arrayContaining([expect.stringContaining("min_matches: 5 cannot exceed requirements.length (4)")])
     });
   });
 });
@@ -666,9 +609,7 @@ describe("new character CLI", () => {
     expect(result.yaml).toContain("name: Compiler Test");
     expect(result.yaml).toContain("verse_id: marvel-mainstream");
     expect(result.yaml).toContain("id: vs-battles-wiki-profile");
-    expect(result.yaml).toContain(
-      "url: https://vsbattles.fandom.com/wiki/Compiler_Test"
-    );
+    expect(result.yaml).toContain("url: https://vsbattles.fandom.com/wiki/Compiler_Test");
     expect(result.yaml).toContain("source_ids:");
     expect(await exists(result.entryPath)).toBe(false);
     expect(await exists(result.imageDirectory)).toBe(false);
@@ -702,5 +643,27 @@ describe("new character CLI", () => {
     expect(result.stdout).toContain("rights_status: unverified-third-party");
     expect(result.stdout).toContain("rights_holder: Example Rights Holder");
     expect(await exists(path.join(projectRoot, "content", "characters", `${id}.yaml`))).toBe(false);
+  });
+
+  it("writes a scaffold and private image-source directory without overwriting either", async () => {
+    const root = await temporaryProject();
+    const options = {
+      id: "written-compiler-test-character",
+      name: "Written Compiler Test",
+      verse: "marvel-mainstream",
+      gender: "unknown",
+      form: "base",
+      identity: "Written Compiler Test",
+      sourceUrl: "https://vsbattles.fandom.com/wiki/Written_Compiler_Test",
+      dryRun: false
+    } as const;
+
+    const result = await createCharacter(options, root);
+
+    expect(await exists(result.entryPath)).toBe(true);
+    expect(await exists(result.imageDirectory)).toBe(true);
+    expect(result.imageDirectory).toContain(path.join("content", "images", "characters"));
+    await compileContent({ root });
+    await expect(createCharacter(options, root)).rejects.toThrow("already exists");
   });
 });

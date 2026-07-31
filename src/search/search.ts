@@ -10,7 +10,9 @@ interface SearchIndexCacheEntry {
   readonly index: readonly SearchRecord<unknown>[];
 }
 
-const searchIndexCache = new WeakMap<object, Map<Function, SearchIndexCacheEntry>>();
+type SearchIndexExtractor = (...args: never[]) => unknown;
+
+const searchIndexCache = new WeakMap<object, Map<SearchIndexExtractor, SearchIndexCacheEntry>>();
 
 export function normalizeSearchText(value: unknown): string {
   return String(value ?? "")
@@ -26,16 +28,10 @@ function editDistanceWithin(left: string, right: string, maximum: number): numbe
   if (left === right) return 0;
 
   const outsideBand = maximum + 1;
-  let previous = Array.from(
-    { length: right.length + 1 },
-    (_, index) => index <= maximum ? index : outsideBand
-  );
+  let previous = Array.from({ length: right.length + 1 }, (_, index) => (index <= maximum ? index : outsideBand));
 
   for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
-    const current = Array.from(
-      { length: right.length + 1 },
-      () => outsideBand
-    );
+    const current = Array.from({ length: right.length + 1 }, () => outsideBand);
     if (leftIndex <= maximum) current[0] = leftIndex;
     let rowBest = current[0] ?? outsideBand;
     const start = Math.max(1, leftIndex - maximum);
@@ -157,9 +153,8 @@ export function getCachedSearchIndex<T>(
   }
 
   const cached = byExtractor.get(textForItem);
-  const unchanged = cached
-    && cached.items.length === items.length
-    && cached.items.every((item, index) => item === items[index]);
+  const unchanged =
+    cached && cached.items.length === items.length && cached.items.every((item, index) => item === items[index]);
   if (cached && unchanged) {
     return cached.index as readonly SearchRecord<T>[];
   }
@@ -174,14 +169,26 @@ export function getCachedSearchIndex<T>(
 
 export function searchIndex<T>(
   index: readonly SearchRecord<T>[],
-  query: string
+  query: string,
+  tieBreaker?: (left: T, right: T) => number
 ): readonly T[] {
   const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return index.map((record) => record.item);
+  if (!normalizedQuery) {
+    const records = [...index];
+    if (tieBreaker) {
+      records.sort((left, right) => tieBreaker(left.item, right.item) || left.index - right.index);
+    }
+    return records.map((record) => record.item);
+  }
 
   return index
     .map((record) => ({ record, score: scoreRecord(record, normalizedQuery) }))
     .filter(({ score }) => score > 0)
-    .sort((left, right) => right.score - left.score || left.record.index - right.record.index)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        tieBreaker?.(left.record.item, right.record.item) ||
+        left.record.index - right.record.index
+    )
     .map(({ record }) => record.item);
 }

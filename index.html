@@ -16,20 +16,20 @@
       property="og:description"
       content="Pick two fighters. Read every advantage. Resolve the matchup with a transparent ruleset."
     >
-    <meta property="og:url" content="https://syntax555.github.io/Nexy/">
-    <meta property="og:image" content="https://syntax555.github.io/Nexy/og.png">
+    <meta property="og:url" content="__NEXY_SITE_URL__">
+    <meta property="og:image" content="__NEXY_SOCIAL_IMAGE_URL__">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nexy Battle Lab">
     <meta
       name="twitter:description"
       content="Pick two fighters. Read every advantage."
     >
-    <meta name="twitter:image" content="https://syntax555.github.io/Nexy/og.png">
+    <meta name="twitter:image" content="__NEXY_SOCIAL_IMAGE_URL__">
     <meta name="twitter:image:alt" content="Nexy Battle Lab character matchup arena">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Nexy Battle Lab character matchup arena">
-    <link rel="canonical" href="https://syntax555.github.io/Nexy/">
+    <link rel="canonical" href="__NEXY_SITE_URL__">
     <title>Nexy Battle Lab</title>
     <script>
       (() => {
@@ -42,6 +42,10 @@
         }
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute(
+          "content",
+          theme === "dark" ? "#090b12" : "#f5f3ee"
+        );
       })();
     </script>
   </head>

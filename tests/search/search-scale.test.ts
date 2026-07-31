@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getCachedSearchIndex,
-  searchIndex
-} from "../../src/search/search.js";
+import { getCachedSearchIndex, searchIndex } from "../../src/search/search.js";
 
 interface SearchFixture {
   readonly id: string;
@@ -38,5 +35,17 @@ describe("large-roster search indexing", () => {
 
     expect(searchIndex(index, "agt venm").map(({ id }) => id)).toEqual(["venom"]);
     expect(searchIndex(index, "z")).toEqual([]);
+  });
+
+  it("keeps relevance ahead of a caller's display-order tie breaker", () => {
+    const roster: SearchFixture[] = [
+      { id: "alpha", text: "Agent Venom" },
+      { id: "zulu", text: "agt venm" }
+    ];
+    const index = getCachedSearchIndex(roster, textForFixture);
+    const byId = (left: SearchFixture, right: SearchFixture): number => left.id.localeCompare(right.id);
+
+    expect(searchIndex(index, "", byId).map(({ id }) => id)).toEqual(["alpha", "zulu"]);
+    expect(searchIndex(index, "agt venm", byId).map(({ id }) => id)).toEqual(["zulu", "alpha"]);
   });
 });

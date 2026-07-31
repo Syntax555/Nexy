@@ -1,17 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import generatedData from "../../src/generated/nexy-data.json";
-import type {
-  CharacterEntry,
-  CharacterForm,
-  NexyData,
-  RankedStat
-} from "../../src/domain/index.js";
-import {
-  createGameContext,
-  getCharacterProfile,
-  simulateBattle
-} from "../../src/engine/index.js";
+import type { CharacterEntry, CharacterForm, NexyData, RankedStat } from "../../src/domain/index.js";
+import { createGameContext, getCharacterProfile, simulateBattle } from "../../src/engine/index.js";
 
 const data = generatedData as unknown as NexyData;
 const context = createGameContext(data);
@@ -20,11 +11,7 @@ function rankedStat(value: string, note: string): RankedStat {
   return { value, modifier: "normal", note };
 }
 
-function notedCharacter(
-  id: string,
-  name: string,
-  statOverrides: Partial<CharacterForm>
-): CharacterEntry {
+function notedCharacter(id: string, name: string, statOverrides: Partial<CharacterForm>): CharacterEntry {
   const template = context.characters.find((character) => character.name === "Dagger");
   const templateForm = template?.keys[0];
   if (!template || !templateForm) {
@@ -35,19 +22,21 @@ function notedCharacter(
     ...structuredClone(template),
     entry_id: id,
     name,
-    keys: [{
-      ...structuredClone(templateForm),
-      ...statOverrides,
-      key: id,
-      names: [name],
-      power_refs: [],
-      resistance_refs: [],
-      standard_equipment_ids: [],
-      standard_equipment_refs: [],
-      optional_equipment_ids: [],
-      optional_equipment_refs: [],
-      attack_ids: []
-    }]
+    keys: [
+      {
+        ...structuredClone(templateForm),
+        ...statOverrides,
+        key: id,
+        names: [name],
+        power_refs: [],
+        resistance_refs: [],
+        standard_equipment_ids: [],
+        standard_equipment_refs: [],
+        optional_equipment_ids: [],
+        optional_equipment_refs: [],
+        attack_ids: []
+      }
+    ]
   };
 }
 
@@ -67,16 +56,15 @@ describe("authored ranked-stat notes", () => {
     });
 
     expect(profile.stats.find((stat) => stat.id === "tier")?.note).toBeUndefined();
-    expect(profile.stats.find((stat) => stat.id === "attack_potency")?.note)
-      .toBe("Only at close range");
-    expect(profile.stats.find((stat) => stat.id === "speed")?.note)
-      .toBe("Combat Speed: Short bursts / Attack Speed: Light daggers only");
-    expect(profile.stats.find((stat) => stat.id === "speed")?.value)
-      .toBe("Combat Speed: Hypersonic / Attack Speed: Hypersonic");
-    expect(profile.stats.find((stat) => stat.id === "speed")?.value)
-      .not.toContain("Short bursts");
-    expect(profile.stats.find((stat) => stat.id === "speed")?.value)
-      .not.toContain("Light daggers only");
+    expect(profile.stats.find((stat) => stat.id === "attack_potency")?.note).toBe("Only at close range");
+    expect(profile.stats.find((stat) => stat.id === "speed")?.note).toBe(
+      "Combat Speed: Short bursts / Attack Speed: Light daggers only"
+    );
+    expect(profile.stats.find((stat) => stat.id === "speed")?.value).toBe(
+      "Combat Speed: Hypersonic / Attack Speed: Hypersonic"
+    );
+    expect(profile.stats.find((stat) => stat.id === "speed")?.value).not.toContain("Short bursts");
+    expect(profile.stats.find((stat) => stat.id === "speed")?.value).not.toContain("Light daggers only");
   });
 
   it("keeps both combatants' notes on paired speed comparisons", () => {
@@ -94,20 +82,10 @@ describe("authored ranked-stat notes", () => {
       ...data,
       characters: [...context.characters, left, right]
     });
-    const report = simulateBattle(
-      testContext,
-      { characterId: "noted-left" },
-      { characterId: "noted-right" }
-    );
-    const attackPotency = report.comparisons.find(
-      (comparison) => comparison.id === "attack_potency"
-    );
-    const combatSpeed = report.comparisons.find(
-      (comparison) => comparison.id === "combat_speed"
-    );
-    const attackSpeed = report.comparisons.find(
-      (comparison) => comparison.id === "attack_speed"
-    );
+    const report = simulateBattle(testContext, { characterId: "noted-left" }, { characterId: "noted-right" });
+    const attackPotency = report.comparisons.find((comparison) => comparison.id === "attack_potency");
+    const combatSpeed = report.comparisons.find((comparison) => comparison.id === "combat_speed");
+    const attackSpeed = report.comparisons.find((comparison) => comparison.id === "attack_speed");
 
     expect(attackPotency?.left?.note).toBe("Left attack condition");
     expect(attackPotency?.right?.note).toBe("Right attack condition");
@@ -137,13 +115,45 @@ describe("authored ranked-stat notes", () => {
       { characterId: "noted-unpaired-left" },
       { characterId: "noted-unpaired-right" }
     );
-    const combatSpeed = report.comparisons.find(
-      (comparison) => comparison.id === "combat_speed"
-    );
+    const combatSpeed = report.comparisons.find((comparison) => comparison.id === "combat_speed");
 
     expect(combatSpeed?.left?.note).toBe(
       "Combat bursts · Shown only here: Travel Speed - Hypersonic (Long-distance only)"
     );
     expect(combatSpeed?.right?.note).toBe("Steady combat pace");
+    expect(report.comparisons.some((comparison) => comparison.id === "travel_speed")).toBe(false);
+    expect(report.score.rows.some((row) => row.id === "travel_speed")).toBe(false);
+    expect(report.score.leftScore).toBe(report.score.rightScore);
+    expect(report.score.pointWinner).toBe("tie");
+  });
+
+  it("scores an optional speed category only when both fighters author it", () => {
+    const left = notedCharacter("paired-speed-left", "Paired Speed Left", {
+      combat_speed: rankedStat("hypersonic", "Equal combat pace"),
+      travel_speed: rankedStat("hypersonic", "Faster travel")
+    });
+    const right = notedCharacter("paired-speed-right", "Paired Speed Right", {
+      combat_speed: rankedStat("hypersonic", "Equal combat pace"),
+      travel_speed: rankedStat("supersonic", "Slower travel")
+    });
+    const testContext = createGameContext({
+      ...data,
+      characters: [...context.characters, left, right]
+    });
+    const report = simulateBattle(
+      testContext,
+      { characterId: "paired-speed-left" },
+      { characterId: "paired-speed-right" }
+    );
+    const travelSpeed = report.comparisons.find((comparison) => comparison.id === "travel_speed");
+    const travelScore = report.score.rows.find((row) => row.id === "travel_speed");
+
+    expect(travelSpeed?.includedInScore).toBe(true);
+    expect(travelSpeed?.winner).toBe("left");
+    expect(travelScore?.winner).toBe("left");
+    expect(travelScore?.leftRank).toBeGreaterThan(travelScore?.rightRank ?? 0);
+    expect(report.score.leftScore - report.score.rightScore).toBe(
+      (travelScore?.leftRank ?? 0) - (travelScore?.rightRank ?? 0)
+    );
   });
 });

@@ -21,12 +21,9 @@ export type RankedStatName =
   | "range"
   | "intelligence";
 
-export type SpeedStatName =
-  | "attack_speed"
-  | "combat_speed"
-  | "reaction_speed"
-  | "travel_speed"
-  | "flight_speed";
+export type SpeedStatName = "attack_speed" | "combat_speed" | "reaction_speed" | "travel_speed" | "flight_speed";
+
+export type OptionalSpeedStatName = Exclude<SpeedStatName, "combat_speed">;
 
 export type CoreRankedStatName = Exclude<
   RankedStatName,
@@ -44,16 +41,9 @@ export interface RankedStat {
 /** The YAML schema permits a tier id as shorthand for a full ranked stat. */
 export type RankedStatInput = Id | RankedStat;
 
-export type RankedStatEffects = Partial<
-  Readonly<Record<RankedStatName, RankedStatInput | null>>
->;
+export type RankedStatEffects = Partial<Readonly<Record<RankedStatName, RankedStatInput | null>>>;
 
-export type ImageRightsStatus =
-  | "original"
-  | "licensed"
-  | "public-domain"
-  | "permission"
-  | "unverified-third-party";
+export type ImageRightsStatus = "original" | "licensed" | "public-domain" | "permission" | "unverified-third-party";
 
 export interface ImageRef {
   readonly name: string;
@@ -135,12 +125,8 @@ export interface EffectNullifiers {
 export interface OpponentStatSwapEffect {
   readonly stat_names?: readonly RankedStatName[] | null;
   readonly max_target_range?: RankedStatInput | null;
-  readonly max_target_stats?: Partial<
-    Readonly<Record<RankedStatName, RankedStatInput | null>>
-  > | null;
-  readonly on_success_stat_modifier_floor_effects?:
-    | readonly StatModifierFloorEffect[]
-    | null;
+  readonly max_target_stats?: Partial<Readonly<Record<RankedStatName, RankedStatInput | null>>> | null;
+  readonly on_success_stat_modifier_floor_effects?: readonly StatModifierFloorEffect[] | null;
 }
 
 /**
@@ -149,9 +135,7 @@ export interface OpponentStatSwapEffect {
  */
 export interface Effect {
   readonly stat_effects?: RankedStatEffects | null;
-  readonly stat_modifier_floor_effects?:
-    | readonly StatModifierFloorEffect[]
-    | null;
+  readonly stat_modifier_floor_effects?: readonly StatModifierFloorEffect[] | null;
   readonly opponent_stat_swap?: OpponentStatSwapEffect | null;
   readonly image_update?: ImageUpdate | null;
   readonly grants?: EffectGrants | null;
@@ -313,9 +297,17 @@ export interface DerivedPowerRequirement {
   readonly comparison?: "at-least" | "at-most" | "exact" | null;
 }
 
+export type DerivedPowerEvaluationStage = "base" | "effective";
+
 export interface DerivedPowerRule {
   readonly id: Id;
   readonly power_id: Id;
+  /**
+   * Ruleset v1 evaluates derived powers from the authored base form. The
+   * optional shape preserves compatibility with imported pre-v1 payloads,
+   * which are interpreted as `base`.
+   */
+  readonly evaluation_stage?: DerivedPowerEvaluationStage | null;
   readonly min_matches?: number | null;
   readonly requirements: readonly DerivedPowerRequirement[];
 }
@@ -413,11 +405,15 @@ export interface NexyOptions {
   readonly intelligence_tiers: readonly RankedTierOption[];
 }
 
-export type CharacterCollection =
-  | readonly CharacterEntry[]
-  | Readonly<Record<Id, CharacterEntry>>;
+export type CharacterCollection = readonly CharacterEntry[] | Readonly<Record<Id, CharacterEntry>>;
+
+export interface NexyDataMeta {
+  readonly schema_version: 1;
+  readonly content_revision: string;
+}
 
 export interface NexyData {
+  readonly meta: NexyDataMeta;
   readonly options: NexyOptions;
   readonly baseurl?: string | null;
   readonly characters: CharacterCollection;

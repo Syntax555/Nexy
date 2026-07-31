@@ -8,25 +8,16 @@ import type {
   RankedStatName,
   ResistanceRef
 } from "./data.js";
+import type { RulesetVersion } from "./version.js";
 
 export type Side = "left" | "right";
 export type Winner = Side | "tie";
 
-export type StatusCode =
-  | "active"
-  | "disabled"
-  | "absorbed"
-  | "negated"
-  | "nullified"
-  | "resisted";
+export type StatusCode = "active" | "disabled" | "absorbed" | "negated" | "nullified" | "resisted";
 
 export type ComparisonClass = "higher" | "lower" | "same";
 
-export type CapabilityKind =
-  | "power"
-  | "resistance"
-  | "equipment"
-  | "attack";
+export type CapabilityKind = "power" | "resistance" | "equipment" | "attack";
 
 export interface BattleSelection {
   readonly characterId: string;
@@ -66,20 +57,12 @@ export interface ProfileCapability {
   readonly id: string;
   readonly label: string;
   readonly placeholder: boolean;
-  readonly ref?:
-    | PowerRef
-    | ResistanceRef
-    | Readonly<Record<string, unknown>>;
+  readonly ref?: PowerRef | ResistanceRef | Readonly<Record<string, unknown>>;
   readonly status?: ItemStatus;
   readonly details?: readonly string[];
 }
 
-export type ProfileSectionId =
-  | "powers"
-  | "resistances"
-  | "standard-equipment"
-  | "optional-equipment"
-  | "attacks";
+export type ProfileSectionId = "powers" | "resistances" | "standard-equipment" | "optional-equipment" | "attacks";
 
 export interface ProfileSection {
   readonly id: ProfileSectionId;
@@ -174,12 +157,7 @@ export interface BattleScore {
   readonly interaction: BattleInteraction | null;
 }
 
-export type VerdictKind =
-  | "points"
-  | "tie-breaker"
-  | "automatic"
-  | "stalemate"
-  | "draw";
+export type VerdictKind = "points" | "tie-breaker" | "automatic" | "stalemate" | "draw";
 
 export interface BattleVerdict {
   readonly winner: Winner;
@@ -189,10 +167,7 @@ export interface BattleVerdict {
   readonly detail?: string;
 }
 
-export type ResolutionMode =
-  | "stable"
-  | "cycle-suppressed"
-  | "safety-limit";
+export type ResolutionMode = "stable" | "cycle-suppressed" | "safety-limit";
 
 export interface BattleResolution {
   readonly mode: ResolutionMode;
@@ -200,7 +175,7 @@ export interface BattleResolution {
 }
 
 export interface BattleReport {
-  readonly rulesetVersion: "1";
+  readonly rulesetVersion: RulesetVersion;
   readonly selections: Readonly<Record<Side, BattleSelection>>;
   readonly left: CharacterProfile;
   readonly right: CharacterProfile;

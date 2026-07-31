@@ -1,9 +1,4 @@
-import type {
-  AgeFilterValue,
-  BattleSelection,
-  CharacterEntry,
-  CharacterProfile
-} from "../domain/index.js";
+import type { AgeFilterValue, BattleSelection, CharacterEntry, CharacterProfile } from "../domain/index.js";
 import type { GameContext } from "../engine/index.js";
 import { getCharacterProfile } from "../engine/index.js";
 
@@ -43,10 +38,7 @@ function characterId(character: CharacterEntry, index: number): string {
   return character.entry_id || character.id || `character-${index + 1}`;
 }
 
-function catalogName(
-  entries: readonly { readonly id: string; readonly name: string }[],
-  id: string
-): string {
+function catalogName(entries: readonly { readonly id: string; readonly name: string }[], id: string): string {
   return entries.find((entry) => entry.id === id)?.name ?? id;
 }
 
@@ -65,11 +57,7 @@ function addAgeRange(values: Set<number>, start: number, end: number): void {
   for (let age = start; age <= end; age += 1) values.add(age);
 }
 
-function addDecadeAgeRange(
-  values: Set<number>,
-  decade: number,
-  qualifier: string
-): void {
+function addDecadeAgeRange(values: Set<number>, decade: number, qualifier: string): void {
   if (!Number.isInteger(decade) || decade < 0) return;
 
   if (qualifier === "early") {
@@ -90,10 +78,10 @@ function derivedAgeFilterValues(character: CharacterEntry): readonly AgeFilterVa
 
   const values = new Set<number>();
   if (
-    character.age.value !== null
-    && character.age.value !== undefined
-    && Number.isInteger(character.age.value)
-    && character.age.value >= 0
+    character.age.value !== null &&
+    character.age.value !== undefined &&
+    Number.isInteger(character.age.value) &&
+    character.age.value >= 0
   ) {
     values.add(character.age.value);
   }
@@ -125,11 +113,7 @@ function derivedAgeFilterValues(character: CharacterEntry): readonly AgeFilterVa
     if (Number.isInteger(age) && age >= 0) values.add(age);
   }
 
-  return values.size > 0
-    ? [...values].sort((left, right) => left - right)
-    : character.age.unknown
-      ? ["unknown"]
-      : [];
+  return values.size > 0 ? [...values].sort((left, right) => left - right) : character.age.unknown ? ["unknown"] : [];
 }
 
 function classificationIdsWithParents(
@@ -156,10 +140,7 @@ function classificationIdsWithParents(
 
 export function buildRoster(context: GameContext): readonly RosterCharacter[] {
   const classificationsById = new Map(
-    context.data.options.classifications.map((classification) => [
-      classification.id,
-      classification
-    ])
+    context.data.options.classifications.map((classification) => [classification.id, classification])
   );
 
   return context.characters.map((character, index) => {
@@ -175,38 +156,38 @@ export function buildRoster(context: GameContext): readonly RosterCharacter[] {
     };
     const defaultProfile = getCharacterProfile(context, defaultSelection);
     const tiers = character.keys
-      .map((form) => tierFromProfile(getCharacterProfile(context, {
-        characterId: id,
-        formId: form.key
-      })))
+      .map((form) =>
+        tierFromProfile(
+          form.key === defaultForm.key
+            ? defaultProfile
+            : getCharacterProfile(context, {
+                characterId: id,
+                formId: form.key
+              })
+        )
+      )
       .filter((candidate) => candidate.value !== "Unranked");
-    const tier = tiers
-      .reduce(
-        (strongest, candidate) =>
-          candidate.rank > strongest.rank ? candidate : strongest,
-        tierFromProfile(defaultProfile)
-      );
-    const uniqueTiers = [...tiers.reduce((byValue, candidate) => {
-      const current = byValue.get(candidate.value);
-      if (!current || candidate.rank < current.rank) {
-        byValue.set(candidate.value, candidate);
-      }
-      return byValue;
-    }, new Map<string, RosterTier>()).values()];
-    const verseOption = context.data.options.verses.find(
-      (candidate) => candidate.id === character.verse_id
+    const tier = tiers.reduce(
+      (strongest, candidate) => (candidate.rank > strongest.rank ? candidate : strongest),
+      tierFromProfile(defaultProfile)
     );
+    const uniqueTiers = [
+      ...tiers
+        .reduce((byValue, candidate) => {
+          const current = byValue.get(candidate.value);
+          if (!current || candidate.rank < current.rank) {
+            byValue.set(candidate.value, candidate);
+          }
+          return byValue;
+        }, new Map<string, RosterTier>())
+        .values()
+    ];
+    const verseOption = context.data.options.verses.find((candidate) => candidate.id === character.verse_id);
     const originId = verseOption?.source_id ?? "";
-    const originOption = context.data.options.origins.find(
-      (candidate) => candidate.id === originId
-    );
+    const originOption = context.data.options.origins.find((candidate) => candidate.id === originId);
     const mediaId = verseOption?.media_id ?? originOption?.media_id ?? "";
-    const media = mediaId
-      ? catalogName(context.data.options.media, mediaId)
-      : "Unspecified media";
-    const origin = originId
-      ? catalogName(context.data.options.origins, originId)
-      : "Unspecified origin";
+    const media = mediaId ? catalogName(context.data.options.media, mediaId) : "Unspecified media";
+    const origin = originId ? catalogName(context.data.options.origins, originId) : "Unspecified origin";
     const verse = catalogName(context.data.options.verses, character.verse_id);
     const gender = catalogName(context.data.options.genders, character.gender_id);
     const classificationNames = character.classification_ids.map((classificationId) =>
@@ -215,17 +196,12 @@ export function buildRoster(context: GameContext): readonly RosterCharacter[] {
     const classificationFilterIds = classificationIdsWithParents(
       character.classification_ids,
       classificationsById
-    ).filter((classificationId) =>
-      classificationsById.get(classificationId)?.filterable !== false
-    );
+    ).filter((classificationId) => classificationsById.get(classificationId)?.filterable !== false);
     const classificationFilterNames = classificationFilterIds.map((classificationId) =>
       catalogName(context.data.options.classifications, classificationId)
     );
     const ageFilterValues = derivedAgeFilterValues(character);
-    const formNames = character.keys.flatMap((form) => [
-      form.name ?? "",
-      ...form.names
-    ]);
+    const formNames = character.keys.flatMap((form) => [form.name ?? "", ...form.names]);
 
     return {
       id,
@@ -267,18 +243,13 @@ export function buildRoster(context: GameContext): readonly RosterCharacter[] {
   });
 }
 
-export function validSelection(
-  context: GameContext,
-  selection: BattleSelection | null
-): BattleSelection | null {
+export function validSelection(context: GameContext, selection: BattleSelection | null): BattleSelection | null {
   if (!selection) return null;
   const character = context.charactersById.get(selection.characterId);
   if (!character) return null;
 
   const requestedForm = selection.formId || selection.keyId;
-  const form = requestedForm
-    ? character.keys.find((candidate) => candidate.key === requestedForm)
-    : character.keys[0];
+  const form = requestedForm ? character.keys.find((candidate) => candidate.key === requestedForm) : character.keys[0];
   if (!form) return null;
 
   return {

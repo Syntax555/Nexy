@@ -1,4 +1,4 @@
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,7 +29,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 function usage(): string {
   return [
     "Usage:",
-    "  pnpm character:new -- --id storm-marvel-mainstream --name \"Storm\" --verse marvel-mainstream --source-url URL [options]",
+    '  pnpm character:new -- --id storm-marvel-mainstream --name "Storm" --verse marvel-mainstream --source-url URL [options]',
     "",
     "Options:",
     "  --gender ID       Gender catalog id (default: unknown)",
@@ -50,6 +50,14 @@ function usage(): string {
     "  --dry-run         Print YAML without writing files",
     "  --help            Show this help"
   ].join("\n");
+}
+
+function requiredValue(values: ReadonlyMap<string, string>, key: string): string {
+  const value = values.get(key);
+  if (!value) {
+    throw new Error(`Internal argument validation missed required --${key}`);
+  }
+  return value;
 }
 
 function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
@@ -76,21 +84,23 @@ function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
     }
 
     const key = argument.slice(2);
-    if (![
-      "id",
-      "name",
-      "verse",
-      "gender",
-      "form",
-      "identity",
-      "source-url",
-      "source-name",
-      "source-publisher",
-      "source-license",
-      "image",
-      "image-source-url",
-      "image-rights-holder"
-    ].includes(key)) {
+    if (
+      ![
+        "id",
+        "name",
+        "verse",
+        "gender",
+        "form",
+        "identity",
+        "source-url",
+        "source-name",
+        "source-publisher",
+        "source-license",
+        "image",
+        "image-source-url",
+        "image-rights-holder"
+      ].includes(key)
+    ) {
       throw new Error(`Unknown option ${argument}\n\n${usage()}`);
     }
     const value = args[index + 1];
@@ -107,40 +117,34 @@ function readArguments(args: readonly string[]): NewCharacterOptions | "help" {
     throw new Error(`Missing required option(s): ${missing.map((key) => `--${key}`).join(", ")}\n\n${usage()}`);
   }
 
-  const imageOptions = [
-    values.get("image"),
-    values.get("image-source-url"),
-    values.get("image-rights-holder")
-  ];
+  const imageOptions = [values.get("image"), values.get("image-source-url"), values.get("image-rights-holder")];
   if (imageOptions.some(Boolean) && !imageOptions.every(Boolean)) {
-    throw new Error(
-      "--image, --image-source-url, and --image-rights-holder must be provided together"
-    );
+    throw new Error("--image, --image-source-url, and --image-rights-holder must be provided together");
   }
 
-  const name = values.get("name")!;
+  const name = requiredValue(values, "name");
+  const sourceName = values.get("source-name");
+  const sourcePublisher = values.get("source-publisher");
+  const sourceLicense = values.get("source-license");
+  const imageFile = values.get("image");
+  const imageSourceUrl = values.get("image-source-url");
+  const imageRightsHolder = values.get("image-rights-holder");
   return {
-    id: values.get("id")!,
+    id: requiredValue(values, "id"),
     name,
-    verse: values.get("verse")!,
+    verse: requiredValue(values, "verse"),
     gender: values.get("gender") ?? "unknown",
     form: values.get("form") ?? "base",
     identity: values.get("identity") ?? name,
-    sourceUrl: values.get("source-url")!,
-    ...(values.get("source-name")
-      ? { sourceName: values.get("source-name")! }
-      : {}),
-    ...(values.get("source-publisher")
-      ? { sourcePublisher: values.get("source-publisher")! }
-      : {}),
-    ...(values.get("source-license")
-      ? { sourceLicense: values.get("source-license")! }
-      : {}),
-    ...(values.get("image")
+    sourceUrl: requiredValue(values, "source-url"),
+    ...(sourceName ? { sourceName } : {}),
+    ...(sourcePublisher ? { sourcePublisher } : {}),
+    ...(sourceLicense ? { sourceLicense } : {}),
+    ...(imageFile && imageSourceUrl && imageRightsHolder
       ? {
-          imageFile: values.get("image")!,
-          imageSourceUrl: values.get("image-source-url")!,
-          imageRightsHolder: values.get("image-rights-holder")!
+          imageFile,
+          imageSourceUrl,
+          imageRightsHolder
         }
       : {}),
     dryRun
@@ -165,23 +169,13 @@ export async function createCharacter(
   const formResult = slugSchema.safeParse(options.form);
   if (!formResult.success) throw new Error(`--form ${formResult.error.issues[0]?.message ?? "is invalid"}`);
   if (
-    options.imageFile
-    && (
-      path.basename(options.imageFile) !== options.imageFile
-      || !/\.(?:avif|jpe?g|png|webp)$/i.test(options.imageFile)
-    )
+    options.imageFile &&
+    (path.basename(options.imageFile) !== options.imageFile || !/\.(?:avif|jpe?g|png|webp)$/i.test(options.imageFile))
   ) {
-    throw new Error(
-      "--image must be an AVIF, JPEG, PNG, or WebP filename without directories"
-    );
+    throw new Error("--image must be an AVIF, JPEG, PNG, or WebP filename without directories");
   }
-  if (
-    Boolean(options.imageFile)
-    !== Boolean(options.imageSourceUrl && options.imageRightsHolder)
-  ) {
-    throw new Error(
-      "imageFile, imageSourceUrl, and imageRightsHolder must be provided together"
-    );
+  if (Boolean(options.imageFile) !== Boolean(options.imageSourceUrl && options.imageRightsHolder)) {
+    throw new Error("imageFile, imageSourceUrl, and imageRightsHolder must be provided together");
   }
 
   const compiled = await compileContent({ root: projectRoot, check: true });
@@ -214,8 +208,7 @@ export async function createCharacter(
         name: options.sourceName ?? `VS Battles Wiki profile: ${options.name}`,
         url: options.sourceUrl,
         publisher: options.sourcePublisher ?? "VS Battles Wiki (Fandom)",
-        license: options.sourceLicense
-          ?? "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
+        license: options.sourceLicense ?? "CC BY-SA 3.0 (wiki text only; third-party media excluded)",
         accessed_on: reviewedOn
       }
     ],
@@ -224,16 +217,19 @@ export async function createCharacter(
         key: options.form,
         name: "Base",
         names: [options.identity],
-        images: options.imageFile
-          ? [{
-              name: "Base",
-              image: `images/characters/${options.id}/${options.imageFile}`,
-              source_url: options.imageSourceUrl!,
-              rights_status: "unverified-third-party" as const,
-              rights_holder: options.imageRightsHolder!,
-              reviewed_on: reviewedOn
-            }]
-          : [],
+        images:
+          options.imageFile && options.imageSourceUrl && options.imageRightsHolder
+            ? [
+                {
+                  name: "Base",
+                  image: `images/characters/${options.id}/${options.imageFile}`,
+                  source_url: options.imageSourceUrl,
+                  rights_status: "unverified-third-party" as const,
+                  rights_holder: options.imageRightsHolder,
+                  reviewed_on: reviewedOn
+                }
+              ]
+            : [],
         source_ids: [sourceId],
         attack_potency: "human",
         combat_speed: "average-human",
@@ -254,7 +250,7 @@ export async function createCharacter(
 
   const yaml = stringify(validated.data, { lineWidth: 0 });
   const entryPath = path.join(projectRoot, "content", "characters", `${options.id}.yaml`);
-  const imageDirectory = path.join(projectRoot, "public", "images", "characters", options.id);
+  const imageDirectory = path.join(projectRoot, "content", "images", "characters", options.id);
 
   if (!options.dryRun) {
     if (await pathExists(entryPath)) throw new Error(`Refusing to overwrite ${entryPath}`);
@@ -262,7 +258,12 @@ export async function createCharacter(
       throw new Error(`Refusing to use existing image directory ${imageDirectory}`);
     }
     await mkdir(imageDirectory);
-    await writeFile(entryPath, yaml, { encoding: "utf8", flag: "wx" });
+    try {
+      await writeFile(entryPath, yaml, { encoding: "utf8", flag: "wx" });
+    } catch (error) {
+      await rm(imageDirectory, { recursive: true, force: true });
+      throw error;
+    }
   }
 
   return { yaml, entryPath, imageDirectory };
@@ -284,8 +285,8 @@ async function runCli(): Promise<void> {
   console.log(`Created ${path.relative(root, result.entryPath).replaceAll(path.sep, "/")}`);
   console.log(`Created ${path.relative(root, result.imageDirectory).replaceAll(path.sep, "/")}/`);
   console.log(
-    "Next: verify source and image-rights metadata, add documented abilities/stats, "
-    + "then run pnpm content:build && pnpm check"
+    "Next: verify source and image-rights metadata, add documented abilities/stats, " +
+      "then run pnpm content:build && pnpm check"
   );
 }
 

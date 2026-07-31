@@ -7,18 +7,11 @@ const verifiedPublicDisplayStatuses = new Set<ImageRef["rights_status"]>([
   "permission"
 ]);
 
-export function isImageEnabledForPublicDisplay(
-  image: ImageRef | null | undefined
-): image is ImageRef {
+export function isImageEnabledForPublicDisplay(image: ImageRef | null | undefined): image is ImageRef {
   return Boolean(
-    image
-    && (
-      verifiedPublicDisplayStatuses.has(image.rights_status)
-      || (
-        image.rights_status === "unverified-third-party"
-        && image.publish_unverified === true
-      )
-    )
+    image &&
+      (verifiedPublicDisplayStatuses.has(image.rights_status) ||
+        (image.rights_status === "unverified-third-party" && image.publish_unverified === true))
   );
 }
 

@@ -1,32 +1,20 @@
-import type {
-  BattleReport,
-  BattleSelection,
-  CharacterProfile
-} from "../domain/index.js";
+import type { BattleReport, BattleSelection, CharacterProfile } from "../domain/index.js";
+import { RULESET_VERSION } from "../domain/index.js";
 import { withBattleStatuses } from "./counters.js";
 import type { GameContext } from "./context.js";
 import type { EngineView } from "./internal.js";
 import { prepareCharacterProfile, resolveSelection } from "./profile.js";
 import { resolveBattleViews } from "./resolve.js";
-import {
-  compareBattleStats,
-  scoreBattle,
-  verdictForScore
-} from "./score.js";
+import { compareBattleStats, scoreBattle, verdictForScore } from "./score.js";
 
-function normalizedSelection(
-  view: EngineView
-): BattleSelection {
+function normalizedSelection(view: EngineView): BattleSelection {
   return {
     characterId: view.character.entry_id || view.character.id || "",
     formId: view.key.key
   };
 }
 
-function publicProfile(
-  view: EngineView,
-  selection: BattleSelection
-): CharacterProfile {
+function publicProfile(view: EngineView, selection: BattleSelection): CharacterProfile {
   return {
     selection,
     character: view.character,
@@ -42,9 +30,7 @@ function publicProfile(
     details: view.details,
     stats: view.stats,
     sections: view.sections,
-    ...(view.opponentStatSwap
-      ? { opponentStatSwap: view.opponentStatSwap }
-      : {})
+    ...(view.opponentStatSwap ? { opponentStatSwap: view.opponentStatSwap } : {})
   };
 }
 
@@ -59,43 +45,18 @@ export function simulateBattle(
 ): BattleReport {
   const leftResolvedSelection = resolveSelection(context, leftSelection);
   const rightResolvedSelection = resolveSelection(context, rightSelection);
-  const baseLeft = prepareCharacterProfile(
-    context,
-    leftResolvedSelection.character,
-    leftResolvedSelection.form
-  );
-  const baseRight = prepareCharacterProfile(
-    context,
-    rightResolvedSelection.character,
-    rightResolvedSelection.form
-  );
+  const baseLeft = prepareCharacterProfile(context, leftResolvedSelection.character, leftResolvedSelection.form);
+  const baseRight = prepareCharacterProfile(context, rightResolvedSelection.character, rightResolvedSelection.form);
   const resolved = resolveBattleViews(context, baseLeft, baseRight);
   const comparisons = compareBattleStats(context, resolved.left, resolved.right);
-  const score = scoreBattle(
-    context,
-    resolved.left,
-    resolved.right,
-    comparisons
-  );
-  const left = withBattleStatuses(
-    context,
-    baseLeft,
-    baseRight,
-    resolved.left,
-    resolved.right
-  );
-  const right = withBattleStatuses(
-    context,
-    baseRight,
-    baseLeft,
-    resolved.right,
-    resolved.left
-  );
+  const score = scoreBattle(context, resolved.left, resolved.right, comparisons);
+  const left = withBattleStatuses(context, baseLeft, baseRight, resolved.left, resolved.right);
+  const right = withBattleStatuses(context, baseRight, baseLeft, resolved.right, resolved.left);
   const normalizedLeftSelection = normalizedSelection(left);
   const normalizedRightSelection = normalizedSelection(right);
 
   return {
-    rulesetVersion: "1",
+    rulesetVersion: RULESET_VERSION,
     selections: {
       left: normalizedLeftSelection,
       right: normalizedRightSelection

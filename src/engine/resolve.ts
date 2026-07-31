@@ -6,26 +6,11 @@ import type {
   RankedStatName,
   ResistanceRef
 } from "../domain/index.js";
-import { effectiveForm } from "./capabilities.js";
+import { activeImage, effectiveForm } from "./capabilities.js";
 import { battleEffectiveView } from "./counters.js";
-import {
-  arrayField,
-  objectField,
-  stringField,
-  type GameContext
-} from "./context.js";
-import type {
-  EngineView,
-  OpponentStatSwapOutcome,
-  ResolvedPair
-} from "./internal.js";
-import {
-  compositeRank,
-  normalizeStat,
-  raiseStatModifier,
-  statCatalogs,
-  statsForForm
-} from "./rank.js";
+import { arrayField, objectField, stringField, type GameContext } from "./context.js";
+import type { EngineView, OpponentStatSwapOutcome, ResolvedPair } from "./internal.js";
+import { compositeRank, normalizeStat, raiseStatModifier, statCatalogs, statsForForm } from "./rank.js";
 
 interface StatSwapEntry {
   readonly statName: RankedStatName;
@@ -51,9 +36,9 @@ function opponentStatSwapCandidate(
       if (!swap) return [];
       const rangeLimit = Reflect.get(swap, "max_target_range") as RankedStatInput | undefined;
       if (
-        rangeLimit
-        && compositeRank(context, target.effectiveKey.range, "range_tiers")
-          > compositeRank(context, rangeLimit, "range_tiers")
+        rangeLimit &&
+        compositeRank(context, target.effectiveKey.range, "range_tiers") >
+          compositeRank(context, rangeLimit, "range_tiers")
       ) {
         return [];
       }
@@ -65,37 +50,33 @@ function opponentStatSwapCandidate(
         const ownerBaseStat = Reflect.get(owner.key, statName) as RankedStatInput | undefined;
         const targetStat = Reflect.get(target.effectiveKey, statName) as RankedStatInput | undefined;
         const targetCap = maximumStats
-          ? Reflect.get(maximumStats, statName) as RankedStatInput | undefined
+          ? (Reflect.get(maximumStats, statName) as RankedStatInput | undefined)
           : undefined;
         if (!catalogName || !ownerStat || !ownerBaseStat || !targetStat) return [];
 
         const ownerRank = compositeRank(context, ownerStat, catalogName);
         const targetRank = compositeRank(context, targetStat, catalogName);
-        const capRank = targetCap
-          ? compositeRank(context, targetCap, catalogName)
-          : Number.POSITIVE_INFINITY;
+        const capRank = targetCap ? compositeRank(context, targetCap, catalogName) : Number.POSITIVE_INFINITY;
         if (targetRank <= ownerRank || targetRank > capRank) return [];
         return [{ statName, gain: targetRank - ownerRank }];
       });
       if (swaps.length === 0) return [];
-      return [{
-        side,
-        swap,
-        swaps,
-        gain: swaps.reduce((total, entry) => total + entry.gain, 0)
-      }];
+      return [
+        {
+          side,
+          swap,
+          swaps,
+          gain: swaps.reduce((total, entry) => total + entry.gain, 0)
+        }
+      ];
     })
     .reduce<StatSwapCandidate | undefined>(
-      (best, candidate) => !best || candidate.gain > best.gain ? candidate : best,
+      (best, candidate) => (!best || candidate.gain > best.gain ? candidate : best),
       undefined
     );
 }
 
-function assignStat(
-  form: CharacterForm,
-  name: RankedStatName,
-  value: RankedStatInput | null | undefined
-): void {
+function assignStat(form: CharacterForm, name: RankedStatName, value: RankedStatInput | null | undefined): void {
   Reflect.set(form, name, value);
 }
 
@@ -106,11 +87,14 @@ function applyOpponentStatSwap(
 ): { readonly left: EngineView; readonly right: EngineView } {
   const leftCandidate = opponentStatSwapCandidate(context, left, right, "left");
   const rightCandidate = opponentStatSwapCandidate(context, right, left, "right");
-  const candidate = leftCandidate && rightCandidate
-    ? leftCandidate.gain === rightCandidate.gain
-      ? undefined
-      : leftCandidate.gain > rightCandidate.gain ? leftCandidate : rightCandidate
-    : leftCandidate ?? rightCandidate;
+  const candidate =
+    leftCandidate && rightCandidate
+      ? leftCandidate.gain === rightCandidate.gain
+        ? undefined
+        : leftCandidate.gain > rightCandidate.gain
+          ? leftCandidate
+          : rightCandidate
+      : (leftCandidate ?? rightCandidate);
   if (!candidate) return { left, right };
 
   const source = candidate.side === "left" ? left : right;
@@ -122,21 +106,12 @@ function applyOpponentStatSwap(
     assignStat(
       sourceKey,
       statName,
-      normalizeStat(
-        Reflect.get(target.effectiveKey, statName) as RankedStatInput | undefined
-      )
+      normalizeStat(Reflect.get(target.effectiveKey, statName) as RankedStatInput | undefined)
     );
-    assignStat(
-      targetKey,
-      statName,
-      normalizeStat(Reflect.get(source.key, statName) as RankedStatInput | undefined)
-    );
+    assignStat(targetKey, statName, normalizeStat(Reflect.get(source.key, statName) as RankedStatInput | undefined));
   });
 
-  arrayField<object>(
-    candidate.swap,
-    "on_success_stat_modifier_floor_effects"
-  ).forEach((floor) => {
+  arrayField<object>(candidate.swap, "on_success_stat_modifier_floor_effects").forEach((floor) => {
     const statName = stringField(floor, "stat") as RankedStatName;
     const catalogName = statCatalogs[statName];
     if (!catalogName) return;
@@ -220,23 +195,13 @@ function intersectResolvedLists<T>(
   });
 }
 
-function conservativeCycleView(
-  context: GameContext,
-  base: EngineView,
-  cycle: readonly EngineView[]
-): EngineView {
+function conservativeCycleView(context: GameContext, base: EngineView, cycle: readonly EngineView[]): EngineView {
   const powerRefs = intersectResolvedLists<PowerRef>(cycle, "powerRefs");
   const resistanceRefs = intersectResolvedLists<ResistanceRef>(cycle, "resistanceRefs");
   const itemEffects = intersectResolvedLists<Effect>(cycle, "itemEffects");
   const effects = intersectResolvedLists<Effect>(cycle, "effects");
-  const effectiveKey = effectiveForm(
-    context,
-    base.key,
-    powerRefs,
-    itemEffects,
-    effects
-  );
-  return {
+  const effectiveKey = effectiveForm(context, base.key, powerRefs, itemEffects, effects);
+  const result: EngineView = {
     ...base,
     effectiveKey,
     powerRefs,
@@ -245,25 +210,25 @@ function conservativeCycleView(
     effects,
     stats: statsForForm(context, effectiveKey)
   };
+  const image = activeImage(base.key, effects);
+  if (image) return { ...result, image };
+
+  const withoutImage = { ...result };
+  delete withoutImage.image;
+  return withoutImage;
 }
 
 /**
  * Resolve counters simultaneously. Both next states are computed from the
  * previous round, so the result does not depend on left/right evaluation order.
  */
-export function resolveBattleViews(
-  context: GameContext,
-  baseLeft: EngineView,
-  baseRight: EngineView
-): ResolvedPair {
+export function resolveBattleViews(context: GameContext, baseLeft: EngineView, baseRight: EngineView): ResolvedPair {
   const maximumRounds = 32;
   let left = baseLeft;
   let right = baseRight;
   let signature = pairStateSignature(left, right);
   const seen = new Map<string, number>([[signature, 0]]);
-  const states: { readonly left: EngineView; readonly right: EngineView }[] = [
-    { left, right }
-  ];
+  const states: { readonly left: EngineView; readonly right: EngineView }[] = [{ left, right }];
 
   for (let round = 0; round < maximumRounds; round += 1) {
     const nextLeft = battleEffectiveView(context, baseLeft, right, left);

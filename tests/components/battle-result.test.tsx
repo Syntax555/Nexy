@@ -35,54 +35,47 @@ describe("BattleResult", () => {
       )
     };
     const { container, rerender } = render(
-      <BattleResult
-        report={displayedReport}
-        shareLabel="Copy battle link"
-        onEdit={vi.fn()}
-        onShare={vi.fn()}
-      />
+      <BattleResult report={displayedReport} shareLabel="Copy battle link" onEdit={vi.fn()} onShare={vi.fn()} />
     );
 
     const leftLabel = "Falcon (Joaquín Torres)";
     const rightLabel = "Falcon (Sam Wilson)";
-    expect(container.querySelector(".verdict__summary strong")?.textContent)
-      .toBe(`${rightLabel} wins`);
-    expect(
-      [...container.querySelectorAll(".verdict__fighter small")]
-        .map((element) => element.textContent)
-    ).toEqual([leftLabel, rightLabel]);
-    expect(
-      [...container.querySelectorAll(".comparison-row__side > span")]
-        .slice(0, 2)
-        .map((element) => element.textContent)
-    ).toEqual([leftLabel, rightLabel]);
-    expect(
-      [...container.querySelectorAll(".comparison-row__label small")]
-        .some((element) => element.textContent?.includes(`${rightLabel} scores`))
-    ).toBe(true);
-    expect(container.querySelector(".comparison-row__side small")?.textContent)
-      .toBe(`Rank ${firstComparison.left.rank} · ${comparisonNote}`);
-    expect(
-      [...container.querySelectorAll(".combatant-card h3")]
-        .map((element) => element.textContent)
-    ).toEqual([leftLabel, rightLabel]);
-    const artworkDisclosures = [
-      ...container.querySelectorAll<HTMLAnchorElement>(
-        '.combatant-card .artwork-disclosure[data-rights-status="unverified-third-party"]'
-      )
-    ];
-    expect(artworkDisclosures).toHaveLength(2);
-    expect(artworkDisclosures.map((link) => link.href)).toEqual([
-      report.left.image?.source_url,
-      report.right.image?.source_url
+    expect(container.querySelector(".verdict__summary strong")?.textContent).toBe(`${rightLabel} wins`);
+    expect([...container.querySelectorAll(".verdict__fighter small")].map((element) => element.textContent)).toEqual([
+      leftLabel,
+      rightLabel
     ]);
-    expect(artworkDisclosures.every((link) =>
-      link.textContent?.includes("no image licence claimed")
-    )).toBe(true);
     expect(
-      [...container.querySelectorAll(".capability-column > h3")]
-        .map((element) => element.textContent)
-    ).toEqual([
+      [...container.querySelectorAll(".comparison-row__side > span")].slice(0, 2).map((element) => element.textContent)
+    ).toEqual([leftLabel, rightLabel]);
+    expect(
+      [...container.querySelectorAll(".comparison-row__label small")].some((element) =>
+        element.textContent?.includes(`${rightLabel} scores`)
+      )
+    ).toBe(true);
+    expect(container.querySelector(".comparison-row__side small")?.textContent).toBe(
+      `Rank ${firstComparison.left.rank} · ${comparisonNote}`
+    );
+    const comparisonTable = container.querySelector("table.comparison-list");
+    expect(comparisonTable?.querySelector("caption")?.textContent).toContain(
+      `Ranked statistic comparison between ${leftLabel} and ${rightLabel}`
+    );
+    expect([...(comparisonTable?.querySelectorAll("thead th") ?? [])].map((heading) => heading.textContent)).toEqual([
+      leftLabel,
+      "Statistic",
+      rightLabel
+    ]);
+    expect(comparisonTable?.querySelector("tbody th[scope='row']")?.textContent).toContain(firstComparison.label);
+    expect([...container.querySelectorAll(".combatant-card h3")].map((element) => element.textContent)).toEqual([
+      leftLabel,
+      rightLabel
+    ]);
+    expect(container.querySelectorAll(".combatant-card__image img")).toHaveLength(0);
+    expect(
+      [...container.querySelectorAll(".combatant-card__image .image-fallback")].map((fallback) => fallback.textContent)
+    ).toEqual(["F", "F"]);
+    expect(container.querySelectorAll(".combatant-card .artwork-disclosure")).toHaveLength(0);
+    expect([...container.querySelectorAll(".capability-column > h3")].map((element) => element.textContent)).toEqual([
       `${leftLabel} · Fighter 01`,
       `${rightLabel} · Fighter 02`
     ]);
@@ -113,13 +106,13 @@ describe("BattleResult", () => {
         onShare={vi.fn()}
       />
     );
-    expect(container.querySelector(".verdict__summary strong")?.textContent)
-      .toBe(`${rightLabel} wins`);
-    expect(container.querySelector(".verdict__summary small")?.textContent)
-      .toBe(`${leftLabel} cannot affect ${rightLabel}. Blocked by Intangibility`);
-    expect(
-      container.querySelectorAll(".battle-fold > summary > small")[3]?.textContent
-    ).toBe(`${leftLabel} cannot affect ${rightLabel}`);
+    expect(container.querySelector(".verdict__summary strong")?.textContent).toBe(`${rightLabel} wins`);
+    expect(container.querySelector(".verdict__summary small")?.textContent).toBe(
+      `${leftLabel} cannot affect ${rightLabel}. Blocked by Intangibility`
+    );
+    expect(container.querySelectorAll(".battle-fold > summary > small")[3]?.textContent).toBe(
+      `${leftLabel} cannot affect ${rightLabel}`
+    );
 
     const contextualMutualBlockReport: BattleReport = {
       ...report,
@@ -148,8 +141,8 @@ describe("BattleResult", () => {
       />
     );
     expect(container.querySelector(".verdict__summary small")?.textContent).toBe(
-      `Neither combatant can affect the other. ${leftLabel} is blocked by Intangibility; `
-      + `${rightLabel} is blocked by Non-Corporeal`
+      `Neither combatant can affect the other. ${leftLabel} is blocked by Intangibility; ` +
+        `${rightLabel} is blocked by Non-Corporeal`
     );
 
     const cycleSuppressedReport: BattleReport = {
@@ -157,16 +150,36 @@ describe("BattleResult", () => {
       resolution: { mode: "cycle-suppressed", rounds: 4 }
     };
     rerender(
-      <BattleResult
-        report={cycleSuppressedReport}
-        shareLabel="Copy battle link"
-        onEdit={vi.fn()}
-        onShare={vi.fn()}
-      />
+      <BattleResult report={cycleSuppressedReport} shareLabel="Copy battle link" onEdit={vi.fn()} onShare={vi.fn()} />
     );
-    expect(
-      container.querySelector(".battle-fold > summary > small")?.textContent
-    ).toBe(`${report.verdict.kind} · cycle suppressed after 4 rounds`);
+    expect(container.querySelector(".battle-fold > summary > small")?.textContent).toBe(
+      `${report.verdict.kind} · cycle suppressed after 4 rounds`
+    );
+  });
+
+  it("describes an absent comparison value without inventing rank zero", () => {
+    const context = createGameContext(nexyData);
+    const report = simulateBattle(
+      context,
+      { characterId: "falcon-marvel-mainstream", formId: "falcon" },
+      { characterId: "dagger-marvel-mainstream", formId: "dagger" }
+    );
+    const firstComparison = report.comparisons[0];
+    if (!firstComparison) {
+      throw new Error("Expected at least one ranked comparison.");
+    }
+    const displayedReport: BattleReport = {
+      ...report,
+      comparisons: [{ ...firstComparison, left: null }, ...report.comparisons.slice(1)]
+    };
+    const { container } = render(
+      <BattleResult report={displayedReport} shareLabel="Copy battle link" onEdit={vi.fn()} onShare={vi.fn()} />
+    );
+    const leftCell = container.querySelector(".comparison-row .comparison-row__side");
+
+    expect(leftCell?.querySelector("strong")?.textContent).toBe("Not ranked");
+    expect(leftCell?.querySelector("small")?.textContent).toBe("No rank");
+    expect(leftCell?.textContent).not.toContain("Rank 0");
   });
 
   it("uses side labels when both the character name and identity collide", () => {
@@ -177,22 +190,15 @@ describe("BattleResult", () => {
     };
     const report = simulateBattle(context, selection, selection);
     const { container } = render(
-      <BattleResult
-        report={report}
-        shareLabel="Copy battle link"
-        onEdit={vi.fn()}
-        onShare={vi.fn()}
-      />
+      <BattleResult report={report} shareLabel="Copy battle link" onEdit={vi.fn()} onShare={vi.fn()} />
     );
 
+    expect([...container.querySelectorAll(".verdict__fighter small")].map((element) => element.textContent)).toEqual([
+      "Falcon (Fighter 01)",
+      "Falcon (Fighter 02)"
+    ]);
     expect(
-      [...container.querySelectorAll(".verdict__fighter small")]
-        .map((element) => element.textContent)
-    ).toEqual(["Falcon (Fighter 01)", "Falcon (Fighter 02)"]);
-    expect(
-      [...container.querySelectorAll(".comparison-row__side > span")]
-        .slice(0, 2)
-        .map((element) => element.textContent)
+      [...container.querySelectorAll(".comparison-row__side > span")].slice(0, 2).map((element) => element.textContent)
     ).toEqual(["Falcon (Fighter 01)", "Falcon (Fighter 02)"]);
   });
 });

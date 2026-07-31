@@ -1,60 +1,26 @@
-import {
-  mkdir,
-  readFile,
-  readdir,
-  rename,
-  rm,
-  stat,
-  writeFile
-} from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { parseDocument } from "yaml";
 import type { ZodType } from "zod";
 
-import {
-  catalogSchemas,
-  characterSchema,
-  type CatalogEntrySource,
-  type CharacterSource
-} from "./schema.js";
+import { CATALOG_NAMES, type CatalogName } from "../../src/domain/catalogs.js";
+import { catalogSchemas, characterSchema, type CatalogEntrySource, type CharacterSource } from "./schema.js";
 
-export const catalogNames = [
-  "ability_modifiers",
-  "acrobatics_degrees",
-  "attack_durability_tiers",
-  "attacks",
-  "classifications",
-  "derived_power_rules",
-  "equipment",
-  "genders",
-  "intelligence_tiers",
-  "lifting_strength_tiers",
-  "magic_levels",
-  "magic_natures",
-  "martial_arts_degrees",
-  "media",
-  "origins",
-  "power_types",
-  "powers",
-  "range_tiers",
-  "resistance_levels",
-  "resistances",
-  "speed_tiers",
-  "stamina_tiers",
-  "stat_modifiers",
-  "striking_strength_tiers",
-  "verses"
-] as const;
-
-export type CatalogName = (typeof catalogNames)[number];
+export const catalogNames = CATALOG_NAMES;
+export type { CatalogName };
 
 export interface CompiledCharacter extends CharacterSource {
   readonly entry_id: string;
 }
 
 export interface CompiledData {
+  readonly meta: {
+    readonly schema_version: 1;
+    readonly content_revision: string;
+  };
   readonly characters: readonly CompiledCharacter[];
   readonly options: Readonly<Record<CatalogName, readonly CatalogEntrySource[]>>;
 }
@@ -79,7 +45,9 @@ export class ContentValidationError extends Error {
 
   constructor(errors: readonly string[]) {
     const sortedErrors = [...new Set(errors)].sort((left, right) => left.localeCompare(right));
-    super(`Content validation failed with ${sortedErrors.length} error(s):\n${sortedErrors.map((error) => `- ${error}`).join("\n")}`);
+    super(
+      `Content validation failed with ${sortedErrors.length} error(s):\n${sortedErrors.map((error) => `- ${error}`).join("\n")}`
+    );
     this.name = "ContentValidationError";
     this.errors = sortedErrors;
   }
@@ -149,12 +117,26 @@ function property(record: Readonly<Record<string, unknown>>, key: string): unkno
   return Reflect.get(record, key);
 }
 
-function stringProperty(
-  record: Readonly<Record<string, unknown>>,
-  key: string
-): string | undefined {
+function stringProperty(record: Readonly<Record<string, unknown>>, key: string): string | undefined {
   const value = property(record, key);
   return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function stringListKey(value: unknown): string {
+  return asArray(value)
+    .filter((item): item is string => typeof item === "string")
+    .sort((left, right) => left.localeCompare(right))
+    .join(",");
+}
+
+function logicalPowerRefKey(ref: Readonly<Record<string, unknown>>): string {
+  return JSON.stringify([
+    stringProperty(ref, "id") ?? "",
+    stringProperty(ref, "source_variant") ?? "",
+    stringListKey(property(ref, "type_ids")),
+    stringListKey(property(ref, "magic_nature_ids")),
+    stringProperty(ref, "condition") ?? ""
+  ]);
 }
 
 function normalizeImagePath(value: string): string {
@@ -178,7 +160,7 @@ function normalizeImages(value: unknown): unknown {
 function issuePath(parts: readonly PropertyKey[]): string {
   if (parts.length === 0) return "";
 
-  return parts.map((part) => typeof part === "number" ? `[${part}]` : `.${String(part)}`).join("");
+  return parts.map((part) => (typeof part === "number" ? `[${part}]` : `.${String(part)}`)).join("");
 }
 
 async function parseYamlFile<T>(
@@ -208,7 +190,9 @@ async function parseYamlFile<T>(
   try {
     rawValue = document.toJS({ maxAliasCount: 0 });
   } catch (error) {
-    errors.push(`${relativePath}: YAML aliases are not allowed (${error instanceof Error ? error.message : String(error)})`);
+    errors.push(
+      `${relativePath}: YAML aliases are not allowed (${error instanceof Error ? error.message : String(error)})`
+    );
     return undefined;
   }
 
@@ -242,10 +226,7 @@ class SemanticValidator {
   readonly #powerVariants: ReadonlyMap<string, ReadonlySet<string>>;
   readonly #powerTypeOwners: ReadonlyMap<string, string>;
 
-  constructor(
-    root: string,
-    options: Readonly<Record<CatalogName, readonly CatalogEntrySource[]>>
-  ) {
+  constructor(root: string, options: Readonly<Record<CatalogName, readonly CatalogEntrySource[]>>) {
     this.#root = root;
     this.#options = options;
     const idSets: Partial<Record<CatalogName, ReadonlySet<string>>> = {};
@@ -280,7 +261,9 @@ class SemanticValidator {
       entries.forEach((entry, index) => {
         const previous = seen.get(entry.id);
         if (previous !== undefined) {
-          this.errors.push(`content/catalogs/${name}.yaml[${index}].id: duplicate ${entry.id}; first used at index ${previous}`);
+          this.errors.push(
+            `content/catalogs/${name}.yaml[${index}].id: duplicate ${entry.id}; first used at index ${previous}`
+          );
         } else {
           seen.set(entry.id, index);
         }
@@ -303,19 +286,12 @@ class SemanticValidator {
       this.#checkRef(`options.verses[${index}].source_id`, property(entry, "source_id"), "origins");
       const sourceId = stringProperty(entry, "source_id");
       const verseMediaId = stringProperty(entry, "media_id");
-      const origin = sourceId
-        ? this.#options.origins.find((candidate) => candidate.id === sourceId)
-        : undefined;
+      const origin = sourceId ? this.#options.origins.find((candidate) => candidate.id === sourceId) : undefined;
       const originMediaId = origin ? stringProperty(origin, "media_id") : undefined;
-      if (
-        sourceId
-        && verseMediaId
-        && originMediaId
-        && verseMediaId !== originMediaId
-      ) {
+      if (sourceId && verseMediaId && originMediaId && verseMediaId !== originMediaId) {
         this.errors.push(
-          `options.verses[${index}].media_id: ${JSON.stringify(verseMediaId)} must match `
-          + `origin ${JSON.stringify(sourceId)} media_id ${JSON.stringify(originMediaId)}`
+          `options.verses[${index}].media_id: ${JSON.stringify(verseMediaId)} must match ` +
+            `origin ${JSON.stringify(sourceId)} media_id ${JSON.stringify(originMediaId)}`
         );
       }
     });
@@ -333,16 +309,34 @@ class SemanticValidator {
         property(entry, "covers_type_ids"),
         "power_types"
       );
+      const owner = stringProperty(entry, "power_id");
+      for (const coveredId of asArray(property(entry, "covers_type_ids"))) {
+        if (typeof coveredId !== "string" || !owner) continue;
+        const coveredOwner = this.#powerTypeOwners.get(coveredId);
+        if (coveredOwner && coveredOwner !== owner) {
+          this.errors.push(
+            `options.power_types[${index}].covers_type_ids: ${coveredId} belongs to ` + `${coveredOwner}, not ${owner}`
+          );
+        }
+      }
     });
     this.#options.derived_power_rules.forEach((entry, index) => {
       const context = `options.derived_power_rules[${index}]`;
       this.#checkRef(`${context}.power_id`, property(entry, "power_id"), "powers");
+      const evaluationStage = property(entry, "evaluation_stage");
+      if (evaluationStage === null || evaluationStage === undefined) {
+        this.errors.push(`${context}.evaluation_stage: must be explicitly set to base for ruleset v1`);
+      } else if (evaluationStage === "effective") {
+        this.errors.push(
+          `${context}.evaluation_stage: effective derived-power evaluation is not supported by ruleset v1`
+        );
+      }
       const requirements = this.#expectArray(`${context}.requirements`, property(entry, "requirements"));
       const minimumMatches = property(entry, "min_matches");
       if (
-        typeof minimumMatches === "number"
-        && Number.isInteger(minimumMatches)
-        && minimumMatches > requirements.length
+        typeof minimumMatches === "number" &&
+        Number.isInteger(minimumMatches) &&
+        minimumMatches > requirements.length
       ) {
         this.errors.push(
           `${context}.min_matches: ${minimumMatches} cannot exceed requirements.length (${requirements.length})`
@@ -400,6 +394,10 @@ class SemanticValidator {
     this.#options.resistances.forEach((entry, index) => {
       const context = `options.resistances[${index}]`;
       this.#checkRefList(`${context}.resists_power_ids`, property(entry, "resists_power_ids"), "powers");
+      const effectIds = this.#expectArray(`${context}.resists_effect_ids`, property(entry, "resists_effect_ids"));
+      if (effectIds.length > 0) {
+        this.errors.push(`${context}.resists_effect_ids: effect-id resistance is not supported by ruleset v1`);
+      }
       this.#checkRefList(
         `${context}.resists_weapon_type_ids`,
         property(entry, "resists_weapon_type_ids"),
@@ -474,30 +472,15 @@ class SemanticValidator {
           `${formContext}.images[${imageIndex}].image`,
           image.image,
           character.entry_id,
-          image.rights_status === "unverified-third-party"
-            && image.publish_unverified !== true
+          image.rights_status === "unverified-third-party" && image.publish_unverified !== true
         );
       });
       this.#validatePowerRefs(`${formContext}.power_refs`, form.power_refs);
       this.#validateResistanceRefs(`${formContext}.resistance_refs`, form.resistance_refs);
-      this.#checkRefList(
-        `${formContext}.standard_equipment_ids`,
-        form.standard_equipment_ids,
-        "equipment"
-      );
-      this.#validateEquipmentRefs(
-        `${formContext}.standard_equipment_refs`,
-        form.standard_equipment_refs
-      );
-      this.#checkRefList(
-        `${formContext}.optional_equipment_ids`,
-        form.optional_equipment_ids,
-        "equipment"
-      );
-      this.#validateEquipmentRefs(
-        `${formContext}.optional_equipment_refs`,
-        form.optional_equipment_refs
-      );
+      this.#checkRefList(`${formContext}.standard_equipment_ids`, form.standard_equipment_ids, "equipment");
+      this.#validateEquipmentRefs(`${formContext}.standard_equipment_refs`, form.standard_equipment_refs);
+      this.#checkRefList(`${formContext}.optional_equipment_ids`, form.optional_equipment_ids, "equipment");
+      this.#validateEquipmentRefs(`${formContext}.optional_equipment_refs`, form.optional_equipment_refs);
       this.#checkRefList(`${formContext}.attack_ids`, form.attack_ids, "attacks");
 
       for (const statName of Object.keys(statCatalogs) as StatName[]) {
@@ -509,14 +492,15 @@ class SemanticValidator {
   async validateCatalogImages(): Promise<void> {
     const visit = (value: unknown, context: string): void => {
       if (Array.isArray(value)) {
-        value.forEach((item, index) => visit(item, `${context}[${index}]`));
+        value.forEach((item, index) => {
+          visit(item, `${context}[${index}]`);
+        });
         return;
       }
       if (!isRecord(value)) return;
 
       const allowMissing =
-        property(value, "rights_status") === "unverified-third-party"
-        && property(value, "publish_unverified") !== true;
+        property(value, "rights_status") === "unverified-third-party" && property(value, "publish_unverified") !== true;
       for (const [key, item] of Object.entries(value)) {
         const itemContext = `${context}.${key}`;
         if (key === "image" && typeof item === "string") {
@@ -552,17 +536,14 @@ class SemanticValidator {
       const actual = [...ranks.keys()].sort((left, right) => left - right);
       const expected = Array.from({ length: actual.length }, (_, index) => minimum + index);
       if (actual.some((rank, index) => rank !== expected[index])) {
-        this.errors.push(`options.${name}.${field}: values must be contiguous ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+        this.errors.push(
+          `options.${name}.${field}: values must be contiguous ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
+        );
       }
     }
   }
 
-  #checkRef(
-    context: string,
-    value: unknown,
-    catalogName: CatalogName,
-    optional = false
-  ): void {
+  #checkRef(context: string, value: unknown, catalogName: CatalogName, optional = false): void {
     if (value === null || value === undefined || value === "") {
       if (!optional) this.errors.push(`${context}: must reference an entry in ${catalogName}`);
       return;
@@ -587,11 +568,8 @@ class SemanticValidator {
     if (value === null || value === undefined) return;
     this.#expectArray(context, value).forEach((item, index) => {
       if (
-        typeof item !== "string"
-        || (
-          !this.#idSets.martial_arts_degrees.has(item)
-          && !this.#idSets.acrobatics_degrees.has(item)
-        )
+        typeof item !== "string" ||
+        (!this.#idSets.martial_arts_degrees.has(item) && !this.#idSets.acrobatics_degrees.has(item))
       ) {
         this.errors.push(`${context}[${index}]: unknown martial arts or acrobatics degree ${JSON.stringify(item)}`);
       }
@@ -634,6 +612,7 @@ class SemanticValidator {
 
   #validatePowerRefs(context: string, value: unknown): void {
     if (value === null || value === undefined) return;
+    const seen = new Map<string, number>();
     this.#expectArray(context, value).forEach((item, index) => {
       const refContext = `${context}[${index}]`;
       if (!isRecord(item)) {
@@ -641,6 +620,13 @@ class SemanticValidator {
         return;
       }
       const powerId = stringProperty(item, "id");
+      const key = logicalPowerRefKey(item);
+      const previous = seen.get(key);
+      if (previous !== undefined) {
+        this.errors.push(`${refContext}: duplicate power capability scope; first used at ${context}[${previous}]`);
+      } else {
+        seen.set(key, index);
+      }
       this.#checkRef(`${refContext}.id`, powerId, "powers");
       this.#checkRef(`${refContext}.modifier`, property(item, "modifier") ?? "normal", "ability_modifiers");
       this.#checkRefList(`${refContext}.type_ids`, property(item, "type_ids"), "power_types");
@@ -656,26 +642,15 @@ class SemanticValidator {
         "acrobatics_degrees",
         true
       );
-      this.#checkRef(
-        `${refContext}.magic_level_id`,
-        property(item, "magic_level_id"),
-        "magic_levels",
-        true
-      );
-      this.#checkRefList(
-        `${refContext}.magic_nature_ids`,
-        property(item, "magic_nature_ids"),
-        "magic_natures"
-      );
+      this.#checkRef(`${refContext}.magic_level_id`, property(item, "magic_level_id"), "magic_levels", true);
+      this.#checkRefList(`${refContext}.magic_nature_ids`, property(item, "magic_nature_ids"), "magic_natures");
 
       const sourceVariant = property(item, "source_variant");
       if (sourceVariant !== null && sourceVariant !== undefined) {
-        if (
-          typeof sourceVariant !== "string"
-          || !powerId
-          || !this.#powerVariants.get(powerId)?.has(sourceVariant)
-        ) {
-          this.errors.push(`${refContext}.source_variant: unknown variant ${JSON.stringify(sourceVariant)} for power ${JSON.stringify(powerId)}`);
+        if (typeof sourceVariant !== "string" || !powerId || !this.#powerVariants.get(powerId)?.has(sourceVariant)) {
+          this.errors.push(
+            `${refContext}.source_variant: unknown variant ${JSON.stringify(sourceVariant)} for power ${JSON.stringify(powerId)}`
+          );
         }
       }
 
@@ -699,28 +674,11 @@ class SemanticValidator {
         return;
       }
       this.#checkRef(`${refContext}.id`, property(item, "id"), "resistances");
-      this.#checkRef(
-        `${refContext}.level`,
-        property(item, "level") ?? "resistant",
-        "resistance_levels"
-      );
-      this.#checkRef(
-        `${refContext}.modifier`,
-        property(item, "modifier") ?? "normal",
-        "ability_modifiers"
-      );
+      this.#checkRef(`${refContext}.level`, property(item, "level") ?? "resistant", "resistance_levels");
+      this.#checkRef(`${refContext}.modifier`, property(item, "modifier") ?? "normal", "ability_modifiers");
       this.#checkRefList(`${refContext}.type_ids`, property(item, "type_ids"), "power_types");
-      this.#checkRef(
-        `${refContext}.magic_level_id`,
-        property(item, "magic_level_id"),
-        "magic_levels",
-        true
-      );
-      this.#checkRefList(
-        `${refContext}.magic_nature_ids`,
-        property(item, "magic_nature_ids"),
-        "magic_natures"
-      );
+      this.#checkRef(`${refContext}.magic_level_id`, property(item, "magic_level_id"), "magic_levels", true);
+      this.#checkRefList(`${refContext}.magic_nature_ids`, property(item, "magic_nature_ids"), "magic_natures");
     });
   }
 
@@ -745,11 +703,7 @@ class SemanticValidator {
     }
     this.#validatePowerRefs(`${context}.power_refs`, property(value, "power_refs"));
     this.#validateResistanceRefs(`${context}.resistance_refs`, property(value, "resistance_refs"));
-    this.#checkRefList(
-      `${context}.magic_level_ids`,
-      property(value, "magic_level_ids"),
-      "magic_levels"
-    );
+    this.#checkRefList(`${context}.magic_level_ids`, property(value, "magic_level_ids"), "magic_levels");
   }
 
   #validatePowerTargets(context: string, value: unknown): void {
@@ -763,21 +717,14 @@ class SemanticValidator {
       const powerId = stringProperty(item, "id");
       this.#checkRef(`${refContext}.id`, powerId, "powers");
       this.#checkRefList(`${refContext}.type_ids`, property(item, "type_ids"), "power_types");
-      this.#checkRef(
-        `${refContext}.magic_level_id`,
-        property(item, "magic_level_id"),
-        "magic_levels",
-        true
-      );
+      this.#checkRef(`${refContext}.magic_level_id`, property(item, "magic_level_id"), "magic_levels", true);
 
       const sourceVariant = property(item, "source_variant");
       if (sourceVariant !== null && sourceVariant !== undefined) {
-        if (
-          typeof sourceVariant !== "string"
-          || !powerId
-          || !this.#powerVariants.get(powerId)?.has(sourceVariant)
-        ) {
-          this.errors.push(`${refContext}.source_variant: unknown variant ${JSON.stringify(sourceVariant)} for power ${JSON.stringify(powerId)}`);
+        if (typeof sourceVariant !== "string" || !powerId || !this.#powerVariants.get(powerId)?.has(sourceVariant)) {
+          this.errors.push(
+            `${refContext}.source_variant: unknown variant ${JSON.stringify(sourceVariant)} for power ${JSON.stringify(powerId)}`
+          );
         }
       }
 
@@ -819,11 +766,7 @@ class SemanticValidator {
             if (!(statName in statCatalogs)) {
               this.errors.push(`${effectContext}.stat_effects.${statName}: unknown ranked stat`);
             } else {
-              this.#validateRankedStat(
-                `${effectContext}.stat_effects`,
-                statValue,
-                statName as StatName
-              );
+              this.#validateRankedStat(`${effectContext}.stat_effects`, statValue, statName as StatName);
             }
           }
         }
@@ -831,8 +774,8 @@ class SemanticValidator {
 
       const modifierFloors = property(effect, "stat_modifier_floor_effects");
       if (modifierFloors !== null && modifierFloors !== undefined) {
-        this.#expectArray(`${effectContext}.stat_modifier_floor_effects`, modifierFloors)
-          .forEach((floor, floorIndex) => {
+        this.#expectArray(`${effectContext}.stat_modifier_floor_effects`, modifierFloors).forEach(
+          (floor, floorIndex) => {
             const floorContext = `${effectContext}.stat_modifier_floor_effects[${floorIndex}]`;
             if (!isRecord(floor)) {
               this.errors.push(`${floorContext}: must be an object`);
@@ -843,7 +786,8 @@ class SemanticValidator {
               this.errors.push(`${floorContext}.stat: unknown ranked stat ${JSON.stringify(statName)}`);
             }
             this.#checkRef(`${floorContext}.modifier`, property(floor, "modifier"), "stat_modifiers");
-          });
+          }
+        );
       }
 
       const swap = property(effect, "opponent_stat_swap");
@@ -857,16 +801,14 @@ class SemanticValidator {
           );
           statNames.forEach((statName, statIndex) => {
             if (typeof statName !== "string" || !(statName in statCatalogs)) {
-              this.errors.push(`${effectContext}.opponent_stat_swap.stat_names[${statIndex}]: unknown ranked stat ${JSON.stringify(statName)}`);
+              this.errors.push(
+                `${effectContext}.opponent_stat_swap.stat_names[${statIndex}]: unknown ranked stat ${JSON.stringify(statName)}`
+              );
             }
           });
           const maxRange = property(swap, "max_target_range");
           if (maxRange !== null && maxRange !== undefined) {
-            this.#validateRankedStat(
-              `${effectContext}.opponent_stat_swap`,
-              maxRange,
-              "range"
-            );
+            this.#validateRankedStat(`${effectContext}.opponent_stat_swap`, maxRange, "range");
           }
           const maxStats = property(swap, "max_target_stats");
           if (maxStats !== null && maxStats !== undefined) {
@@ -875,7 +817,9 @@ class SemanticValidator {
             } else {
               for (const [statName, statValue] of Object.entries(maxStats)) {
                 if (!(statName in statCatalogs)) {
-                  this.errors.push(`${effectContext}.opponent_stat_swap.max_target_stats.${statName}: unknown ranked stat`);
+                  this.errors.push(
+                    `${effectContext}.opponent_stat_swap.max_target_stats.${statName}: unknown ranked stat`
+                  );
                 } else {
                   this.#validateRankedStat(
                     `${effectContext}.opponent_stat_swap.max_target_stats`,
@@ -971,8 +915,8 @@ class SemanticValidator {
               `${effectContext}.image_update.image`,
               image,
               undefined,
-              property(imageUpdate, "rights_status") === "unverified-third-party"
-                && property(imageUpdate, "publish_unverified") !== true
+              property(imageUpdate, "rights_status") === "unverified-third-party" &&
+                property(imageUpdate, "publish_unverified") !== true
             );
           }
         }
@@ -983,10 +927,7 @@ class SemanticValidator {
         if (!isRecord(nullifiedBy)) {
           this.errors.push(`${effectContext}.nullified_by: must be an object`);
         } else {
-          this.#validatePowerRefs(
-            `${effectContext}.nullified_by.power_refs`,
-            property(nullifiedBy, "power_refs")
-          );
+          this.#validatePowerRefs(`${effectContext}.nullified_by.power_refs`, property(nullifiedBy, "power_refs"));
           this.#validateResistanceRefs(
             `${effectContext}.nullified_by.resistance_refs`,
             property(nullifiedBy, "resistance_refs")
@@ -1012,45 +953,40 @@ class SemanticValidator {
     });
   }
 
-  #validateImage(
-    context: string,
-    imagePath: string,
-    entryId?: string,
-    allowMissing = false
-  ): void {
-    if (externalAssetPattern.test(imagePath)) return;
+  #validateImage(context: string, imagePath: string, entryId?: string, allowMissing = false): void {
+    if (externalAssetPattern.test(imagePath)) {
+      this.errors.push(
+        `${context}: remote and data image URLs are not supported; ` +
+          "store a reviewed source below content/images/characters/"
+      );
+      return;
+    }
 
     const normalized = normalizeImagePath(imagePath);
     if (normalized.includes("\\") || normalized.split("/").includes("..")) {
       this.errors.push(`${context}: local image path must not contain backslashes or parent traversal`);
       return;
     }
-    const requiredPrefix = entryId
-      ? `${publicImagePrefix}${entryId}/`
-      : publicImagePrefix;
+    const requiredPrefix = entryId ? `${publicImagePrefix}${entryId}/` : publicImagePrefix;
     if (!normalized.startsWith(requiredPrefix)) {
       this.errors.push(`${context}: local image must stay under ${requiredPrefix}`);
       return;
     }
     if (!supportedLocalImagePattern.test(normalized)) {
-      this.errors.push(
-        `${context}: local image must use AVIF, JPEG, PNG, or WebP so the image build can optimize it`
-      );
+      this.errors.push(`${context}: local image must use AVIF, JPEG, PNG, or WebP so the image build can optimize it`);
       return;
     }
 
-    const publicRoot = path.resolve(this.#root, "public");
-    const absolutePath = path.resolve(publicRoot, ...normalized.split("/"));
-    const relativeToPublic = path.relative(publicRoot, absolutePath);
-    if (
-      relativeToPublic.startsWith("..")
-      || path.isAbsolute(relativeToPublic)
-      || relativeToPublic.length === 0
-    ) {
-      this.errors.push(`${context}: local image escapes public/`);
+    const contentRoot = path.resolve(this.#root, "content");
+    const absolutePath = path.resolve(contentRoot, ...normalized.split("/"));
+    const relativeToContent = path.relative(contentRoot, absolutePath);
+    if (relativeToContent.startsWith("..") || path.isAbsolute(relativeToContent) || relativeToContent.length === 0) {
+      this.errors.push(`${context}: local image escapes content/`);
       return;
     }
-    if (!allowMissing) this.#requireFile(context, absolutePath, normalized);
+    if (!allowMissing) {
+      this.#requireFile(context, absolutePath, `content/${normalized}`);
+    }
   }
 
   #requireFile(context: string, absolutePath: string, displayPath: string): void {
@@ -1061,7 +997,7 @@ class SemanticValidator {
           if (!result.isFile()) this.errors.push(`${context}: ${displayPath} is not a file`);
         })
         .catch(() => {
-          this.errors.push(`${context}: local image does not exist at public/${displayPath}`);
+          this.errors.push(`${context}: local image does not exist at ${displayPath}`);
         })
     );
   }
@@ -1092,18 +1028,20 @@ async function loadCatalogs(
     }
   }
 
-  const pairs = await Promise.all(catalogNames.map(async (name) => {
-    const value = await parseYamlFile(
-      path.join(directory, `${name}.yaml`),
-      root,
-      catalogSchemas[name] as unknown as ZodType<readonly CatalogEntrySource[]>,
-      errors
-    ).catch((error: unknown) => {
-      errors.push(`content/catalogs/${name}.yaml: ${error instanceof Error ? error.message : String(error)}`);
-      return undefined;
-    });
-    return [name, value ?? []] as const;
-  }));
+  const pairs = await Promise.all(
+    catalogNames.map(async (name) => {
+      const value = await parseYamlFile(
+        path.join(directory, `${name}.yaml`),
+        root,
+        catalogSchemas[name] as unknown as ZodType<readonly CatalogEntrySource[]>,
+        errors
+      ).catch((error: unknown) => {
+        errors.push(`content/catalogs/${name}.yaml: ${error instanceof Error ? error.message : String(error)}`);
+        return undefined;
+      });
+      return [name, value ?? []] as const;
+    })
+  );
 
   const catalogs: Partial<Record<CatalogName, readonly CatalogEntrySource[]>> = {};
   for (const [name, entries] of pairs) catalogs[name] = entries;
@@ -1119,24 +1057,21 @@ async function loadCharacters(root: string, errors: string[]): Promise<CompiledC
   for (const file of files) {
     const entryId = file.replace(/\.ya?ml$/i, "");
     if (!slugPattern.test(entryId)) {
-      errors.push(`content/characters/${file}: filename-derived entry id must use lowercase letters, numbers, and single hyphens`);
+      errors.push(
+        `content/characters/${file}: filename-derived entry id must use lowercase letters, numbers, and single hyphens`
+      );
       continue;
     }
     const previousFile = entryFiles.get(entryId);
     if (previousFile) {
       errors.push(
-        `content/characters/${file}: duplicate filename-derived entry id ${entryId}; `
-        + `already defined by content/characters/${previousFile}`
+        `content/characters/${file}: duplicate filename-derived entry id ${entryId}; ` +
+          `already defined by content/characters/${previousFile}`
       );
       continue;
     }
     entryFiles.set(entryId, file);
-    const character = await parseYamlFile(
-      path.join(directory, file),
-      root,
-      characterSchema,
-      errors
-    );
+    const character = await parseYamlFile(path.join(directory, file), root, characterSchema, errors);
     if (character) characters.push({ ...character, entry_id: entryId });
   }
 
@@ -1146,10 +1081,7 @@ async function loadCharacters(root: string, errors: string[]): Promise<CompiledC
 async function writeAtomically(outputPath: string, contents: string): Promise<void> {
   const directory = path.dirname(outputPath);
   await mkdir(directory, { recursive: true });
-  const temporaryPath = path.join(
-    directory,
-    `.${path.basename(outputPath)}.${process.pid}.tmp`
-  );
+  const temporaryPath = path.join(directory, `.${path.basename(outputPath)}.${process.pid}.tmp`);
 
   try {
     await writeFile(temporaryPath, contents, "utf8");
@@ -1162,9 +1094,7 @@ async function writeAtomically(outputPath: string, contents: string): Promise<vo
 
 export async function compileContent(options: CompileOptions = {}): Promise<CompileResult> {
   const root = path.resolve(options.root ?? defaultRoot);
-  const outputPath = path.resolve(
-    options.outputPath ?? path.join(root, "src", "generated", "nexy-data.json")
-  );
+  const outputPath = path.resolve(options.outputPath ?? path.join(root, "src", "generated", "nexy-data.json"));
   const errors: string[] = [];
   const catalogs = await loadCatalogs(root, errors);
   const characters = await loadCharacters(root, errors);
@@ -1173,7 +1103,9 @@ export async function compileContent(options: CompileOptions = {}): Promise<Comp
 
   const validator = new SemanticValidator(root, catalogs);
   validator.validateCatalogs();
-  characters.forEach((character, index) => validator.validateCharacter(character, index));
+  characters.forEach((character, index) => {
+    validator.validateCharacter(character, index);
+  });
   await validator.validateCatalogImages();
   await validator.finish();
 
@@ -1181,9 +1113,17 @@ export async function compileContent(options: CompileOptions = {}): Promise<Comp
     throw new ContentValidationError(validator.errors);
   }
 
-  const data: CompiledData = {
+  const payload = {
     characters,
     options: catalogs
+  };
+  const contentRevision = createHash("sha256").update(JSON.stringify(payload)).digest("hex");
+  const data: CompiledData = {
+    meta: {
+      schema_version: 1,
+      content_revision: contentRevision
+    },
+    ...payload
   };
   const json = `${JSON.stringify(data, null, 2)}\n`;
   const check = options.check === true;
@@ -1196,9 +1136,7 @@ export async function compileContent(options: CompileOptions = {}): Promise<Comp
         ]);
       }
     } catch (error) {
-      const code = error instanceof Error && "code" in error
-        ? Reflect.get(error, "code")
-        : undefined;
+      const code = error instanceof Error && "code" in error ? Reflect.get(error, "code") : undefined;
       if (code === "ENOENT") {
         throw new ContentValidationError([
           `${path.relative(root, outputPath).replaceAll(path.sep, "/")}: generated data is missing; run pnpm content:build`
@@ -1232,8 +1170,8 @@ async function runCli(): Promise<void> {
   const result = await compileContent({ check });
   const verb = check ? "validated" : "compiled";
   console.log(
-    `${verb} ${result.characterCount} characters / ${result.formCount} forms`
-    + (check ? "" : ` to ${path.relative(defaultRoot, result.outputPath).replaceAll(path.sep, "/")}`)
+    `${verb} ${result.characterCount} characters / ${result.formCount} forms` +
+      (check ? "" : ` to ${path.relative(defaultRoot, result.outputPath).replaceAll(path.sep, "/")}`)
   );
 }
 

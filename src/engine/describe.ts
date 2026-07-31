@@ -28,15 +28,7 @@ import {
   type GameContext
 } from "./context.js";
 import type { ResolvedCatalogItem } from "./internal.js";
-import {
-  compositeRank,
-  formatStat,
-  humanizeId,
-  joinText,
-  modifier,
-  normalizeStat,
-  statCatalogs
-} from "./rank.js";
+import { compositeRank, formatStat, humanizeId, joinText, modifier, normalizeStat, statCatalogs } from "./rank.js";
 
 const statLabels: Readonly<Record<RankedStatName, string>> = {
   attack_potency: "Attack Potency",
@@ -63,20 +55,13 @@ function catalogNames(
     .filter(Boolean);
 }
 
-function grantDetails(
-  context: GameContext,
-  grants: object | null | undefined
-): readonly string[] {
+function grantDetails(context: GameContext, grants: object | null | undefined): readonly string[] {
   const lines: string[] = [];
-  const powers = arrayField<PowerRef>(grants, "power_refs")
-    .map((ref) => powerRefLabel(context, ref));
-  const resistances = arrayField<ResistanceRef>(grants, "resistance_refs")
-    .map((ref) => resistanceRefLabel(context, ref));
-  const magicLevels = catalogNames(
-    context,
-    arrayField<string>(grants, "magic_level_ids"),
-    "magic_levels"
+  const powers = arrayField<PowerRef>(grants, "power_refs").map((ref) => powerRefLabel(context, ref));
+  const resistances = arrayField<ResistanceRef>(grants, "resistance_refs").map((ref) =>
+    resistanceRefLabel(context, ref)
   );
+  const magicLevels = catalogNames(context, arrayField<string>(grants, "magic_level_ids"), "magic_levels");
   if (powers.length) lines.push(`Grants: ${joinText(powers)}`);
   if (resistances.length) lines.push(`Grants resistances: ${joinText(resistances)}`);
   if (magicLevels.length) lines.push(`Grants magic: ${joinText(magicLevels)}`);
@@ -107,16 +92,8 @@ function refScopeDetails(
   variant?: CatalogRecord
 ): readonly string[] {
   const lines: string[] = [];
-  const magicLevel = byId(
-    context,
-    "magic_levels",
-    optionalStringField(ref, "magic_level_id")
-  );
-  const magicNatures = catalogNames(
-    context,
-    arrayField<string>(ref, "magic_nature_ids"),
-    "magic_natures"
-  );
+  const magicLevel = byId(context, "magic_levels", optionalStringField(ref, "magic_level_id"));
+  const magicNatures = catalogNames(context, arrayField<string>(ref, "magic_nature_ids"), "magic_natures");
   if (magicLevel) lines.push(`Magic level: ${stringField(magicLevel, "name")}`);
   if (magicNatures.length) lines.push(`Magic nature: ${joinText(magicNatures)}`);
   const sourceVariant = optionalStringField(ref, "source_variant");
@@ -135,24 +112,16 @@ function powerTargetTypeLimit(
 ): string {
   const maximum = Number(Reflect.get(nullification, "max_target_type_rank"));
   if (!Number.isFinite(maximum)) return "";
-  const targetId = [
-    ...arrayField<string>(nullification, "target_power_ids"),
-    ...targetRefs.map((ref) => ref.id)
-  ].find(Boolean);
+  const targetId = [...arrayField<string>(nullification, "target_power_ids"), ...targetRefs.map((ref) => ref.id)].find(
+    Boolean
+  );
   const matching = context.catalogs.power_types
-    .filter((type) =>
-      Reflect.get(type, "power_id") === targetId
-      && numberField(type, "rank") <= maximum
-    )
+    .filter((type) => Reflect.get(type, "power_id") === targetId && numberField(type, "rank") <= maximum)
     .sort((left, right) => numberField(right, "rank") - numberField(left, "rank"))[0];
   return matching ? ` up to ${stringField(matching, "name")}` : ` up to type rank ${maximum}`;
 }
 
-export function describeEffect(
-  context: GameContext,
-  effect: Effect,
-  form?: CharacterForm
-): readonly string[] {
+export function describeEffect(context: GameContext, effect: Effect, form?: CharacterForm): readonly string[] {
   const lines: string[] = [];
   Object.entries(objectField(effect, "stat_effects") ?? {}).forEach(([field, value]) => {
     const statName = field as RankedStatName;
@@ -161,9 +130,7 @@ export function describeEffect(
     const stat = value as RankedStatInput;
     const display = formatStat(context, stat, catalogName);
     if (!display) return;
-    const resistanceNote = normalizeStat(stat)?.resistible === false
-      ? " (ignores resistance)"
-      : "";
+    const resistanceNote = normalizeStat(stat)?.resistible === false ? " (ignores resistance)" : "";
     if (form) {
       const current = Reflect.get(form, statName) as RankedStatInput | undefined;
       const currentRank = compositeRank(context, current, catalogName);
@@ -192,40 +159,30 @@ export function describeEffect(
       const currentModifier = modifier(context, currentStat);
       const modifierName = stringField(floorEntry, "name") || humanizeId(modifierId);
       lines.push(
-        floorEntry
-        && numberField(currentModifier, "rank") >= numberField(floorEntry, "rank")
+        floorEntry && numberField(currentModifier, "rank") >= numberField(floorEntry, "rank")
           ? `${statLabels[statName]}: Already ${stringField(currentModifier, "name")}`
           : `${statLabels[statName]}: Raises modifier to ${modifierName}`
       );
       return;
     }
-    floorGroups.set(
-      modifierId,
-      [...(floorGroups.get(modifierId) ?? []), statLabels[statName]]
-    );
+    floorGroups.set(modifierId, [...(floorGroups.get(modifierId) ?? []), statLabels[statName]]);
   });
   floorGroups.forEach((stats, modifierId) => {
-    const modifierName = stringField(
-      byId(context, "stat_modifiers", modifierId),
-      "name"
-    ) || humanizeId(modifierId);
+    const modifierName = stringField(byId(context, "stat_modifiers", modifierId), "name") || humanizeId(modifierId);
     lines.push(`Raises modifier: ${joinText(stats)} to ${modifierName}`);
   });
 
   const swap = objectField(effect, "opponent_stat_swap");
   if (swap) {
-    const statNames = arrayField<RankedStatName>(swap, "stat_names")
-      .map((name) => statLabels[name]);
-    const caps = Object.entries(objectField(swap, "max_target_stats") ?? {})
-      .flatMap(([field, stat]) => {
-        const name = field as RankedStatName;
-        const catalogName = statCatalogs[name];
-        const value = catalogName
-          ? formatStat(context, stat as RankedStatInput, catalogName)
-              .replace(/ level(?=\+?$)/i, "")
-          : "";
-        return value ? [`${statLabels[name]} ${value}`] : [];
-      });
+    const statNames = arrayField<RankedStatName>(swap, "stat_names").map((name) => statLabels[name]);
+    const caps = Object.entries(objectField(swap, "max_target_stats") ?? {}).flatMap(([field, stat]) => {
+      const name = field as RankedStatName;
+      const catalogName = statCatalogs[name];
+      const value = catalogName
+        ? formatStat(context, stat as RankedStatInput, catalogName).replace(/ level(?=\+?$)/i, "")
+        : "";
+      return value ? [`${statLabels[name]} ${value}`] : [];
+    });
     const range = Reflect.get(swap, "max_target_range") as RankedStatInput | undefined;
     const rangeLimit = range ? formatStat(context, range, "range_tiers") : "";
     if (statNames.length) lines.push(`Swaps stronger opponent stats: ${joinText(statNames)}`);
@@ -234,10 +191,7 @@ export function describeEffect(
     arrayField<object>(swap, "on_success_stat_modifier_floor_effects").forEach((floor) => {
       const name = stringField(floor, "stat") as RankedStatName;
       const modifierId = stringField(floor, "modifier");
-      const modifierName = stringField(
-        byId(context, "stat_modifiers", modifierId),
-        "name"
-      ) || humanizeId(modifierId);
+      const modifierName = stringField(byId(context, "stat_modifiers", modifierId), "name") || humanizeId(modifierId);
       lines.push(`On use: Raises ${statLabels[name]} modifier to ${modifierName}`);
     });
   }
@@ -249,16 +203,9 @@ export function describeEffect(
 
   const nullification = objectField(effect, "power_nullification");
   if (nullification) {
-    const targetRefs = arrayField<PowerTargetRef>(
-      nullification,
-      "target_power_refs"
-    );
+    const targetRefs = arrayField<PowerTargetRef>(nullification, "target_power_refs");
     const targets = [
-      ...catalogNames(
-        context,
-        arrayField<string>(nullification, "target_power_ids"),
-        "powers"
-      ),
+      ...catalogNames(context, arrayField<string>(nullification, "target_power_ids"), "powers"),
       ...targetRefs.map((ref) => powerTargetRefLabel(context, ref))
     ];
     const maximumModifier = byId(
@@ -266,9 +213,7 @@ export function describeEffect(
       "ability_modifiers",
       optionalStringField(nullification, "max_target_modifier")
     );
-    const modifierLimit = maximumModifier
-      ? ` up to ${stringField(maximumModifier, "name")}`
-      : "";
+    const modifierLimit = maximumModifier ? ` up to ${stringField(maximumModifier, "name")}` : "";
     const typeLimit = powerTargetTypeLimit(context, nullification, targetRefs);
     lines.push(
       targets.length
@@ -279,60 +224,42 @@ export function describeEffect(
 
   const absorption = objectField(effect, "absorption");
   if (absorption) {
-    const targets = arrayField<PowerTargetRef>(absorption, "target_power_refs")
-      .map((ref) => powerTargetRefLabel(context, ref));
+    const targets = arrayField<PowerTargetRef>(absorption, "target_power_refs").map((ref) =>
+      powerTargetRefLabel(context, ref)
+    );
     if (targets.length) lines.push(`Absorbs: ${joinText(targets)}`);
   }
   const negation = objectField(effect, "resistance_negation");
   if (negation) {
-    const targets = catalogNames(
-      context,
-      arrayField<string>(negation, "target_resistance_ids"),
-      "resistances"
-    );
-    const immunities = catalogNames(
-      context,
-      arrayField<string>(negation, "target_immunity_ids"),
-      "resistances"
-    );
+    const targets = catalogNames(context, arrayField<string>(negation, "target_resistance_ids"), "resistances");
+    const immunities = catalogNames(context, arrayField<string>(negation, "target_immunity_ids"), "resistances");
     lines.push(targets.length ? `Negates resistances: ${joinText(targets)}` : "Negates resistances");
     if (immunities.length) lines.push(`Negates immunities: ${joinText(immunities)}`);
   }
   const interaction = objectField(effect, "non_physical_interaction");
   if (interaction) {
-    const targets = arrayField<PowerTargetRef>(interaction, "target_power_refs")
-      .map((ref) => powerTargetRefLabel(context, ref));
-    lines.push(
-      targets.length
-        ? `Can affect: ${joinText(targets)}`
-        : "Can affect non-physical targets"
+    const targets = arrayField<PowerTargetRef>(interaction, "target_power_refs").map((ref) =>
+      powerTargetRefLabel(context, ref)
     );
+    lines.push(targets.length ? `Can affect: ${joinText(targets)}` : "Can affect non-physical targets");
   }
   const nullifiedBy = objectField(effect, "nullified_by");
   if (nullifiedBy) {
     const sources = [
-      ...arrayField<PowerRef>(nullifiedBy, "power_refs")
-        .map((ref) => powerRefLabel(context, ref)),
-      ...arrayField<ResistanceRef>(nullifiedBy, "resistance_refs")
-        .map((ref) => resistanceRefLabel(context, ref))
+      ...arrayField<PowerRef>(nullifiedBy, "power_refs").map((ref) => powerRefLabel(context, ref)),
+      ...arrayField<ResistanceRef>(nullifiedBy, "resistance_refs").map((ref) => resistanceRefLabel(context, ref))
     ];
     if (sources.length) lines.push(`Stopped by: ${joinText(sources)}`);
   }
   return lines;
 }
 
-export function describePower(
-  context: GameContext,
-  form: CharacterForm,
-  ref: PowerRef
-): readonly string[] {
+export function describePower(context: GameContext, form: CharacterForm, ref: PowerRef): readonly string[] {
   const power = byId(context, "powers", ref.id);
   if (!power) return [];
   const variant = powerVariant(power, ref);
   const placeholderValue = Reflect.get(ref, "placeholder");
-  const placeholder = typeof placeholderValue === "boolean"
-    ? placeholderValue
-    : booleanField(power, "placeholder");
+  const placeholder = typeof placeholderValue === "boolean" ? placeholderValue : booleanField(power, "placeholder");
   const lines: string[] = [];
   if (placeholder) lines.push("Placeholder: no game effect yet");
   if (ref.id === "flight") lines.push("Game effect: enables Flight Speed");
@@ -343,10 +270,7 @@ export function describePower(
     lines.push("Game effect: fallback tie-breaker if battle points and Regeneration are tied");
   }
   const refTypes = arrayField<string>(ref, "type_ids");
-  lines.push(...typeDetails(
-    context,
-    refTypes.length ? refTypes : arrayField<string>(power, "type_ids")
-  ));
+  lines.push(...typeDetails(context, refTypes.length ? refTypes : arrayField<string>(power, "type_ids")));
   lines.push(...refScopeDetails(context, ref, variant));
 
   const derivedRuleId = optionalStringField(ref, "derived_rule_id");
@@ -354,9 +278,7 @@ export function describePower(
   if (derivedRule) {
     const requirements = arrayField<object>(derivedRule, "requirements");
     const configuredMinimum = Reflect.get(derivedRule, "min_matches");
-    const minimum = Number.isInteger(configuredMinimum)
-      ? Number(configuredMinimum)
-      : requirements.length;
+    const minimum = Number.isInteger(configuredMinimum) ? Number(configuredMinimum) : requirements.length;
     const requirementTexts = requirements
       .map((requirement) => formatStatRequirement(context, requirement))
       .filter(Boolean);
@@ -367,57 +289,33 @@ export function describePower(
   const includeBase = !variant || Reflect.get(variant, "inherits_base_grants") !== false;
   if (includeBase) lines.push(...grantDetails(context, objectField(power, "grants")));
   if (variant) lines.push(...grantDetails(context, objectField(variant, "grants")));
-  lines.push(...powerRefEffects(context, ref).flatMap((effect) =>
-    describeEffect(context, effect, form)
-  ));
+  lines.push(...powerRefEffects(context, ref).flatMap((effect) => describeEffect(context, effect, form)));
   return lines;
 }
 
-export function describeResistance(
-  context: GameContext,
-  ref: ResistanceRef
-): readonly string[] {
+export function describeResistance(context: GameContext, ref: ResistanceRef): readonly string[] {
   const resistance = byId(context, "resistances", ref.id);
   if (!resistance) return [];
   const lines: string[] = [
     ...typeDetails(context, arrayField<string>(ref, "type_ids")),
     ...refScopeDetails(context, ref)
   ];
-  const powers = catalogNames(
-    context,
-    arrayField<string>(resistance, "resists_power_ids"),
-    "powers"
-  );
+  const powers = catalogNames(context, arrayField<string>(resistance, "resists_power_ids"), "powers");
   const effects = arrayField<string>(resistance, "resists_effect_ids").map(humanizeId);
-  const weapons = catalogNames(
-    context,
-    arrayField<string>(resistance, "resists_weapon_type_ids"),
-    "power_types"
-  );
+  const weapons = catalogNames(context, arrayField<string>(resistance, "resists_weapon_type_ids"), "power_types");
   if (powers.length) lines.push(`Resists: ${joinText(powers)}`);
   if (effects.length) lines.push(`Resists effects: ${joinText(effects)}`);
   if (weapons.length) lines.push(`Resists weapon types: ${joinText(weapons)}`);
   return lines;
 }
 
-export function describeItem(
-  context: GameContext,
-  item: ResolvedCatalogItem,
-  form: CharacterForm
-): readonly string[] {
+export function describeItem(context: GameContext, item: ResolvedCatalogItem, form: CharacterForm): readonly string[] {
   const lines: string[] = [];
   if (booleanField(item, "placeholder")) lines.push("Placeholder: no game effect yet");
-  lines.push(...typeDetails(
-    context,
-    arrayField<string>(item, "weapon_type_ids"),
-    "Weapon types"
-  ));
-  const requirements = arrayField<PowerRef>(item, "required_power_refs")
-    .map((ref) => powerRefLabel(context, ref));
+  lines.push(...typeDetails(context, arrayField<string>(item, "weapon_type_ids"), "Weapon types"));
+  const requirements = arrayField<PowerRef>(item, "required_power_refs").map((ref) => powerRefLabel(context, ref));
   if (requirements.length) lines.push(`Requires powers: ${joinText(requirements)}`);
   lines.push(...grantDetails(context, objectField(item, "grants")));
-  lines.push(...(item.effects ?? []).flatMap((effect) =>
-    describeEffect(context, effect, form)
-  ));
+  lines.push(...(item.effects ?? []).flatMap((effect) => describeEffect(context, effect, form)));
   return lines;
 }

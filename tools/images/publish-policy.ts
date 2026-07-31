@@ -11,12 +11,7 @@ export interface ImageRightsRecord {
   readonly reviewed_on?: string | null;
 }
 
-const verifiedPublicDisplayStatuses = new Set([
-  "original",
-  "licensed",
-  "public-domain",
-  "permission"
-]);
+const verifiedPublicDisplayStatuses = new Set(["original", "licensed", "public-domain", "permission"]);
 const generatedWidths = [160, 640] as const;
 const characterImagePrefix = "images/characters/";
 
@@ -24,18 +19,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function optionalString(
-  record: Readonly<Record<string, unknown>>,
-  key: string
-): string | null | undefined {
+function optionalString(record: Readonly<Record<string, unknown>>, key: string): string | null | undefined {
   const value = Reflect.get(record, key);
   return typeof value === "string" || value === null ? value : undefined;
 }
 
-function optionalBoolean(
-  record: Readonly<Record<string, unknown>>,
-  key: string
-): boolean | undefined {
+function optionalBoolean(record: Readonly<Record<string, unknown>>, key: string): boolean | undefined {
   const value = Reflect.get(record, key);
   return typeof value === "boolean" ? value : undefined;
 }
@@ -45,11 +34,7 @@ function asRightsRecord(value: unknown): ImageRightsRecord | null {
   const image = Reflect.get(value, "image");
   const sourceUrl = Reflect.get(value, "source_url");
   const rightsStatus = Reflect.get(value, "rights_status");
-  if (
-    typeof image !== "string"
-    || typeof sourceUrl !== "string"
-    || typeof rightsStatus !== "string"
-  ) {
+  if (typeof image !== "string" || typeof sourceUrl !== "string" || typeof rightsStatus !== "string") {
     return null;
   }
 
@@ -70,9 +55,7 @@ function asRightsRecord(value: unknown): ImageRightsRecord | null {
   };
 }
 
-export function collectImageRightsRecords(
-  data: unknown
-): readonly ImageRightsRecord[] {
+export function collectImageRightsRecords(data: unknown): readonly ImageRightsRecord[] {
   const records: ImageRightsRecord[] = [];
 
   const visit = (value: unknown): void => {
@@ -88,37 +71,35 @@ export function collectImageRightsRecords(
   };
 
   visit(data);
-  return records.sort((left, right) =>
-    left.image.localeCompare(right.image)
-    || left.source_url.localeCompare(right.source_url)
+  const sorted = records.sort(
+    (left, right) => left.image.localeCompare(right.image) || left.source_url.localeCompare(right.source_url)
   );
+  const seen = new Set<string>();
+  return sorted.filter((record) => {
+    const key = JSON.stringify(record);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
-export function isRightsRecordPublishable(
-  record: ImageRightsRecord
-): boolean {
-  return verifiedPublicDisplayStatuses.has(record.rights_status)
-    || (
-      record.rights_status === "unverified-third-party"
-      && record.publish_unverified === true
-    );
+export function isRightsRecordPublishable(record: ImageRightsRecord): boolean {
+  return (
+    verifiedPublicDisplayStatuses.has(record.rights_status) ||
+    (record.rights_status === "unverified-third-party" && record.publish_unverified === true)
+  );
 }
 
 export function generatedVariantPaths(image: string): readonly string[] {
   const normalized = image.replaceAll("\\", "/");
-  if (
-    !normalized.startsWith(characterImagePrefix)
-    || !/\.(?:avif|jpe?g|png|webp)$/i.test(normalized)
-  ) {
+  if (!normalized.startsWith(characterImagePrefix) || !/\.(?:avif|jpe?g|png|webp)$/i.test(normalized)) {
     return [];
   }
 
   const relative = normalized.slice(characterImagePrefix.length);
   const extension = path.posix.extname(relative);
   const stem = relative.slice(0, -extension.length);
-  return generatedWidths.map(
-    (width) => `images/generated/${stem}-${width}.webp`
-  );
+  return generatedWidths.map((width) => `images/generated/${stem}-${width}.webp`);
 }
 
 export function publishedImageSourcePaths(data: unknown): ReadonlySet<string> {
@@ -140,7 +121,9 @@ export function publishedImageSourcePaths(data: unknown): ReadonlySet<string> {
 export function publishedImageVariantPaths(data: unknown): ReadonlySet<string> {
   const paths = new Set<string>();
   for (const image of publishedImageSourcePaths(data)) {
-    generatedVariantPaths(image).forEach((variant) => paths.add(variant));
+    generatedVariantPaths(image).forEach((variant) => {
+      paths.add(variant);
+    });
   }
   return paths;
 }

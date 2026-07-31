@@ -29,20 +29,19 @@ describe("image output publication policy", () => {
 
   it("finds rights records in characters and catalog effects", () => {
     const records = collectImageRightsRecords({
-      characters: [{ keys: [{ images: [licensed] }] }],
+      characters: [{ keys: [{ images: [licensed, unverified] }] }],
       options: { equipment: [{ effects: [{ image_update: unverified }] }] }
     });
-    expect(records.map((record) => record.image)).toEqual([
-      licensed.image,
-      unverified.image
-    ]);
+    expect(records.map((record) => record.image)).toEqual([licensed.image, unverified.image]);
   });
 
   it("publishes verified images and explicitly enabled unverified images", () => {
     const data = {
-      characters: [{
-        keys: [{ images: [licensed, unverified, withheldUnverified] }]
-      }]
+      characters: [
+        {
+          keys: [{ images: [licensed, unverified, withheldUnverified] }]
+        }
+      ]
     };
     const sources = publishedImageSourcePaths(data);
     const variants = publishedImageVariantPaths(data);
@@ -59,11 +58,15 @@ describe("image output publication policy", () => {
     const sources = publishedImageSourcePaths({
       characters: [{ keys: [{ images: [unverified] }] }],
       options: {
-        equipment: [{
-          effects: [{
-            image_update: { ...unverified, publish_unverified: false }
-          }]
-        }]
+        equipment: [
+          {
+            effects: [
+              {
+                image_update: { ...unverified, publish_unverified: false }
+              }
+            ]
+          }
+        ]
       }
     });
     expect(sources.has(unverified.image)).toBe(false);

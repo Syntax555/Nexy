@@ -18,6 +18,7 @@ runtime.
 - **Vitest** for engine, content-pipeline, search, URL-state, and component tests
 - **Playwright + axe-core** for Chromium, Firefox, WebKit, mobile, responsive,
   and automated WCAG browser checks
+- **Biome** for TypeScript, Preact, accessibility, and formatting checks
 - **Sharp** for build-time character thumbnails, profile images, and social-card
   optimization
 - **GitHub Actions + GitHub Pages** for validation and static deployment
@@ -40,16 +41,21 @@ correction, or removal through the repository's
 [rights-holder request form](https://github.com/Syntax555/Nexy/issues/new?template=rights-holder-request.yml).
 VS Battles Wiki-derived text and structured data attribution is documented in
 [CONTENT-LICENSE.md](CONTENT-LICENSE.md). A disclaimer is not a substitute for
-permission or a licence. At the repository operator's direction, the current
-character artwork is displayed while remaining honestly marked
-`unverified-third-party`. Every such image requires an explicit per-record
-`publish_unverified: true` opt-in and is paired with its exact source-file link,
-an unverified-rights warning, and the removal route. The flag is a publication
-choice, not evidence of ownership, permission, fair use, or a licence. Future
-unverified images remain withheld unless explicitly opted in. The generated
+permission or a licence. The image pipeline publishes only allowlisted records.
+Verified rights statuses are eligible for publication; an
+`unverified-third-party` record is withheld unless the repository operator
+deliberately adds `publish_unverified: true` for that exact record. The flag is
+a publication choice, not evidence of ownership, permission, fair use, or a
+licence. Published unverified images are paired with their exact source-file
+link, a warning, and the removal route. The generated
 [image rights manifest](https://syntax555.github.io/Nexy/image-rights.json)
 records the source, status, review date, and publication decision for each
 image reference.
+
+The source code is not currently offered under an open-source licence. See
+[CODE-LICENSE.md](CODE-LICENSE.md) for the code-use terms and
+[CONTENT-LICENSE.md](CONTENT-LICENSE.md) for the separate treatment of
+third-party content and data.
 
 ## Gameplay model
 
@@ -61,8 +67,11 @@ simulation.
    grants, derived abilities, resistances, and stat effects.
 3. Nullification, absorption, resistance negation, and non-physical interaction
    are resolved until both profiles reach a stable state.
-4. Ranked combat statistics contribute comparison points. Tier is shown but is
-   not counted separately because it is derived from attack potency.
+4. Ranked combat statistics contribute comparison points. Combat speed is
+   always compared; attack, reaction, travel, and flight speed score only when
+   both profiles author that category. One-sided speed values remain visible as
+   unscored notes. Tier is shown but is not counted separately because it is
+   derived from attack potency.
 5. Interaction advantages and deterministic tie-break rules produce the final
    verdict.
 
@@ -77,9 +86,9 @@ change the underlying result.
 |-- content/
 |   |-- catalogs/             # Shared powers, tiers, equipment, verses, and rules
 |   |-- characters/           # One human-authored YAML file per character
-|   `-- images/               # Build sources such as the social card
+|   `-- images/               # Private build sources for characters and social card
 |-- public/
-|   |-- images/characters/    # Original character artwork, grouped by entry id
+|   |-- images/generated/     # Rebuilt, allowlisted responsive image variants
 |   `-- .nojekyll             # Serve the Vite output without Jekyll processing
 |-- src/
 |   |-- app/                  # Application state, assets, theme, and URL state
@@ -93,7 +102,10 @@ change the underlying result.
 |   |-- content/              # YAML compiler, schemas, and character scaffolder
 |   `-- images/               # Responsive image generation
 |-- tests/                    # Automated tests and parity fixtures
+|-- 404.html                  # Tokenized not-found page built by Vite
 |-- index.html                # Vite document entry point
+|-- legal.html                # Tokenized legal and removal-request page
+|-- site.config.ts            # Canonical origin, base path, and generated site files
 `-- vite.config.ts            # Build configuration and GitHub Pages base path
 ```
 
@@ -108,7 +120,8 @@ The boundaries are intentional:
 
 ## Local development
 
-Install Node.js 24 or newer and pnpm 11.9.0, then run:
+Install Node.js 24.x (the exact CI version is in `.node-version`) and pnpm
+11.9.0, then run:
 
 ```bash
 pnpm install --frozen-lockfile
@@ -150,7 +163,7 @@ gender IDs, refuses to overwrite an existing entry, and creates:
 
 ```text
 content/characters/storm-marvel-mainstream.yaml
-public/images/characters/storm-marvel-mainstream/
+content/images/characters/storm-marvel-mainstream/
 ```
 
 Next:
@@ -165,7 +178,8 @@ Character filenames, entry IDs, and form IDs use lowercase letters, numbers,
 and single hyphens. The entry ID is derived from the YAML filename. A character
 can have multiple forms by adding objects to `keys`.
 
-A local image reference is relative to `public/`:
+A local image value keeps its public-facing logical path, while the reviewed
+source file lives at the corresponding path below `content/`:
 
 ```yaml
 images:
@@ -178,10 +192,14 @@ images:
     reviewed_on: "2026-07-28"
 ```
 
-Local artwork must remain inside the matching character directory. Validation
-rejects missing files, parent-directory traversal, backslashes, and references
-to another character's directory. WebP is recommended for source artwork, but
-PNG, JPEG, AVIF, and WebP are accepted by the image build.
+For that example, place the source file at
+`content/images/characters/storm-marvel-mainstream/classic.webp`.
+Local artwork must remain inside the matching character directory. For
+publishable records, validation rejects missing files; every record rejects
+parent-directory traversal, backslashes, and references to another character's
+directory. A withheld `unverified-third-party` record may retain provenance
+without keeping a local binary. WebP is recommended for source artwork, but PNG,
+JPEG, AVIF, and WebP are accepted by the image build.
 
 The scaffolder can create an unverified image record when all three image
 flags are provided together:
@@ -241,36 +259,42 @@ pnpm content:build
 
 Do not edit the generated JSON by hand. Change the YAML source and rebuild it.
 
-Generate enabled 160 px roster thumbnails, enabled 640 px profile images,
-the public image-rights manifest, and the optimized 1200 x 630 social card:
+Generate allowlisted 160 px roster thumbnails, allowlisted 640 px profile
+images, the public image-rights manifest, and the optimized 1200 x 630 social
+card:
 
 ```bash
 pnpm images:build
 ```
 
 Generated image variants are written below `public/images/generated/`. The
-production post-build removes all full-size character sources and unpublished
-variants from `dist/` before GitHub Pages uploads it; the 160 px and 640 px
-variants are the only character image files needed by the website. The
-social-card source is `content/images/og-source.png`; its generated public file
-is `public/og.png`.
+full-size sources remain below `content/images/characters/` and never enter
+Vite's public tree. The production post-build also removes unpublished variants
+from `dist/` before GitHub Pages uploads it; the 160 px and 640 px variants are
+the only character image files needed by the website. The social-card source is
+`content/images/og-source.png`; its generated public file is `public/og.png`.
 
 ## Validation and tests
 
 The main commands are:
 
 ```bash
-pnpm typecheck        # Strict TypeScript checks
-pnpm test             # Run the test suite once
+pnpm lint             # Biome TypeScript, Preact hooks, and accessibility checks
+pnpm format:check     # Verify repository formatting without rewriting files
+pnpm typecheck        # Check app, Node tooling, tests, and build/test configs
+pnpm test             # Run the unit and component suite once
 pnpm test:watch       # Run affected tests while developing
-pnpm test:coverage    # Run tests with coverage enforcement
+pnpm test:coverage    # Run tests with global and critical-module thresholds
 pnpm test:e2e         # Build and test in five desktop/mobile browser projects
 pnpm build            # Compile content/images and create dist/
-pnpm check            # Validate content, typecheck, test, and production-build
+pnpm check:fast       # Content, style, types, and coverage-enforced tests
+pnpm check            # check:fast plus the production build
+pnpm check:full       # check plus the complete real-browser suite
 ```
 
-`pnpm check` already includes the production build, so it is the single
-pre-push command for a complete verification.
+Use `pnpm check:fast` during normal iteration, `pnpm check` before pushing, and
+`pnpm check:full` when changing interaction, responsive, or accessibility
+behavior.
 
 ### Legacy parity fixture
 
@@ -294,7 +318,15 @@ In the repository settings, configure **Pages > Build and deployment > Source**
 to **GitHub Actions**. No Jekyll theme, Pages gem, or branch-generated `_site/`
 directory is used.
 
-If the repository or account name changes, update `VITE_BASE_PATH` in the
-workflow, the default `base` in `vite.config.ts`, the canonical/social URLs in
-`index.html`, the return link in `public/404.html`, and the URLs in
-`public/robots.txt` and `public/sitemap.xml`.
+Deployment URLs have one source of truth in `site.config.ts`. If the repository
+or account name changes, update its defaults and the two matching environment
+values near the top of the CI build job. Vite renders the canonical/social
+metadata and static `404.html`/`legal.html` tokens, then generates `robots.txt`
+and `sitemap.xml` from that configuration.
+
+## Contributing and security
+
+Development workflow and review expectations are in
+[CONTRIBUTING.md](CONTRIBUTING.md). Report suspected vulnerabilities through
+the private process in [SECURITY.md](SECURITY.md); use the rights-holder request
+form above for copyright, trademark, attribution, or artwork-removal concerns.

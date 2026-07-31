@@ -43,10 +43,7 @@ export function ImageDialog({ image, onClose }: ImageDialogProps) {
         {image ? <img src={image.src} alt={image.alt} decoding="async" /> : null}
         <strong>{image?.title}</strong>
         {image?.rightsRecord ? (
-          <ArtworkDisclosure
-            image={image.rightsRecord}
-            className="image-modal__disclosure"
-          />
+          <ArtworkDisclosure image={image.rightsRecord} className="image-modal__disclosure" />
         ) : null}
       </div>
     </dialog>

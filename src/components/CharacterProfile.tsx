@@ -2,9 +2,9 @@ import { characterImageVariant } from "../app/assets.js";
 import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
 import type { RosterCharacter } from "../app/roster.js";
 import type { CharacterProfile as CharacterProfileData } from "../domain/index.js";
-import type { DialogImage } from "./ImageDialog.js";
 import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
 import { CharacterImage } from "./CharacterImage.js";
+import type { DialogImage } from "./ImageDialog.js";
 
 interface CharacterProfileProps {
   readonly side: "left" | "right";
@@ -15,10 +15,7 @@ interface CharacterProfileProps {
 }
 
 function capabilityCount(profile: CharacterProfileData): number {
-  return profile.sections.reduce(
-    (total, section) => total + section.items.length,
-    0
-  );
+  return profile.sections.reduce((total, section) => total + section.items.length, 0);
 }
 
 function rightsStatusLabel(status: string): string {
@@ -28,19 +25,15 @@ function rightsStatusLabel(status: string): string {
     .join(" ");
 }
 
-export function CharacterProfile({
-  side,
-  rosterCharacter,
-  profile,
-  onFormChange,
-  onOpenImage
-}: CharacterProfileProps) {
+export function CharacterProfile({ side, rosterCharacter, profile, onFormChange, onOpenImage }: CharacterProfileProps) {
   const fighterNumber = side === "left" ? "01" : "02";
 
   if (!rosterCharacter || !profile) {
     return (
       <div class="fighter-profile fighter-profile--empty">
-        <span class="fighter-profile__number" aria-hidden="true">{fighterNumber}</span>
+        <span class="fighter-profile__number" aria-hidden="true">
+          {fighterNumber}
+        </span>
         <strong>No fighter selected</strong>
         <p>Choose someone from the roster to inspect their form, stats, and complete loadout.</p>
       </div>
@@ -48,29 +41,19 @@ export function CharacterProfile({
   }
 
   const imageRecord = profile.image;
-  const displayImage = isImageEnabledForPublicDisplay(imageRecord)
-    ? imageRecord
-    : null;
-  const imageTitle = displayImage
-    ? `${profile.character.name} — ${displayImage.name}`
-    : profile.character.name;
+  const displayImage = isImageEnabledForPublicDisplay(imageRecord) ? imageRecord : null;
+  const imageTitle = displayImage ? `${profile.character.name} — ${displayImage.name}` : profile.character.name;
   const aliases = profile.names.filter((name) => name !== profile.character.name);
   const totalCapabilities = capabilityCount(profile);
   const sourceCount = profile.sources.length + (imageRecord ? 1 : 0);
-  const formName = profile.key.name
-    || profile.key.names[0]
-    || profile.key.key;
+  const formName = profile.key.name || profile.key.names[0] || profile.key.key;
 
   return (
     <article class="fighter-profile">
       <div class="profile-visual">
         {displayImage ? (
           <>
-            <CharacterImage
-              src={characterImageVariant(displayImage.image, 640)}
-              alt={imageTitle}
-              loading="eager"
-            />
+            <CharacterImage src={characterImageVariant(displayImage.image, 640)} alt={imageTitle} loading="eager" />
             <button
               class="icon-button profile-visual__expand"
               type="button"
@@ -91,30 +74,23 @@ export function CharacterProfile({
           <span
             class="image-fallback"
             role="img"
-            aria-label={imageRecord
-              ? `${profile.character.name} artwork withheld pending rights verification`
-              : "Image unavailable"}
+            aria-label={
+              imageRecord
+                ? `${profile.character.name} artwork withheld pending rights verification`
+                : "Image unavailable"
+            }
           >
             {profile.character.name.charAt(0)}
           </span>
         )}
       </div>
-      {displayImage ? (
-        <ArtworkDisclosure
-          image={displayImage}
-          className="profile-artwork-disclosure"
-        />
-      ) : null}
+      {displayImage ? <ArtworkDisclosure image={displayImage} className="profile-artwork-disclosure" /> : null}
 
       <div class="profile-content">
         <div class="profile-identity">
           <span class="eyebrow">Fighter {fighterNumber}</span>
           <h3>{profile.character.name}</h3>
-          <p>
-            {aliases.length > 0
-              ? aliases.join(" · ")
-              : rosterCharacter.verse}
-          </p>
+          <p>{aliases.length > 0 ? aliases.join(" · ") : rosterCharacter.verse}</p>
         </div>
 
         {rosterCharacter.character.keys.length > 1 ? (
@@ -122,7 +98,7 @@ export function CharacterProfile({
             <span>Combat form</span>
             <select
               value={profile.key.key}
-              aria-label={`Form for ${profile.character.name}`}
+              aria-label={`Combat form for ${profile.character.name}`}
               onChange={(event) => onFormChange(event.currentTarget.value)}
             >
               {rosterCharacter.character.keys.map((form) => (
@@ -143,7 +119,9 @@ export function CharacterProfile({
           <li>Media: {rosterCharacter.media}</li>
           <li>Publisher: {rosterCharacter.origin}</li>
           <li>Universe: {rosterCharacter.verse}</li>
-          {profile.details.map((detail) => <li key={detail}>{detail}</li>)}
+          {profile.details.map((detail) => (
+            <li key={detail}>{detail}</li>
+          ))}
         </ul>
 
         <ul class="profile-stats" aria-label={`${profile.character.name} statistics`}>
@@ -159,7 +137,9 @@ export function CharacterProfile({
         <details class="profile-details profile-sources">
           <summary>
             Sources
-            <span>{sourceCount} {sourceCount === 1 ? "entry" : "entries"}</span>
+            <span>
+              {sourceCount} {sourceCount === 1 ? "entry" : "entries"}
+            </span>
           </summary>
           <div class="profile-sections">
             <section>
@@ -190,9 +170,7 @@ export function CharacterProfile({
                     </a>
                     {" — "}
                     Rights status: {rightsStatusLabel(imageRecord.rights_status)}
-                    {imageRecord.rights_holder
-                      ? ` · Rights holder record: ${imageRecord.rights_holder}`
-                      : ""}
+                    {imageRecord.rights_holder ? ` · Rights holder record: ${imageRecord.rights_holder}` : ""}
                     {imageRecord.creator ? ` · Creator: ${imageRecord.creator}` : ""}
                     {imageRecord.license ? ` · License: ${imageRecord.license}` : ""}
                     {imageRecord.reviewed_on ? ` · Reviewed ${imageRecord.reviewed_on}` : ""}
@@ -227,14 +205,12 @@ export function CharacterProfile({
                             <details class="profile-capability">
                               <summary>
                                 <span>{item.label}</span>
-                                {item.status && item.status.code !== "active"
-                                  ? <small>{item.status.label}</small>
-                                  : null}
+                                {item.status && item.status.code !== "active" ? (
+                                  <small>{item.status.label}</small>
+                                ) : null}
                               </summary>
                               <ul class="profile-capability__details">
-                                {item.status?.reason
-                                  ? <li>{item.status.reason}</li>
-                                  : null}
+                                {item.status?.reason ? <li>{item.status.reason}</li> : null}
                                 {item.details?.map((detail) => (
                                   <li key={detail}>{detail}</li>
                                 ))}
@@ -243,9 +219,7 @@ export function CharacterProfile({
                           ) : (
                             <>
                               {item.label}
-                              {item.status && item.status.code !== "active"
-                                ? ` — ${item.status.label}`
-                                : ""}
+                              {item.status && item.status.code !== "active" ? ` — ${item.status.label}` : ""}
                             </>
                           )}
                         </li>

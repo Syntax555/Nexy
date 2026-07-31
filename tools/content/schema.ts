@@ -1,20 +1,13 @@
 import { z } from "zod";
 
-import type {
-  Effect,
-  EffectGrants,
-  EquipmentRef,
-  PowerRef,
-  ResistanceRef
-} from "../../src/domain/data.js";
+import type { CatalogName } from "../../src/domain/catalogs.js";
+
+import type { Effect, EffectGrants, EquipmentRef, PowerRef, ResistanceRef } from "../../src/domain/data.js";
 
 export const slugSchema = z
   .string()
   .min(1)
-  .regex(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-    "must use lowercase letters, numbers, and single hyphens"
-  );
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "must use lowercase letters, numbers, and single hyphens");
 
 const nonEmptyStringSchema = z.string().min(1);
 const nullableStringSchema = nonEmptyStringSchema.nullable();
@@ -38,9 +31,7 @@ const isoDateSchema = z
   .refine((value) => {
     const [year, month, day] = value.split("-").map(Number);
     const date = new Date(Date.UTC(year ?? 0, (month ?? 0) - 1, day));
-    return date.getUTCFullYear() === year
-      && date.getUTCMonth() === (month ?? 0) - 1
-      && date.getUTCDate() === day;
+    return date.getUTCFullYear() === year && date.getUTCMonth() === (month ?? 0) - 1 && date.getUTCDate() === day;
   }, "must be a valid calendar date");
 
 export const rankedStatNames = [
@@ -101,10 +92,7 @@ function validateImageRights(
   },
   context: z.RefinementCtx
 ): void {
-  if (
-    (image.rights_status === "licensed" || image.rights_status === "public-domain")
-    && !image.license
-  ) {
+  if ((image.rights_status === "licensed" || image.rights_status === "public-domain") && !image.license) {
     context.addIssue({
       code: "custom",
       path: ["license"],
@@ -118,10 +106,7 @@ function validateImageRights(
       message: "is required when rights_status is unverified-third-party"
     });
   }
-  if (
-    image.publish_unverified !== undefined
-    && image.rights_status !== "unverified-third-party"
-  ) {
+  if (image.publish_unverified !== undefined && image.rights_status !== "unverified-third-party") {
     context.addIssue({
       code: "custom",
       path: ["publish_unverified"],
@@ -151,9 +136,7 @@ function validateImageRights(
   }
 }
 
-export const imageRefSchema = z
-  .strictObject(imageFields)
-  .superRefine(validateImageRights);
+export const imageRefSchema = z.strictObject(imageFields).superRefine(validateImageRights);
 
 const imageUpdateSchema = z
   .strictObject({
@@ -199,42 +182,61 @@ const powerTargetSchema = z.strictObject({
 });
 
 export const effectSchema = z.lazy(() =>
-  z.strictObject({
-    stat_effects: statEffectsSchema.nullable().optional(),
-    stat_modifier_floor_effects: z.array(statModifierFloorSchema).nullable().optional(),
-    opponent_stat_swap: z.strictObject({
-      stat_names: z.array(rankedStatNameSchema).nullable().optional(),
-      max_target_range: rankedStatSchema.nullable().optional(),
-      max_target_stats: statEffectsSchema.nullable().optional(),
-      on_success_stat_modifier_floor_effects:
-        z.array(statModifierFloorSchema).nullable().optional()
-    }).nullable().optional(),
-    image_update: imageUpdateSchema.nullable().optional(),
-    grants: effectGrantsSchema.nullable().optional(),
-    power_nullification: z.strictObject({
-      target_power_ids: optionalSlugListSchema,
-      target_power_refs: z.array(powerTargetSchema).nullable().optional(),
-      max_target_modifier: optionalNullableStringSchema,
-      max_target_type_rank: nonnegativeIntegerSchema.nullable().optional()
-    }).nullable().optional(),
-    absorption: z.strictObject({
-      target_power_refs: z.array(powerTargetSchema).nullable().optional()
-    }).nullable().optional(),
-    resistance_negation: z.strictObject({
-      target_resistance_ids: optionalSlugListSchema,
-      target_immunity_ids: optionalSlugListSchema
-    }).nullable().optional(),
-    non_physical_interaction: z.strictObject({
-      target_power_refs: z.array(powerTargetSchema).nullable().optional()
-    }).nullable().optional(),
-    nullified_by: z.strictObject({
-      power_refs: z.array(powerRefSchema).nullable().optional(),
-      resistance_refs: z.array(resistanceRefSchema).nullable().optional()
-    }).nullable().optional()
-  }).refine(
-    (effect) => Object.values(effect).some((value) => value !== null && value !== undefined),
-    "effect must contain at least one supported branch"
-  )
+  z
+    .strictObject({
+      stat_effects: statEffectsSchema.nullable().optional(),
+      stat_modifier_floor_effects: z.array(statModifierFloorSchema).nullable().optional(),
+      opponent_stat_swap: z
+        .strictObject({
+          stat_names: z.array(rankedStatNameSchema).nullable().optional(),
+          max_target_range: rankedStatSchema.nullable().optional(),
+          max_target_stats: statEffectsSchema.nullable().optional(),
+          on_success_stat_modifier_floor_effects: z.array(statModifierFloorSchema).nullable().optional()
+        })
+        .nullable()
+        .optional(),
+      image_update: imageUpdateSchema.nullable().optional(),
+      grants: effectGrantsSchema.nullable().optional(),
+      power_nullification: z
+        .strictObject({
+          target_power_ids: optionalSlugListSchema,
+          target_power_refs: z.array(powerTargetSchema).nullable().optional(),
+          max_target_modifier: optionalNullableStringSchema,
+          max_target_type_rank: nonnegativeIntegerSchema.nullable().optional()
+        })
+        .nullable()
+        .optional(),
+      absorption: z
+        .strictObject({
+          target_power_refs: z.array(powerTargetSchema).nullable().optional()
+        })
+        .nullable()
+        .optional(),
+      resistance_negation: z
+        .strictObject({
+          target_resistance_ids: optionalSlugListSchema,
+          target_immunity_ids: optionalSlugListSchema
+        })
+        .nullable()
+        .optional(),
+      non_physical_interaction: z
+        .strictObject({
+          target_power_refs: z.array(powerTargetSchema).nullable().optional()
+        })
+        .nullable()
+        .optional(),
+      nullified_by: z
+        .strictObject({
+          power_refs: z.array(powerRefSchema).nullable().optional(),
+          resistance_refs: z.array(resistanceRefSchema).nullable().optional()
+        })
+        .nullable()
+        .optional()
+    })
+    .refine(
+      (effect) => Object.values(effect).some((value) => value !== null && value !== undefined),
+      "effect must contain at least one supported branch"
+    )
 ) as unknown as z.ZodType<Effect>;
 
 export const effectGrantsSchema = z.lazy(() =>
@@ -392,6 +394,7 @@ const derivedPowerRequirementSchema = z.strictObject({
 const derivedPowerRuleSchema = z.strictObject({
   id: slugSchema,
   power_id: slugSchema,
+  evaluation_stage: z.enum(["base", "effective"]).nullable().optional(),
   min_matches: positiveIntegerSchema.nullable().optional(),
   requirements: z.array(derivedPowerRequirementSchema).min(1)
 });
@@ -492,11 +495,10 @@ export const catalogSchemas = {
   stat_modifiers: nonEmptyCatalog(statModifierSchema),
   striking_strength_tiers: nonEmptyCatalog(rankedTierSchema),
   verses: nonEmptyCatalog(verseSchema)
-} as const;
+} as const satisfies Readonly<Record<CatalogName, z.ZodType>>;
 
 type CatalogArraySource = z.infer<(typeof catalogSchemas)[keyof typeof catalogSchemas]>;
-export type CatalogEntrySource =
-  CatalogArraySource extends readonly (infer Entry)[] ? Entry : never;
+export type CatalogEntrySource = CatalogArraySource extends readonly (infer Entry)[] ? Entry : never;
 export type RankedStatSource = z.infer<typeof rankedStatSchema>;
 export type PowerRefSource = z.infer<typeof powerRefSchema>;
 export type ResistanceRefSource = z.infer<typeof resistanceRefSchema>;

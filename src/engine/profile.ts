@@ -20,18 +20,8 @@ import {
   resistanceRefLabel,
   resistanceRefs
 } from "./capabilities.js";
-import {
-  arrayField,
-  booleanField,
-  byId,
-  stringField,
-  type GameContext
-} from "./context.js";
-import {
-  describeItem,
-  describePower,
-  describeResistance
-} from "./describe.js";
+import { arrayField, booleanField, byId, stringField, type GameContext } from "./context.js";
+import { describeItem, describePower, describeResistance } from "./describe.js";
 import {
   status,
   type CapabilityItem,
@@ -46,9 +36,7 @@ function resolvedCharacterId(character: CharacterEntry): string {
 }
 
 function findForm(character: CharacterEntry, requestedId?: string): CharacterForm | undefined {
-  return requestedId
-    ? character.keys.find((form) => form.key === requestedId)
-    : character.keys[0];
+  return requestedId ? character.keys.find((form) => form.key === requestedId) : character.keys[0];
 }
 
 export function resolveSelection(
@@ -63,9 +51,7 @@ export function resolveSelection(
   const requestedForm = selection.formId || selection.keyId;
   const form = findForm(character, requestedForm);
   if (!form) {
-    throw new Error(
-      `Unknown form selection: ${selection.characterId}~${requestedForm || "(default)"}`
-    );
+    throw new Error(`Unknown form selection: ${selection.characterId}~${requestedForm || "(default)"}`);
   }
   return { character, form };
 }
@@ -91,77 +77,56 @@ function characterDetails(context: GameContext, character: CharacterEntry): read
   return details;
 }
 
-function sourcesForForm(
-  character: CharacterEntry,
-  form: CharacterForm
-) {
-  const sourcesById = new Map(
-    arrayField<ContentSource>(character, "sources").map((source) => [source.id, source])
-  );
+function sourcesForForm(character: CharacterEntry, form: CharacterForm) {
+  const sourcesById = new Map(arrayField<ContentSource>(character, "sources").map((source) => [source.id, source]));
   return arrayField<string>(form, "source_ids").flatMap((sourceId) => {
     const source = sourcesById.get(sourceId);
     return source ? [source] : [];
   });
 }
 
-function itemStatus(
-  context: GameContext,
-  item: ResolvedCatalogItem,
-  ownedPowers: readonly PowerRef[],
-  reason = ""
-) {
+function itemStatus(context: GameContext, item: ResolvedCatalogItem, ownedPowers: readonly PowerRef[], reason = "") {
   const requirements = arrayField<PowerRef>(item, "required_power_refs");
-  if (
-    requirements.length === 0
-    || powerRefsMeetRequirements(context, ownedPowers, requirements)
-  ) {
+  if (requirements.length === 0 || powerRefsMeetRequirements(context, ownedPowers, requirements)) {
     return undefined;
   }
 
   const names = requirements.map((ref) => powerRefLabel(context, ref));
-  return status(
-    "disabled",
-    reason || `Missing ${names.join(names.length === 2 ? " and " : ", ")}`
-  );
+  return status("disabled", reason || `Missing ${names.join(names.length === 2 ? " and " : ", ")}`);
 }
 
-function powerItems(
-  context: GameContext,
-  form: CharacterForm,
-  refs: readonly PowerRef[]
-): readonly CapabilityItem[] {
+function powerItems(context: GameContext, form: CharacterForm, refs: readonly PowerRef[]): readonly CapabilityItem[] {
   return refs.flatMap((ref) => {
     const power = byId(context, "powers", ref.id);
     if (!power) return [];
     const localPlaceholder = Reflect.get(ref, "placeholder");
-    return [{
-      kind: "power" as const,
-      id: ref.id,
-      label: powerRefLabel(context, ref),
-      placeholder: typeof localPlaceholder === "boolean"
-        ? localPlaceholder
-        : booleanField(power, "placeholder"),
-      ref,
-      details: describePower(context, form, ref)
-    }];
+    return [
+      {
+        kind: "power" as const,
+        id: ref.id,
+        label: powerRefLabel(context, ref),
+        placeholder: typeof localPlaceholder === "boolean" ? localPlaceholder : booleanField(power, "placeholder"),
+        ref,
+        details: describePower(context, form, ref)
+      }
+    ];
   });
 }
 
-function resistanceItems(
-  context: GameContext,
-  refs: readonly ResistanceRef[]
-): readonly CapabilityItem[] {
+function resistanceItems(context: GameContext, refs: readonly ResistanceRef[]): readonly CapabilityItem[] {
   return refs.flatMap((ref) => {
     const resistance = byId(context, "resistances", ref.id);
     if (!resistance) return [];
-    return [{
-      kind: "resistance" as const,
-      id: ref.id,
-      label: resistanceRefLabel(context, ref),
-      placeholder: booleanField(resistance, "placeholder"),
-      ref,
-      details: describeResistance(context, ref)
-    }];
+    return [
+      {
+        kind: "resistance" as const,
+        id: ref.id,
+        label: resistanceRefLabel(context, ref),
+        placeholder: booleanField(resistance, "placeholder"),
+        ref,
+        details: describeResistance(context, ref)
+      }
+    ];
   });
 }
 
@@ -265,12 +230,7 @@ export function prepareCharacterProfile(
   const resolvedPowers = powerRefs(context, form, itemEffects);
   const effects = activeEffects(context, form, resolvedPowers, itemEffects);
   const effectiveKey = effectiveForm(context, form, resolvedPowers, itemEffects, effects);
-  const resolvedResistances = resistanceRefs(
-    context,
-    form,
-    resolvedPowers,
-    itemEffects
-  );
+  const resolvedResistances = resistanceRefs(context, form, resolvedPowers, itemEffects);
   const image = activeImage(form, effects);
 
   return {
@@ -289,19 +249,11 @@ export function prepareCharacterProfile(
     names: [...form.names],
     details: characterDetails(context, character),
     stats: statsForForm(context, effectiveKey),
-    sections: profileSections(
-      context,
-      form,
-      resolvedPowers,
-      resolvedResistances
-    )
+    sections: profileSections(context, form, resolvedPowers, resolvedResistances)
   };
 }
 
-export function getCharacterProfile(
-  context: GameContext,
-  selection: BattleSelection
-): CharacterProfile {
+export function getCharacterProfile(context: GameContext, selection: BattleSelection): CharacterProfile {
   const { character, form } = resolveSelection(context, selection);
   return {
     ...prepareCharacterProfile(context, character, form),

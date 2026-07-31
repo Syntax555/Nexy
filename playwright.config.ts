@@ -1,7 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL =
-  process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173/Nexy/";
+import { createSiteConfig } from "./site.config.js";
+
+const site = createSiteConfig();
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? new URL(site.basePath, "http://127.0.0.1:4173").href;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -9,9 +11,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  ...(process.env.CI ? { workers: 1 } : {}),
   reporter: process.env.CI
-    ? [["github"], ["line"]]
+    ? [["github"], ["line"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],
   use: {
     baseURL,

@@ -1,5 +1,4 @@
-const localCharacterImage =
-  /^images\/characters\/(.+)\.(?:avif|jpe?g|png|webp)$/i;
+const localCharacterImage = /^images\/characters\/(.+)\.(?:avif|jpe?g|png|webp)$/i;
 
 export function assetUrl(path: string): string {
   if (!path || /^(?:[a-z]+:)?\/\//i.test(path) || path.startsWith("data:")) return path;

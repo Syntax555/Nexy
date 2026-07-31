@@ -1,4 +1,4 @@
-import type { CharacterProfile } from "../domain/index.js";
+import { type CharacterProfile, RULESET_VERSION } from "../domain/index.js";
 
 interface ActionDockProps {
   readonly left: CharacterProfile | null;
@@ -27,20 +27,12 @@ function FighterSummary({
   );
 }
 
-export function ActionDock({
-  left,
-  right,
-  onSwap,
-  onAnalyze
-}: ActionDockProps) {
+export function ActionDock({ left, right, onSwap, onAnalyze }: ActionDockProps) {
   const ready = Boolean(left && right);
 
   return (
-    <div
-      class="action-dock"
-      data-ready={ready ? "true" : "false"}
-      aria-label="Matchup controls"
-    >
+    <fieldset class="action-dock" data-ready={ready ? "true" : "false"}>
+      <legend class="visually-hidden">Matchup controls</legend>
       <FighterSummary side="Fighter 01" profile={left} />
       <button
         class="icon-button swap-button"
@@ -53,15 +45,10 @@ export function ActionDock({
         ⇄
       </button>
       <FighterSummary side="Fighter 02" profile={right} />
-      <button
-        class="primary-button analyze-button"
-        type="button"
-        disabled={!ready}
-        onClick={onAnalyze}
-      >
+      <button class="primary-button analyze-button" type="button" disabled={!ready} onClick={onAnalyze}>
         <span>Analyze battle</span>
-        <small>{ready ? "Run deterministic ruleset v1" : "Choose two fighters"}</small>
+        <small>{ready ? `Run deterministic ruleset v${RULESET_VERSION}` : "Choose two fighters"}</small>
       </button>
-    </div>
+    </fieldset>
   );
 }

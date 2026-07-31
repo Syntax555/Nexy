@@ -1,27 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import type { RosterCharacter, RosterTier } from "../app/roster.js";
-import type {
-  BattleSelection,
-  CharacterProfile as CharacterProfileData
-} from "../domain/index.js";
+import type { BattleSelection, CharacterProfile as CharacterProfileData } from "../domain/index.js";
 import { getCachedSearchIndex, searchIndex } from "../search/search.js";
 import "../styles/roster-scale.css";
-import type { DialogImage } from "./ImageDialog.js";
 import { CharacterProfile } from "./CharacterProfile.js";
+import type { DialogImage } from "./ImageDialog.js";
 import { RosterCarousel } from "./RosterCarousel.js";
 import { SearchableSelect } from "./SearchableSelect.js";
 
 type SortOrder = "name" | "name-desc" | "tier-desc" | "tier-asc";
-type AgeFilter =
-  | "all"
-  | "under-13"
-  | "teen"
-  | "20s"
-  | "30s"
-  | "40s"
-  | "50-plus"
-  | "unknown";
+type AgeFilter = "all" | "under-13" | "teen" | "20s" | "30s" | "40s" | "50-plus" | "unknown";
 
 interface FilterOption {
   readonly id: string;
@@ -64,23 +53,19 @@ function sortedUniqueOptions(options: readonly FilterOption[]): readonly FilterO
   for (const option of options) {
     if (option.id) labels.set(option.id, option.label);
   }
-  return [...labels]
-    .map(([id, label]) => ({ id, label }))
-    .sort((left, right) => left.label.localeCompare(right.label));
+  return [...labels].map(([id, label]) => ({ id, label })).sort((left, right) => left.label.localeCompare(right.label));
 }
 
-function ageMatchesGroup(
-  values: RosterCharacter["ageFilterValues"],
-  groupId: Exclude<AgeFilter, "all">
-): boolean {
+function ageMatchesGroup(values: RosterCharacter["ageFilterValues"], groupId: Exclude<AgeFilter, "all">): boolean {
   const group = ageGroups.find((candidate) => candidate.id === groupId);
   if (!group) return true;
   if (group.id === "unknown") return values.includes("unknown");
 
-  return values.some((value) =>
-    typeof value === "number"
-    && (group.min === undefined || value >= group.min)
-    && (group.max === undefined || value <= group.max)
+  return values.some(
+    (value) =>
+      typeof value === "number" &&
+      (group.min === undefined || value >= group.min) &&
+      (group.max === undefined || value <= group.max)
   );
 }
 
@@ -98,15 +83,25 @@ function sortedTierOptions(items: readonly RosterCharacter[]): readonly FilterOp
     .map((tier) => ({ id: tier.value, label: tier.value }));
 }
 
-function compareByName(
-  left: RosterCharacter,
-  right: RosterCharacter,
-  direction = 1
-): number {
-  return direction * (
-    left.name.localeCompare(right.name, undefined, { sensitivity: "base" })
-    || left.identity.localeCompare(right.identity, undefined, { sensitivity: "base" })
+function compareByName(left: RosterCharacter, right: RosterCharacter, direction = 1): number {
+  return (
+    direction *
+    (left.name.localeCompare(right.name, undefined, { sensitivity: "base" }) ||
+      left.identity.localeCompare(right.identity, undefined, { sensitivity: "base" }))
   );
+}
+
+function compareRoster(left: RosterCharacter, right: RosterCharacter, sortOrder: SortOrder): number {
+  if (sortOrder === "tier-desc") {
+    return right.tierRank - left.tierRank || compareByName(left, right);
+  }
+  if (sortOrder === "tier-asc") {
+    return left.tierRank - right.tierRank || compareByName(left, right);
+  }
+  if (sortOrder === "name-desc") {
+    return compareByName(left, right, -1);
+  }
+  return compareByName(left, right);
 }
 
 export function FighterPicker({
@@ -132,167 +127,147 @@ export function FighterPicker({
   const searchRef = useRef<HTMLInputElement>(null);
   const fighterNumber = side === "left" ? "01" : "02";
   const accentName = side === "left" ? "Cyan corner" : "Magenta corner";
-  const searchIndexForRoster = useMemo(
-    () => getCachedSearchIndex(roster, rosterSearchText),
+  const searchIndexForRoster = useMemo(() => getCachedSearchIndex(roster, rosterSearchText), [roster]);
+  const mediaOptions = useMemo(
+    () => sortedUniqueOptions(roster.map((item) => ({ id: item.mediaId, label: item.media }))),
     [roster]
   );
-  const mediaOptions = useMemo(() => sortedUniqueOptions(
-    roster.map((item) => ({ id: item.mediaId, label: item.media }))
-  ), [roster]);
-  const originOptions = useMemo(() => sortedUniqueOptions(
-    media === "all" ? [] : roster
-      .filter((item) => media === "all" || item.mediaId === media)
-      .map((item) => ({ id: item.originId, label: item.origin }))
-  ), [media, roster]);
-  const verseOptions = useMemo(() => sortedUniqueOptions(
-    origin === "all" ? [] : roster
-      .filter((item) => media === "all" || item.mediaId === media)
-      .filter((item) => origin === "all" || item.originId === origin)
-      .map((item) => ({ id: item.verseId, label: item.verse }))
-  ), [media, origin, roster]);
-  const locationRoster = useMemo(() => roster.filter((item) =>
-    (media === "all" || item.mediaId === media)
-    && (origin === "all" || item.originId === origin)
-    && (verse === "all" || item.verseId === verse)
-  ),
-  [media, origin, roster, verse]);
-  const genders = useMemo(() => sortedUniqueOptions(
-    locationRoster.map((item) => ({ id: item.genderId, label: item.gender }))
-  ), [locationRoster]);
-  const ages = useMemo(() => ageGroups
-    .filter((group) =>
-      locationRoster.some((item) => ageMatchesGroup(item.ageFilterValues, group.id))
-    )
-    .map((group) => ({ id: group.id, label: group.label })),
-  [locationRoster]);
+  const originOptions = useMemo(
+    () =>
+      sortedUniqueOptions(
+        media === "all"
+          ? []
+          : roster
+              .filter((item) => media === "all" || item.mediaId === media)
+              .map((item) => ({ id: item.originId, label: item.origin }))
+      ),
+    [media, roster]
+  );
+  const verseOptions = useMemo(
+    () =>
+      sortedUniqueOptions(
+        origin === "all"
+          ? []
+          : roster
+              .filter((item) => media === "all" || item.mediaId === media)
+              .filter((item) => origin === "all" || item.originId === origin)
+              .map((item) => ({ id: item.verseId, label: item.verse }))
+      ),
+    [media, origin, roster]
+  );
+  const locationRoster = useMemo(
+    () =>
+      roster.filter(
+        (item) =>
+          (media === "all" || item.mediaId === media) &&
+          (origin === "all" || item.originId === origin) &&
+          (verse === "all" || item.verseId === verse)
+      ),
+    [media, origin, roster, verse]
+  );
+  const genders = useMemo(
+    () => sortedUniqueOptions(locationRoster.map((item) => ({ id: item.genderId, label: item.gender }))),
+    [locationRoster]
+  );
+  const ages = useMemo(
+    () =>
+      ageGroups
+        .filter((group) => locationRoster.some((item) => ageMatchesGroup(item.ageFilterValues, group.id)))
+        .map((group) => ({ id: group.id, label: group.label })),
+    [locationRoster]
+  );
   const tiers = useMemo(() => sortedTierOptions(locationRoster), [locationRoster]);
-  const classifications = useMemo(() => sortedUniqueOptions(
-    locationRoster.flatMap((item) =>
-      item.classificationFilterIds.map((id, index) => ({
-        id,
-        label: item.classificationFilterNames[index] ?? id
-      }))
-    )
-  ), [locationRoster]);
+  const classifications = useMemo(
+    () =>
+      sortedUniqueOptions(
+        locationRoster.flatMap((item) =>
+          item.classificationFilterIds.map((id, index) => ({
+            id,
+            label: item.classificationFilterNames[index] ?? id
+          }))
+        )
+      ),
+    [locationRoster]
+  );
 
   const visibleRoster = useMemo(() => {
-    const matched = searchIndex(searchIndexForRoster, query)
-      .filter((item) =>
-        (media === "all" || item.mediaId === media)
-        && (origin === "all" || item.originId === origin)
-        && (verse === "all" || item.verseId === verse)
-        && (gender === "all" || item.genderId === gender)
-        && (age === "all" || ageMatchesGroup(item.ageFilterValues, age))
-        && (
-          tier === "all"
-          || item.tiers.some((candidate) => candidate.value === tier)
-        )
-        && (
-          classification === "all"
-          || item.classificationFilterIds.includes(classification)
-        )
-      );
+    const matched = searchIndex(searchIndexForRoster, query, (left, right) =>
+      compareRoster(left, right, sortOrder)
+    ).filter(
+      (item) =>
+        (media === "all" || item.mediaId === media) &&
+        (origin === "all" || item.originId === origin) &&
+        (verse === "all" || item.verseId === verse) &&
+        (gender === "all" || item.genderId === gender) &&
+        (age === "all" || ageMatchesGroup(item.ageFilterValues, age)) &&
+        (tier === "all" || item.tiers.some((candidate) => candidate.value === tier)) &&
+        (classification === "all" || item.classificationFilterIds.includes(classification))
+    );
 
-    return [...matched].sort((left, right) => {
-      if (sortOrder === "tier-desc") {
-        return right.tierRank - left.tierRank || compareByName(left, right);
-      }
-      if (sortOrder === "tier-asc") {
-        return left.tierRank - right.tierRank || compareByName(left, right);
-      }
-      if (sortOrder === "name-desc") {
-        return compareByName(left, right, -1);
-      }
-      return compareByName(left, right);
-    });
-  }, [
-    age,
-    classification,
-    gender,
-    media,
-    origin,
-    query,
-    searchIndexForRoster,
-    sortOrder,
-    tier,
-    verse
-  ]);
+    return matched;
+  }, [age, classification, gender, media, origin, query, searchIndexForRoster, sortOrder, tier, verse]);
 
-  const selectedCharacter = selection
-    ? roster.find((item) => item.id === selection.characterId) ?? null
-    : null;
+  const selectedCharacter = selection ? (roster.find((item) => item.id === selection.characterId) ?? null) : null;
   const selectedOutsideFilters = Boolean(
-    selectedCharacter
-    && !visibleRoster.some((item) => item.id === selectedCharacter.id)
+    selectedCharacter && !visibleRoster.some((item) => item.id === selectedCharacter.id)
   );
   const randomAvailable = selection
     ? visibleRoster.some((item) => item.id !== selection.characterId)
     : visibleRoster.length > 0;
   const renderedRoster = useMemo(() => {
     const page = visibleRoster.slice(0, visibleLimit);
-    if (
-      !selectedCharacter
-      || page.some((item) => item.id === selectedCharacter.id)
-    ) {
+    if (!selectedCharacter || page.some((item) => item.id === selectedCharacter.id)) {
       return page;
     }
 
     if (selectedOutsideFilters) return [selectedCharacter, ...page];
-    return [
-      selectedCharacter,
-      ...page.slice(0, Math.max(0, page.length - 1))
-    ];
-  }, [
-    selectedCharacter,
-    selectedOutsideFilters,
-    visibleLimit,
-    visibleRoster
-  ]);
+    return [selectedCharacter, ...page.slice(0, Math.max(0, page.length - 1))];
+  }, [selectedCharacter, selectedOutsideFilters, visibleLimit, visibleRoster]);
   const shownRosterCount = Math.min(visibleLimit, visibleRoster.length);
   const remainingRosterCount = Math.max(0, visibleRoster.length - shownRosterCount);
   const galleryActive = !(selectedCharacter && profile);
   const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
   const selectedOrigin = originOptions.find((option) => option.id === origin) ?? null;
   const selectedVerse = verseOptions.find((option) => option.id === verse) ?? null;
-  const browsePathLevel = verse !== "all"
-    ? "universe"
-    : origin !== "all"
-      ? "publisher"
-      : media !== "all"
-        ? "media"
-        : "all";
-  const browsePathStatus = selectedVerse && selectedOrigin && selectedMedia
-    ? `${selectedMedia.label} → ${selectedOrigin.label} → ${selectedVerse.label}`
-    : selectedOrigin && selectedMedia
-      ? `${selectedMedia.label} → ${selectedOrigin.label}. Choose a universe.`
-      : selectedMedia
-        ? `${selectedMedia.label} selected. Choose a publisher or origin.`
-        : "Choose media, then publisher or origin, then universe.";
-
-  useEffect(() => {
-    setVisibleLimit(ROSTER_PAGE_SIZE);
-  }, [
-    age,
-    classification,
-    gender,
+  const browsePathLevel =
+    verse !== "all" ? "universe" : origin !== "all" ? "publisher" : media !== "all" ? "media" : "all";
+  const browsePathStatus =
+    selectedVerse && selectedOrigin && selectedMedia
+      ? `${selectedMedia.label} → ${selectedOrigin.label} → ${selectedVerse.label}`
+      : selectedOrigin && selectedMedia
+        ? `${selectedMedia.label} → ${selectedOrigin.label}. Choose a universe.`
+        : selectedMedia
+          ? `${selectedMedia.label} selected. Choose a publisher or origin.`
+          : "Choose media, then publisher or origin, then universe.";
+  const rosterResetKey = [
+    query,
     media,
     origin,
-    query,
-    roster,
-    sortOrder,
+    verse,
+    gender,
+    age,
     tier,
-    verse
-  ]);
+    classification,
+    sortOrder,
+    String(roster.length)
+  ].join("\u0000");
+
+  useEffect(() => {
+    void rosterResetKey;
+    void searchIndexForRoster;
+    setVisibleLimit(ROSTER_PAGE_SIZE);
+  }, [rosterResetKey, searchIndexForRoster]);
 
   useEffect(() => {
     if (side !== "left") return;
 
     const focusSearch = (event: KeyboardEvent): void => {
       const target = event.target;
-      const isTyping = target instanceof HTMLInputElement
-        || target instanceof HTMLTextAreaElement
-        || target instanceof HTMLSelectElement
-        || (target instanceof HTMLElement && target.isContentEditable);
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable);
       if (event.key !== "/" || isTyping || event.metaKey || event.ctrlKey || event.altKey) return;
       event.preventDefault();
       searchRef.current?.focus();
@@ -328,36 +303,18 @@ export function FighterPicker({
     setClassification("all");
   };
 
-  const activeMetadataFilterCount = [
-    gender,
-    age,
-    tier,
-    classification
-  ].filter((value) => value !== "all").length;
+  const activeMetadataFilterCount = [gender, age, tier, classification].filter((value) => value !== "all").length;
   const filtersActive = Boolean(
-    query
-    || media !== "all"
-    || origin !== "all"
-    || verse !== "all"
-    || gender !== "all"
-    || age !== "all"
-    || tier !== "all"
-    || classification !== "all"
-    || sortOrder !== "name"
+    query ||
+      media !== "all" ||
+      origin !== "all" ||
+      verse !== "all" ||
+      gender !== "all" ||
+      age !== "all" ||
+      tier !== "all" ||
+      classification !== "all" ||
+      sortOrder !== "name"
   );
-  const rosterResetKey = [
-    query,
-    media,
-    origin,
-    verse,
-    gender,
-    age,
-    tier,
-    classification,
-    sortOrder,
-    String(roster.length)
-  ].join("\u0000");
-
   return (
     <section
       class="fighter-picker"
@@ -367,7 +324,9 @@ export function FighterPicker({
     >
       <header class="fighter-picker__header">
         <div>
-          <span class="eyebrow">{accentName} · Fighter {fighterNumber}</span>
+          <span class="eyebrow">
+            {accentName} · Fighter {fighterNumber}
+          </span>
           <h2 id={`${side}-picker-title`} tabIndex={-1}>
             {selectedCharacter?.name ?? "Select fighter"}
           </h2>
@@ -378,12 +337,7 @@ export function FighterPicker({
           </p>
         </div>
         <div class="fighter-picker__actions">
-          <button
-            class="text-button"
-            type="button"
-            disabled={!randomAvailable}
-            onClick={() => onRandom(visibleRoster)}
-          >
+          <button class="text-button" type="button" disabled={!randomAvailable} onClick={() => onRandom(visibleRoster)}>
             Random
           </button>
           {selection ? (
@@ -418,14 +372,14 @@ export function FighterPicker({
               autocomplete="off"
               onInput={(event) => setQuery(event.currentTarget.value)}
             />
-            {side === "left" ? <kbd aria-hidden="true">/</kbd> : null}
+            {side === "left" ? (
+              <span aria-hidden="true">
+                <kbd>/</kbd>
+              </span>
+            ) : null}
           </label>
 
-          <fieldset
-            class="roster-path"
-            data-browse-path
-            data-browse-level={browsePathLevel}
-          >
+          <fieldset class="roster-path" data-browse-path data-browse-level={browsePathLevel}>
             <legend class="roster-path__legend">Browse by universe</legend>
             <p
               class="roster-path__status"
@@ -461,9 +415,9 @@ export function FighterPicker({
                 browseStep="publisher"
                 value={origin}
                 options={originOptions}
-                allLabel={selectedMedia
-                  ? `All ${selectedMedia.label} publishers / origins`
-                  : "All publishers / origins"}
+                allLabel={
+                  selectedMedia ? `All ${selectedMedia.label} publishers / origins` : "All publishers / origins"
+                }
                 disabled={media === "all"}
                 disabledHint="Choose media first"
                 describedBy={`${side}-browse-path-status`}
@@ -480,9 +434,7 @@ export function FighterPicker({
                 browseStep="universe"
                 value={verse}
                 options={verseOptions}
-                allLabel={selectedOrigin
-                  ? `All ${selectedOrigin.label} universes`
-                  : "All universes"}
+                allLabel={selectedOrigin ? `All ${selectedOrigin.label} universes` : "All universes"}
                 disabled={origin === "all"}
                 disabledHint="Choose publisher / origin first"
                 describedBy={`${side}-browse-path-status`}
@@ -497,10 +449,7 @@ export function FighterPicker({
           <div class="filter-primary filter-primary--order">
             <label class="filter-field">
               <span>Order</span>
-              <select
-                value={sortOrder}
-                onChange={(event) => setSortOrder(event.currentTarget.value as SortOrder)}
-              >
+              <select value={sortOrder} onChange={(event) => setSortOrder(event.currentTarget.value as SortOrder)}>
                 <option value="name">Name A–Z</option>
                 <option value="name-desc">Name Z–A</option>
                 <option value="tier-desc">Highest tier</option>
@@ -513,9 +462,7 @@ export function FighterPicker({
             <summary>
               <span>More filters</span>
               <small>
-                {activeMetadataFilterCount > 0
-                  ? `${activeMetadataFilterCount} active`
-                  : "Gender, age, tier, class"}
+                {activeMetadataFilterCount > 0 ? `${activeMetadataFilterCount} active` : "Gender, age, tier, class"}
               </small>
             </summary>
             <div class="filter-grid">
@@ -524,19 +471,20 @@ export function FighterPicker({
                 <select value={gender} onChange={(event) => setGender(event.currentTarget.value)}>
                   <option value="all">All genders</option>
                   {genders.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
+                    <option value={option.id} key={option.id}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </label>
               <label class="filter-field">
                 <span>Age</span>
-                <select
-                  value={age}
-                  onChange={(event) => setAge(event.currentTarget.value as AgeFilter)}
-                >
+                <select value={age} onChange={(event) => setAge(event.currentTarget.value as AgeFilter)}>
                   <option value="all">All ages</option>
                   {ages.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
+                    <option value={option.id} key={option.id}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -545,19 +493,20 @@ export function FighterPicker({
                 <select value={tier} onChange={(event) => setTier(event.currentTarget.value)}>
                   <option value="all">All tiers</option>
                   {tiers.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
+                    <option value={option.id} key={option.id}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </label>
               <label class="filter-field">
                 <span>Classification</span>
-                <select
-                  value={classification}
-                  onChange={(event) => setClassification(event.currentTarget.value)}
-                >
+                <select value={classification} onChange={(event) => setClassification(event.currentTarget.value)}>
                   <option value="all">All classifications</option>
                   {classifications.map((option) => (
-                    <option value={option.id} key={option.id}>{option.label}</option>
+                    <option value={option.id} key={option.id}>
+                      {option.label}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -572,21 +521,15 @@ export function FighterPicker({
               <button class="text-button" type="button" onClick={resetFilters}>
                 Reset
               </button>
-            ) : <span>Ruleset v1</span>}
+            ) : (
+              <span>Ruleset v1</span>
+            )}
           </div>
-          <p
-            class="roster-artwork-note"
-            id={`${side}-roster-artwork-note`}
-          >
-            Third-party artwork may have unverified rights. Select a fighter
-            for its exact source record.
+          <p class="roster-artwork-note" id={`${side}-roster-artwork-note`}>
+            Third-party artwork may have unverified rights. Select a fighter for its exact source record.
           </p>
           {selectedOutsideFilters ? (
-            <p
-              class="roster-selection-note"
-              id={`${side}-roster-selection-note`}
-              role="status"
-            >
+            <p class="roster-selection-note" id={`${side}-roster-selection-note`} role="status">
               Selected fighter shown outside the current filters.
             </p>
           ) : null}
@@ -606,28 +549,21 @@ export function FighterPicker({
               `${side}-rendered-roster-count`,
               `${side}-roster-artwork-note`,
               selectedOutsideFilters ? `${side}-roster-selection-note` : ""
-            ].filter(Boolean).join(" ")}
+            ]
+              .filter(Boolean)
+              .join(" ")}
             onSelect={onSelect}
             onResetFilters={resetFilters}
-            onShowMore={() => setVisibleLimit((current) =>
-              Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length)
-            )}
+            onShowMore={() => setVisibleLimit((current) => Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length))}
           />
-          <span
-            id={`${side}-rendered-roster-count`}
-            class="visually-hidden"
-            role="status"
-            aria-live="polite"
-          >
+          <span id={`${side}-rendered-roster-count`} class="visually-hidden">
             Showing {shownRosterCount} of {visibleRoster.length} matching fighters.
             {selectedOutsideFilters ? " Plus the selected fighter outside the filters." : ""}
           </span>
         </aside>
 
         <CharacterProfile
-          key={selection
-            ? selection.characterId
-            : `${side}:empty`}
+          key={selection ? selection.characterId : `${side}:empty`}
           side={side}
           rosterCharacter={selectedCharacter}
           profile={profile}

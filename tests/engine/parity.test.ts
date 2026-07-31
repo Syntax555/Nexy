@@ -11,15 +11,9 @@ import type {
   PowerTargetRef,
   ResistanceRef
 } from "../../src/domain/index.js";
-import {
-  powerTargetRefLabel,
-  powerTargetRefMatches
-} from "../../src/engine/capabilities.js";
-import {
-  createGameContext,
-  getCharacterProfile,
-  simulateBattle
-} from "../../src/engine/index.js";
+import { derivedPowerRefs, powerTargetRefLabel, powerTargetRefMatches } from "../../src/engine/capabilities.js";
+import { resistanceBlocksPower } from "../../src/engine/counters.js";
+import { createGameContext, getCharacterProfile, simulateBattle } from "../../src/engine/index.js";
 import legacyFixtureJson from "../fixtures/legacy-parity.json";
 
 interface LegacyMatchupExpectation {
@@ -82,15 +76,9 @@ function semanticCanonicalize(value: unknown): unknown {
 
   return Object.fromEntries(
     Object.keys(value)
-      .filter((key) =>
-        !provenanceOnlyFields.has(key)
-        && Reflect.get(value, key) !== undefined
-      )
+      .filter((key) => !provenanceOnlyFields.has(key) && Reflect.get(value, key) !== undefined)
       .sort()
-      .map((key) => [
-        key,
-        semanticCanonicalize(Reflect.get(value, key))
-      ])
+      .map((key) => [key, semanticCanonicalize(Reflect.get(value, key))])
   );
 }
 
@@ -115,10 +103,7 @@ function semanticProfileDigest(profile: CharacterProfile): string {
   return digest(profileSnapshot(profile));
 }
 
-function legacyComparedStat(
-  stat: BattleReport["comparisons"][number]["left"],
-  includeLegacyDisplayFields: boolean
-) {
+function legacyComparedStat(stat: BattleReport["comparisons"][number]["left"], includeLegacyDisplayFields: boolean) {
   return stat
     ? {
         label: stat.label,
@@ -131,13 +116,7 @@ function legacyComparedStat(
 }
 
 function matchupDigest(report: BattleReport): string {
-  const speedIds = new Set([
-    "attack_speed",
-    "combat_speed",
-    "reaction_speed",
-    "travel_speed",
-    "flight_speed"
-  ]);
+  const speedIds = new Set(["attack_speed", "combat_speed", "reaction_speed", "travel_speed", "flight_speed"]);
   const statPairs = report.comparisons.map((comparison) => {
     const includeLegacyDisplayFields = !speedIds.has(comparison.id);
     return {
@@ -164,19 +143,20 @@ function matchupDigest(report: BattleReport): string {
     scoreGap: report.score.scoreGap,
     statCount: report.score.statCount,
     winner: report.score.winner,
-    tieBreaker: report.score.interaction || report.score.pointWinner !== "tie"
-      ? null
-      : tieBreaker
-        ? {
-            label: tieBreaker.label,
-            leftValue: tieBreaker.leftValue,
-            rightValue: tieBreaker.rightValue,
-            leftRank: tieBreaker.leftRank,
-            rightRank: tieBreaker.rightRank,
-            rankGap: tieBreaker.rankGap,
-            winner: tieBreaker.winner
-          }
-        : undefined,
+    tieBreaker:
+      report.score.interaction || report.score.pointWinner !== "tie"
+        ? null
+        : tieBreaker
+          ? {
+              label: tieBreaker.label,
+              leftValue: tieBreaker.leftValue,
+              rightValue: tieBreaker.rightValue,
+              leftRank: tieBreaker.leftRank,
+              rightRank: tieBreaker.rightRank,
+              rankGap: tieBreaker.rankGap,
+              winner: tieBreaker.winner
+            }
+          : undefined,
     interaction: report.score.interaction
   };
 
@@ -204,41 +184,40 @@ function isolatedCharacter(
     ...character,
     entry_id: id,
     name,
-    keys: [{
-      ...form,
-      key: id,
-      names: [name],
-      power_refs: powers,
-      resistance_refs: resistances,
-      standard_equipment_ids: [],
-      standard_equipment_refs: [],
-      optional_equipment_ids: [],
-      optional_equipment_refs: [],
-      attack_ids: []
-    }]
+    keys: [
+      {
+        ...form,
+        key: id,
+        names: [name],
+        power_refs: powers,
+        resistance_refs: resistances,
+        standard_equipment_ids: [],
+        standard_equipment_refs: [],
+        optional_equipment_ids: [],
+        optional_equipment_refs: [],
+        attack_ids: []
+      }
+    ]
   };
 }
 
-function withIdentity(
-  character: CharacterEntry,
-  identity: string
-): CharacterEntry {
+function withIdentity(character: CharacterEntry, identity: string): CharacterEntry {
   const form = character.keys[0];
   if (!form) throw new Error(`Test character ${character.entry_id} has no form`);
   return {
     ...character,
-    keys: [{
-      ...form,
-      names: [identity]
-    }]
+    keys: [
+      {
+        ...form,
+        names: [identity]
+      }
+    ]
   };
 }
 
 describe("ruleset-v1 parity", () => {
   it("keeps the immutable legacy snapshot tied to its source revision", () => {
-    expect(legacyFixture.provenance.sourceCommit).toBe(
-      "66e22416331bbeced0554e85112f6992eeff41ab"
-    );
+    expect(legacyFixture.provenance.sourceCommit).toBe("66e22416331bbeced0554e85112f6992eeff41ab");
     expect(legacyFixture.provenance.generationNote).toContain("Never regenerate");
   });
 
@@ -270,19 +249,18 @@ describe("ruleset-v1 parity", () => {
       if (!leftId || !rightId || unexpected.length > 0) {
         throw new Error(`Invalid legacy matchup id: ${matchupId}`);
       }
-      const report = simulateBattle(
-        context,
-        selectionFromId(leftId),
-        selectionFromId(rightId)
-      );
+      const report = simulateBattle(context, selectionFromId(leftId), selectionFromId(rightId));
 
-      expect({
-        winner: report.score.winner,
-        leftScore: report.score.leftScore,
-        rightScore: report.score.rightScore,
-        interaction: report.score.interaction?.summary ?? null,
-        tieBreaker: report.score.tieBreaker?.label ?? null
-      }, matchupId).toEqual({
+      expect(
+        {
+          winner: report.score.winner,
+          leftScore: report.score.leftScore,
+          rightScore: report.score.rightScore,
+          interaction: report.score.interaction?.summary ?? null,
+          tieBreaker: report.score.tieBreaker?.label ?? null
+        },
+        matchupId
+      ).toEqual({
         winner: expected.winner,
         leftScore: expected.leftScore,
         rightScore: expected.rightScore,
@@ -311,40 +289,29 @@ describe("contextual combatant names", () => {
     );
 
     expect(report.verdict.headline).toBe("Falcon (Sam Wilson) wins");
-    expect(report.verdict.summary).toBe(
-      "Falcon (Sam Wilson) wins - +417 pts"
-    );
+    expect(report.verdict.summary).toBe("Falcon (Sam Wilson) wins - +417 pts");
   });
 
   it("distinguishes same-name characters in interaction prose", () => {
-    const alpha = withIdentity(
-      isolatedCharacter("test-echo-alpha", "Echo"),
-      "Alpha"
-    );
+    const alpha = withIdentity(isolatedCharacter("test-echo-alpha", "Echo"), "Alpha");
     const beta = withIdentity(
-      isolatedCharacter("test-echo-beta", "Echo", [{
-        id: "intangibility",
-        type_ids: ["elemental-intangibility-type-3-liquids"]
-      }]),
+      isolatedCharacter("test-echo-beta", "Echo", [
+        {
+          id: "intangibility",
+          type_ids: ["elemental-intangibility-type-3-liquids"]
+        }
+      ]),
       "Beta"
     );
     const testContext = createGameContext({
       ...data,
       characters: [...context.characters, alpha, beta]
     });
-    const report = simulateBattle(
-      testContext,
-      { characterId: "test-echo-alpha" },
-      { characterId: "test-echo-beta" }
-    );
+    const report = simulateBattle(testContext, { characterId: "test-echo-alpha" }, { characterId: "test-echo-beta" });
 
-    expect(report.score.interaction?.summary).toBe(
-      "Echo (Alpha) cannot affect Echo (Beta)"
-    );
+    expect(report.score.interaction?.summary).toBe("Echo (Alpha) cannot affect Echo (Beta)");
     expect(report.verdict.headline).toBe("Echo (Beta) wins");
-    expect(report.verdict.summary).toBe(
-      "Echo (Beta) wins - Automatic win"
-    );
+    expect(report.verdict.summary).toBe("Echo (Beta) wins - Automatic win");
   });
 
   it("preserves names byte-for-byte when character names do not collide", () => {
@@ -360,13 +327,9 @@ describe("contextual combatant names", () => {
       }
     );
 
-    expect(report.score.interaction?.summary).toBe(
-      "Agent Venom cannot affect Ms. Marvel"
-    );
+    expect(report.score.interaction?.summary).toBe("Agent Venom cannot affect Ms. Marvel");
     expect(report.verdict.headline).toBe("Ms. Marvel wins");
-    expect(report.verdict.summary).toBe(
-      "Ms. Marvel wins - Automatic win"
-    );
+    expect(report.verdict.summary).toBe("Ms. Marvel wins - Automatic win");
   });
 
   it("preserves legacy prose when both sides are the same identity", () => {
@@ -396,53 +359,63 @@ describe("contextual combatant names", () => {
 
 describe("power target references", () => {
   it("matches only the requested variant, magic level, and covered types", () => {
-    expect(powerTargetRefMatches(
-      context,
-      {
-        id: "flight",
-        source_variant: "gliding",
-        magic_level_id: "sorcerer-supreme-level"
-      },
-      scopedPowerTarget
-    )).toBe(true);
-    expect(powerTargetRefMatches(
-      context,
-      {
-        id: "flight",
-        magic_level_id: "sorcerer-supreme-level"
-      },
-      scopedPowerTarget
-    )).toBe(false);
-    expect(powerTargetRefMatches(
-      context,
-      {
-        id: "flight",
-        source_variant: "gliding",
-        magic_level_id: "basic-level-magic-users"
-      },
-      scopedPowerTarget
-    )).toBe(false);
+    expect(
+      powerTargetRefMatches(
+        context,
+        {
+          id: "flight",
+          source_variant: "gliding",
+          magic_level_id: "sorcerer-supreme-level"
+        },
+        scopedPowerTarget
+      )
+    ).toBe(true);
+    expect(
+      powerTargetRefMatches(
+        context,
+        {
+          id: "flight",
+          magic_level_id: "sorcerer-supreme-level"
+        },
+        scopedPowerTarget
+      )
+    ).toBe(false);
+    expect(
+      powerTargetRefMatches(
+        context,
+        {
+          id: "flight",
+          source_variant: "gliding",
+          magic_level_id: "basic-level-magic-users"
+        },
+        scopedPowerTarget
+      )
+    ).toBe(false);
 
     const typedTarget = {
       id: "intangibility",
       type_ids: ["elemental-intangibility-type-3-liquids"]
     } satisfies PowerTargetRef;
-    expect(powerTargetRefMatches(
-      context,
-      {
-        id: "intangibility",
-        type_ids: ["intangibility-all"]
-      },
-      typedTarget
-    )).toBe(true);
-    expect(powerTargetRefMatches(
-      context,
-      {
-        id: "intangibility",
-        type_ids: ["elemental-intangibility-type-1-solids"]
-      },
-      typedTarget
-    )).toBe(false);
+    expect(
+      powerTargetRefMatches(
+        context,
+        {
+          id: "intangibility",
+          type_ids: ["intangibility-all"]
+        },
+        typedTarget
+      )
+    ).toBe(true);
+    expect(
+      powerTargetRefMatches(
+        context,
+        {
+          id: "intangibility",
+          type_ids: ["elemental-intangibility-type-1-solids"]
+        },
+        typedTarget
+      )
+    ).toBe(false);
   });
 
   it("makes variant and magic-level targeting explicit in labels", () => {
@@ -454,31 +427,35 @@ describe("power target references", () => {
 
 describe("counter fixed-point regressions", () => {
   it("suppresses both capabilities in a reciprocal nullification cycle", () => {
-    const fire = isolatedCharacter("test-fire", "Fire", [{
-      id: "fire-manipulation",
-      effects: [{
-        power_nullification: {
-          target_power_ids: ["ice-manipulation"]
-        }
-      }]
-    }]);
-    const ice = isolatedCharacter("test-ice", "Ice", [{
-      id: "ice-manipulation",
-      effects: [{
-        power_nullification: {
-          target_power_ids: ["fire-manipulation"]
-        }
-      }]
-    }]);
+    const fire = isolatedCharacter("test-fire", "Fire", [
+      {
+        id: "fire-manipulation",
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["ice-manipulation"]
+            }
+          }
+        ]
+      }
+    ]);
+    const ice = isolatedCharacter("test-ice", "Ice", [
+      {
+        id: "ice-manipulation",
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["fire-manipulation"]
+            }
+          }
+        ]
+      }
+    ]);
     const testContext = createGameContext({
       ...data,
       characters: [...context.characters, fire, ice]
     });
-    const report = simulateBattle(
-      testContext,
-      { characterId: "test-fire" },
-      { characterId: "test-ice" }
-    );
+    const report = simulateBattle(testContext, { characterId: "test-fire" }, { characterId: "test-ice" });
 
     expect(report.left.powerRefs.some((ref) => ref.id === "fire-manipulation")).toBe(false);
     expect(report.right.powerRefs.some((ref) => ref.id === "ice-manipulation")).toBe(false);
@@ -492,55 +469,53 @@ describe("counter fixed-point regressions", () => {
     const attacker = isolatedCharacter("test-attacker", "Attacker", [
       {
         id: "mind-manipulation",
-        effects: [{
-          stat_effects: {
-            attack_potency: {
-              value: "multi-city-block",
-              modifier: "normal"
+        effects: [
+          {
+            stat_effects: {
+              attack_potency: {
+                value: "multi-city-block",
+                modifier: "normal"
+              }
             }
           }
-        }]
+        ]
       },
       {
         id: "power-nullification",
-        effects: [{
-          power_nullification: {
-            target_power_ids: ["forcefield-creation"]
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["forcefield-creation"]
+            }
           }
-        }]
+        ]
       }
     ]);
-    const defender = isolatedCharacter("test-defender", "Defender", [{
-      id: "forcefield-creation",
-      effects: [{
-        grants: {
-          resistance_refs: [{
-            id: "mind-manipulation-resistance"
-          }]
-        }
-      }]
-    }]);
+    const defender = isolatedCharacter("test-defender", "Defender", [
+      {
+        id: "forcefield-creation",
+        effects: [
+          {
+            grants: {
+              resistance_refs: [
+                {
+                  id: "mind-manipulation-resistance"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]);
     const testContext = createGameContext({
       ...data,
       characters: [...context.characters, attacker, defender]
     });
-    const report = simulateBattle(
-      testContext,
-      { characterId: "test-attacker" },
-      { characterId: "test-defender" }
-    );
+    const report = simulateBattle(testContext, { characterId: "test-attacker" }, { characterId: "test-defender" });
 
-    expect(
-      report.right.powerRefs.some((ref) => ref.id === "forcefield-creation")
-    ).toBe(false);
-    expect(
-      report.right.resistanceRefs.some(
-        (ref) => ref.id === "mind-manipulation-resistance"
-      )
-    ).toBe(false);
-    expect(
-      report.left.powerRefs.some((ref) => ref.id === "mind-manipulation")
-    ).toBe(true);
+    expect(report.right.powerRefs.some((ref) => ref.id === "forcefield-creation")).toBe(false);
+    expect(report.right.resistanceRefs.some((ref) => ref.id === "mind-manipulation-resistance")).toBe(false);
+    expect(report.left.powerRefs.some((ref) => ref.id === "mind-manipulation")).toBe(true);
     expect(report.left.effectiveKey.attack_potency).toEqual({
       value: "multi-city-block",
       modifier: "normal"
@@ -558,27 +533,35 @@ describe("counter fixed-point regressions", () => {
       },
       {
         id: "resistance-negation",
-        effects: [{
-          resistance_negation: {
-            target_resistance_ids: ["mind-manipulation-resistance"]
+        effects: [
+          {
+            resistance_negation: {
+              target_resistance_ids: ["mind-manipulation-resistance"]
+            }
           }
-        }]
+        ]
       }
     ]);
     const defender = isolatedCharacter(
       "test-counter-nullifier",
       "Counter Nullifier",
-      [{
-        id: "power-nullification",
-        effects: [{
-          power_nullification: {
-            target_power_ids: ["resistance-negation"]
-          }
-        }]
-      }],
-      [{
-        id: "mind-manipulation-resistance"
-      }]
+      [
+        {
+          id: "power-nullification",
+          effects: [
+            {
+              power_nullification: {
+                target_power_ids: ["resistance-negation"]
+              }
+            }
+          ]
+        }
+      ],
+      [
+        {
+          id: "mind-manipulation-resistance"
+        }
+      ]
     );
     const testContext = createGameContext({
       ...data,
@@ -589,36 +572,227 @@ describe("counter fixed-point regressions", () => {
       { characterId: "test-negator" },
       { characterId: "test-counter-nullifier" }
     );
-    const attackerPowers = report.left.sections
-      .find((section) => section.id === "powers")?.items;
-    const defenderResistances = report.right.sections
-      .find((section) => section.id === "resistances")?.items;
+    const attackerPowers = report.left.sections.find((section) => section.id === "powers")?.items;
+    const defenderResistances = report.right.sections.find((section) => section.id === "resistances")?.items;
 
-    expect(
-      report.left.powerRefs.some((ref) => ref.id === "resistance-negation")
-    ).toBe(false);
-    expect(
-      report.left.powerRefs.some((ref) => ref.id === "mind-manipulation")
-    ).toBe(false);
-    expect(
-      report.right.resistanceRefs.some(
-        (ref) => ref.id === "mind-manipulation-resistance"
-      )
-    ).toBe(true);
-    expect(
-      attackerPowers?.find((item) => item.id === "resistance-negation")?.status?.code
-    ).toBe("nullified");
-    expect(
-      attackerPowers?.find((item) => item.id === "mind-manipulation")?.status?.code
-    ).toBe("resisted");
-    expect(
-      defenderResistances
-        ?.find((item) => item.id === "mind-manipulation-resistance")
-        ?.status?.code
-    ).toBe("active");
+    expect(report.left.powerRefs.some((ref) => ref.id === "resistance-negation")).toBe(false);
+    expect(report.left.powerRefs.some((ref) => ref.id === "mind-manipulation")).toBe(false);
+    expect(report.right.resistanceRefs.some((ref) => ref.id === "mind-manipulation-resistance")).toBe(true);
+    expect(attackerPowers?.find((item) => item.id === "resistance-negation")?.status?.code).toBe("nullified");
+    expect(attackerPowers?.find((item) => item.id === "mind-manipulation")?.status?.code).toBe("resisted");
+    expect(defenderResistances?.find((item) => item.id === "mind-manipulation-resistance")?.status?.code).toBe(
+      "active"
+    );
     expect(report.resolution).toEqual({
       mode: "stable",
       rounds: 3
     });
+  });
+
+  it("reports power status from the resolved opponent rather than its base profile", () => {
+    const attacker = isolatedCharacter("test-status-attacker", "Status Attacker", [
+      {
+        id: "fire-manipulation",
+        effects: [
+          {
+            stat_effects: {
+              attack_potency: {
+                value: "city",
+                modifier: "normal"
+              }
+            }
+          }
+        ]
+      },
+      {
+        id: "power-nullification",
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["ice-manipulation"]
+            }
+          }
+        ]
+      }
+    ]);
+    const defender = isolatedCharacter("test-status-defender", "Status Defender", [
+      {
+        id: "ice-manipulation",
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["fire-manipulation"]
+            }
+          }
+        ]
+      }
+    ]);
+    const testContext = createGameContext({
+      ...data,
+      characters: [...context.characters, attacker, defender]
+    });
+    const report = simulateBattle(
+      testContext,
+      { characterId: "test-status-attacker" },
+      { characterId: "test-status-defender" }
+    );
+    const attackerPowers = report.left.sections.find((section) => section.id === "powers")?.items;
+
+    expect(report.left.powerRefs.some((ref) => ref.id === "fire-manipulation")).toBe(true);
+    expect(report.left.effectiveKey.attack_potency).toEqual({
+      value: "city",
+      modifier: "normal"
+    });
+    expect(attackerPowers?.find((item) => item.id === "fire-manipulation")?.status?.code).toBe("active");
+    expect(report.right.powerRefs.some((ref) => ref.id === "ice-manipulation")).toBe(false);
+  });
+
+  it("recomputes effect-driven artwork after its source power is removed", () => {
+    const attacker = isolatedCharacter("test-image-attacker", "Image Attacker", [
+      {
+        id: "fire-manipulation",
+        effects: [
+          {
+            image_update: {
+              name: "Fire Form",
+              image: "images/characters/test-image-attacker/fire-form.webp",
+              source_url: "https://example.com/fire-form",
+              rights_status: "original",
+              reviewed_on: "2026-07-31"
+            }
+          }
+        ]
+      }
+    ]);
+    const defender = isolatedCharacter("test-image-defender", "Image Defender", [
+      {
+        id: "power-nullification",
+        effects: [
+          {
+            power_nullification: {
+              target_power_ids: ["fire-manipulation"]
+            }
+          }
+        ]
+      }
+    ]);
+    const testContext = createGameContext({
+      ...data,
+      characters: [...context.characters, attacker, defender]
+    });
+    const initial = getCharacterProfile(testContext, {
+      characterId: "test-image-attacker"
+    });
+    const report = simulateBattle(
+      testContext,
+      { characterId: "test-image-attacker" },
+      { characterId: "test-image-defender" }
+    );
+
+    expect(initial.image?.name).toBe("Fire Form");
+    expect(report.left.powerRefs.some((ref) => ref.id === "fire-manipulation")).toBe(false);
+    expect(report.left.effects).toEqual([]);
+    expect(report.left.image).toEqual(report.left.key.images[0]);
+    expect(report.left.image?.name).not.toBe("Fire Form");
+  });
+
+  it("fails loudly instead of discarding conflicting duplicate local effects", () => {
+    const duplicate = isolatedCharacter("test-duplicate-power", "Duplicate Power", [
+      {
+        id: "fire-manipulation",
+        effects: [
+          {
+            stat_effects: {
+              attack_potency: "city"
+            }
+          }
+        ]
+      },
+      {
+        id: "fire-manipulation",
+        effects: [
+          {
+            stat_effects: {
+              range: "planetary"
+            }
+          }
+        ]
+      }
+    ]);
+    const testContext = createGameContext({
+      ...data,
+      characters: [...context.characters, duplicate]
+    });
+
+    expect(() =>
+      getCharacterProfile(testContext, {
+        characterId: "test-duplicate-power"
+      })
+    ).toThrow(/Conflicting power references/);
+  });
+});
+
+describe("catalog-driven rule semantics", () => {
+  it("uses the resistance-level bypass flag rather than a hard-coded level id", () => {
+    const power: PowerRef = {
+      id: "mind-manipulation",
+      modifier: "immense"
+    };
+    const resistance: ResistanceRef = {
+      id: "mind-manipulation-resistance",
+      level: "immunity",
+      modifier: "minor"
+    };
+    expect(resistanceBlocksPower(context, power, resistance)).toBe(true);
+
+    const testContext = createGameContext({
+      ...data,
+      options: {
+        ...data.options,
+        resistance_levels: data.options.resistance_levels.map((level) =>
+          level.id === "immunity" ? { ...level, bypasses_ability_modifier_coverage: false } : level
+        )
+      }
+    });
+    expect(resistanceBlocksPower(testContext, power, resistance)).toBe(false);
+  });
+
+  it("defaults legacy derived rules to base evaluation and exposes explicit stages", () => {
+    const character = context.characters.find((candidate) => candidate.entry_id === "agent-venom-marvel-mainstream");
+    const form = character?.keys[0];
+    if (!form) throw new Error("Agent Venom test form is unavailable");
+
+    const legacyContext = createGameContext({
+      ...data,
+      options: {
+        ...data.options,
+        derived_power_rules: data.options.derived_power_rules.map((rule) => {
+          const legacyRule = { ...rule };
+          delete legacyRule.evaluation_stage;
+          return legacyRule;
+        })
+      }
+    });
+    expect(derivedPowerRefs(legacyContext, form).some((ref) => ref.id === "superhuman-physical-characteristics")).toBe(
+      true
+    );
+
+    const effectiveContext = createGameContext({
+      ...data,
+      options: {
+        ...data.options,
+        derived_power_rules: data.options.derived_power_rules.map((rule) =>
+          rule.id === "superhuman-physical-characteristics" ? { ...rule, evaluation_stage: "effective" as const } : rule
+        )
+      }
+    });
+    expect(
+      derivedPowerRefs(effectiveContext, form).some((ref) => ref.id === "superhuman-physical-characteristics")
+    ).toBe(false);
+    expect(
+      derivedPowerRefs(effectiveContext, form, "effective").some(
+        (ref) => ref.id === "superhuman-physical-characteristics"
+      )
+    ).toBe(true);
   });
 });

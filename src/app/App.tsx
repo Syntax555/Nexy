@@ -1,16 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { nexyData } from "../data/nexy.js";
-import type {
-  BattleReport,
-  BattleSelection,
-  CharacterProfile
-} from "../domain/index.js";
-import {
-  createGameContext,
-  getCharacterProfile,
-  simulateBattle
-} from "../engine/index.js";
+import type { BattleReport, BattleSelection, CharacterProfile } from "../domain/index.js";
+import { RULESET_VERSION } from "../domain/index.js";
+import { createGameContext, getCharacterProfile, simulateBattle } from "../engine/index.js";
 import { ActionDock } from "../components/ActionDock.js";
 import { BattleResult } from "../components/BattleResult.js";
 import { Brand } from "../components/Brand.js";
@@ -25,14 +18,12 @@ import {
 import { RulesDialog } from "../components/RulesDialog.js";
 import { ThemeToggle } from "../components/ThemeToggle.js";
 import { assetUrl } from "./assets.js";
+import { buildRoster, validSelection, type RosterCharacter } from "./roster.js";
 import {
-  buildRoster,
-  validSelection,
-  type RosterCharacter
-} from "./roster.js";
-import {
+  matchupVersionWarning,
   readMatchupUrl,
   writeMatchupUrl,
+  type CurrentMatchupVersion,
   type MatchupUrlState
 } from "./url-state.js";
 import { useTheme } from "./use-theme.js";
@@ -41,6 +32,10 @@ interface AppState {
   readonly left: BattleSelection | null;
   readonly right: BattleSelection | null;
   readonly showBattle: boolean;
+}
+
+interface InitialAppState extends AppState {
+  readonly versionWarning: string | null;
 }
 
 interface ReportState {
@@ -57,30 +52,32 @@ function profileFor(
 
 function initialState(
   context: ReturnType<typeof createGameContext>,
-  search: string
-): AppState {
+  search: string,
+  currentVersion: CurrentMatchupVersion
+): InitialAppState {
   const fromUrl = readMatchupUrl(search);
   const left = validSelection(context, fromUrl.left);
   const right = validSelection(context, fromUrl.right);
   return {
     left,
     right,
-    showBattle: fromUrl.showBattle && Boolean(left && right)
+    showBattle: fromUrl.showBattle && Boolean(left && right),
+    versionWarning: matchupVersionWarning(fromUrl, currentVersion)
   };
 }
 
-function urlState(state: AppState): MatchupUrlState {
+function urlState(state: AppState, currentVersion: CurrentMatchupVersion): MatchupUrlState {
   const asUrlSelection = (selection: BattleSelection | null) => {
     const formId = selection?.formId || selection?.keyId;
-    return selection && formId
-      ? { characterId: selection.characterId, formId }
-      : null;
+    return selection && formId ? { characterId: selection.characterId, formId } : null;
   };
 
   return {
     left: asUrlSelection(state.left),
     right: asUrlSelection(state.right),
-    showBattle: state.showBattle
+    showBattle: state.showBattle,
+    rulesetVersion: currentVersion.rulesetVersion,
+    contentRevision: currentVersion.contentRevision
   };
 }
 
@@ -115,8 +112,8 @@ async function copyText(value: string): Promise<void> {
 }
 
 function scrollToSection(selector: string): void {
-  const reducedMotion = typeof window.matchMedia === "function"
-    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reducedMotion =
+    typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.querySelector(selector)?.scrollIntoView({
     behavior: reducedMotion ? "auto" : "smooth",
     block: "start"
@@ -131,15 +128,25 @@ function focusAndScroll(focusSelector: string, scrollSelector: string): void {
 export function App() {
   const context = useMemo(() => createGameContext(nexyData), []);
   const roster = useMemo(() => buildRoster(context), [context]);
-  const initial = useMemo(() => initialState(context, window.location.search), [context]);
+  const currentVersion = useMemo<CurrentMatchupVersion>(
+    () => ({
+      rulesetVersion: RULESET_VERSION,
+      contentRevision: nexyData.meta.content_revision
+    }),
+    []
+  );
+  const initial = useMemo(
+    () => initialState(context, window.location.search, currentVersion),
+    [context, currentVersion]
+  );
   const [left, setLeft] = useState<BattleSelection | null>(initial.left);
   const [right, setRight] = useState<BattleSelection | null>(initial.right);
   const [showBattle, setShowBattle] = useState(initial.showBattle);
+  const [versionWarning, setVersionWarning] = useState(initial.versionWarning);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [dialogImage, setDialogImage] = useState<DialogImage | null>(null);
   const [shareLabel, setShareLabel] = useState("Copy battle link");
-  const [activeMobileSide, setActiveMobileSide] =
-    useState<MobileFighterSide>("left");
+  const [activeMobileSide, setActiveMobileSide] = useState<MobileFighterSide>("left");
   const [theme, toggleTheme] = useTheme();
   const isMobileMatchup = useMobileMatchupViewport();
   const shareResetTimer = useRef<number | undefined>(undefined);
@@ -147,14 +154,8 @@ export function App() {
   const previousMobileViewport = useRef(isMobileMatchup);
   const lastFocusedPicker = useRef<MobileFighterSide>("left");
 
-  const leftProfile = useMemo(
-    () => profileFor(left, context),
-    [context, left]
-  );
-  const rightProfile = useMemo(
-    () => profileFor(right, context),
-    [context, right]
-  );
+  const leftProfile = useMemo(() => profileFor(left, context), [context, left]);
+  const rightProfile = useMemo(() => profileFor(right, context), [context, right]);
   const reportState = useMemo<ReportState>(() => {
     if (!showBattle || !left || !right) return { report: null, error: null };
     try {
@@ -171,27 +172,32 @@ export function App() {
   }, [context, left, right, showBattle]);
 
   useEffect(() => {
-    const query = writeMatchupUrl(urlState({ left, right, showBattle }));
+    if (versionWarning) return;
+    const query = writeMatchupUrl(urlState({ left, right, showBattle }, currentVersion));
     const nextUrl = `${window.location.pathname}${query}`;
     window.history.replaceState(null, "", nextUrl);
-  }, [left, right, showBattle]);
+  }, [currentVersion, left, right, showBattle, versionWarning]);
 
   useEffect(() => {
     const restoreFromHistory = (): void => {
-      const restored = initialState(context, window.location.search);
+      const restored = initialState(context, window.location.search, currentVersion);
       setLeft(restored.left);
       setRight(restored.right);
       setShowBattle(restored.showBattle);
+      setVersionWarning(restored.versionWarning);
     };
     window.addEventListener("popstate", restoreFromHistory);
     return () => window.removeEventListener("popstate", restoreFromHistory);
-  }, [context]);
+  }, [context, currentVersion]);
 
-  useEffect(() => () => {
-    if (shareResetTimer.current !== undefined) {
-      window.clearTimeout(shareResetTimer.current);
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (shareResetTimer.current !== undefined) {
+        window.clearTimeout(shareResetTimer.current);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const wasMobile = previousMobileViewport.current;
@@ -200,29 +206,26 @@ export function App() {
 
     const focusedElement = document.activeElement;
     if (isMobileMatchup) {
-      const focusedPicker = focusedElement instanceof HTMLElement
-        ? focusedElement.closest<HTMLElement>(".fighter-picker")?.dataset.side
-        : undefined;
+      const focusedPicker =
+        focusedElement instanceof HTMLElement
+          ? focusedElement.closest<HTMLElement>(".fighter-picker")?.dataset.side
+          : undefined;
       const side = focusedPicker === "right" ? "right" : lastFocusedPicker.current;
       setActiveMobileSide(side);
       if (focusedPicker) {
         window.requestAnimationFrame(() => {
-          document.querySelector<HTMLButtonElement>(
-            `[data-mobile-fighter-tab="${side}"]`
-          )?.focus({ preventScroll: true });
+          document
+            .querySelector<HTMLButtonElement>(`[data-mobile-fighter-tab="${side}"]`)
+            ?.focus({ preventScroll: true });
         });
       }
       return;
     }
 
-    if (
-      focusedElement instanceof HTMLElement
-      && focusedElement.matches("[data-mobile-fighter-tab]")
-    ) {
+    if (focusedElement instanceof HTMLElement && focusedElement.matches("[data-mobile-fighter-tab]")) {
       const side = lastFocusedPicker.current;
       window.requestAnimationFrame(() => {
-        document.querySelector<HTMLElement>(`#${side}-picker-title`)
-          ?.focus({ preventScroll: true });
+        document.querySelector<HTMLElement>(`#${side}-picker-title`)?.focus({ preventScroll: true });
       });
     }
   }, [isMobileMatchup]);
@@ -240,38 +243,20 @@ export function App() {
 
     if (pendingFocus.current === "picker" && !showBattle) {
       pendingFocus.current = null;
-      focusAndScroll(
-        isMobileMatchup
-          ? `#${activeMobileSide}-picker-title`
-          : "#left-picker-title",
-        "#arena"
-      );
+      focusAndScroll(isMobileMatchup ? `#${activeMobileSide}-picker-title` : "#left-picker-title", "#arena");
     }
-  }, [
-    activeMobileSide,
-    isMobileMatchup,
-    reportState.error,
-    reportState.report,
-    showBattle
-  ]);
+  }, [activeMobileSide, isMobileMatchup, reportState.error, reportState.report, showBattle]);
 
-  const updateSelection = (
-    side: "left" | "right",
-    selection: BattleSelection | null
-  ): void => {
+  const updateSelection = (side: "left" | "right", selection: BattleSelection | null): void => {
     if (side === "left") setLeft(selection);
     else setRight(selection);
     setShowBattle(false);
+    setVersionWarning(null);
   };
 
-  const chooseRandom = (
-    side: "left" | "right",
-    candidates: readonly RosterCharacter[]
-  ): void => {
+  const chooseRandom = (side: "left" | "right", candidates: readonly RosterCharacter[]): void => {
     const current = side === "left" ? left : right;
-    const alternatives = current
-      ? candidates.filter((candidate) => candidate.id !== current.characterId)
-      : candidates;
+    const alternatives = current ? candidates.filter((candidate) => candidate.id !== current.characterId) : candidates;
     const candidate = alternatives[randomIndex(alternatives.length)];
     if (candidate) updateSelection(side, candidate.defaultSelection);
   };
@@ -285,6 +270,7 @@ export function App() {
     setLeft(roster[leftIndex]?.defaultSelection ?? null);
     setRight(roster[rightIndex]?.defaultSelection ?? null);
     setShowBattle(false);
+    setVersionWarning(null);
     window.requestAnimationFrame(() => {
       scrollToSection("#arena");
     });
@@ -309,7 +295,7 @@ export function App() {
   };
 
   const shareBattle = async (): Promise<void> => {
-    const query = writeMatchupUrl(urlState({ left, right, showBattle: true }));
+    const query = writeMatchupUrl(urlState({ left, right, showBattle: true }, currentVersion));
     const address = new URL(`${window.location.pathname}${query}`, window.location.origin).href;
     try {
       await copyText(address);
@@ -330,13 +316,20 @@ export function App() {
 
   return (
     <div class="app-shell">
-      <a class="skip-link" href="#main">Skip to matchup builder</a>
+      <a class="skip-link" href="#main">
+        Skip to matchup builder
+      </a>
 
       <header class="site-header">
         <Brand />
         <div class="site-header__actions">
-          <span class="roster-count" aria-label={`${roster.length} characters and ${formCount} forms`}>
-            <strong>{roster.length}</strong> fighters · {formCount} forms
+          <span class="roster-count">
+            <span class="visually-hidden">
+              {roster.length} characters and {formCount} forms
+            </span>
+            <span aria-hidden="true">
+              <strong>{roster.length}</strong> fighters · {formCount} forms
+            </span>
           </span>
           <button class="quiet-button" type="button" onClick={() => setRulesOpen(true)}>
             Rules
@@ -351,9 +344,8 @@ export function App() {
             <span class="eyebrow">Transparent character matchup engine</span>
             <h1 id="hero-title">Build the fight. Inspect the reason.</h1>
             <p>
-              Pick two combatants and Nexy resolves forms, equipment, powers,
-              resistances, counters, and ranked statistics into a reproducible
-              battle report—without hiding the calculation.
+              Pick two combatants and Nexy resolves forms, equipment, powers, resistances, counters, and ranked
+              statistics into a reproducible battle report—without hiding the calculation.
             </p>
           </div>
           <div class="hero__actions">
@@ -362,6 +354,13 @@ export function App() {
             </button>
           </div>
         </section>
+
+        {versionWarning ? (
+          <aside class="link-version-warning" role="status">
+            <strong>Shared-link compatibility notice</strong>
+            <p>{versionWarning}</p>
+          </aside>
+        ) : null}
 
         <section class="arena-grid" id="arena" aria-label="Matchup builder">
           <MobileMatchupNavigator
@@ -378,8 +377,12 @@ export function App() {
           <div
             id="mobile-fighter-left-panel"
             class="mobile-matchup-panel"
-            role={isMobileMatchup ? "tabpanel" : undefined}
-            aria-labelledby={isMobileMatchup ? "mobile-fighter-left-tab" : undefined}
+            {...(isMobileMatchup
+              ? {
+                  role: "tabpanel",
+                  "aria-labelledby": "mobile-fighter-left-tab"
+                }
+              : {})}
             hidden={isMobileMatchup && activeMobileSide !== "left"}
             onFocusCapture={() => {
               lastFocusedPicker.current = "left";
@@ -396,12 +399,18 @@ export function App() {
               onOpenImage={setDialogImage}
             />
           </div>
-          <div class="versus-rail" aria-hidden="true"><strong>VS</strong></div>
+          <div class="versus-rail" aria-hidden="true">
+            <strong>VS</strong>
+          </div>
           <div
             id="mobile-fighter-right-panel"
             class="mobile-matchup-panel"
-            role={isMobileMatchup ? "tabpanel" : undefined}
-            aria-labelledby={isMobileMatchup ? "mobile-fighter-right-tab" : undefined}
+            {...(isMobileMatchup
+              ? {
+                  role: "tabpanel",
+                  "aria-labelledby": "mobile-fighter-right-tab"
+                }
+              : {})}
             hidden={isMobileMatchup && activeMobileSide !== "right"}
             onFocusCapture={() => {
               lastFocusedPicker.current = "right";
@@ -427,6 +436,7 @@ export function App() {
             setLeft(right);
             setRight(left);
             setShowBattle(false);
+            setVersionWarning(null);
           }}
           onAnalyze={analyze}
         />
@@ -441,13 +451,10 @@ export function App() {
         ) : null}
 
         {reportState.error ? (
-          <section
-            class="battle-error"
-            id="battle-error"
-            role="alert"
-            aria-labelledby="battle-error-title"
-          >
-            <h2 id="battle-error-title" tabIndex={-1}>Battle calculation stopped</h2>
+          <section class="battle-error" id="battle-error" role="alert" aria-labelledby="battle-error-title">
+            <h2 id="battle-error-title" tabIndex={-1}>
+              Battle calculation stopped
+            </h2>
             <p>{reportState.error}</p>
             <button class="secondary-button" type="button" onClick={editMatchup}>
               Return to matchup
@@ -457,11 +464,10 @@ export function App() {
 
         <footer class="site-footer">
           <div class="site-footer__copy">
-            <p>Nexy Battle Lab · deterministic ruleset v1</p>
+            <p>Nexy Battle Lab · deterministic ruleset v{RULESET_VERSION}</p>
             <small>
-              Unofficial, non-commercial fan project. Not affiliated with or
-              endorsed by any rights holder. Third-party characters and marks
-              belong to their respective owners.
+              Unofficial, non-commercial fan project. Not affiliated with or endorsed by any rights holder. Third-party
+              characters and marks belong to their respective owners.
             </small>
           </div>
           <div class="site-footer__actions">

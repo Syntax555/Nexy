@@ -1,7 +1,4 @@
-import {
-  imageRightsLabel,
-  imageSourceName
-} from "../app/image-rights.js";
+import { imageRightsLabel, imageSourceName } from "../app/image-rights.js";
 import type { ImageRef } from "../domain/index.js";
 
 interface ArtworkDisclosureProps {
@@ -9,10 +6,7 @@ interface ArtworkDisclosureProps {
   readonly className?: string;
 }
 
-export function ArtworkDisclosure({
-  image,
-  className = ""
-}: ArtworkDisclosureProps) {
+export function ArtworkDisclosure({ image, className = "" }: ArtworkDisclosureProps) {
   const sourceName = imageSourceName(image.source_url);
   const rightsLabel = imageRightsLabel(image);
 

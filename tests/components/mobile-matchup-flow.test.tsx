@@ -16,16 +16,10 @@ function installMatchMedia(initialMatches: boolean): MatchMediaController {
     matches: initialMatches,
     media: "(max-width: 1180px)",
     onchange: null,
-    addEventListener: (
-      type: string,
-      listener: (event: MediaQueryListEvent) => void
-    ): void => {
+    addEventListener: (type: string, listener: (event: MediaQueryListEvent) => void): void => {
       if (type === "change") listeners.add(listener);
     },
-    removeEventListener: (
-      type: string,
-      listener: (event: MediaQueryListEvent) => void
-    ): void => {
+    removeEventListener: (type: string, listener: (event: MediaQueryListEvent) => void): void => {
       if (type === "change") listeners.delete(listener);
     },
     addListener: (listener: (event: MediaQueryListEvent) => void): void => {
@@ -98,9 +92,7 @@ describe("mobile matchup flow", () => {
     expect(rightPanel.hidden).toBe(true);
     expect(leftTab.getAttribute("aria-selected")).toBe("true");
     expect(document.activeElement).toBe(leftFighter);
-    expect(flowStatus.textContent).toMatch(
-      /fighter 01 selected\. choose fighter 02/i
-    );
+    expect(flowStatus.textContent).toMatch(/fighter 01 selected\. choose fighter 02/i);
 
     const chooseSecondFighter = screen.getByRole("button", {
       name: "Choose Fighter 02"
@@ -110,9 +102,7 @@ describe("mobile matchup flow", () => {
       expect(rightPanel.hidden).toBe(false);
       expect(leftPanel.hidden).toBe(true);
       expect(rightTab.getAttribute("aria-selected")).toBe("true");
-      expect(document.activeElement).toBe(
-        rightPanel.querySelector("#right-picker-title")
-      );
+      expect(document.activeElement).toBe(rightPanel.querySelector("#right-picker-title"));
     });
 
     const rightFighter = rightPanel.querySelector<HTMLButtonElement>(".roster-card");
@@ -138,9 +128,7 @@ describe("mobile matchup flow", () => {
     fireEvent.keyDown(selectedLeftTab, { key: "ArrowRight" });
     await waitFor(() => {
       expect(rightPanel.hidden).toBe(false);
-      expect(document.activeElement).toBe(
-        screen.getByRole("tab", { name: /fighter 02:/i })
-      );
+      expect(document.activeElement).toBe(screen.getByRole("tab", { name: /fighter 02:/i }));
     });
   });
 

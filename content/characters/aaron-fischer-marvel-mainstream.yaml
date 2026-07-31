@@ -28,7 +28,6 @@ keys:
         image: "images/characters/aaron-fischer-marvel-mainstream/original.webp"
         source_url: "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_MC_TR.png"
         rights_status: unverified-third-party
-        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:
@@ -83,7 +82,6 @@ keys:
         image: "images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp"
         source_url: "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_AA_MC_TR.webp"
         rights_status: unverified-third-party
-        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:

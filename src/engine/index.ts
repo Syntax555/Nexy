@@ -30,9 +30,7 @@ export {
   resolveSelection
 } from "./profile.js";
 
-export {
-  resolveBattleViews
-} from "./resolve.js";
+export { resolveBattleViews } from "./resolve.js";
 
 export {
   battleInteractionOutcome,
@@ -41,7 +39,4 @@ export {
   verdictForScore
 } from "./score.js";
 
-export {
-  simulateBattle
-} from "./simulate.js";
-
+export { simulateBattle } from "./simulate.js";

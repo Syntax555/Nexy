@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  waitFor,
-  within
-} from "@testing-library/preact";
+import { cleanup, fireEvent, render, waitFor, within } from "@testing-library/preact";
 import { useMemo, useState } from "preact/hooks";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -12,10 +6,7 @@ import { buildRoster, type RosterCharacter } from "../../src/app/roster.js";
 import { FighterPicker } from "../../src/components/FighterPicker.js";
 import { nexyData } from "../../src/data/nexy.js";
 import type { BattleSelection } from "../../src/domain/index.js";
-import {
-  createGameContext,
-  getCharacterProfile
-} from "../../src/engine/index.js";
+import { createGameContext, getCharacterProfile } from "../../src/engine/index.js";
 
 const context = createGameContext(nexyData);
 const roster = buildRoster(context);
@@ -29,19 +20,34 @@ function rosterCharacter(name: string): RosterCharacter {
 interface ControlledPickerProps {
   readonly initialSelection?: BattleSelection | null;
   readonly onRandom?: (candidates: readonly RosterCharacter[]) => void;
+  readonly rosterItems?: readonly RosterCharacter[];
 }
 
 function ControlledPicker({
   initialSelection = null,
-  onRandom = () => undefined
+  onRandom = () => undefined,
+  rosterItems = roster
 }: ControlledPickerProps) {
-  const [selection, setSelection] = useState<BattleSelection | null>(
-    initialSelection
+  const [selection, setSelection] = useState<BattleSelection | null>(initialSelection);
+  const profile = useMemo(() => (selection ? getCharacterProfile(context, selection) : null), [selection]);
+
+  return (
+    <FighterPicker
+      side="left"
+      roster={rosterItems}
+      selection={selection}
+      profile={profile}
+      onSelect={setSelection}
+      onClear={() => setSelection(null)}
+      onRandom={onRandom}
+      onOpenImage={() => undefined}
+    />
   );
-  const profile = useMemo(
-    () => selection ? getCharacterProfile(context, selection) : null,
-    [selection]
-  );
+}
+
+function RandomizingPicker() {
+  const [selection, setSelection] = useState<BattleSelection | null>(null);
+  const profile = useMemo(() => (selection ? getCharacterProfile(context, selection) : null), [selection]);
 
   return (
     <FighterPicker
@@ -51,7 +57,10 @@ function ControlledPicker({
       profile={profile}
       onSelect={setSelection}
       onClear={() => setSelection(null)}
-      onRandom={onRandom}
+      onRandom={(candidates) => {
+        const candidate = candidates[1] ?? candidates[0];
+        if (candidate) setSelection(candidate.defaultSelection);
+      }}
       onOpenImage={() => undefined}
     />
   );
@@ -66,15 +75,12 @@ describe("fighter selection flow", () => {
     const carousel = picker.getByRole("region", {
       name: "Cyan corner character carousel"
     });
-    const featuredCard = () => container.querySelector<HTMLButtonElement>(
-      '.roster-card[aria-current="true"]'
-    );
+    const featuredCard = () => container.querySelector<HTMLButtonElement>('.roster-card[aria-current="true"]');
 
     await waitFor(() => {
       expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Agent Venom,/);
     });
-    expect(picker.getByRole("heading", { name: "Select fighter", level: 2 }))
-      .toBeTruthy();
+    expect(picker.getByRole("heading", { name: "Select fighter", level: 2 })).toBeTruthy();
     expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
 
     const next = within(carousel).getByRole("button", {
@@ -88,12 +94,16 @@ describe("fighter selection flow", () => {
     });
     expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
 
-    fireEvent.click(within(carousel).getByRole("button", {
-      name: "Previous fighter: Agent Venom"
-    }));
-    fireEvent.click(within(carousel).getByRole("button", {
-      name: "Previous fighter: Wonder Girl"
-    }));
+    fireEvent.click(
+      within(carousel).getByRole("button", {
+        name: "Previous fighter: Agent Venom"
+      })
+    );
+    fireEvent.click(
+      within(carousel).getByRole("button", {
+        name: "Previous fighter: Wonder Girl"
+      })
+    );
     await waitFor(() => {
       expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
       expect(carousel.textContent).toContain("20 of 20");
@@ -122,9 +132,8 @@ describe("fighter selection flow", () => {
     const { container } = render(<ControlledPicker />);
     const picker = within(container as HTMLElement);
     const list = picker.getByRole("list", { name: "Characters" });
-    const featuredName = () => container.querySelector<HTMLButtonElement>(
-      '.roster-card[aria-current="true"]'
-    )?.getAttribute("aria-label");
+    const featuredName = () =>
+      container.querySelector<HTMLButtonElement>('.roster-card[aria-current="true"]')?.getAttribute("aria-label");
 
     await waitFor(() => expect(featuredName()).toMatch(/^Agent Venom,/));
     fireEvent.pointerDown(list, {
@@ -152,20 +161,13 @@ describe("fighter selection flow", () => {
     });
     expect(featuredName()).toMatch(/^Aurora,/);
 
-    fireEvent.input(
-      picker.getByRole("searchbox", { name: "Search characters" }),
-      { target: { value: "Wonder Girl" } }
-    );
+    fireEvent.input(picker.getByRole("searchbox", { name: "Search characters" }), { target: { value: "Wonder Girl" } });
     await waitFor(() => {
       expect(featuredName()).toMatch(/^Wonder Girl,/);
       expect(
-        picker.getByRole("button", { name: "Previous fighter: Wonder Girl" })
-          .getAttribute("disabled")
+        picker.getByRole("button", { name: "Previous fighter: Wonder Girl" }).getAttribute("disabled")
       ).not.toBeNull();
-      expect(
-        picker.getByRole("button", { name: "Next fighter: Wonder Girl" })
-          .getAttribute("disabled")
-      ).not.toBeNull();
+      expect(picker.getByRole("button", { name: "Next fighter: Wonder Girl" }).getAttribute("disabled")).not.toBeNull();
     });
   });
 
@@ -180,9 +182,7 @@ describe("fighter selection flow", () => {
 
     expect(pickerElement?.dataset.view).toBe("gallery");
     expect(within(characterList).getAllByRole("button")).toHaveLength(roster.length);
-    expect(
-      picker.getAllByRole("button", { name: /^Captain America,/ })
-    ).toHaveLength(1);
+    expect(picker.getAllByRole("button", { name: /^Captain America,/ })).toHaveLength(1);
 
     captainAmerica.focus();
     fireEvent.click(captainAmerica);
@@ -192,26 +192,77 @@ describe("fighter selection flow", () => {
       expect(captainAmerica.getAttribute("aria-pressed")).toBe("true");
       expect(document.activeElement).toBe(captainAmerica);
     });
-    expect(
-      picker.getByRole("heading", { name: "Captain America", level: 3 })
-    ).toBeTruthy();
+    expect(picker.getByRole("heading", { name: "Captain America", level: 3 })).toBeTruthy();
 
-    fireEvent.click(
-      picker.getByRole("button", { name: "Remove fighter" })
-    );
+    fireEvent.click(picker.getByRole("button", { name: "Remove fighter" }));
     await waitFor(() => {
       expect(pickerElement?.dataset.view).toBe("gallery");
-      expect(
-        picker.getByRole("searchbox", { name: "Search characters" })
-      ).toBe(document.activeElement);
+      expect(picker.getByRole("searchbox", { name: "Search characters" })).toBe(document.activeElement);
     });
+  });
+
+  it("keeps focus on Random when that control changes the selection", async () => {
+    const { container } = render(<RandomizingPicker />);
+    const picker = within(container as HTMLElement);
+    const random = picker.getByRole("button", { name: "Random" });
+
+    random.focus();
+    fireEvent.click(random);
+
+    await waitFor(() => {
+      expect(container.querySelector(".fighter-picker")?.getAttribute("data-view")).toBe("profile");
+      expect(document.activeElement).toBe(random);
+    });
+  });
+
+  it("uses initials for the unpublished roster artwork", () => {
+    const { container } = render(<ControlledPicker />);
+
+    expect(container.querySelector(".roster-card img")).toBeNull();
+    expect(container.querySelector('.roster-card[aria-current="true"] .image-fallback')?.textContent).toBe("A");
+  });
+
+  it("provides responsive candidates for display-approved roster artwork", () => {
+    const first = roster[0];
+    const imageRecord = first?.defaultProfile.image;
+    if (!first || !imageRecord) {
+      throw new Error("Expected a roster character with an image record.");
+    }
+    const displayApprovedRoster: readonly RosterCharacter[] = [
+      {
+        ...first,
+        defaultProfile: {
+          ...first.defaultProfile,
+          image: {
+            ...imageRecord,
+            rights_status: "licensed"
+          }
+        }
+      }
+    ];
+    const { container } = render(<ControlledPicker rosterItems={displayApprovedRoster} />);
+    const image = container.querySelector<HTMLImageElement>('.roster-card[aria-current="true"] img');
+    if (!image) throw new Error("Expected the featured roster image.");
+
+    expect(image.getAttribute("src")).toMatch(/-160\.webp$/);
+    expect(image.getAttribute("srcset")).toMatch(/-160\.webp 160w/);
+    expect(image.getAttribute("srcset")).toMatch(/-640\.webp 640w/);
+    expect(image.getAttribute("sizes")).toContain("84vw");
+  });
+
+  it("exposes one live result count", () => {
+    const { container } = render(<ControlledPicker />);
+
+    const visibleCount = container.querySelector(".roster-meta [role='status']");
+    const descriptiveCount = container.querySelector("#left-rendered-roster-count");
+    expect(visibleCount).toBeTruthy();
+    expect(descriptiveCount?.hasAttribute("role")).toBe(false);
+    expect(descriptiveCount?.hasAttribute("aria-live")).toBe(false);
   });
 
   it("pins the selected fighter above results when it is outside the active filters", async () => {
     const captainAmerica = rosterCharacter("Captain America");
-    const { container } = render(
-      <ControlledPicker initialSelection={captainAmerica.defaultSelection} />
-    );
+    const { container } = render(<ControlledPicker initialSelection={captainAmerica.defaultSelection} />);
     const picker = within(container as HTMLElement);
     const search = picker.getByRole("searchbox", {
       name: "Search characters"
@@ -219,14 +270,10 @@ describe("fighter selection flow", () => {
 
     fireEvent.input(search, { target: { value: "Wonder Girl" } });
     await waitFor(() => {
-      expect(
-        container.querySelector(".roster-meta [role='status']")?.textContent
-      ).toContain("1 of 20 fighters");
+      expect(container.querySelector(".roster-meta [role='status']")?.textContent).toContain("1 of 20 fighters");
     });
 
-    const cards = [
-      ...container.querySelectorAll<HTMLButtonElement>(".roster-card")
-    ];
+    const cards = [...container.querySelectorAll<HTMLButtonElement>(".roster-card")];
     expect(cards).toHaveLength(2);
     expect(cards[0]?.getAttribute("aria-pressed")).toBe("true");
     expect(cards[0]?.getAttribute("aria-label")).toMatch(/^Captain America,/);
@@ -238,41 +285,28 @@ describe("fighter selection flow", () => {
     const { container } = render(<ControlledPicker onRandom={onRandom} />);
     const picker = within(container as HTMLElement);
 
-    fireEvent.input(
-      picker.getByRole("searchbox", { name: "Search characters" }),
-      { target: { value: "Wonder Girl" } }
-    );
+    fireEvent.input(picker.getByRole("searchbox", { name: "Search characters" }), { target: { value: "Wonder Girl" } });
     await waitFor(() => {
-      expect(
-        container.querySelector(".roster-meta [role='status']")?.textContent
-      ).toContain("1 of 20 fighters");
+      expect(container.querySelector(".roster-meta [role='status']")?.textContent).toContain("1 of 20 fighters");
     });
     fireEvent.click(picker.getByRole("button", { name: "Random" }));
 
     expect(onRandom).toHaveBeenCalledTimes(1);
     const candidates = onRandom.mock.calls[0]?.[0];
-    expect(candidates?.map((candidate) => candidate.name)).toEqual([
-      "Wonder Girl"
-    ]);
+    expect(candidates?.map((candidate) => candidate.name)).toEqual(["Wonder Girl"]);
   });
 
   it("disables Random when the only filtered candidate is already selected", async () => {
     const captainAmerica = rosterCharacter("Captain America");
-    const { container } = render(
-      <ControlledPicker initialSelection={captainAmerica.defaultSelection} />
-    );
+    const { container } = render(<ControlledPicker initialSelection={captainAmerica.defaultSelection} />);
     const picker = within(container as HTMLElement);
 
-    fireEvent.input(
-      picker.getByRole("searchbox", { name: "Search characters" }),
-      { target: { value: "Captain America" } }
-    );
+    fireEvent.input(picker.getByRole("searchbox", { name: "Search characters" }), {
+      target: { value: "Captain America" }
+    });
 
     await waitFor(() => {
-      expect(
-        (picker.getByRole("button", { name: "Random" }) as HTMLButtonElement)
-          .disabled
-      ).toBe(true);
+      expect((picker.getByRole("button", { name: "Random" }) as HTMLButtonElement).disabled).toBe(true);
     });
   });
 
@@ -288,10 +322,9 @@ describe("fighter selection flow", () => {
     await waitFor(() => expect(list.scrollTop).toBe(0));
 
     list.scrollTop = 240;
-    fireEvent.input(
-      picker.getByRole("searchbox", { name: "Search characters" }),
-      { target: { value: "Captain America" } }
-    );
+    fireEvent.input(picker.getByRole("searchbox", { name: "Search characters" }), {
+      target: { value: "Captain America" }
+    });
     await waitFor(() => expect(list.scrollTop).toBe(0));
   });
 
@@ -299,35 +332,35 @@ describe("fighter selection flow", () => {
     const { container } = render(<ControlledPicker />);
     const picker = within(container as HTMLElement);
 
-    fireEvent.click(
-      picker.getByRole("button", { name: /^Captain America,/ })
-    );
-    const form = await picker.findByRole("combobox", {
-      name: "Form for Captain America"
-    }) as HTMLSelectElement;
+    fireEvent.click(picker.getByRole("button", { name: /^Captain America,/ }));
+    const form = (await picker.findByRole("combobox", {
+      name: "Combat form for Captain America"
+    })) as HTMLSelectElement;
     form.focus();
     fireEvent.change(form, {
       target: { value: "post-alchemax-enhancement" }
     });
     await waitFor(() => {
       expect(
-        (picker.getByRole("combobox", {
-          name: "Form for Captain America"
-        }) as HTMLSelectElement).value
+        (
+          picker.getByRole("combobox", {
+            name: "Combat form for Captain America"
+          }) as HTMLSelectElement
+        ).value
       ).toBe("post-alchemax-enhancement");
     });
     expect(document.activeElement).toBe(form);
 
-    const selectedCard = container.querySelector<HTMLButtonElement>(
-      '.roster-card[aria-pressed="true"]'
-    );
+    const selectedCard = container.querySelector<HTMLButtonElement>('.roster-card[aria-pressed="true"]');
     if (!selectedCard) throw new Error("Expected Captain America to remain selected.");
     fireEvent.click(selectedCard);
 
     expect(
-      (picker.getByRole("combobox", {
-        name: "Form for Captain America"
-      }) as HTMLSelectElement).value
+      (
+        picker.getByRole("combobox", {
+          name: "Combat form for Captain America"
+        }) as HTMLSelectElement
+      ).value
     ).toBe("post-alchemax-enhancement");
   });
 });

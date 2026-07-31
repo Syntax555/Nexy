@@ -19,7 +19,7 @@ const rules = [
   {
     number: "03",
     title: "Compare ranked stats",
-    body: "Attack, speed, strength, durability, stamina, range, and intelligence contribute points. Tier is shown but not counted twice."
+    body: "Combat speed always contributes. Other speed categories score only when both profiles specify them; one-sided values are disclosed without scoring. Tier is shown but not counted twice."
   },
   {
     number: "04",
@@ -69,8 +69,8 @@ export function RulesDialog({ open, onClose }: RulesDialogProps) {
           ))}
         </div>
         <p class="modal__note">
-          Nexy is a deterministic comparison model, not a claim about narrative canon.
-          Every verdict is only as complete as the entered data.
+          Nexy is a deterministic comparison model, not a claim about narrative canon. Every verdict is only as complete
+          as the entered data.
         </p>
       </div>
     </dialog>

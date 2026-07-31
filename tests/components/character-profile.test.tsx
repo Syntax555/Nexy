@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/preact";
+import { cleanup, render, screen } from "@testing-library/preact";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { buildRoster } from "../../src/app/roster.js";
@@ -21,9 +21,7 @@ describe("CharacterProfile", () => {
     const note = "Only while the character is fully powered.";
     const profile = {
       ...rosterCharacter.defaultProfile,
-      stats: rosterCharacter.defaultProfile.stats.map((stat) =>
-        stat.id === firstStat.id ? { ...stat, note } : stat
-      )
+      stats: rosterCharacter.defaultProfile.stats.map((stat) => (stat.id === firstStat.id ? { ...stat, note } : stat))
     };
     const onOpenImage = vi.fn();
     const { container } = render(
@@ -47,35 +45,25 @@ describe("CharacterProfile", () => {
       throw new Error("The component test requires a resolved profile source.");
     }
     const sourceDisclosure = container.querySelector(".profile-sources");
-    const sourceLink = sourceDisclosure?.querySelector<HTMLAnchorElement>(
-      `a[href="${source.url}"]`
-    );
+    const sourceLink = sourceDisclosure?.querySelector<HTMLAnchorElement>(`a[href="${source.url}"]`);
     expect(sourceLink?.textContent).toBe(source.name);
     expect(sourceDisclosure?.textContent).toContain(`License: ${source.license}`);
     expect(sourceDisclosure?.textContent).toContain(`Accessed ${source.accessed_on}`);
-    expect(sourceDisclosure?.textContent).toContain(
-      `Rights status: Unverified Third Party`
-    );
-    expect(sourceDisclosure?.textContent).toContain(
-      `Rights holder record: ${profile.image?.rights_holder}`
-    );
+    expect(sourceDisclosure?.textContent).toContain(`Rights status: Unverified Third Party`);
+    expect(sourceDisclosure?.textContent).toContain(`Rights holder record: ${profile.image?.rights_holder}`);
 
-    const artworkDisclosure = container.querySelector<HTMLAnchorElement>(
-      '.profile-artwork-disclosure[data-rights-status="unverified-third-party"]'
-    );
-    expect(artworkDisclosure?.href).toBe(profile.image?.source_url);
-    expect(artworkDisclosure?.textContent).toContain("Source file page: VS Battles Wiki");
-    expect(artworkDisclosure?.textContent)
-      .toContain("Rights unverified · no image licence claimed");
-
-    fireEvent.click(
-      screen.getByRole("button", {
+    expect(
+      screen.getByRole("img", {
+        name: `${profile.character.name} artwork withheld pending rights verification`
+      }).textContent
+    ).toBe(profile.character.name.charAt(0));
+    expect(container.querySelector(".profile-visual img")).toBeNull();
+    expect(container.querySelector(".profile-artwork-disclosure")).toBeNull();
+    expect(
+      screen.queryByRole("button", {
         name: `View full image of ${profile.character.name}`
       })
-    );
-    expect(onOpenImage).toHaveBeenCalledWith(expect.objectContaining({
-      src: expect.stringContaining("-640.webp"),
-      rightsRecord: profile.image
-    }));
+    ).toBeNull();
+    expect(onOpenImage).not.toHaveBeenCalled();
   });
 });

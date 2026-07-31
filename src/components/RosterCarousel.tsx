@@ -45,23 +45,21 @@ export function RosterCarousel({
   onResetFilters,
   onShowMore
 }: RosterCarouselProps) {
-  const [featuredId, setFeaturedId] = useState<string | null>(
-    selection?.characterId ?? null
-  );
-  const listRef = useRef<HTMLDivElement>(null);
+  const selectedCharacterId = selection?.characterId ?? null;
+  const [featuredId, setFeaturedId] = useState<string | null>(selectedCharacterId);
+  const listRef = useRef<HTMLUListElement>(null);
   const swipeRef = useRef<SwipeStart | null>(null);
   const suppressClickRef = useRef(false);
   const featuredRosterIndex = items.findIndex((item) => item.id === featuredId);
   const featuredIndex = items.length === 0 ? -1 : Math.max(0, featuredRosterIndex);
-  const featuredCharacter = featuredIndex >= 0 ? items[featuredIndex] ?? null : null;
-  const previousFeatured = featuredIndex >= 0
-    ? items[(featuredIndex - 1 + items.length) % items.length] ?? null
-    : null;
-  const nextFeatured = featuredIndex >= 0
-    ? items[(featuredIndex + 1) % items.length] ?? null
-    : null;
+  const featuredCharacter = featuredIndex >= 0 ? (items[featuredIndex] ?? null) : null;
+  const featuredCharacterId = featuredCharacter?.id ?? null;
+  const previousFeatured =
+    featuredIndex >= 0 ? (items[(featuredIndex - 1 + items.length) % items.length] ?? null) : null;
+  const nextFeatured = featuredIndex >= 0 ? (items[(featuredIndex + 1) % items.length] ?? null) : null;
 
   useEffect(() => {
+    void resetKey;
     const list = listRef.current;
     if (!list) return;
     list.scrollTop = 0;
@@ -78,23 +76,20 @@ export function RosterCarousel({
   }, [featuredId, items]);
 
   useEffect(() => {
-    if (!galleryActive || !featuredCharacter) return;
+    if (!galleryActive || !featuredCharacterId) return;
 
     const frame = window.requestAnimationFrame(() => {
       const list = listRef.current;
-      const entry = [...(list?.querySelectorAll<HTMLElement>(".roster-entry") ?? [])]
-        .find((item) => item.dataset.characterId === featuredCharacter.id);
+      const entry = [...(list?.querySelectorAll<HTMLElement>(".roster-entry") ?? [])].find(
+        (item) => item.dataset.characterId === featuredCharacterId
+      );
       if (!list || !entry) return;
 
       const listBounds = list.getBoundingClientRect();
       const entryBounds = entry.getBoundingClientRect();
-      const centeredLeft = list.scrollLeft
-        + (entryBounds.left + (entryBounds.width / 2))
-        - (listBounds.left + (listBounds.width / 2));
-      const targetLeft = Math.max(
-        0,
-        Math.min(centeredLeft, list.scrollWidth - list.clientWidth)
-      );
+      const centeredLeft =
+        list.scrollLeft + (entryBounds.left + entryBounds.width / 2) - (listBounds.left + listBounds.width / 2);
+      const targetLeft = Math.max(0, Math.min(centeredLeft, list.scrollWidth - list.clientWidth));
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (typeof list.scrollTo === "function") {
         try {
@@ -111,24 +106,16 @@ export function RosterCarousel({
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [
-    featuredCharacter?.id,
-    featuredIndex,
-    galleryActive,
-    items.length
-  ]);
+  }, [featuredCharacterId, galleryActive]);
 
   useEffect(() => {
-    if (!selection) return;
-    setFeaturedId(selection.characterId);
+    if (!selectedCharacterId) return;
+    setFeaturedId(selectedCharacterId);
     const frame = window.requestAnimationFrame(() => {
       const list = listRef.current;
-      const selectedCard = list?.querySelector<HTMLElement>(
-        '.roster-card[aria-pressed="true"]'
-      );
+      const selectedCard = list?.querySelector<HTMLElement>('.roster-card[aria-pressed="true"]');
       if (!list || !selectedCard) return;
 
-      selectedCard.focus({ preventScroll: true });
       const listBounds = list.getBoundingClientRect();
       const cardBounds = selectedCard.getBoundingClientRect();
       if (cardBounds.top < listBounds.top) {
@@ -139,7 +126,7 @@ export function RosterCarousel({
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [selection?.characterId]);
+  }, [selectedCharacterId]);
 
   const featureAtIndex = (index: number, focusCard = false): void => {
     if (items.length === 0) return;
@@ -150,9 +137,9 @@ export function RosterCarousel({
 
     if (focusCard) {
       window.requestAnimationFrame(() => {
-        const entry = [...(
-          listRef.current?.querySelectorAll<HTMLElement>(".roster-entry") ?? []
-        )].find((item) => item.dataset.characterId === nextItem.id);
+        const entry = [...(listRef.current?.querySelectorAll<HTMLElement>(".roster-entry") ?? [])].find(
+          (item) => item.dataset.characterId === nextItem.id
+        );
         entry?.querySelector<HTMLElement>(".roster-card")?.focus({
           preventScroll: true
         });
@@ -166,15 +153,11 @@ export function RosterCarousel({
   };
 
   return (
-    <div
+    <section
       class="roster-carousel"
       data-empty={visibleRosterCount === 0 ? "true" : "false"}
-      role={galleryActive ? "region" : undefined}
-      aria-roledescription={galleryActive ? "carousel" : undefined}
-      aria-label={galleryActive ? `${accentName} character carousel` : undefined}
-      aria-describedby={galleryActive && featuredCharacter
-        ? `${side}-carousel-status`
-        : undefined}
+      aria-label={galleryActive ? `${accentName} character carousel` : `${accentName} character roster`}
+      aria-describedby={galleryActive && featuredCharacter ? `${side}-carousel-status` : undefined}
     >
       {galleryActive && featuredCharacter ? (
         <button
@@ -190,10 +173,9 @@ export function RosterCarousel({
           <span aria-hidden="true">‹</span>
         </button>
       ) : null}
-      <div
+      <ul
         ref={listRef}
         class="roster-list"
-        role="list"
         aria-label="Characters"
         aria-describedby={describedBy}
         onPointerDown={(event) => {
@@ -211,10 +193,7 @@ export function RosterCarousel({
 
           const distanceX = event.clientX - start.x;
           const distanceY = event.clientY - start.y;
-          if (
-            Math.abs(distanceX) < 48
-            || Math.abs(distanceX) <= Math.abs(distanceY) * 1.2
-          ) {
+          if (Math.abs(distanceX) < 48 || Math.abs(distanceX) <= Math.abs(distanceY) * 1.2) {
             return;
           }
 
@@ -232,18 +211,17 @@ export function RosterCarousel({
         {items.map((item, index) => {
           const image = item.defaultProfile.image;
           const displayImage = isImageEnabledForPublicDisplay(image) ? image : null;
+          const thumbnailSource = displayImage ? characterImageVariant(displayImage.image, 160) : null;
+          const gallerySource = displayImage ? characterImageVariant(displayImage.image, 640) : null;
           const isSelected = selection?.characterId === item.id;
           const isFeatured = galleryActive && featuredCharacter?.id === item.id;
           return (
-            <div
+            <li
               class="roster-entry"
-              role="listitem"
               key={item.id}
               data-character-id={item.id}
               data-featured={isFeatured ? "true" : "false"}
-              aria-label={galleryActive
-                ? `${index + 1} of ${shownRosterCount}`
-                : undefined}
+              aria-label={galleryActive ? `${index + 1} of ${shownRosterCount}` : undefined}
             >
               <button
                 class="roster-card"
@@ -280,10 +258,13 @@ export function RosterCarousel({
                 <span class="roster-card__portrait">
                   {displayImage ? (
                     <CharacterImage
-                      src={characterImageVariant(
-                        displayImage.image,
-                        galleryActive ? 640 : 160
-                      )}
+                      src={thumbnailSource ?? gallerySource ?? ""}
+                      srcSet={
+                        galleryActive && thumbnailSource && gallerySource
+                          ? `${thumbnailSource} 160w, ${gallerySource} 640w`
+                          : undefined
+                      }
+                      sizes={galleryActive ? "(max-width: 820px) 84vw, (max-width: 1180px) 68vw, 34vw" : "48px"}
                       alt=""
                       loading={isFeatured ? "eager" : "lazy"}
                     />
@@ -315,19 +296,19 @@ export function RosterCarousel({
                   Choose {item.name}
                 </span>
               </button>
-            </div>
+            </li>
           );
         })}
         {visibleRosterCount === 0 ? (
-          <div class="roster-empty">
+          <li class="roster-empty">
             <strong>No fighters found</strong>
             <span>Try a shorter search or reset the filters.</span>
             <button class="text-button" type="button" onClick={onResetFilters}>
               Reset filters
             </button>
-          </div>
+          </li>
         ) : null}
-      </div>
+      </ul>
       {galleryActive && featuredCharacter ? (
         <button
           class="roster-carousel__arrow roster-carousel__arrow--next"
@@ -356,11 +337,7 @@ export function RosterCarousel({
       ) : null}
       {remainingRosterCount > 0 ? (
         <div class="roster-list__more">
-          <button
-            type="button"
-            aria-label={`Show next ${nextPageSize} fighters`}
-            onClick={onShowMore}
-          >
+          <button type="button" aria-label={`Show next ${nextPageSize} fighters`} onClick={onShowMore}>
             Show more fighters
           </button>
           <small>
@@ -368,6 +345,6 @@ export function RosterCarousel({
           </small>
         </div>
       ) : null}
-    </div>
+    </section>
   );
 }

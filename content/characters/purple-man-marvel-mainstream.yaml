@@ -23,7 +23,6 @@ keys:
         image: "images/characters/purple-man-marvel-mainstream/purple-man.webp"
         source_url: "https://vsbattles.fandom.com/wiki/File:Purple_Man.png"
         rights_status: unverified-third-party
-        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:

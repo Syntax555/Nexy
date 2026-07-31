@@ -14,9 +14,7 @@ interface MobileMatchupNavigatorProps {
 }
 
 function queryMatches(query: string): boolean {
-  return typeof window !== "undefined"
-    && typeof window.matchMedia === "function"
-    && window.matchMedia(query).matches;
+  return typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia(query).matches;
 }
 
 export function useMobileMatchupViewport(): boolean {
@@ -44,9 +42,7 @@ export function useMobileMatchupViewport(): boolean {
 }
 
 function stepLabel(number: "01" | "02", name: string | null): string {
-  return name
-    ? `Fighter ${number}: ${name}, chosen`
-    : `Fighter ${number}: not selected`;
+  return name ? `Fighter ${number}: ${name}, chosen` : `Fighter ${number}: not selected`;
 }
 
 export function MobileMatchupNavigator({
@@ -58,35 +54,26 @@ export function MobileMatchupNavigator({
   onAnalyze
 }: MobileMatchupNavigatorProps) {
   const ready = Boolean(leftName && rightName);
-  const nextSide = (side: MobileFighterSide): MobileFighterSide =>
-    side === "left" ? "right" : "left";
+  const nextSide = (side: MobileFighterSide): MobileFighterSide => (side === "left" ? "right" : "left");
 
-  const activateAndFocus = (
-    side: MobileFighterSide,
-    focusTarget: "tab" | "heading" = "tab"
-  ): void => {
+  const activateAndFocus = (side: MobileFighterSide, focusTarget: "tab" | "heading" = "tab"): void => {
     onActivate(side);
     window.requestAnimationFrame(() => {
-      const reducedMotion = typeof window.matchMedia === "function"
-        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      document.querySelector<HTMLElement>(
-        `#mobile-fighter-${side}-panel`
-      )?.scrollIntoView?.({
+      const reducedMotion =
+        typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.querySelector<HTMLElement>(`#mobile-fighter-${side}-panel`)?.scrollIntoView?.({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start"
       });
-      document.querySelector<HTMLElement>(
-        focusTarget === "heading"
-          ? `#${side}-picker-title`
-          : `[data-mobile-fighter-tab="${side}"]`
-      )?.focus({ preventScroll: true });
+      document
+        .querySelector<HTMLElement>(
+          focusTarget === "heading" ? `#${side}-picker-title` : `[data-mobile-fighter-tab="${side}"]`
+        )
+        ?.focus({ preventScroll: true });
     });
   };
 
-  const handleKeyDown = (
-    event: KeyboardEvent,
-    side: MobileFighterSide
-  ): void => {
+  const handleKeyDown = (event: KeyboardEvent, side: MobileFighterSide): void => {
     let target: MobileFighterSide | null = null;
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       target = nextSide(side);
@@ -108,18 +95,10 @@ export function MobileMatchupNavigator({
       : rightName
         ? "Fighter 02 selected. Choose Fighter 01."
         : "Choose Fighter 01, then Fighter 02.";
-  const nextIncompleteSide: MobileFighterSide | null = !leftName
-    ? "left"
-    : !rightName
-      ? "right"
-      : null;
+  const nextIncompleteSide: MobileFighterSide | null = !leftName ? "left" : !rightName ? "right" : null;
 
   return (
-    <nav
-      class="mobile-matchup-navigator"
-      aria-label="Fighter selection steps"
-      hidden={!isMobile}
-    >
+    <nav class="mobile-matchup-navigator" aria-label="Fighter selection steps" hidden={!isMobile}>
       <div class="mobile-matchup-tabs" role="tablist" aria-label="Choose a fighter to edit">
         <button
           id="mobile-fighter-left-tab"
@@ -163,17 +142,12 @@ export function MobileMatchupNavigator({
           </span>
         </button>
       </div>
-      <div
-        class="mobile-matchup-status"
-        data-ready={ready ? "true" : "false"}
-      >
-        <p role="status" aria-live="polite">{status}</p>
+      <div class="mobile-matchup-status" data-ready={ready ? "true" : "false"}>
+        <p role="status" aria-live="polite">
+          {status}
+        </p>
         {ready ? (
-          <button
-            class="mobile-matchup-action"
-            type="button"
-            onClick={onAnalyze}
-          >
+          <button class="mobile-matchup-action" type="button" onClick={onAnalyze}>
             Analyze battle
           </button>
         ) : nextIncompleteSide && nextIncompleteSide !== activeSide ? (

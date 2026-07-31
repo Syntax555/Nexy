@@ -1,12 +1,7 @@
-import type {
-  Effect,
-  PowerRef,
-  PowerTargetRef,
-  RankedStatInput,
-  ResistanceRef
-} from "../domain/index.js";
+import type { Effect, PowerRef, PowerTargetRef, RankedStatInput, ResistanceRef } from "../domain/index.js";
 import {
   activeEffects,
+  activeImage,
   activeItemEffectsForPowerRefs,
   effectiveForm,
   powerRefEffects,
@@ -24,14 +19,7 @@ import {
   resistanceRefs,
   type ItemPredicate
 } from "./capabilities.js";
-import {
-  arrayField,
-  booleanField,
-  byId,
-  objectField,
-  optionalStringField,
-  type GameContext
-} from "./context.js";
+import { arrayField, booleanField, byId, objectField, optionalStringField, type GameContext } from "./context.js";
 import {
   status,
   type CapabilityIdentity,
@@ -40,60 +28,38 @@ import {
   type EngineView,
   type ResolvedCatalogItem
 } from "./internal.js";
-import {
-  abilityModifierRank,
-  magicLevelRank,
-  normalizeStat,
-  resistanceLevelRank,
-  statsForForm
-} from "./rank.js";
+import { abilityModifierRank, magicLevelRank, normalizeStat, resistanceLevelRank, statsForForm } from "./rank.js";
 
 function identity(kind: CapabilityIdentity["kind"], id: string): CapabilityIdentity {
   return { kind, id };
 }
 
-export function effectNullifiesPower(
-  context: GameContext,
-  effect: Effect,
-  ref: PowerRef
-): boolean {
+export function effectNullifiesPower(context: GameContext, effect: Effect, ref: PowerRef): boolean {
   const nullification = objectField(effect, "power_nullification");
   if (!nullification) return false;
 
   const targetIds = arrayField<string>(nullification, "target_power_ids");
-  const targetRefs = arrayField<PowerTargetRef>(
-    nullification,
-    "target_power_refs"
-  );
+  const targetRefs = arrayField<PowerTargetRef>(nullification, "target_power_refs");
   const hasTargets = targetIds.length > 0 || targetRefs.length > 0;
   const targetMatches = hasTargets
-    ? targetIds.includes(ref.id)
-      || targetRefs.some((target) => powerTargetRefMatches(context, ref, target))
+    ? targetIds.includes(ref.id) || targetRefs.some((target) => powerTargetRefMatches(context, ref, target))
     : true;
-  const maximumModifier = byId(
-    context,
-    "ability_modifiers",
-    optionalStringField(nullification, "max_target_modifier")
-  );
-  const modifierMatches = !maximumModifier
-    || abilityModifierRank(context, ref) <= Number(Reflect.get(maximumModifier, "coverage_rank") || 0);
+  const maximumModifier = byId(context, "ability_modifiers", optionalStringField(nullification, "max_target_modifier"));
+  const modifierMatches =
+    !maximumModifier || abilityModifierRank(context, ref) <= Number(Reflect.get(maximumModifier, "coverage_rank") || 0);
   const maximumTypeRank = Number(Reflect.get(nullification, "max_target_type_rank"));
-  const typeMatches = !Number.isFinite(maximumTypeRank)
-    || powerTypeRank(context, ref) <= maximumTypeRank;
+  const typeMatches = !Number.isFinite(maximumTypeRank) || powerTypeRank(context, ref) <= maximumTypeRank;
   return targetMatches && modifierMatches && typeMatches;
 }
 
-export function effectAbsorbsPower(
-  context: GameContext,
-  effect: Effect,
-  ref: PowerRef,
-  sourceRef?: PowerRef
-): boolean {
+export function effectAbsorbsPower(context: GameContext, effect: Effect, ref: PowerRef, sourceRef?: PowerRef): boolean {
   const absorption = objectField(effect, "absorption");
   if (!absorption) return false;
-  return arrayField<PowerTargetRef>(absorption, "target_power_refs")
-    .some((target) => powerTargetRefMatches(context, ref, target))
-    && abilityModifierRank(context, sourceRef) >= abilityModifierRank(context, ref);
+  return (
+    arrayField<PowerTargetRef>(absorption, "target_power_refs").some((target) =>
+      powerTargetRefMatches(context, ref, target)
+    ) && abilityModifierRank(context, sourceRef) >= abilityModifierRank(context, ref)
+  );
 }
 
 function effectPowerBlockStatus(
@@ -107,32 +73,19 @@ function effectPowerBlockStatus(
   return undefined;
 }
 
-export function effectNegatesResistance(
-  context: GameContext,
-  effect: Effect,
-  ref: ResistanceRef
-): boolean {
+export function effectNegatesResistance(context: GameContext, effect: Effect, ref: ResistanceRef): boolean {
   const negation = objectField(effect, "resistance_negation");
   if (!negation) return false;
-  const level = byId(
-    context,
-    "resistance_levels",
-    optionalStringField(ref, "level") || "resistant"
-  );
+  const level = byId(context, "resistance_levels", optionalStringField(ref, "level") || "resistant");
   const targets = arrayField<string>(negation, "target_resistance_ids");
   const immunityTargets = arrayField<string>(negation, "target_immunity_ids");
   if (level?.id === "immunity") return immunityTargets.includes(ref.id);
   return targets.length === 0 || targets.includes(ref.id);
 }
 
-export function powerNullifiedBy(
-  context: GameContext,
-  ref: PowerRef,
-  opponent: EngineView
-): EngineStatus | undefined {
+export function powerNullifiedBy(context: GameContext, ref: PowerRef, opponent: EngineView): EngineStatus | undefined {
   const nullifyingPower = opponent.powerRefs.find((opponentRef) =>
-    powerRefEffects(context, opponentRef)
-      .some((effect) => effectPowerBlockStatus(context, effect, ref, opponentRef))
+    powerRefEffects(context, opponentRef).some((effect) => effectPowerBlockStatus(context, effect, ref, opponentRef))
   );
 
   if (nullifyingPower) {
@@ -153,10 +106,7 @@ export function powerNullifiedBy(
     .find((candidate) => candidate);
   if (itemBlock) {
     const verb = itemBlock.code === "absorbed" ? "absorbs" : "targets";
-    return status(
-      itemBlock.code,
-      `Opponent equipment or attack ${verb} this power`
-    );
+    return status(itemBlock.code, `Opponent equipment or attack ${verb} this power`);
   }
   return undefined;
 }
@@ -167,8 +117,7 @@ export function resistanceNegatedBy(
   opponent: EngineView
 ): EngineStatus | undefined {
   const negatingPower = opponent.powerRefs.find((opponentRef) =>
-    powerRefEffects(context, opponentRef)
-      .some((effect) => effectNegatesResistance(context, effect, ref))
+    powerRefEffects(context, opponentRef).some((effect) => effectNegatesResistance(context, effect, ref))
   );
   if (negatingPower) {
     return status(
@@ -197,8 +146,9 @@ export function resistanceBlocksWeaponType(
   resistanceRef: ResistanceRef
 ): boolean {
   const resistance = byId(context, "resistances", resistanceRef.id);
-  return arrayField<string>(resistance, "resists_weapon_type_ids")
-    .some((resistedTypeId) => powerTypeCovers(context, resistedTypeId, weaponTypeId));
+  return arrayField<string>(resistance, "resists_weapon_type_ids").some((resistedTypeId) =>
+    powerTypeCovers(context, resistedTypeId, weaponTypeId)
+  );
 }
 
 export function weaponItemResistedBy(
@@ -209,10 +159,9 @@ export function weaponItemResistedBy(
 ): EngineStatus | undefined {
   const weaponTypeIds = arrayField<string>(item, "weapon_type_ids");
   if (weaponTypeIds.length === 0) return undefined;
-  const resistingRef = effectiveResistanceRefsFor(context, opponent, owner)
-    .find((ref) =>
-      weaponTypeIds.some((typeId) => resistanceBlocksWeaponType(context, typeId, ref))
-    );
+  const resistingRef = effectiveResistanceRefsFor(context, opponent, owner).find((ref) =>
+    weaponTypeIds.some((typeId) => resistanceBlocksWeaponType(context, typeId, ref))
+  );
   return resistingRef
     ? status(
         "resisted",
@@ -222,18 +171,11 @@ export function weaponItemResistedBy(
     : undefined;
 }
 
-export function resistanceBlocksPower(
-  context: GameContext,
-  powerRef: PowerRef,
-  resistanceRef: ResistanceRef
-): boolean {
+export function resistanceBlocksPower(context: GameContext, powerRef: PowerRef, resistanceRef: ResistanceRef): boolean {
   const resistance = byId(context, "resistances", resistanceRef.id);
   if (!arrayField<string>(resistance, "resists_power_ids").includes(powerRef.id)) return false;
   const resistanceVariant = optionalStringField(resistanceRef, "source_variant");
-  if (
-    resistanceVariant
-    && optionalStringField(powerRef, "source_variant") !== resistanceVariant
-  ) {
+  if (resistanceVariant && optionalStringField(powerRef, "source_variant") !== resistanceVariant) {
     return false;
   }
   if (magicLevelRank(context, resistanceRef) < magicLevelRank(context, powerRef)) return false;
@@ -242,22 +184,18 @@ export function resistanceBlocksPower(
   const powerTypes = arrayField<string>(powerRef, "type_ids");
   if (resistanceTypes.length > 0) {
     if (powerTypes.length === 0) {
-      const coversAll = resistanceTypes.some((id) =>
-        booleanField(byId(context, "power_types", id), "covers_all")
-      );
+      const coversAll = resistanceTypes.some((id) => booleanField(byId(context, "power_types", id), "covers_all"));
       if (!coversAll) return false;
     } else if (!powerTypesCover(context, resistanceTypes, powerTypes)) {
       return false;
     }
   }
 
-  const level = byId(
-    context,
-    "resistance_levels",
-    optionalStringField(resistanceRef, "level") || "resistant"
+  const level = byId(context, "resistance_levels", optionalStringField(resistanceRef, "level") || "resistant");
+  return (
+    booleanField(level, "bypasses_ability_modifier_coverage") ||
+    abilityModifierRank(context, resistanceRef) >= abilityModifierRank(context, powerRef)
   );
-  return level?.id === "immunity"
-    || abilityModifierRank(context, resistanceRef) >= abilityModifierRank(context, powerRef);
 }
 
 export function resistanceRefMeetsRequirement(
@@ -267,10 +205,7 @@ export function resistanceRefMeetsRequirement(
 ): boolean {
   if (ownedRef.id !== requiredRef.id) return false;
   const requiredVariant = optionalStringField(requiredRef, "source_variant");
-  if (
-    requiredVariant
-    && optionalStringField(ownedRef, "source_variant") !== requiredVariant
-  ) {
+  if (requiredVariant && optionalStringField(ownedRef, "source_variant") !== requiredVariant) {
     return false;
   }
   if (resistanceLevelRank(context, ownedRef) < resistanceLevelRank(context, requiredRef)) {
@@ -293,8 +228,9 @@ export function powerResistedBy(
   owner: EngineView,
   opponent: EngineView
 ): EngineStatus | undefined {
-  const resistingRef = effectiveResistanceRefsFor(context, opponent, owner)
-    .find((candidate) => resistanceBlocksPower(context, ref, candidate));
+  const resistingRef = effectiveResistanceRefsFor(context, opponent, owner).find((candidate) =>
+    resistanceBlocksPower(context, ref, candidate)
+  );
   return resistingRef
     ? status(
         "resisted",
@@ -313,13 +249,11 @@ export function effectBlockedBy(
   const rules = objectField(effect, "nullified_by");
   if (!rules) return undefined;
 
-  const blockingResistance = effectiveResistanceRefsFor(context, opponent, owner)
-    .find((opponentRef) =>
-      arrayField<ResistanceRef>(rules, "resistance_refs")
-        .some((requiredRef) =>
-          resistanceRefMeetsRequirement(context, opponentRef, requiredRef)
-        )
-    );
+  const blockingResistance = effectiveResistanceRefsFor(context, opponent, owner).find((opponentRef) =>
+    arrayField<ResistanceRef>(rules, "resistance_refs").some((requiredRef) =>
+      resistanceRefMeetsRequirement(context, opponentRef, requiredRef)
+    )
+  );
   if (blockingResistance) {
     return status(
       "resisted",
@@ -329,10 +263,9 @@ export function effectBlockedBy(
   }
 
   const blockingPower = opponent.powerRefs.find((opponentRef) =>
-    arrayField<PowerRef>(rules, "power_refs")
-      .some((requiredRef) =>
-        powerRefMeetsRequirement(context, opponentRef, requiredRef)
-      )
+    arrayField<PowerRef>(rules, "power_refs").some((requiredRef) =>
+      powerRefMeetsRequirement(context, opponentRef, requiredRef)
+    )
   );
   if (blockingPower) {
     return status(
@@ -367,10 +300,7 @@ function itemStatusForPowerRefs(
   if (required.length === 0 || powerRefsMeetRequirements(context, ownedPowers, required)) {
     return undefined;
   }
-  return status(
-    "disabled",
-    detail || `Missing ${required.map((ref) => powerRefLabel(context, ref)).join(", ")}`
-  );
+  return status("disabled", detail || `Missing ${required.map((ref) => powerRefLabel(context, ref)).join(", ")}`);
 }
 
 function hasMatchingPowerRef(ref: PowerRef, refs: readonly PowerRef[]): boolean {
@@ -378,10 +308,7 @@ function hasMatchingPowerRef(ref: PowerRef, refs: readonly PowerRef[]): boolean 
   return refs.some((candidate) => powerRefKey(candidate) === key);
 }
 
-function hasMatchingResistanceRef(
-  ref: ResistanceRef,
-  refs: readonly ResistanceRef[]
-): boolean {
+function hasMatchingResistanceRef(ref: ResistanceRef, refs: readonly ResistanceRef[]): boolean {
   const key = resistanceRefKey(ref);
   return refs.some((candidate) => resistanceRefKey(candidate) === key);
 }
@@ -398,46 +325,40 @@ export function battleCapabilityStatus(
 
   if (item.kind === "power" && item.ref) {
     const ref = item.ref as PowerRef;
-    return powerNullifiedBy(context, ref, opponent)
-      ?? powerResistedBy(context, ref, ownerBattleView, opponentBattleView)
-      ?? powerEffectsBlockedBy(context, ref, ownerBattleView, opponentBattleView)
-      ?? (
-        hasMatchingPowerRef(ref, ownerBattleView.powerRefs)
-          ? undefined
-          : status("disabled", "Source power is inactive in this battle")
-      )
-      ?? status("active");
+    return (
+      powerNullifiedBy(context, ref, opponentBattleView) ??
+      powerResistedBy(context, ref, ownerBattleView, opponentBattleView) ??
+      powerEffectsBlockedBy(context, ref, ownerBattleView, opponentBattleView) ??
+      (hasMatchingPowerRef(ref, ownerBattleView.powerRefs)
+        ? undefined
+        : status("disabled", "Source power is inactive in this battle")) ??
+      status("active")
+    );
   }
 
   if (item.kind === "resistance" && item.ref) {
     const ref = item.ref as ResistanceRef;
-    return resistanceNegatedBy(context, ref, opponentBattleView)
-      ?? (
-        hasMatchingResistanceRef(ref, ownerBattleView.resistanceRefs)
-          ? undefined
-          : status("disabled", "Source power is inactive in this battle")
-      )
-      ?? status("active");
+    return (
+      resistanceNegatedBy(context, ref, opponentBattleView) ??
+      (hasMatchingResistanceRef(ref, ownerBattleView.resistanceRefs)
+        ? undefined
+        : status("disabled", "Source power is inactive in this battle")) ??
+      status("active")
+    );
   }
 
-  if (
-    (item.kind === "equipment" || item.kind === "attack")
-    && item.catalogItem
-  ) {
-    return weaponItemResistedBy(
-      context,
-      item.catalogItem,
-      ownerBattleView,
-      opponentBattleView
-    )
-      ?? itemStatusForPowerRefs(
+  if ((item.kind === "equipment" || item.kind === "attack") && item.catalogItem) {
+    return (
+      weaponItemResistedBy(context, item.catalogItem, ownerBattleView, opponentBattleView) ??
+      itemStatusForPowerRefs(
         context,
         item.catalogItem,
         ownerBattleView.powerRefs,
         "Required power is inactive in this battle"
-      )
-      ?? item.status
-      ?? status("active");
+      ) ??
+      item.status ??
+      status("active")
+    );
   }
 
   return item.status ?? status("active");
@@ -456,14 +377,7 @@ export function withBattleStatuses(
       ...section,
       items: section.items.map((item) => ({
         ...item,
-        status: battleCapabilityStatus(
-          context,
-          item,
-          base,
-          opponentBase,
-          battleView,
-          opponentBattleView
-        )
+        status: battleCapabilityStatus(context, item, base, opponentBase, battleView, opponentBattleView)
       }))
     }))
   };
@@ -475,18 +389,16 @@ export function powerBlockedInBattle(
   owner: EngineView,
   opponent: EngineView
 ): EngineStatus | undefined {
-  return powerNullifiedBy(context, ref, opponent)
-    ?? powerResistedBy(context, ref, owner, opponent);
+  return powerNullifiedBy(context, ref, opponent) ?? powerResistedBy(context, ref, owner, opponent);
 }
 
 function nonResistibleStatEffect(effect: Effect): Effect | undefined {
   const statEffects = Object.fromEntries(
-    Object.entries(objectField(effect, "stat_effects") ?? {})
-      .filter(([, stat]) => normalizeStat(stat as RankedStatInput)?.resistible === false)
+    Object.entries(objectField(effect, "stat_effects") ?? {}).filter(
+      ([, stat]) => normalizeStat(stat as RankedStatInput)?.resistible === false
+    )
   );
-  return Object.keys(statEffects).length > 0
-    ? { stat_effects: statEffects }
-    : undefined;
+  return Object.keys(statEffects).length > 0 ? { stat_effects: statEffects } : undefined;
 }
 
 export function battleEffectiveView(
@@ -495,10 +407,8 @@ export function battleEffectiveView(
   opponent: EngineView,
   ownerState: EngineView = view
 ): EngineView {
-  const includeEffect = (effect: Effect) =>
-    !effectBlockedBy(context, effect, ownerState, opponent);
-  const includeItem: ItemPredicate = (item) =>
-    !weaponItemResistedBy(context, item, ownerState, opponent);
+  const includeEffect = (effect: Effect) => !effectBlockedBy(context, effect, ownerState, opponent);
+  const includeItem: ItemPredicate = (item) => !weaponItemResistedBy(context, item, ownerState, opponent);
   const requirementPowerRefs = powerRefs(
     context,
     view.key,
@@ -506,12 +416,7 @@ export function battleEffectiveView(
     (ref) => !powerBlockedInBattle(context, ref, ownerState, opponent),
     includeEffect
   );
-  const itemEffects = activeItemEffectsForPowerRefs(
-    context,
-    view.key,
-    requirementPowerRefs,
-    includeItem
-  );
+  const itemEffects = activeItemEffectsForPowerRefs(context, view.key, requirementPowerRefs, includeItem);
   const resolvedPowerRefs = powerRefs(
     context,
     view.key,
@@ -520,9 +425,8 @@ export function battleEffectiveView(
     includeEffect
   );
   const nonResistibleEffects = view.powerRefs
-    .filter((ref) =>
-      !powerNullifiedBy(context, ref, opponent)
-      && Boolean(powerResistedBy(context, ref, ownerState, opponent))
+    .filter(
+      (ref) => !powerNullifiedBy(context, ref, opponent) && Boolean(powerResistedBy(context, ref, ownerState, opponent))
     )
     .flatMap((ref) => powerRefEffects(context, ref))
     .filter(includeEffect)
@@ -532,26 +436,20 @@ export function battleEffectiveView(
     ...activeEffects(context, view.key, resolvedPowerRefs, itemEffects, includeEffect),
     ...nonResistibleEffects
   ];
-  const effectiveKey = effectiveForm(
-    context,
-    view.key,
-    resolvedPowerRefs,
-    itemEffects,
-    effects
-  );
-  return {
+  const effectiveKey = effectiveForm(context, view.key, resolvedPowerRefs, itemEffects, effects);
+  const result: EngineView = {
     ...view,
     effectiveKey,
     powerRefs: resolvedPowerRefs,
-    resistanceRefs: resistanceRefs(
-      context,
-      view.key,
-      resolvedPowerRefs,
-      itemEffects,
-      includeEffect
-    ),
+    resistanceRefs: resistanceRefs(context, view.key, resolvedPowerRefs, itemEffects, includeEffect),
     itemEffects,
     effects,
     stats: statsForForm(context, effectiveKey)
   };
+  const image = activeImage(view.key, effects);
+  if (image) return { ...result, image };
+
+  const withoutImage = { ...result };
+  delete withoutImage.image;
+  return withoutImage;
 }

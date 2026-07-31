@@ -2,15 +2,13 @@ import { useState } from "preact/hooks";
 
 interface CharacterImageProps {
   readonly src: string;
+  readonly srcSet?: string | undefined;
+  readonly sizes?: string | undefined;
   readonly alt: string;
   readonly loading?: "eager" | "lazy";
 }
 
-export function CharacterImage({
-  src,
-  alt,
-  loading = "lazy"
-}: CharacterImageProps) {
+export function CharacterImage({ src, srcSet, sizes, alt, loading = "lazy" }: CharacterImageProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const failed = failedSrc === src;
@@ -18,7 +16,11 @@ export function CharacterImage({
 
   if (failed || !src) {
     if (!alt) {
-      return <span class="image-fallback" aria-hidden="true">?</span>;
+      return (
+        <span class="image-fallback" aria-hidden="true">
+          ?
+        </span>
+      );
     }
     return (
       <span class="image-fallback" role="img" aria-label={`${alt} image unavailable`}>
@@ -31,6 +33,8 @@ export function CharacterImage({
     <img
       class="character-image"
       src={src}
+      srcSet={srcSet}
+      sizes={sizes}
       alt={alt}
       loading={loading}
       decoding="async"

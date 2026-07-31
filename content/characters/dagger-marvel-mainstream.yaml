@@ -24,7 +24,6 @@ keys:
         image: "images/characters/dagger-marvel-mainstream/dagger.png"
         source_url: "https://vsbattles.fandom.com/wiki/File:Dagger_Tam.png"
         rights_status: unverified-third-party
-        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:

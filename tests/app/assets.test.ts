@@ -8,12 +8,14 @@ describe("asset URLs", () => {
   });
 
   it("maps character originals to generated variants", () => {
-    expect(characterImageVariant("images/characters/example/base.png", 160))
-      .toContain("images/generated/example/base-160.webp");
+    expect(characterImageVariant("images/characters/example/base.png", 160)).toContain(
+      "images/generated/example/base-160.webp"
+    );
   });
 
   it("does not invent a generated URL for an unsupported source format", () => {
-    expect(characterImageVariant("images/characters/example/base.gif", 160))
-      .toContain("images/characters/example/base.gif");
+    expect(characterImageVariant("images/characters/example/base.gif", 160)).toContain(
+      "images/characters/example/base.gif"
+    );
   });
 });

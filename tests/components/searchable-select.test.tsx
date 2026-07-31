@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor
-} from "@testing-library/preact";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/preact";
 import { useState } from "preact/hooks";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -41,9 +35,11 @@ describe("SearchableSelect", () => {
 
     expect(trigger.getAttribute("aria-haspopup")).toBe("listbox");
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
-    expect(screen.queryByRole("searchbox", {
-      name: "Search Media choices"
-    })).toBeNull();
+    expect(
+      screen.queryByRole("searchbox", {
+        name: "Search Media choices"
+      })
+    ).toBeNull();
 
     fireEvent.click(trigger);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
@@ -51,14 +47,17 @@ describe("SearchableSelect", () => {
     await waitFor(() => {
       expect(document.activeElement).toBe(listbox);
     });
+    expect(screen.getAllByRole("option").map((option) => option.textContent?.replace("✓", ""))).toEqual([
+      "All media",
+      "Comics",
+      "Video games",
+      "Movies"
+    ]);
     expect(
-      screen.getAllByRole("option").map((option) =>
-        option.textContent?.replace("✓", "")
-      )
-    ).toEqual(["All media", "Comics", "Video games", "Movies"]);
-    expect(screen.queryByRole("searchbox", {
-      name: "Search Media choices"
-    })).toBeNull();
+      screen.queryByRole("searchbox", {
+        name: "Search Media choices"
+      })
+    ).toBeNull();
 
     fireEvent.click(screen.getByRole("option", { name: "Movies" }));
     expect(screen.queryByRole("listbox", { name: "Media" })).toBeNull();
@@ -172,9 +171,11 @@ describe("SearchableSelect", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", {
-      name: "Universe / verse: All universes"
-    }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Universe / verse: All universes"
+      })
+    );
     const search = screen.getByRole("searchbox", {
       name: "Search Universe / verse choices"
     });
@@ -182,11 +183,7 @@ describe("SearchableSelect", () => {
       expect(document.activeElement).toBe(search);
     });
     expect(screen.getAllByRole("option")).toHaveLength(50);
-    expect(
-      screen.getAllByText(
-        "Showing 50 of 76 choices. Use search to narrow the list."
-      )
-    ).toHaveLength(2);
+    expect(screen.getAllByText("Showing 50 of 76 choices. Use search to narrow the list.")).toHaveLength(2);
 
     fireEvent.input(search, { target: { value: "Universe 075" } });
     expect(screen.getAllByRole("option")).toHaveLength(1);
@@ -195,13 +192,13 @@ describe("SearchableSelect", () => {
 
     fireEvent.keyDown(search, { key: "Enter" });
     await waitFor(() => {
-      expect(document.activeElement).toBe(
-        screen.getByRole("listbox", { name: "Universe / verse" })
-      );
+      expect(document.activeElement).toBe(screen.getByRole("listbox", { name: "Universe / verse" }));
     });
-    expect(screen.getByRole("listbox", {
-      name: "Universe / verse"
-    })).toBeTruthy();
+    expect(
+      screen.getByRole("listbox", {
+        name: "Universe / verse"
+      })
+    ).toBeTruthy();
 
     search.focus();
     fireEvent.input(search, { target: { value: "" } });

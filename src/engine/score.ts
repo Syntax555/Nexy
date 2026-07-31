@@ -5,9 +5,11 @@ import type {
   BattleTieBreaker,
   BattleVerdict,
   ComparedStat,
+  OptionalSpeedStatName,
   PowerRef,
   PowerTargetRef,
   RankedStatName,
+  SpeedStatName,
   StatComparison,
   Winner
 } from "../domain/index.js";
@@ -18,11 +20,7 @@ import {
   powerTypeRank,
   powerTypesCover
 } from "./capabilities.js";
-import {
-  arrayField,
-  byId,
-  type GameContext
-} from "./context.js";
+import { arrayField, byId, type GameContext } from "./context.js";
 import type { EngineView, ResolvedStat } from "./internal.js";
 import {
   compositeRank,
@@ -40,6 +38,33 @@ function winnerFor(leftRank: number, rightRank: number): Winner {
   if (leftRank > rightRank) return "left";
   if (rightRank > leftRank) return "right";
   return "tie";
+}
+
+const rulesetV1OptionalSpeedScoring = {
+  attack_speed: "both-authored",
+  reaction_speed: "both-authored",
+  travel_speed: "both-authored",
+  flight_speed: "both-authored"
+} as const satisfies Readonly<Record<OptionalSpeedStatName, "both-authored">>;
+
+const rulesetV1SpeedScoring = {
+  combat_speed: "always",
+  ...rulesetV1OptionalSpeedScoring
+} as const satisfies Readonly<Record<SpeedStatName, "always" | "both-authored">>;
+
+function hasAuthoredSpeedCategory(view: EngineView, field: SpeedStatName): boolean {
+  return Boolean(formStat(view.effectiveKey, field));
+}
+
+/**
+ * Ruleset v1 always scores combat speed. An optional category contributes a
+ * comparison row only when it is present on both resolved forms.
+ */
+function speedCategoryIsScored(left: EngineView, right: EngineView, field: SpeedStatName): boolean {
+  return (
+    rulesetV1SpeedScoring[field] === "always" ||
+    (hasAuthoredSpeedCategory(left, field) && hasAuthoredSpeedCategory(right, field))
+  );
 }
 
 function comparisonClass(rank: number, otherRank: number): "higher" | "lower" | "same" {
@@ -87,7 +112,7 @@ function comparedStat(
 function speedBattleStat(
   context: GameContext,
   view: EngineView,
-  field: RankedStatName,
+  field: SpeedStatName,
   fallbackLabel: string
 ): ComparedStat | null {
   const stat = formStat(view.effectiveKey, field);
@@ -101,53 +126,34 @@ function speedBattleStat(
   );
 }
 
-function unpairedSpeedNotes(
-  context: GameContext,
-  form: EngineView["effectiveKey"],
-  opponentForm: EngineView["effectiveKey"]
-): readonly string[] {
+function unscoredOptionalSpeedNotes(context: GameContext, view: EngineView, opponent: EngineView): readonly string[] {
   return speedDefinitions
-    .filter(([field]) =>
-      field !== "combat_speed"
-      && Boolean(formStat(form, field))
-      && !formStat(opponentForm, field)
+    .filter(
+      ([field]) =>
+        rulesetV1SpeedScoring[field] === "both-authored" &&
+        hasAuthoredSpeedCategory(view, field) &&
+        !speedCategoryIsScored(view, opponent, field)
     )
     .map(([field, fallbackLabel]) => {
-      const stat = formStat(form, field);
+      const stat = formStat(view.effectiveKey, field);
       const label = speedComparisonLabel(field, fallbackLabel);
       const note = normalizeStat(stat)?.note;
       return `${label} - ${formatStat(context, stat, "speed_tiers")}${note ? ` (${note})` : ""}`;
     });
 }
 
-function withAdditionalNote(
-  stat: ComparedStat | null,
-  additionalNote: string
-): ComparedStat | null {
+function withAdditionalNote(stat: ComparedStat | null, additionalNote: string): ComparedStat | null {
   if (!stat) return null;
-  const note = stat.note
-    ? `${stat.note} · ${additionalNote}`
-    : additionalNote;
+  const note = stat.note ? `${stat.note} · ${additionalNote}` : additionalNote;
   return { ...stat, note };
 }
 
-function speedComparisons(
-  context: GameContext,
-  left: EngineView,
-  right: EngineView
-): readonly StatComparison[] {
-  const comparable = speedDefinitions.filter(([field]) =>
-    field === "combat_speed"
-    || Boolean(
-      formStat(left.effectiveKey, field)
-      && formStat(right.effectiveKey, field)
-    )
-  );
+function speedComparisons(context: GameContext, left: EngineView, right: EngineView): readonly StatComparison[] {
+  const comparable = speedDefinitions.filter(([field]) => speedCategoryIsScored(left, right, field));
   const useSpecificCombatLabel = comparable.length > 1;
   const rows = comparable.map(([field, fallbackLabel]) => {
-    const label = field === "combat_speed" && !useSpecificCombatLabel
-      ? "Speed"
-      : speedComparisonLabel(field, fallbackLabel);
+    const label =
+      field === "combat_speed" && !useSpecificCombatLabel ? "Speed" : speedComparisonLabel(field, fallbackLabel);
     return comparisonPair(
       field,
       label,
@@ -156,18 +162,16 @@ function speedComparisons(
     );
   });
 
-  const leftNotes = unpairedSpeedNotes(context, left.effectiveKey, right.effectiveKey);
-  const rightNotes = unpairedSpeedNotes(context, right.effectiveKey, left.effectiveKey);
+  // These disclosures are attached to the always-present combat-speed row;
+  // they never create a score row or contribute points.
+  const leftNotes = unscoredOptionalSpeedNotes(context, left, right);
+  const rightNotes = unscoredOptionalSpeedNotes(context, right, left);
   const first = rows[0];
   if (!first || (leftNotes.length === 0 && rightNotes.length === 0)) return rows;
   const firstWithNotes: StatComparison = {
     ...first,
-    left: leftNotes.length
-      ? withAdditionalNote(first.left, `Shown only here: ${joinText(leftNotes)}`)
-      : first.left,
-    right: rightNotes.length
-      ? withAdditionalNote(first.right, `Shown only here: ${joinText(rightNotes)}`)
-      : first.right
+    left: leftNotes.length ? withAdditionalNote(first.left, `Shown only here: ${joinText(leftNotes)}`) : first.left,
+    right: rightNotes.length ? withAdditionalNote(first.right, `Shown only here: ${joinText(rightNotes)}`) : first.right
   };
   return [firstWithNotes, ...rows.slice(1)];
 }
@@ -185,16 +189,14 @@ export function compareBattleStats(
     if (field === "speed") return speedComparisons(context, left, right);
     const leftStat = profileStat(left, id);
     const rightStat = profileStat(right, id);
-    return [comparisonPair(
-      field,
-      label,
-      leftStat
-        ? comparedStat(field, label, leftStat.value, leftStat.rank, leftStat.note)
-        : null,
-      rightStat
-        ? comparedStat(field, label, rightStat.value, rightStat.rank, rightStat.note)
-        : null
-    )];
+    return [
+      comparisonPair(
+        field,
+        label,
+        leftStat ? comparedStat(field, label, leftStat.value, leftStat.rank, leftStat.note) : null,
+        rightStat ? comparedStat(field, label, rightStat.value, rightStat.rank, rightStat.note) : null
+      )
+    ];
   });
 }
 
@@ -245,21 +247,9 @@ export function battleTieBreakers(
   right: EngineView
 ): readonly BattleTieBreaker[] {
   return [
-    powerTieBreaker(
-      context,
-      left,
-      right,
-      "regeneration",
-      "Regeneration",
-      (ref) => powerTypeRank(context, ref)
-    ),
-    powerTieBreaker(
-      context,
-      left,
-      right,
-      "martial-arts-mastery",
-      "Martial Arts Mastery",
-      (ref) => ref ? degreeRank(context, ref) : 0
+    powerTieBreaker(context, left, right, "regeneration", "Regeneration", (ref) => powerTypeRank(context, ref)),
+    powerTieBreaker(context, left, right, "martial-arts-mastery", "Martial Arts Mastery", (ref) =>
+      ref ? degreeRank(context, ref) : 0
     )
   ];
 }
@@ -282,15 +272,14 @@ function nonPhysicalTargetCoversProtection(
   if (protectionTypes.length > 0) {
     return powerTypesCover(context, targetTypes, protectionTypes);
   }
-  const availableTypes = context.catalogs.power_types
-    .filter((type) => Reflect.get(type, "power_id") === protectionRef.id);
+  const availableTypes = context.catalogs.power_types.filter(
+    (type) => Reflect.get(type, "power_id") === protectionRef.id
+  );
   if (availableTypes.length === 0) return true;
   return targetTypes.some((typeId) => byId(context, "power_types", typeId)?.covers_all === true);
 }
 
-function nonPhysicalInteractionTargets(
-  view: EngineView
-): readonly PowerTargetRef[] {
+function nonPhysicalInteractionTargets(view: EngineView): readonly PowerTargetRef[] {
   return view.effects.flatMap((effect) =>
     arrayField<PowerTargetRef>(
       Reflect.get(effect, "non_physical_interaction") as object | undefined,
@@ -321,11 +310,7 @@ function contextualDisplayNames(
 
   const leftIdentity = firstDistinctIdentity(left);
   const rightIdentity = firstDistinctIdentity(right);
-  if (
-    !leftIdentity ||
-    !rightIdentity ||
-    leftIdentity.trim() === rightIdentity.trim()
-  ) {
+  if (!leftIdentity || !rightIdentity || leftIdentity.trim() === rightIdentity.trim()) {
     return { left: leftName, right: rightName };
   }
 
@@ -342,10 +327,9 @@ function nonPhysicalAttackStatus(
 ): { readonly canAffect: boolean; readonly blockedBy: readonly string[] } {
   const interactionTargets = nonPhysicalInteractionTargets(attacker);
   const blockedBy = activeNonPhysicalProtections(target)
-    .filter((protection) =>
-      !interactionTargets.some((targetRef) =>
-        nonPhysicalTargetCoversProtection(context, targetRef, protection)
-      )
+    .filter(
+      (protection) =>
+        !interactionTargets.some((targetRef) => nonPhysicalTargetCoversProtection(context, targetRef, protection))
     )
     .map((ref) => powerTargetRefLabel(context, ref));
   return { canAffect: blockedBy.length === 0, blockedBy };
@@ -408,10 +392,10 @@ export function scoreBattle(
   const rightScore = rows.reduce((total, row) => total + row.rightRank, 0);
   const pointWinner = winnerFor(leftScore, rightScore);
   const interaction = battleInteractionOutcome(context, left, right);
-  const tieBreaker = !interaction && pointWinner === "tie"
-    ? battleTieBreakers(context, left, right)
-        .find((candidate) => candidate.winner !== "tie") ?? null
-    : null;
+  const tieBreaker =
+    !interaction && pointWinner === "tie"
+      ? (battleTieBreakers(context, left, right).find((candidate) => candidate.winner !== "tie") ?? null)
+      : null;
   return {
     rows,
     leftScore,
@@ -425,17 +409,14 @@ export function scoreBattle(
   };
 }
 
-export function verdictForScore(
-  left: EngineView,
-  right: EngineView,
-  score: BattleScore
-): BattleVerdict {
+export function verdictForScore(left: EngineView, right: EngineView, score: BattleScore): BattleVerdict {
   const displayNames = contextualDisplayNames(left, right);
-  const headline = score.winner === "left"
-    ? `${displayNames.left} wins`
-    : score.winner === "right"
-      ? `${displayNames.right} wins`
-      : "Draw";
+  const headline =
+    score.winner === "left"
+      ? `${displayNames.left} wins`
+      : score.winner === "right"
+        ? `${displayNames.right} wins`
+        : "Draw";
   if (score.interaction) {
     const kind = score.interaction.winner === "tie" ? "stalemate" : "automatic";
     const result = score.interaction.winner === "tie" ? "Stalemate" : "Automatic win";

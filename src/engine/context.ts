@@ -1,36 +1,11 @@
-import type { CharacterEntry, NexyData } from "../domain/index.js";
+import { CATALOG_NAMES, type CatalogName, type CharacterEntry, type NexyData } from "../domain/index.js";
+
+export type { CatalogName };
 
 export interface CatalogRecord {
   readonly id: string;
   readonly [field: string]: unknown;
 }
-
-export type CatalogName =
-  | "media"
-  | "origins"
-  | "verses"
-  | "genders"
-  | "classifications"
-  | "derived_power_rules"
-  | "ability_modifiers"
-  | "powers"
-  | "power_types"
-  | "martial_arts_degrees"
-  | "acrobatics_degrees"
-  | "resistance_levels"
-  | "resistances"
-  | "magic_levels"
-  | "magic_natures"
-  | "equipment"
-  | "attacks"
-  | "stat_modifiers"
-  | "attack_durability_tiers"
-  | "speed_tiers"
-  | "lifting_strength_tiers"
-  | "striking_strength_tiers"
-  | "stamina_tiers"
-  | "range_tiers"
-  | "intelligence_tiers";
 
 export interface GameContext {
   readonly data: NexyData;
@@ -41,42 +16,12 @@ export interface GameContext {
   readonly statModifierStride: number;
 }
 
-const catalogNames: readonly CatalogName[] = [
-  "media",
-  "origins",
-  "verses",
-  "genders",
-  "classifications",
-  "derived_power_rules",
-  "ability_modifiers",
-  "powers",
-  "power_types",
-  "martial_arts_degrees",
-  "acrobatics_degrees",
-  "resistance_levels",
-  "resistances",
-  "magic_levels",
-  "magic_natures",
-  "equipment",
-  "attacks",
-  "stat_modifiers",
-  "attack_durability_tiers",
-  "speed_tiers",
-  "lifting_strength_tiers",
-  "striking_strength_tiers",
-  "stamina_tiers",
-  "range_tiers",
-  "intelligence_tiers"
-];
-
 function asCatalog(value: unknown): readonly CatalogRecord[] {
   if (!Array.isArray(value)) return [];
 
   return value.filter(
     (entry): entry is CatalogRecord =>
-      typeof entry === "object"
-      && entry !== null
-      && typeof Reflect.get(entry, "id") === "string"
+      typeof entry === "object" && entry !== null && typeof Reflect.get(entry, "id") === "string"
   );
 }
 
@@ -86,11 +31,11 @@ function entryId(character: CharacterEntry, index: number): string {
 }
 
 function normalizedCharacters(data: NexyData): readonly CharacterEntry[] {
-  const source = (data as NexyData & {
-    readonly characters:
-      | readonly CharacterEntry[]
-      | Readonly<Record<string, CharacterEntry>>;
-  }).characters;
+  const source = (
+    data as NexyData & {
+      readonly characters: readonly CharacterEntry[] | Readonly<Record<string, CharacterEntry>>;
+    }
+  ).characters;
 
   if (Array.isArray(source)) {
     return source.map((character, index) => ({
@@ -112,18 +57,13 @@ function normalizedCharacters(data: NexyData): readonly CharacterEntry[] {
 export function createGameContext(data: NexyData): GameContext {
   const optionSource = Reflect.get(data as object, "options") as Record<string, unknown> | undefined;
   const catalogEntries = Object.fromEntries(
-    catalogNames.map((name) => [name, asCatalog(optionSource?.[name])])
+    CATALOG_NAMES.map((name) => [name, asCatalog(optionSource?.[name])])
   ) as Record<CatalogName, readonly CatalogRecord[]>;
   const catalogIndexes = Object.fromEntries(
-    catalogNames.map((name) => [
-      name,
-      new Map(catalogEntries[name].map((entry) => [entry.id, entry]))
-    ])
+    CATALOG_NAMES.map((name) => [name, new Map(catalogEntries[name].map((entry) => [entry.id, entry]))])
   ) as unknown as Record<CatalogName, ReadonlyMap<string, CatalogRecord>>;
   const characters = normalizedCharacters(data);
-  const charactersById = new Map(
-    characters.map((character, index) => [entryId(character, index), character])
-  );
+  const charactersById = new Map(characters.map((character, index) => [entryId(character, index), character]));
   const modifierRanks = catalogEntries.stat_modifiers.map((entry) => numberField(entry, "rank"));
   const statModifierStride = Math.max(1, ...modifierRanks);
 
@@ -137,10 +77,7 @@ export function createGameContext(data: NexyData): GameContext {
   };
 }
 
-export function catalog(
-  context: GameContext,
-  name: CatalogName
-): readonly CatalogRecord[] {
+export function catalog(context: GameContext, name: CatalogName): readonly CatalogRecord[] {
   return context.catalogs[name];
 }
 
@@ -161,10 +98,7 @@ export function stringField(record: object | null | undefined, field: string): s
   return typeof value === "string" ? value : "";
 }
 
-export function optionalStringField(
-  record: object | null | undefined,
-  field: string
-): string | undefined {
+export function optionalStringField(record: object | null | undefined, field: string): string | undefined {
   const value = record ? Reflect.get(record, field) : undefined;
   return typeof value === "string" && value.length > 0 ? value : undefined;
 }
@@ -184,14 +118,11 @@ export function objectField(
 ): Readonly<Record<string, unknown>> | undefined {
   const value = record ? Reflect.get(record, field) : undefined;
   return typeof value === "object" && value !== null && !Array.isArray(value)
-    ? value as Readonly<Record<string, unknown>>
+    ? (value as Readonly<Record<string, unknown>>)
     : undefined;
 }
 
-export function arrayField<T = unknown>(
-  record: object | null | undefined,
-  field: string
-): readonly T[] {
+export function arrayField<T = unknown>(record: object | null | undefined, field: string): readonly T[] {
   const value = record ? Reflect.get(record, field) : undefined;
-  return Array.isArray(value) ? value as readonly T[] : [];
+  return Array.isArray(value) ? (value as readonly T[]) : [];
 }

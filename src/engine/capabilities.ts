@@ -1,5 +1,6 @@
 import type {
   CharacterForm,
+  DerivedPowerEvaluationStage,
   Effect,
   ImageRef,
   ImageRightsStatus,
@@ -44,17 +45,14 @@ const includeEveryPower: PowerPredicate = () => true;
 const includeEveryItem: ItemPredicate = () => true;
 
 function asEffects(value: unknown): readonly Effect[] {
-  return Array.isArray(value) ? value as readonly Effect[] : [];
+  return Array.isArray(value) ? (value as readonly Effect[]) : [];
 }
 
 function powerRefsField(value: object | null | undefined, field: string): readonly PowerRef[] {
   return arrayField<PowerRef>(value, field).filter((ref) => Boolean(ref?.id));
 }
 
-function resistanceRefsField(
-  value: object | null | undefined,
-  field: string
-): readonly ResistanceRef[] {
+function resistanceRefsField(value: object | null | undefined, field: string): readonly ResistanceRef[] {
   return arrayField<ResistanceRef>(value, field).filter((ref) => Boolean(ref?.id));
 }
 
@@ -62,10 +60,7 @@ export function idListKey(ids: readonly string[] | null | undefined): string {
   return [...(Array.isArray(ids) ? ids : [])].sort().join(",");
 }
 
-export function powerVariant(
-  power: CatalogRecord,
-  ref: PowerRef
-): CatalogRecord | undefined {
+export function powerVariant(power: CatalogRecord, ref: PowerRef): CatalogRecord | undefined {
   const variantId = optionalStringField(ref, "source_variant");
   return variantId
     ? arrayField<CatalogRecord>(power, "variants").find((variant) => variant.id === variantId)
@@ -135,15 +130,13 @@ function refsFromGrants<T extends PowerRef | ResistanceRef>(
 ): readonly T[] {
   return [
     ...arrayField<T>(grants, directField),
-    ...magicLevelsFromIds(context, arrayField<string>(grants, "magic_level_ids"))
-      .flatMap((level) => arrayField<T>(level, magicLevelField))
+    ...magicLevelsFromIds(context, arrayField<string>(grants, "magic_level_ids")).flatMap((level) =>
+      arrayField<T>(level, magicLevelField)
+    )
   ];
 }
 
-export function powerRefsFromGrants(
-  context: GameContext,
-  grants: object | null | undefined
-): readonly PowerRef[] {
+export function powerRefsFromGrants(context: GameContext, grants: object | null | undefined): readonly PowerRef[] {
   return refsFromGrants<PowerRef>(context, grants, "power_refs", "power_refs");
 }
 
@@ -176,14 +169,13 @@ export function grantedResistanceRefsFromEffects(
 
 export function powerRefEffects(context: GameContext, ref: PowerRef): readonly Effect[] {
   const { power, variant, includeBase } = powerRefContext(context, ref);
-  const magicNatureEffects = magicNaturesFromIds(
-    context,
-    arrayField<string>(ref, "magic_nature_ids")
-  ).flatMap((nature) => asEffects(Reflect.get(nature, "effects")));
+  const magicNatureEffects = magicNaturesFromIds(context, arrayField<string>(ref, "magic_nature_ids")).flatMap(
+    (nature) => asEffects(Reflect.get(nature, "effects"))
+  );
   const localEffects = Reflect.get(ref, "effects");
 
   if (Array.isArray(localEffects)) {
-    return [...localEffects as Effect[], ...magicNatureEffects];
+    return [...(localEffects as Effect[]), ...magicNatureEffects];
   }
 
   return [
@@ -202,9 +194,7 @@ export function grantedPowerRefsFromPowerRef(
   const magicNatures = magicNaturesFromIds(context, arrayField<string>(ref, "magic_nature_ids"));
 
   return [
-    ...(includeBase
-      ? powerRefsFromGrants(context, objectField(power, "grants"))
-      : []),
+    ...(includeBase ? powerRefsFromGrants(context, objectField(power, "grants")) : []),
     ...powerRefsFromGrants(context, objectField(variant, "grants")),
     ...magicNatures.flatMap((nature) => powerRefsField(nature, "power_refs")),
     ...grantedPowerRefsFromEffects(context, powerRefEffects(context, ref), includeEffect)
@@ -220,9 +210,7 @@ export function grantedResistanceRefsFromPowerRef(
   const magicNatures = magicNaturesFromIds(context, arrayField<string>(ref, "magic_nature_ids"));
 
   return [
-    ...(includeBase
-      ? resistanceRefsFromGrants(context, objectField(power, "grants"))
-      : []),
+    ...(includeBase ? resistanceRefsFromGrants(context, objectField(power, "grants")) : []),
     ...resistanceRefsFromGrants(context, objectField(variant, "grants")),
     ...magicNatures.flatMap((nature) => resistanceRefsField(nature, "resistance_refs")),
     ...grantedResistanceRefsFromEffects(context, powerRefEffects(context, ref), includeEffect)
@@ -249,11 +237,7 @@ export function resistanceRefKey(ref: ResistanceRef): string {
   ].join("|");
 }
 
-function compareRankTuples<T>(
-  left: T,
-  right: T,
-  ranker: (value: T) => readonly number[]
-): number {
+function compareRankTuples<T>(left: T, right: T, ranker: (value: T) => readonly number[]): number {
   const leftRanks = ranker(left);
   const rightRanks = ranker(right);
   const length = Math.max(leftRanks.length, rightRanks.length);
@@ -269,36 +253,34 @@ export function refStrength(context: GameContext, ref: PowerRef): readonly numbe
     magicLevelRank(context, ref),
     abilityModifierRank(context, ref),
     degreeRank(context, ref),
-    Array.isArray(Reflect.get(ref, "effects"))
-      ? (Reflect.get(ref, "effects") as readonly unknown[]).length
-      : 0
+    Array.isArray(Reflect.get(ref, "effects")) ? (Reflect.get(ref, "effects") as readonly unknown[]).length : 0
   ];
 }
 
-export function compareRefStrength(
-  context: GameContext,
-  left: PowerRef,
-  right: PowerRef
-): number {
+export function compareRefStrength(context: GameContext, left: PowerRef, right: PowerRef): number {
   return compareRankTuples(left, right, (ref) => refStrength(context, ref));
 }
 
-export function resistanceRefStrength(
-  context: GameContext,
-  ref: ResistanceRef
-): readonly number[] {
-  return [
-    resistanceLevelRank(context, ref),
-    magicLevelRank(context, ref),
-    abilityModifierRank(context, ref)
-  ];
+function localPowerEffectsSignature(ref: PowerRef): string | undefined {
+  const effects = Reflect.get(ref, "effects");
+  return Array.isArray(effects) ? JSON.stringify(effects) : undefined;
 }
 
-export function compareResistanceRefStrength(
-  context: GameContext,
-  left: ResistanceRef,
-  right: ResistanceRef
-): number {
+function assertCompatiblePowerRefs(existing: PowerRef, candidate: PowerRef, key: string): void {
+  const existingEffects = localPowerEffectsSignature(existing);
+  const candidateEffects = localPowerEffectsSignature(candidate);
+  if (existingEffects === candidateEffects) return;
+
+  throw new Error(
+    `Conflicting power references for ${key}: duplicate capability scopes must not define different local effects`
+  );
+}
+
+export function resistanceRefStrength(context: GameContext, ref: ResistanceRef): readonly number[] {
+  return [resistanceLevelRank(context, ref), magicLevelRank(context, ref), abilityModifierRank(context, ref)];
+}
+
+export function compareResistanceRefStrength(context: GameContext, left: ResistanceRef, right: ResistanceRef): number {
   return compareRankTuples(left, right, (ref) => resistanceRefStrength(context, ref));
 }
 
@@ -314,19 +296,13 @@ export function powerTypeCovers(
   seen.add(ownedTypeId);
   const ownedType = byId(context, "power_types", ownedTypeId);
   const requiredType = byId(context, "power_types", requiredTypeId);
-  if (
-    !ownedType
-    || !requiredType
-    || stringField(ownedType, "power_id") !== stringField(requiredType, "power_id")
-  ) {
+  if (!ownedType || !requiredType || stringField(ownedType, "power_id") !== stringField(requiredType, "power_id")) {
     return false;
   }
   if (booleanField(ownedType, "covers_all")) return true;
 
   return arrayField<string>(ownedType, "covers_type_ids").some(
-    (coveredId) =>
-      coveredId === requiredTypeId
-      || powerTypeCovers(context, coveredId, requiredTypeId, seen)
+    (coveredId) => coveredId === requiredTypeId || powerTypeCovers(context, coveredId, requiredTypeId, seen)
   );
 }
 
@@ -340,18 +316,14 @@ export function powerTypesCover(
   const owned = Array.isArray(ownedTypeIds) ? ownedTypeIds : [];
   if (owned.length === 0) return false;
 
-  return required.every((requiredId) =>
-    owned.some((ownedId) => powerTypeCovers(context, ownedId, requiredId))
-  );
+  return required.every((requiredId) => owned.some((ownedId) => powerTypeCovers(context, ownedId, requiredId)));
 }
 
 export function powerTypeRank(context: GameContext, ref?: PowerRef | null): number {
   if (!ref) return 0;
   return Math.max(
     0,
-    ...arrayField<string>(ref, "type_ids").map((id) =>
-      numberField(byId(context, "power_types", id), "rank")
-    )
+    ...arrayField<string>(ref, "type_ids").map((id) => numberField(byId(context, "power_types", id), "rank"))
   );
 }
 
@@ -364,11 +336,7 @@ export function powerTargetRefMatches(
   const targetVariant = optionalStringField(targetRef, "source_variant");
   if (targetVariant && optionalStringField(powerRef, "source_variant") !== targetVariant) return false;
   if (magicLevelRank(context, powerRef) < magicLevelRank(context, targetRef)) return false;
-  return powerTypesCover(
-    context,
-    arrayField<string>(powerRef, "type_ids"),
-    arrayField<string>(targetRef, "type_ids")
-  );
+  return powerTypesCover(context, arrayField<string>(powerRef, "type_ids"), arrayField<string>(targetRef, "type_ids"));
 }
 
 export function powerRefMeetsRequirement(
@@ -406,11 +374,7 @@ function requirementStat(requirement: object): RankedStatInput {
   };
 }
 
-function meetsStatRequirement(
-  context: GameContext,
-  form: CharacterForm,
-  requirement: object
-): boolean {
+function meetsStatRequirement(context: GameContext, form: CharacterForm, requirement: object): boolean {
   const statName = stringField(requirement, "stat") as RankedStatName;
   const catalogName = statCatalogs[statName];
   if (!catalogName) return false;
@@ -429,36 +393,36 @@ function meetsStatRequirement(
 
 export function derivedPowerRefs(
   context: GameContext,
-  form: CharacterForm
+  form: CharacterForm,
+  evaluationStage: DerivedPowerEvaluationStage = "base"
 ): readonly PowerRef[] {
   return context.catalogs.derived_power_rules
+    .filter((rule) => (optionalStringField(rule, "evaluation_stage") || "base") === evaluationStage)
     .filter((rule) => {
       const requirements = arrayField<object>(rule, "requirements");
       const configuredMinimum = Reflect.get(rule, "min_matches");
-      const minimum = Number.isInteger(configuredMinimum)
-        ? Number(configuredMinimum)
-        : requirements.length;
-      return requirements.filter((requirement) =>
-        meetsStatRequirement(context, form, requirement)
-      ).length >= minimum;
+      const minimum = Number.isInteger(configuredMinimum) ? Number(configuredMinimum) : requirements.length;
+      return requirements.filter((requirement) => meetsStatRequirement(context, form, requirement)).length >= minimum;
     })
-    .map((rule) => ({
-      id: stringField(rule, "power_id"),
-      modifier: "normal",
-      type_ids: [],
-      derived: true,
-      derived_rule_id: rule.id
-    } as PowerRef));
+    .map(
+      (rule) =>
+        ({
+          id: stringField(rule, "power_id"),
+          modifier: "normal",
+          type_ids: [],
+          derived: true,
+          derived_rule_id: rule.id
+        }) as PowerRef
+    );
 }
 
 export function itemRefs(
   ids: readonly string[] | null | undefined,
   refs: readonly Readonly<Record<string, unknown>>[] | null | undefined
 ): readonly Readonly<Record<string, unknown>>[] {
-  return [
-    ...(Array.isArray(ids) ? ids.map((id) => ({ id })) : []),
-    ...(Array.isArray(refs) ? refs : [])
-  ].filter((ref) => Boolean(optionalStringField(ref, "id")));
+  return [...(Array.isArray(ids) ? ids.map((id) => ({ id })) : []), ...(Array.isArray(refs) ? refs : [])].filter(
+    (ref) => Boolean(optionalStringField(ref, "id"))
+  );
 }
 
 export function catalogItemFromRef(
@@ -473,7 +437,7 @@ export function catalogItemFromRef(
   return {
     ...item,
     effects: Array.isArray(localEffects)
-      ? localEffects as readonly Effect[]
+      ? (localEffects as readonly Effect[])
       : asEffects(Reflect.get(item, "effects")),
     ref
   };
@@ -499,11 +463,7 @@ export function usableItems(
 ): readonly ResolvedCatalogItem[] {
   return catalogItemsFromRefs(context, itemRefs(ids, refs), catalogName)
     .filter((item) =>
-      powerRefsMeetRequirements(
-        context,
-        ownedPowerRefs,
-        arrayField<PowerRef>(item, "required_power_refs")
-      )
+      powerRefsMeetRequirements(context, ownedPowerRefs, arrayField<PowerRef>(item, "required_power_refs"))
     )
     .filter(includeItem);
 }
@@ -515,20 +475,10 @@ export function activeItemEffectsForPowerRefs(
   includeItem: ItemPredicate = includeEveryItem
 ): readonly Effect[] {
   const standardEquipmentIds = arrayField<string>(form, "standard_equipment_ids");
-  const standardEquipmentRefs = arrayField<Readonly<Record<string, unknown>>>(
-    form,
-    "standard_equipment_refs"
-  );
+  const standardEquipmentRefs = arrayField<Readonly<Record<string, unknown>>>(form, "standard_equipment_refs");
   const attackIds = arrayField<string>(form, "attack_ids");
   return [
-    ...usableItems(
-      context,
-      standardEquipmentIds,
-      standardEquipmentRefs,
-      "equipment",
-      ownedPowerRefs,
-      includeItem
-    ),
+    ...usableItems(context, standardEquipmentIds, standardEquipmentRefs, "equipment", ownedPowerRefs, includeItem),
     ...usableItems(context, attackIds, [], "attacks", ownedPowerRefs, includeItem)
   ].flatMap((item) => item.effects ?? []);
 }
@@ -556,6 +506,7 @@ export function powerRefs(
     const existingIndex = indexes.get(key);
     if (existingIndex !== undefined) {
       const existing = refs[existingIndex];
+      if (existing) assertCompatiblePowerRefs(existing, ref, key);
       if (!existing || compareRefStrength(context, ref, existing) <= 0) continue;
       refs[existingIndex] = ref;
     } else {
@@ -568,10 +519,7 @@ export function powerRefs(
   return refs;
 }
 
-export function activeItemEffects(
-  context: GameContext,
-  form: CharacterForm
-): readonly Effect[] {
+export function activeItemEffects(context: GameContext, form: CharacterForm): readonly Effect[] {
   return activeItemEffectsForPowerRefs(context, form, powerRefs(context, form));
 }
 
@@ -587,9 +535,7 @@ export function resistanceRefs(
   const queue: ResistanceRef[] = [
     ...arrayField<ResistanceRef>(form, "resistance_refs"),
     ...grantedResistanceRefsFromEffects(context, itemEffects, includeEffect),
-    ...resolvedPowerRefs.flatMap((ref) =>
-      grantedResistanceRefsFromPowerRef(context, ref, includeEffect)
-    )
+    ...resolvedPowerRefs.flatMap((ref) => grantedResistanceRefsFromPowerRef(context, ref, includeEffect))
   ];
 
   for (let index = 0; index < queue.length; index += 1) {
@@ -618,10 +564,7 @@ export function activeEffects(
   itemEffects: readonly Effect[] = activeItemEffects(context, form),
   includeEffect: EffectPredicate = includeEveryEffect
 ): readonly Effect[] {
-  return [
-    ...itemEffects,
-    ...refs.flatMap((ref) => powerRefEffects(context, ref))
-  ].filter(includeEffect);
+  return [...itemEffects, ...refs.flatMap((ref) => powerRefEffects(context, ref))].filter(includeEffect);
 }
 
 export function effectiveForm(
@@ -671,10 +614,7 @@ export function effectiveForm(
   return result;
 }
 
-export function activeImage(
-  form: CharacterForm,
-  effects: readonly Effect[]
-): ImageRef | undefined {
+export function activeImage(form: CharacterForm, effects: readonly Effect[]): ImageRef | undefined {
   const baseImage = arrayField<ImageRef>(form, "images")[0];
   const updates = effects
     .map((effect, sourceIndex) => ({
@@ -687,17 +627,10 @@ export function activeImage(
   const winner = updates.reduce((current, image) => {
     const currentPriorityValue = Reflect.get(current, "priority");
     const imagePriorityValue = Reflect.get(image, "priority");
-    const currentPriority = Number.isInteger(currentPriorityValue)
-      ? Number(currentPriorityValue)
-      : 0;
-    const imagePriority = Number.isInteger(imagePriorityValue)
-      ? Number(imagePriorityValue)
-      : 0;
+    const currentPriority = Number.isInteger(currentPriorityValue) ? Number(currentPriorityValue) : 0;
+    const imagePriority = Number.isInteger(imagePriorityValue) ? Number(imagePriorityValue) : 0;
     if (imagePriority > currentPriority) return image;
-    if (
-      imagePriority === currentPriority
-      && numberField(image, "sourceIndex") > numberField(current, "sourceIndex")
-    ) {
+    if (imagePriority === currentPriority && numberField(image, "sourceIndex") > numberField(current, "sourceIndex")) {
       return image;
     }
     return current;
@@ -712,11 +645,9 @@ export function activeImage(
     name: optionalStringField(winner, "name") || baseImage?.name || "",
     image: stringField(winner, "image"),
     source_url: optionalStringField(winner, "source_url") || baseImage?.source_url || "",
-    rights_status: (
-      optionalStringField(winner, "rights_status")
-      || baseImage?.rights_status
-      || "unverified-third-party"
-    ) as ImageRightsStatus,
+    rights_status: (optionalStringField(winner, "rights_status") ||
+      baseImage?.rights_status ||
+      "unverified-third-party") as ImageRightsStatus,
     ...(publishUnverified ? { publish_unverified: true } : {}),
     ...(creator ? { creator } : {}),
     ...(rightsHolder ? { rights_holder: rightsHolder } : {}),
@@ -725,11 +656,7 @@ export function activeImage(
   };
 }
 
-export function formatAbilityLabel(
-  context: GameContext,
-  label: string,
-  ref: PowerRef | ResistanceRef
-): string {
+export function formatAbilityLabel(context: GameContext, label: string, ref: PowerRef | ResistanceRef): string {
   const resolved = abilityModifier(context, ref);
   if (!resolved || resolved.id === "normal") return label;
   const displayPrefix = optionalStringField(resolved, "display_prefix");
@@ -737,10 +664,7 @@ export function formatAbilityLabel(
   return `${prefix}${label}${optionalStringField(resolved, "display_suffix") || ""}`;
 }
 
-export function powerTargetRefLabel(
-  context: GameContext,
-  ref: PowerTargetRef
-): string {
+export function powerTargetRefLabel(context: GameContext, ref: PowerTargetRef): string {
   const power = byId(context, "powers", ref.id);
   const label = power ? stringField(power, "name") : humanizeId(ref.id);
   const typeNames = arrayField<string>(ref, "type_ids")
@@ -751,29 +675,21 @@ export function powerTargetRefLabel(
   const variantId = optionalStringField(ref, "source_variant");
   if (variantId) {
     const variant = power
-      ? arrayField<CatalogRecord>(power, "variants")
-          .find((entry) => entry.id === variantId)
+      ? arrayField<CatalogRecord>(power, "variants").find((entry) => entry.id === variantId)
       : undefined;
     scope.push(`Variant: ${stringField(variant, "name") || humanizeId(variantId)}`);
   }
   const magicLevelId = optionalStringField(ref, "magic_level_id");
   if (magicLevelId) {
     const magicLevel = byId(context, "magic_levels", magicLevelId);
-    scope.push(
-      `Magic level: ${stringField(magicLevel, "name") || humanizeId(magicLevelId)}`
-    );
+    scope.push(`Magic level: ${stringField(magicLevel, "name") || humanizeId(magicLevelId)}`);
   }
   return scope.length ? `${baseLabel} (${scope.join("; ")})` : baseLabel;
 }
 
 function absorptionTargetName(context: GameContext, ref: PowerRef): string {
   const targets = powerRefEffects(context, ref)
-    .flatMap((effect) =>
-      arrayField<PowerTargetRef>(
-        objectField(effect, "absorption"),
-        "target_power_refs"
-      )
-    )
+    .flatMap((effect) => arrayField<PowerTargetRef>(objectField(effect, "absorption"), "target_power_refs"))
     .map((target) => powerTargetRefLabel(context, target));
   return targets.length === 1 ? (targets[0] ?? "").replace(/ Manipulation$/i, "") : "";
 }
@@ -782,16 +698,8 @@ export function powerRefLabel(context: GameContext, ref: PowerRef): string {
   const power = byId(context, "powers", ref.id);
   if (!power) return humanizeId(ref.id);
 
-  const martialDegree = byId(
-    context,
-    "martial_arts_degrees",
-    optionalStringField(ref, "martial_arts_degree_id")
-  );
-  const acrobaticsDegree = byId(
-    context,
-    "acrobatics_degrees",
-    optionalStringField(ref, "acrobatics_degree_id")
-  );
+  const martialDegree = byId(context, "martial_arts_degrees", optionalStringField(ref, "martial_arts_degree_id"));
+  const acrobaticsDegree = byId(context, "acrobatics_degrees", optionalStringField(ref, "acrobatics_degree_id"));
   if (martialDegree) {
     return formatAbilityLabel(context, stringField(martialDegree, "name"), ref);
   }
@@ -818,24 +726,15 @@ export function powerRefLabel(context: GameContext, ref: PowerRef): string {
 export function resistanceRefLabel(context: GameContext, ref: ResistanceRef): string {
   const resistance = byId(context, "resistances", ref.id);
   const label = resistance ? stringField(resistance, "name") : humanizeId(ref.id);
-  const level = byId(
-    context,
-    "resistance_levels",
-    optionalStringField(ref, "level") || "resistant"
-  );
+  const level = byId(context, "resistance_levels", optionalStringField(ref, "level") || "resistant");
   const levelLabel = level?.id === "immunity" ? `Immunity to ${label}` : label;
   return formatAbilityLabel(context, levelLabel, ref);
 }
 
-export function formatStatRequirement(
-  context: GameContext,
-  requirement: object
-): string {
+export function formatStatRequirement(context: GameContext, requirement: object): string {
   const statName = stringField(requirement, "stat") as RankedStatName;
   const catalogName = statCatalogs[statName];
-  const value = catalogName
-    ? formatStat(context, requirementStat(requirement), catalogName)
-    : "";
+  const value = catalogName ? formatStat(context, requirementStat(requirement), catalogName) : "";
   if (!value) return "";
   const label = humanizeId(statName);
   const comparison = stringField(requirement, "comparison");

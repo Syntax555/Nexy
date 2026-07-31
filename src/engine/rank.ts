@@ -4,7 +4,8 @@ import type {
   RankedStat,
   RankedStatInput,
   RankedStatName,
-  ResistanceRef
+  ResistanceRef,
+  SpeedStatName
 } from "../domain/index.js";
 import {
   byId,
@@ -23,7 +24,7 @@ export const speedDefinitions = [
   ["reaction_speed", "Reaction Speed"],
   ["travel_speed", "Travel Speed"],
   ["flight_speed", "Flight Speed"]
-] as const satisfies readonly (readonly [RankedStatName, string])[];
+] as const satisfies readonly (readonly [SpeedStatName, string])[];
 
 export const statCatalogs: Readonly<Partial<Record<RankedStatName, CatalogName>>> = {
   attack_potency: "attack_durability_tiers",
@@ -40,6 +41,10 @@ export const statCatalogs: Readonly<Partial<Record<RankedStatName, CatalogName>>
   intelligence: "intelligence_tiers"
 };
 
+type ProfileStatDefinition =
+  | readonly [string, string, "tier" | "speed", undefined]
+  | readonly [string, string, RankedStatName, CatalogName];
+
 export const profileStatDefinitions = [
   ["tier", "Tier", "tier", undefined],
   ["attack_potency", "Attack Potency", "attack_potency", "attack_durability_tiers"],
@@ -50,20 +55,14 @@ export const profileStatDefinitions = [
   ["stamina", "Stamina", "stamina", "stamina_tiers"],
   ["range", "Range", "range", "range_tiers"],
   ["intelligence", "Intelligence", "intelligence", "intelligence_tiers"]
-] as const satisfies readonly (
-  readonly [string, string, RankedStatName | "tier" | "speed", CatalogName | undefined]
-)[];
+] as const satisfies readonly ProfileStatDefinition[];
 
 function rankedRecord(stat: RankedStatInput | null | undefined): Readonly<Record<string, unknown>> {
   if (typeof stat === "string") return { value: stat, modifier: "normal" };
-  return typeof stat === "object" && stat !== null
-    ? stat as unknown as Readonly<Record<string, unknown>>
-    : {};
+  return typeof stat === "object" && stat !== null ? (stat as unknown as Readonly<Record<string, unknown>>) : {};
 }
 
-export function normalizeStat(
-  stat: RankedStatInput | null | undefined
-): RankedStat | undefined {
+export function normalizeStat(stat: RankedStatInput | null | undefined): RankedStat | undefined {
   const source = rankedRecord(stat);
   const value = optionalStringField(source, "value");
   if (!value) return undefined;
@@ -92,16 +91,17 @@ export function modifier(
   }
 
   const normalized = normalizeStat(stat);
-  return byId(context, "stat_modifiers", normalized?.modifier || "normal")
-    ?? byId(context, "stat_modifiers", "normal");
+  return byId(context, "stat_modifiers", normalized?.modifier || "normal") ?? byId(context, "stat_modifiers", "normal");
 }
 
 export function abilityModifier(
   context: GameContext,
   ref: PowerRef | ResistanceRef | Readonly<Record<string, unknown>> | null | undefined
 ): CatalogRecord | undefined {
-  return byId(context, "ability_modifiers", optionalStringField(ref, "modifier") || "normal")
-    ?? byId(context, "ability_modifiers", "normal");
+  return (
+    byId(context, "ability_modifiers", optionalStringField(ref, "modifier") || "normal") ??
+    byId(context, "ability_modifiers", "normal")
+  );
 }
 
 export function abilityModifierRank(
@@ -115,10 +115,7 @@ export function magicLevelRank(
   context: GameContext,
   ref: PowerRef | ResistanceRef | Readonly<Record<string, unknown>> | null | undefined
 ): number {
-  return numberField(
-    byId(context, "magic_levels", optionalStringField(ref, "magic_level_id")),
-    "rank"
-  );
+  return numberField(byId(context, "magic_levels", optionalStringField(ref, "magic_level_id")), "rank");
 }
 
 export function degreeRank(
@@ -140,10 +137,7 @@ export function resistanceLevelRank(
   context: GameContext,
   ref: ResistanceRef | Readonly<Record<string, unknown>> | null | undefined
 ): number {
-  return numberField(
-    byId(context, "resistance_levels", optionalStringField(ref, "level") || "resistant"),
-    "rank"
-  );
+  return numberField(byId(context, "resistance_levels", optionalStringField(ref, "level") || "resistant"), "rank");
 }
 
 export function statEntry(
@@ -163,14 +157,10 @@ export function compositeRank(
   if (!entry) return 0;
 
   const resolvedModifier = modifier(context, stat, entry);
-  return ((numberField(entry, "rank") - 1) * context.statModifierStride)
-    + numberField(resolvedModifier, "rank");
+  return (numberField(entry, "rank") - 1) * context.statModifierStride + numberField(resolvedModifier, "rank");
 }
 
-export function formStat(
-  form: CharacterForm,
-  statName: RankedStatName
-): RankedStatInput | null | undefined {
+export function formStat(form: CharacterForm, statName: RankedStatName): RankedStatInput | null | undefined {
   return Reflect.get(form, statName) as RankedStatInput | null | undefined;
 }
 
@@ -181,9 +171,7 @@ export function tierRank(context: GameContext, form: CharacterForm): number {
 export function speedRank(context: GameContext, form: CharacterForm): number {
   return Math.max(
     0,
-    ...speedDefinitions.map(([field]) =>
-      compositeRank(context, formStat(form, field), "speed_tiers")
-    )
+    ...speedDefinitions.map(([field]) => compositeRank(context, formStat(form, field), "speed_tiers"))
   );
 }
 
@@ -196,22 +184,14 @@ export function rankedStatRank(
   if (field === "tier") return tierRank(context, form);
   if (field === "speed") return speedRank(context, form);
   const resolvedCatalog = catalogName ?? statCatalogs[field];
-  return resolvedCatalog
-    ? compositeRank(context, formStat(form, field), resolvedCatalog)
-    : 0;
+  return resolvedCatalog ? compositeRank(context, formStat(form, field), resolvedCatalog) : 0;
 }
 
-function statDisplayValue(
-  entry: CatalogRecord,
-  catalogName: CatalogName,
-  valueField: string
-): string {
+function statDisplayValue(entry: CatalogRecord, catalogName: CatalogName, valueField: string): string {
   const value = stringField(entry, valueField);
   if (catalogName !== "striking_strength_tiers" || valueField !== "name") return value;
 
-  return value
-    .replace(/ level\+$/i, "+")
-    .replace(/ level$/i, "");
+  return value.replace(/ level\+$/i, "+").replace(/ level$/i, "");
 }
 
 export function formatStat(
@@ -236,9 +216,7 @@ export function formatTier(context: GameContext, form: CharacterForm): string {
 }
 
 export function humanizeId(value: string): string {
-  return value
-    .replace(/[-_]+/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  return value.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 export function joinText(items: readonly string[]): string {
@@ -286,21 +264,20 @@ function profileSpeedNote(form: CharacterForm): string | undefined {
   return entries.map((entry) => `${entry.label}: ${entry.note}`).join(" / ");
 }
 
-export function statsForForm(
-  context: GameContext,
-  form: CharacterForm
-): readonly ResolvedStat[] {
+export function statsForForm(context: GameContext, form: CharacterForm): readonly ResolvedStat[] {
   return profileStatDefinitions.map(([id, label, field, catalogName]) => {
-    const value = field === "tier"
-      ? formatTier(context, form)
-      : field === "speed"
-        ? formatSpeed(context, form)
-        : formatStat(context, formStat(form, field), catalogName!);
-    const note = field === "tier"
-      ? undefined
-      : field === "speed"
-        ? profileSpeedNote(form)
-        : normalizeStat(formStat(form, field))?.note;
+    const value =
+      field === "tier"
+        ? formatTier(context, form)
+        : field === "speed"
+          ? formatSpeed(context, form)
+          : formatStat(context, formStat(form, field), catalogName);
+    const note =
+      field === "tier"
+        ? undefined
+        : field === "speed"
+          ? profileSpeedNote(form)
+          : normalizeStat(formStat(form, field))?.note;
     return {
       id,
       label,

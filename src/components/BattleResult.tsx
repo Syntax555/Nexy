@@ -1,12 +1,6 @@
 import { characterImageVariant } from "../app/assets.js";
 import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
-import type {
-  BattleReport,
-  CharacterProfile,
-  ProfileCapability,
-  Side,
-  Winner
-} from "../domain/index.js";
+import type { BattleReport, CharacterProfile, ProfileCapability, Side, Winner } from "../domain/index.js";
 import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
 import { CharacterImage } from "./CharacterImage.js";
 
@@ -19,20 +13,19 @@ interface BattleResultProps {
 
 function profileIdentity(profile: CharacterProfile, fallback: string): string {
   const characterName = profile.character.name.trim().toLocaleLowerCase();
-  return profile.names.find((name) =>
-    name.trim() && name.trim().toLocaleLowerCase() !== characterName
-  )?.trim() || profile.key.name?.trim() || fallback;
+  return (
+    profile.names.find((name) => name.trim() && name.trim().toLocaleLowerCase() !== characterName)?.trim() ||
+    profile.key.name?.trim() ||
+    fallback
+  );
 }
 
 function combatantLabels(report: BattleReport): {
   readonly left: string;
   readonly right: string;
 } {
-  const namesCollide = report.left.character.name.localeCompare(
-    report.right.character.name,
-    undefined,
-    { sensitivity: "base" }
-  ) === 0;
+  const namesCollide =
+    report.left.character.name.localeCompare(report.right.character.name, undefined, { sensitivity: "base" }) === 0;
 
   if (!namesCollide) {
     return {
@@ -43,11 +36,7 @@ function combatantLabels(report: BattleReport): {
 
   const leftIdentity = profileIdentity(report.left, "Fighter 01");
   const rightIdentity = profileIdentity(report.right, "Fighter 02");
-  const identitiesCollide = leftIdentity.localeCompare(
-    rightIdentity,
-    undefined,
-    { sensitivity: "base" }
-  ) === 0;
+  const identitiesCollide = leftIdentity.localeCompare(rightIdentity, undefined, { sensitivity: "base" }) === 0;
 
   return {
     left: `${report.left.character.name} (${identitiesCollide ? "Fighter 01" : leftIdentity})`,
@@ -55,10 +44,7 @@ function combatantLabels(report: BattleReport): {
   };
 }
 
-function winnerLabel(
-  winner: Winner,
-  labels: ReturnType<typeof combatantLabels>
-): string {
+function winnerLabel(winner: Winner, labels: ReturnType<typeof combatantLabels>): string {
   if (winner === "left") return labels.left;
   if (winner === "right") return labels.right;
   return "Draw";
@@ -73,9 +59,7 @@ function CombatantCard({
   readonly profile: CharacterProfile;
   readonly label: string;
 }) {
-  const image = isImageEnabledForPublicDisplay(profile.image)
-    ? profile.image
-    : null;
+  const image = isImageEnabledForPublicDisplay(profile.image) ? profile.image : null;
   return (
     <article class="combatant-card">
       <div class="combatant-card__copy">
@@ -86,26 +70,23 @@ function CombatantCard({
           {profile.key.name ? ` · ${profile.key.name}` : ""}
         </p>
         <ul class="combatant-card__facts">
-          {profile.details.map((detail) => <li key={detail}>{detail}</li>)}
+          {profile.details.map((detail) => (
+            <li key={detail}>{detail}</li>
+          ))}
           <li>{profile.stats.length} ranked stats</li>
         </ul>
       </div>
       <div class="combatant-card__artwork">
         <div class="combatant-card__image">
           {image ? (
-            <CharacterImage
-              src={characterImageVariant(image.image, 640)}
-              alt={`${label} — ${image.name}`}
-            />
+            <CharacterImage src={characterImageVariant(image.image, 640)} alt={`${label} — ${image.name}`} />
           ) : (
             <span class="image-fallback" aria-hidden="true">
               {profile.character.name.charAt(0)}
             </span>
           )}
         </div>
-        {image ? (
-          <ArtworkDisclosure image={image} />
-        ) : null}
+        {image ? <ArtworkDisclosure image={image} /> : null}
       </div>
     </article>
   );
@@ -114,10 +95,7 @@ function CombatantCard({
 function CapabilityTag({ capability }: { readonly capability: ProfileCapability }) {
   const status = capability.status;
   const statusCode = status?.code ?? "active";
-  const details = [
-    ...(status?.reason ? [status.reason] : []),
-    ...(capability.details ?? [])
-  ];
+  const details = [...(status?.reason ? [status.reason] : []), ...(capability.details ?? [])];
 
   return (
     <li class="capability-tag" data-status={statusCode}>
@@ -125,20 +103,18 @@ function CapabilityTag({ capability }: { readonly capability: ProfileCapability 
         <details>
           <summary>
             <strong>{capability.label}</strong>
-            <small>
-              {status?.label ?? (capability.placeholder ? "Unspecified" : "Active")}
-            </small>
+            <small>{status?.label ?? (capability.placeholder ? "Unspecified" : "Active")}</small>
           </summary>
           <ul class="capability-tag__details">
-            {details.map((detail) => <li key={detail}>{detail}</li>)}
+            {details.map((detail) => (
+              <li key={detail}>{detail}</li>
+            ))}
           </ul>
         </details>
       ) : (
         <>
           <strong>{capability.label}</strong>
-          <small>
-            {status?.label ?? (capability.placeholder ? "Unspecified" : "Active")}
-          </small>
+          <small>{status?.label ?? (capability.placeholder ? "Unspecified" : "Active")}</small>
         </>
       )}
     </li>
@@ -156,7 +132,9 @@ function CapabilityColumn({
 }) {
   return (
     <div class="capability-column">
-      <h3>{label} · {side === "left" ? "Fighter 01" : "Fighter 02"}</h3>
+      <h3>
+        {label} · {side === "left" ? "Fighter 01" : "Fighter 02"}
+      </h3>
       {profile.sections
         .filter((section) => section.items.length > 0)
         .map((section) => (
@@ -164,10 +142,7 @@ function CapabilityColumn({
             <h3 class="capability-section-title">{section.label}</h3>
             <ul class="capability-list">
               {section.items.map((item, index) => (
-                <CapabilityTag
-                  capability={item}
-                  key={`${section.id}-${item.id}-${index}`}
-                />
+                <CapabilityTag capability={item} key={`${section.id}-${item.id}-${index}`} />
               ))}
             </ul>
           </section>
@@ -176,12 +151,9 @@ function CapabilityColumn({
   );
 }
 
-function relabeledInteractionDetail(
-  report: BattleReport,
-  labels: ReturnType<typeof combatantLabels>
-): string {
+function relabeledInteractionDetail(report: BattleReport, labels: ReturnType<typeof combatantLabels>): string {
   const interaction = report.score.interaction;
-  if (!interaction || interaction.winner !== "tie") return interaction?.detail ?? "";
+  if (interaction?.winner !== "tie") return interaction?.detail ?? "";
 
   const parts = interaction.detail.split(";").map((part) => part.trim());
   const leftPart = parts[0];
@@ -203,20 +175,17 @@ function relabeledInteractionDetail(
   ].join("; ");
 }
 
-function contextualInteractionSummary(
-  report: BattleReport,
-  labels: ReturnType<typeof combatantLabels>
-): string {
+function contextualInteractionSummary(report: BattleReport, labels: ReturnType<typeof combatantLabels>): string {
   const interaction = report.score.interaction;
   if (!interaction) return "";
 
-  const labelsAreContextual = labels.left !== report.left.character.name
-    || labels.right !== report.right.character.name;
+  const labelsAreContextual =
+    labels.left !== report.left.character.name || labels.right !== report.right.character.name;
   if (
-    !labelsAreContextual
-    || interaction.winner === "tie"
-    || interaction.summary.includes(labels.left)
-    || interaction.summary.includes(labels.right)
+    !labelsAreContextual ||
+    interaction.winner === "tie" ||
+    interaction.summary.includes(labels.left) ||
+    interaction.summary.includes(labels.right)
   ) {
     return interaction.summary;
   }
@@ -237,25 +206,24 @@ function resolutionLabel(resolution: BattleReport["resolution"]): string {
   return `stable in ${rounds}`;
 }
 
-export function BattleResult({
-  report,
-  shareLabel,
-  onEdit,
-  onShare
-}: BattleResultProps) {
+function comparisonRank(stat: { readonly rank: number; readonly note?: string } | null): string {
+  if (!stat) return "No rank";
+  return `Rank ${stat.rank}${stat.note ? ` · ${stat.note}` : ""}`;
+}
+
+export function BattleResult({ report, shareLabel, onEdit, onShare }: BattleResultProps) {
   const { left, right, score, verdict } = report;
   const labels = combatantLabels(report);
-  const labelsAreContextual = labels.left !== left.character.name
-    || labels.right !== right.character.name;
-  const headlineIsContextual = verdict.headline.includes(labels.left)
-    || verdict.headline.includes(labels.right);
-  const verdictHeadline = !labelsAreContextual || headlineIsContextual
-    ? verdict.headline
-    : verdict.winner === "left"
-      ? `${labels.left} wins`
-      : verdict.winner === "right"
-        ? `${labels.right} wins`
-        : `${labels.left} and ${labels.right} draw`;
+  const labelsAreContextual = labels.left !== left.character.name || labels.right !== right.character.name;
+  const headlineIsContextual = verdict.headline.includes(labels.left) || verdict.headline.includes(labels.right);
+  const verdictHeadline =
+    !labelsAreContextual || headlineIsContextual
+      ? verdict.headline
+      : verdict.winner === "left"
+        ? `${labels.left} wins`
+        : verdict.winner === "right"
+          ? `${labels.right} wins`
+          : `${labels.left} and ${labels.right} draw`;
   const interactionSummary = contextualInteractionSummary(report, labels);
   const decisionDetail = score.interaction
     ? `${interactionSummary}. ${relabeledInteractionDetail(report, labels)}`
@@ -270,7 +238,9 @@ export function BattleResult({
       <header class="battle-toolbar">
         <div class="battle-toolbar__copy">
           <span class="eyebrow">Deterministic ruleset v{report.rulesetVersion}</span>
-          <h2 class="battle-heading" id="battle-title" tabIndex={-1}>Battle report</h2>
+          <h2 class="battle-heading" id="battle-title" tabIndex={-1}>
+            Battle report
+          </h2>
         </div>
         <div class="battle-toolbar__actions">
           <button class="secondary-button" type="button" onClick={onEdit}>
@@ -285,7 +255,9 @@ export function BattleResult({
       <details class="battle-fold" open>
         <summary>
           <h2>Verdict</h2>
-          <small>{verdict.kind} · {resolutionLabel(report.resolution)}</small>
+          <small>
+            {verdict.kind} · {resolutionLabel(report.resolution)}
+          </small>
         </summary>
         <div class="verdict">
           <div class="verdict__fighter">
@@ -309,40 +281,52 @@ export function BattleResult({
       <details class="battle-fold" open>
         <summary>
           <h2>Ranked comparison</h2>
-          <small>{score.statCount} scored stats · gap {score.scoreGap}</small>
+          <small>
+            {score.statCount} scored stats · gap {score.scoreGap}
+          </small>
         </summary>
-        <div class="comparison-list">
-          {report.comparisons.map((comparison) => (
-            <div class="comparison-row" key={comparison.id}>
-              <div class={`comparison-row__side${comparison.winner === "left" ? " comparison-row__side--winner" : ""}`}>
-                <span>{labels.left}</span>
-                <strong>{comparison.left?.value ?? "Not ranked"}</strong>
-                <small>
-                  Rank {comparison.left?.rank ?? 0}
-                  {comparison.left?.note ? ` · ${comparison.left.note}` : ""}
-                </small>
-              </div>
-              <div class="comparison-row__label">
-                <strong>{comparison.label}</strong>
-                <small>
-                  {comparison.includedInScore
-                    ? comparison.winner === "tie"
-                      ? "Even"
-                      : `${winnerLabel(comparison.winner, labels)} scores`
-                    : "Display only"}
-                </small>
-              </div>
-              <div class={`comparison-row__side${comparison.winner === "right" ? " comparison-row__side--winner" : ""}`}>
-                <span>{labels.right}</span>
-                <strong>{comparison.right?.value ?? "Not ranked"}</strong>
-                <small>
-                  Rank {comparison.right?.rank ?? 0}
-                  {comparison.right?.note ? ` · ${comparison.right.note}` : ""}
-                </small>
-              </div>
-            </div>
-          ))}
-        </div>
+        <table class="comparison-list">
+          <caption class="visually-hidden">
+            Ranked statistic comparison between {labels.left} and {labels.right}
+          </caption>
+          <thead class="visually-hidden">
+            <tr>
+              <th scope="col">{labels.left}</th>
+              <th scope="col">Statistic</th>
+              <th scope="col">{labels.right}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.comparisons.map((comparison) => (
+              <tr class="comparison-row" key={comparison.id}>
+                <td
+                  class={`comparison-row__side${comparison.winner === "left" ? " comparison-row__side--winner" : ""}`}
+                >
+                  <span>{labels.left}</span>
+                  <strong>{comparison.left?.value ?? "Not ranked"}</strong>
+                  <small>{comparisonRank(comparison.left)}</small>
+                </td>
+                <th class="comparison-row__label" scope="row">
+                  <strong>{comparison.label}</strong>
+                  <small>
+                    {comparison.includedInScore
+                      ? comparison.winner === "tie"
+                        ? "Even"
+                        : `${winnerLabel(comparison.winner, labels)} scores`
+                      : "Display only"}
+                  </small>
+                </th>
+                <td
+                  class={`comparison-row__side${comparison.winner === "right" ? " comparison-row__side--winner" : ""}`}
+                >
+                  <span>{labels.right}</span>
+                  <strong>{comparison.right?.value ?? "Not ranked"}</strong>
+                  <small>{comparisonRank(comparison.right)}</small>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </details>
 
       <details class="battle-fold">

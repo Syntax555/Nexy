@@ -1,6 +1,7 @@
 import { render } from "preact";
 
 import { App } from "./app/App.js";
+import { ApplicationError, RuntimeErrorBoundary } from "./components/RuntimeErrorBoundary.js";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/app.css";
@@ -14,18 +15,13 @@ if (!root) {
 }
 
 try {
-  render(<App />, root);
-} catch (error) {
-  const message = error instanceof Error ? error.message : "Unknown application error";
   render(
-    <main class="main error-state" role="alert">
-      <span class="eyebrow">Nexy could not start</span>
-      <h1>Something broke before the fight.</h1>
-      <p>{message}</p>
-      <button class="secondary-button" type="button" onClick={() => window.location.reload()}>
-        Reload application
-      </button>
-    </main>,
+    <RuntimeErrorBoundary>
+      <App />
+    </RuntimeErrorBoundary>,
     root
   );
+} catch (error) {
+  const message = error instanceof Error ? error.message : "Unknown application error";
+  render(<ApplicationError message={message} eyebrow="Nexy could not start" />, root);
 }

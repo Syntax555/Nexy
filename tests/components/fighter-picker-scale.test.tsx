@@ -27,24 +27,14 @@ function largeRoster(size: number): readonly RosterCharacter[] {
   });
 }
 
-function Picker({
-  roster,
-  selectedId
-}: {
-  readonly roster: readonly RosterCharacter[];
-  readonly selectedId?: string;
-}) {
-  const selection = selectedId
-    ? roster.find((item) => item.id === selectedId)?.defaultSelection ?? null
-    : null;
+function Picker({ roster, selectedId }: { readonly roster: readonly RosterCharacter[]; readonly selectedId?: string }) {
+  const selection = selectedId ? (roster.find((item) => item.id === selectedId)?.defaultSelection ?? null) : null;
   return (
     <FighterPicker
       side="left"
       roster={roster}
       selection={selection}
-      profile={selection
-        ? roster.find((item) => item.id === selectedId)?.defaultProfile ?? null
-        : null}
+      profile={selection ? (roster.find((item) => item.id === selectedId)?.defaultProfile ?? null) : null}
       onSelect={() => undefined}
       onClear={() => undefined}
       onRandom={() => undefined}
@@ -71,9 +61,9 @@ describe("large roster rendering", () => {
       target: { value: "name-desc" }
     });
     await waitFor(() => expect(cards()).toHaveLength(60));
-    expect(
-      container.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")
-    ).toMatch(/^Scale Fighter 125,/);
+    expect(container.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")).toMatch(
+      /^Scale Fighter 125,/
+    );
   });
 
   it("keeps a matching selected fighter represented beyond the first page", () => {
@@ -83,10 +73,43 @@ describe("large roster rendering", () => {
     const { container } = render(<Picker roster={roster} selectedId={selected.id} />);
 
     expect(container.querySelectorAll(".roster-card")).toHaveLength(60);
-    const selectedCard = container.querySelector<HTMLButtonElement>(
-      '.roster-card[aria-pressed="true"]'
-    );
+    const selectedCard = container.querySelector<HTMLButtonElement>('.roster-card[aria-pressed="true"]');
     expect(selectedCard?.getAttribute("aria-label")).toMatch(/^Scale Fighter 125,/);
     expect(container.querySelector(".roster-card")).toBe(selectedCard);
+  });
+
+  it("keeps a stronger search match ahead of alphabetical display order", async () => {
+    const [first, second] = largeRoster(2);
+    if (!first || !second) throw new Error("Expected two generated fighters.");
+    const roster: readonly RosterCharacter[] = [
+      {
+        ...first,
+        id: "alpha",
+        name: "Alpha Fighter",
+        searchText: "Agent Venom"
+      },
+      {
+        ...second,
+        id: "zulu",
+        name: "Zulu Fighter",
+        searchText: "agt venm"
+      }
+    ];
+    const { container } = render(<Picker roster={roster} />);
+
+    fireEvent.input(
+      screen.getByRole("searchbox", {
+        name: "Search characters"
+      }),
+      {
+        target: { value: "agt venm" }
+      }
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")).toMatch(
+        /^Zulu Fighter,/
+      );
+    });
   });
 });
