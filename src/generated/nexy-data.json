@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema_version": 1,
-    "content_revision": "cd58afe73e61d6cd9e11c78ecc61aebd33abb991191a19c50b0424bcd96397e1"
+    "content_revision": "c373c4581ede01b4ac9862a2db58a5260950fd630f387245a521624295d0f40e"
   },
   "characters": [
     {
@@ -43,6 +43,7 @@
               "image": "images/characters/aaron-fischer-marvel-mainstream/original.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -126,6 +127,7 @@
               "image": "images/characters/aaron-fischer-marvel-mainstream/post-alchemax-enhancement.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Captain_America_AF_AA_MC_TR.webp",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -241,6 +243,7 @@
               "image": "images/characters/agent-venom-marvel-mainstream/agent-venom.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Eugene_Thompson_(Earth-12131).png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -379,6 +382,7 @@
               "image": "images/characters/aurora-marvel-mainstream/aurora.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Aurora-Render.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -498,6 +502,7 @@
               "image": "images/characters/black-canary-dc-post-crisis/black-canary.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Black_Canary_02.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -604,6 +609,7 @@
               "image": "images/characters/dagger-marvel-mainstream/dagger.png",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Dagger_Tam.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -772,6 +778,7 @@
               "image": "images/characters/elektra-marvel-mainstream/elektra.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:ElektraRender.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -927,6 +934,7 @@
               "image": "images/characters/escapade-marvel-mainstream/escapade.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Escapade_MC_TR.webp",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1091,6 +1099,7 @@
               "image": "images/characters/falcon-marvel-mainstream/falcon.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Falcon_Joaqu%C3%ACn_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1189,6 +1198,7 @@
               "image": "images/characters/falcon-sam-wilson-marvel-mainstream/sam-wilson.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Falcon_MC_Classic_TR.gif",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1298,6 +1308,7 @@
               "image": "images/characters/kimura-marvel-mainstream/kimura.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Kimura_M_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1402,6 +1413,7 @@
               "image": "images/characters/kingpin-marvel-mainstream/kingpin.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Wilson_Fisk_Modern_Render.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1511,6 +1523,7 @@
               "image": "images/characters/lila-cheney-marvel-mainstream/lila-cheney.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Lila_Cheney_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1638,6 +1651,7 @@
               "image": "images/characters/lucia-von-bardas-marvel-mainstream/lucia-von-bardas.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Lucia_von_Bardas_MC_TR.webp",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1778,6 +1792,7 @@
               "image": "images/characters/luke-cage-marvel-mainstream/luke-cage.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Luke_Cage_M_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -1901,6 +1916,7 @@
               "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -2061,6 +2077,7 @@
               "image": "images/characters/mystique-marvel-mainstream/mystique.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:4296511-raven_darkholme_(earth-616)_from_all-new_x-men_vol_1_7_001.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -2198,6 +2215,7 @@
               "image": "images/characters/purple-man-marvel-mainstream/purple-man.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Purple_Man.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -2321,6 +2339,7 @@
               "image": "images/characters/quicksilver-marvel-ultimate/quicksilver.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Ultquicksilver.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -2420,6 +2439,7 @@
               "image": "images/characters/us-agent-marvel-mainstream/modern.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:US_Agent_M_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -2527,6 +2547,7 @@
               "image": "images/characters/wonder-girl-dc-post-flashpoint/yara-flor.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Yara_Elecriticity_1.webp",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28"
             }
@@ -3647,6 +3668,7 @@
               "image": "images/characters/ms-marvel-marvel-mainstream/destined-one-suit.webp",
               "source_url": "https://vsbattles.fandom.com/wiki/File:Ms._Marvel_MC_TR.png",
               "rights_status": "unverified-third-party",
+              "publish_unverified": true,
               "rights_holder": "Unknown / respective rights holders",
               "reviewed_on": "2026-07-28",
               "priority": 10

@@ -70,11 +70,29 @@ describe("BattleResult", () => {
       leftLabel,
       rightLabel
     ]);
-    expect(container.querySelectorAll(".combatant-card__image img")).toHaveLength(0);
-    expect(
-      [...container.querySelectorAll(".combatant-card__image .image-fallback")].map((fallback) => fallback.textContent)
-    ).toEqual(["F", "F"]);
-    expect(container.querySelectorAll(".combatant-card .artwork-disclosure")).toHaveLength(0);
+    const combatantImages = [...container.querySelectorAll<HTMLImageElement>(".combatant-card__image img")];
+    expect(combatantImages.map((image) => image.getAttribute("src"))).toEqual([
+      "/images/generated/falcon-marvel-mainstream/falcon-640.webp",
+      "/images/generated/falcon-sam-wilson-marvel-mainstream/sam-wilson-640.webp"
+    ]);
+    expect(combatantImages.map((image) => image.getAttribute("alt"))).toEqual([
+      `${leftLabel} \u2014 Falcon`,
+      `${rightLabel} \u2014 Falcon`
+    ]);
+    expect(container.querySelectorAll(".combatant-card__image .image-fallback")).toHaveLength(0);
+
+    const artworkDisclosures = [
+      ...container.querySelectorAll<HTMLAnchorElement>(".combatant-card .artwork-disclosure")
+    ];
+    expect(artworkDisclosures).toHaveLength(2);
+    expect(artworkDisclosures.map((disclosure) => disclosure.dataset.rightsStatus)).toEqual([
+      "unverified-third-party",
+      "unverified-third-party"
+    ]);
+    expect(artworkDisclosures.map((disclosure) => disclosure.querySelector("small")?.textContent)).toEqual([
+      "Rights unverified \u00b7 no image licence claimed",
+      "Rights unverified \u00b7 no image licence claimed"
+    ]);
     expect([...container.querySelectorAll(".capability-column > h3")].map((element) => element.textContent)).toEqual([
       `${leftLabel} · Fighter 01`,
       `${rightLabel} · Fighter 02`

@@ -86,13 +86,14 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   await selectFighter(rightPicker, "Dagger", /^Dagger,/);
 
   const visibleProfile = page.locator(".fighter-profile:visible").first();
-  await expect(
-    visibleProfile.getByRole("img", {
-      name: /artwork withheld pending rights verification/
-    })
-  ).toBeVisible();
-  await expect(visibleProfile.locator(".profile-visual img")).toHaveCount(0);
-  await expect(visibleProfile.getByRole("button", { name: /^View full image of/ })).toHaveCount(0);
+  const profileImage = visibleProfile.locator(".profile-visual img");
+  await expect(profileImage).toBeVisible();
+  await expect(profileImage).toHaveAttribute("src", /\/images\/generated\/.+-640\.webp$/);
+  await expect(visibleProfile.locator(".profile-visual .image-fallback")).toHaveCount(0);
+  await expect(visibleProfile.getByRole("button", { name: /^View full image of/ })).toBeVisible();
+  await expect(visibleProfile.locator(".profile-artwork-disclosure")).toContainText(
+    "Rights unverified · no image licence claimed"
+  );
   await expect(visibleProfile.locator(".profile-sources")).toContainText("Character image record");
   await expect(visibleProfile.locator(".profile-sources")).toContainText("Rights status: Unverified Third Party");
   await expect(page.locator("dialog.image-modal")).not.toBeVisible();
@@ -116,9 +117,9 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   await expect(page.getByText("Ranked comparison")).toBeVisible();
   await page.getByRole("heading", { level: 2, name: "Combatants" }).click();
   const combatantImages = page.locator(".combatant-card__image img");
-  await expect(combatantImages).toHaveCount(0);
-  await expect(page.locator(".combatant-card__image .image-fallback")).toHaveCount(2);
-  await expect(page.locator(".combatant-card .artwork-disclosure")).toHaveCount(0);
+  await expect(combatantImages).toHaveCount(2);
+  await expect(page.locator(".combatant-card__image .image-fallback")).toHaveCount(0);
+  await expect(page.locator(".combatant-card .artwork-disclosure")).toHaveCount(2);
 
   const interactionAccessibility = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])

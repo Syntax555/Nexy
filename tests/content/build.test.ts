@@ -5,9 +5,10 @@ import path from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { CATALOG_NAMES } from "../../src/domain/catalogs.js";
+import type { EquipmentOption } from "../../src/domain/data.js";
 import { catalogNames, compileContent, ContentValidationError } from "../../tools/content/build.js";
 import { createCharacter } from "../../tools/content/new-character.js";
-import { CATALOG_NAMES } from "../../src/domain/catalogs.js";
 
 const projectRoot = process.cwd();
 const temporaryRoots: string[] = [];
@@ -90,12 +91,28 @@ describe("content compiler", () => {
       [...first.data.characters.map((character) => character.entry_id)].sort()
     );
 
-    const localImages = first.data.characters.flatMap((character) =>
-      character.keys.flatMap((form) => form.images.map((image) => image.image))
+    const characterImages = first.data.characters.flatMap((character) => character.keys.flatMap((form) => form.images));
+    const equipmentImageUpdates = (first.data.options.equipment as readonly EquipmentOption[]).flatMap((equipment) =>
+      (equipment.effects ?? []).flatMap((effect) => (effect.image_update ? [effect.image_update] : []))
     );
-    expect(localImages.length).toBeGreaterThan(0);
+    const authoredImages = [...characterImages, ...equipmentImageUpdates];
+    const localImages = authoredImages.map((image) => image.image);
+
+    expect(characterImages).toHaveLength(first.formCount);
+    expect(equipmentImageUpdates).toHaveLength(1);
+    expect(authoredImages).toHaveLength(first.formCount + 1);
+    expect(new Set(localImages).size).toBe(first.formCount);
     expect(localImages.every((image) => image.startsWith("images/characters/"))).toBe(true);
     expect(localImages.some((image) => image.startsWith("assets/"))).toBe(false);
+    expect(
+      authoredImages.every(
+        (image) =>
+          image.source_url.startsWith("https://") &&
+          image.rights_status === "unverified-third-party" &&
+          image.publish_unverified === true &&
+          Boolean(image.rights_holder)
+      )
+    ).toBe(true);
     expect(
       first.data.characters.every(
         (character) =>
@@ -106,14 +123,7 @@ describe("content compiler", () => {
           character.keys.every(
             (form) =>
               form.source_ids.length > 0 &&
-              form.source_ids.every((sourceId) => character.sources.some((source) => source.id === sourceId)) &&
-              form.images.every(
-                (image) =>
-                  image.source_url.startsWith("https://") &&
-                  image.rights_status === "unverified-third-party" &&
-                  image.publish_unverified !== true &&
-                  Boolean(image.rights_holder)
-              )
+              form.source_ids.every((sourceId) => character.sources.some((source) => source.id === sourceId))
           )
       )
     ).toBe(true);

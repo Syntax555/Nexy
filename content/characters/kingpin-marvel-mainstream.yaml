@@ -23,6 +23,7 @@ keys:
         image: "images/characters/kingpin-marvel-mainstream/kingpin.webp"
         source_url: "https://vsbattles.fandom.com/wiki/File:Wilson_Fisk_Modern_Render.png"
         rights_status: unverified-third-party
+        publish_unverified: true
         rights_holder: "Unknown / respective rights holders"
         reviewed_on: "2026-07-28"
     source_ids:

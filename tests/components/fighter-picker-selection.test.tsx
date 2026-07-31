@@ -215,11 +215,26 @@ describe("fighter selection flow", () => {
     });
   });
 
-  it("uses initials for the unpublished roster artwork", () => {
+  it("renders explicitly published unverified roster artwork with responsive candidates", () => {
     const { container } = render(<ControlledPicker />);
+    const featured = roster[0];
+    const imageRecord = featured?.defaultProfile.image;
+    if (!featured || !imageRecord) {
+      throw new Error("Expected the featured fighter to have an image record.");
+    }
+    expect(imageRecord.rights_status).toBe("unverified-third-party");
+    expect(imageRecord.publish_unverified).toBe(true);
 
-    expect(container.querySelector(".roster-card img")).toBeNull();
-    expect(container.querySelector('.roster-card[aria-current="true"] .image-fallback')?.textContent).toBe("A");
+    const image = container.querySelector<HTMLImageElement>('.roster-card[aria-current="true"] img');
+    if (!image) throw new Error("Expected explicitly published artwork for the featured fighter.");
+
+    expect(image.getAttribute("src")).toBe("/images/generated/agent-venom-marvel-mainstream/agent-venom-160.webp");
+    expect(image.getAttribute("srcset")).toBe(
+      "/images/generated/agent-venom-marvel-mainstream/agent-venom-160.webp 160w, " +
+        "/images/generated/agent-venom-marvel-mainstream/agent-venom-640.webp 640w"
+    );
+    expect(image.getAttribute("sizes")).toContain("84vw");
+    expect(container.querySelector('.roster-card[aria-current="true"] .image-fallback')).toBeNull();
   });
 
   it("provides responsive candidates for display-approved roster artwork", () => {
