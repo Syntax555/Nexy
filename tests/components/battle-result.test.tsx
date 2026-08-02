@@ -35,12 +35,29 @@ describe("BattleResult", () => {
       )
     };
     const { container, rerender } = render(
-      <BattleResult report={displayedReport} shareLabel="Copy battle link" onEdit={vi.fn()} onShare={vi.fn()} />
+      <BattleResult
+        report={displayedReport}
+        shareLabel="Copy battle link"
+        shareStatus="Battle link copied to the clipboard."
+        onEdit={vi.fn()}
+        onShare={vi.fn()}
+      />
     );
 
     const leftLabel = "Falcon (Joaquín Torres)";
     const rightLabel = "Falcon (Sam Wilson)";
     expect(container.querySelector(".verdict__summary strong")?.textContent).toBe(`${rightLabel} wins`);
+    const folds = container.querySelectorAll<HTMLDetailsElement>(".battle-fold");
+    expect(folds[0]?.open).toBe(true);
+    expect(folds[1]?.open).toBe(false);
+    expect(container.querySelectorAll(".verdict-reasons li").length).toBeGreaterThan(0);
+    expect(container.querySelector(".battle-coverage")?.textContent).toContain(
+      "missing optional values are excluded, never treated as zero"
+    );
+    expect(container.querySelector(".battle-method")?.textContent).toContain("adds each fighter's catalog rank");
+    expect(container.querySelector("[role='status'][aria-live='polite']")?.textContent).toBe(
+      "Battle link copied to the clipboard."
+    );
     expect([...container.querySelectorAll(".verdict__fighter small")].map((element) => element.textContent)).toEqual([
       leftLabel,
       rightLabel

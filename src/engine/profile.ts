@@ -20,14 +20,14 @@ import {
   resistanceRefLabel,
   resistanceRefs
 } from "./capabilities.js";
-import { arrayField, booleanField, byId, stringField, type GameContext } from "./context.js";
+import { arrayField, booleanField, byId, type GameContext, stringField } from "./context.js";
 import { describeItem, describePower, describeResistance } from "./describe.js";
 import {
-  status,
   type CapabilityItem,
   type EngineView,
   type ProfileSection,
-  type ResolvedCatalogItem
+  type ResolvedCatalogItem,
+  status
 } from "./internal.js";
 import { statsForForm } from "./rank.js";
 

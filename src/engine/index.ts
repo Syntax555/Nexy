@@ -1,12 +1,22 @@
 export {
+  powerRefLabel,
+  powerRefs,
+  powerTypesCover,
+  resistanceRefLabel,
+  resistanceRefs
+} from "./capabilities.js";
+export {
   byId,
-  catalog,
-  createGameContext,
   type CatalogName,
   type CatalogRecord,
+  catalog,
+  createGameContext,
   type GameContext
 } from "./context.js";
-
+export {
+  getCharacterProfile,
+  resolveSelection
+} from "./profile.js";
 export {
   abilityModifierRank,
   compositeRank,
@@ -16,19 +26,6 @@ export {
   normalizeStat,
   statsForForm
 } from "./rank.js";
-
-export {
-  powerRefLabel,
-  powerRefs,
-  powerTypesCover,
-  resistanceRefLabel,
-  resistanceRefs
-} from "./capabilities.js";
-
-export {
-  getCharacterProfile,
-  resolveSelection
-} from "./profile.js";
 
 export { resolveBattleViews } from "./resolve.js";
 

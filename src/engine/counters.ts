@@ -4,6 +4,7 @@ import {
   activeImage,
   activeItemEffectsForPowerRefs,
   effectiveForm,
+  type ItemPredicate,
   powerRefEffects,
   powerRefKey,
   powerRefLabel,
@@ -16,17 +17,16 @@ import {
   powerTypesCover,
   resistanceRefKey,
   resistanceRefLabel,
-  resistanceRefs,
-  type ItemPredicate
+  resistanceRefs
 } from "./capabilities.js";
-import { arrayField, booleanField, byId, objectField, optionalStringField, type GameContext } from "./context.js";
+import { arrayField, booleanField, byId, type GameContext, objectField, optionalStringField } from "./context.js";
 import {
-  status,
   type CapabilityIdentity,
   type CapabilityItem,
   type EngineStatus,
   type EngineView,
-  type ResolvedCatalogItem
+  type ResolvedCatalogItem,
+  status
 } from "./internal.js";
 import { abilityModifierRank, magicLevelRank, normalizeStat, resistanceLevelRank, statsForForm } from "./rank.js";
 

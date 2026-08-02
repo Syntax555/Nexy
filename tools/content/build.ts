@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,7 +7,8 @@ import { parseDocument } from "yaml";
 import type { ZodType } from "zod";
 
 import { CATALOG_NAMES, type CatalogName } from "../../src/domain/catalogs.js";
-import { catalogSchemas, characterSchema, type CatalogEntrySource, type CharacterSource } from "./schema.js";
+import { rankedStatCatalogs } from "../../src/domain/ranked-stats.js";
+import { type CatalogEntrySource, type CharacterSource, catalogSchemas, characterSchema } from "./schema.js";
 
 export const catalogNames = CATALOG_NAMES;
 export type { CatalogName };
@@ -60,20 +61,7 @@ const externalAssetPattern = /^(?:(?:[a-z][a-z0-9+.-]*:)?\/\/|data:)/i;
 const publicImagePrefix = "images/characters/";
 const supportedLocalImagePattern = /\.(?:avif|jpe?g|png|webp)$/i;
 
-const statCatalogs = {
-  attack_potency: "attack_durability_tiers",
-  attack_speed: "speed_tiers",
-  combat_speed: "speed_tiers",
-  reaction_speed: "speed_tiers",
-  travel_speed: "speed_tiers",
-  flight_speed: "speed_tiers",
-  lifting_strength: "lifting_strength_tiers",
-  striking_strength: "striking_strength_tiers",
-  durability: "attack_durability_tiers",
-  stamina: "stamina_tiers",
-  range: "range_tiers",
-  intelligence: "intelligence_tiers"
-} as const satisfies Readonly<Record<string, CatalogName>>;
+const statCatalogs = rankedStatCatalogs;
 
 type StatName = keyof typeof statCatalogs;
 

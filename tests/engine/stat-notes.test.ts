@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-
-import generatedData from "../../src/generated/nexy-data.json";
 import type { CharacterEntry, CharacterForm, NexyData, RankedStat } from "../../src/domain/index.js";
 import { createGameContext, getCharacterProfile, simulateBattle } from "../../src/engine/index.js";
+import generatedData from "../../src/generated/nexy-data.json";
 
 const data = generatedData as unknown as NexyData;
 const context = createGameContext(data);

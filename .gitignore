@@ -13,6 +13,9 @@ test-results/
 public/images/generated/
 public/og.png
 public/image-rights.json
+public/favicon-32.png
+public/apple-touch-icon.png
+public/app-icon-*.png
 
 # Local scratch files and logs
 tmp/

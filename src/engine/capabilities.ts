@@ -14,14 +14,14 @@ import {
   arrayField,
   booleanField,
   byId,
+  type CatalogRecord,
+  type GameContext,
   numberField,
   objectField,
   optionalStringField,
-  stringField,
-  type CatalogRecord,
-  type GameContext
+  stringField
 } from "./context.js";
-import { record, type ResolvedCatalogItem } from "./internal.js";
+import { type ResolvedCatalogItem, record } from "./internal.js";
 import {
   abilityModifier,
   abilityModifierRank,

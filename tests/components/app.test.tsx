@@ -55,7 +55,7 @@ describe("Nexy application", () => {
   });
 
   it("selects two roster entries and produces a battle report", async () => {
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     expect((screen.getByRole("main") as HTMLElement).tabIndex).toBe(-1);
     const pickers = container.querySelectorAll<HTMLElement>(".fighter-picker");
     const [leftSelection, rightSelection] = firstTwoSelections();
@@ -112,7 +112,7 @@ describe("Nexy application", () => {
     });
     window.history.replaceState(null, "", `/Nexy/?${query.toString()}`);
 
-    render(<App />);
+    render(<App data={nexyData} />);
 
     expect(await screen.findByRole("heading", { name: "Battle report" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /copy battle link/i })).toBeTruthy();
@@ -122,7 +122,7 @@ describe("Nexy application", () => {
   });
 
   it("shows the legal notice and links to the rights-holder page", () => {
-    render(<App />);
+    render(<App data={nexyData} />);
 
     expect(screen.getByText(/unofficial, non-commercial fan project/i)).toBeTruthy();
     const legalLink = screen.getByRole("link", {
@@ -131,8 +131,38 @@ describe("Nexy application", () => {
     expect(legalLink.getAttribute("href")).toMatch(/\/legal\.html$/);
   });
 
+  it("resets matchup state when the supplied content revision changes", async () => {
+    const { container, rerender } = render(<App data={nexyData} />);
+    const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
+    const firstFighter = leftPicker?.querySelector<HTMLButtonElement>(".roster-card");
+    if (!leftPicker || !firstFighter) throw new Error("Expected the left picker and its first fighter.");
+
+    fireEvent.click(firstFighter);
+    expect(within(leftPicker).getByRole("button", { name: "Remove fighter" })).toBeTruthy();
+    if (!Array.isArray(nexyData.characters)) throw new Error("Expected the compiled character list.");
+    const selectedId = firstFighter.closest<HTMLElement>("[data-character-id]")?.dataset.characterId;
+    if (!selectedId) throw new Error("Expected the selected fighter identifier.");
+
+    const revisedData = {
+      ...nexyData,
+      characters: nexyData.characters.filter((character) => (character.entry_id || character.id) !== selectedId),
+      meta: {
+        ...nexyData.meta,
+        content_revision: "f".repeat(64)
+      }
+    };
+    rerender(<App data={revisedData} />);
+
+    await waitFor(() => {
+      const updatedPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
+      if (!updatedPicker) throw new Error("Expected the remounted left picker.");
+      expect(within(updatedPicker).queryByRole("button", { name: "Remove fighter" })).toBeNull();
+      expect(within(updatedPicker).getByRole("heading", { level: 2 }).textContent).toBe("Select fighter");
+    });
+  });
+
   it("browses media, publisher, and universe progressively before filtering metadata", async () => {
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
     if (!leftPicker) throw new Error("Expected the left fighter picker.");
 
@@ -273,7 +303,7 @@ describe("Nexy application", () => {
   });
 
   it("keeps the selected fighter while the browse path changes", () => {
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
     if (!leftPicker) throw new Error("Expected the left fighter picker.");
 
@@ -283,6 +313,10 @@ describe("Nexy application", () => {
 
     fireEvent.click(firstFighter);
     const selectedName = picker.getByRole("heading", { level: 2 }).textContent;
+
+    const rosterTools = picker.getByText("Find another fighter").closest("summary");
+    if (!rosterTools) throw new Error("Expected compact selected-roster tools.");
+    fireEvent.click(rosterTools);
 
     const media = picker.getByRole("button", { name: /^Media:/ });
     fireEvent.click(media);
@@ -298,7 +332,7 @@ describe("Nexy application", () => {
   });
 
   it("keeps focus in a picker when clear and reset controls unmount", async () => {
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPicker = container.querySelector<HTMLElement>('.fighter-picker[data-side="left"]');
     if (!leftPicker) throw new Error("Expected the left fighter picker.");
 

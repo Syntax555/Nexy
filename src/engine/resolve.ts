@@ -7,8 +7,8 @@ import type {
   ResistanceRef
 } from "../domain/index.js";
 import { activeImage, effectiveForm } from "./capabilities.js";
+import { arrayField, type GameContext, objectField, stringField } from "./context.js";
 import { battleEffectiveView } from "./counters.js";
-import { arrayField, objectField, stringField, type GameContext } from "./context.js";
 import type { EngineView, OpponentStatSwapOutcome, ResolvedPair } from "./internal.js";
 import { compositeRank, normalizeStat, raiseStatModifier, statCatalogs, statsForForm } from "./rank.js";
 

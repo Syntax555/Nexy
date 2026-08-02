@@ -1,9 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-
-import { nexyData } from "../data/nexy.js";
-import type { BattleReport, BattleSelection, CharacterProfile } from "../domain/index.js";
-import { RULESET_VERSION } from "../domain/index.js";
-import { createGameContext, getCharacterProfile, simulateBattle } from "../engine/index.js";
 import { ActionDock } from "../components/ActionDock.js";
 import { BattleResult } from "../components/BattleResult.js";
 import { Brand } from "../components/Brand.js";
@@ -11,21 +6,27 @@ import { FighterPicker } from "../components/FighterPicker.js";
 import type { DialogImage } from "../components/ImageDialog.js";
 import { ImageDialog } from "../components/ImageDialog.js";
 import {
-  MobileMatchupNavigator,
   type MobileFighterSide,
+  MobileMatchupNavigator,
   useMobileMatchupViewport
 } from "../components/MobileMatchupNavigator.js";
 import type { RosterView } from "../components/RosterCarousel.js";
 import { RulesDialog } from "../components/RulesDialog.js";
+import { ApplicationError } from "../components/RuntimeErrorBoundary.js";
 import { ThemeToggle } from "../components/ThemeToggle.js";
+import { loadNexyData } from "../data/load-nexy.js";
+import type { BattleReport, BattleSelection, CharacterProfile, NexyData } from "../domain/index.js";
+import { RULESET_VERSION } from "../domain/index.js";
+import { createGameContext, getCharacterProfile, simulateBattle } from "../engine/index.js";
 import { assetUrl } from "./assets.js";
-import { buildRoster, validSelection, type RosterCharacter } from "./roster.js";
+import { buildRoster, type RosterCharacter, validSelection } from "./roster.js";
+import { defaultShareLabel, shareLink } from "./share.js";
 import {
+  type CurrentMatchupVersion,
+  type MatchupUrlState,
   matchupVersionWarning,
   readMatchupUrl,
-  writeMatchupUrl,
-  type CurrentMatchupVersion,
-  type MatchupUrlState
+  writeMatchupUrl
 } from "./url-state.js";
 import { useTheme } from "./use-theme.js";
 
@@ -41,6 +42,16 @@ interface InitialAppState extends AppState {
 
 interface ReportState {
   readonly report: BattleReport | null;
+  readonly error: string | null;
+}
+
+interface AppProps {
+  /** Supplying data keeps component tests and embedded consumers synchronous. */
+  readonly data?: NexyData;
+}
+
+interface DataState {
+  readonly data: NexyData | null;
   readonly error: string | null;
 }
 
@@ -94,24 +105,6 @@ function randomIndex(length: number): number {
   return Math.floor(Math.random() * length);
 }
 
-async function copyText(value: string): Promise<void> {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(value);
-    return;
-  }
-
-  const field = document.createElement("textarea");
-  field.value = value;
-  field.setAttribute("readonly", "");
-  field.style.position = "fixed";
-  field.style.opacity = "0";
-  document.body.append(field);
-  field.select();
-  const copied = document.execCommand("copy");
-  field.remove();
-  if (!copied) throw new Error("The browser did not allow clipboard access.");
-}
-
 function scrollToSection(selector: string): void {
   const reducedMotion =
     typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -126,15 +119,69 @@ function focusAndScroll(focusSelector: string, scrollSelector: string): void {
   scrollToSection(scrollSelector);
 }
 
-export function App() {
-  const context = useMemo(() => createGameContext(nexyData), []);
+function LoadingApp() {
+  return (
+    <div class="app-shell">
+      <header class="site-header">
+        <Brand />
+      </header>
+      <main class="main" id="main" tabIndex={-1}>
+        <section class="app-loading" role="status" aria-live="polite">
+          <span class="eyebrow">Preparing deterministic ruleset v{RULESET_VERSION}</span>
+          <h1>Loading the fighter roster…</h1>
+          <p>The interface is ready; Nexy is loading the authored matchup data.</p>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function LazyApp() {
+  const [dataState, setDataState] = useState<DataState>(() => ({
+    data: null,
+    error: null
+  }));
+
+  useEffect(() => {
+    let active = true;
+    void loadNexyData().then(
+      (data) => {
+        if (active) setDataState({ data, error: null });
+      },
+      (error: unknown) => {
+        if (!active) return;
+        setDataState({
+          data: null,
+          error: error instanceof Error ? error.message : "The fighter roster could not be loaded."
+        });
+      }
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (dataState.error) {
+    return <ApplicationError eyebrow="Nexy could not load its roster" message={dataState.error} />;
+  }
+  if (!dataState.data) return <LoadingApp />;
+  return <MatchupApp key={dataState.data.meta.content_revision} data={dataState.data} />;
+}
+
+export function App({ data }: AppProps) {
+  if (!data) return <LazyApp />;
+  return <MatchupApp key={data.meta.content_revision} data={data} />;
+}
+
+function MatchupApp({ data }: { readonly data: NexyData }) {
+  const context = useMemo(() => createGameContext(data), [data]);
   const roster = useMemo(() => buildRoster(context), [context]);
   const currentVersion = useMemo<CurrentMatchupVersion>(
     () => ({
       rulesetVersion: RULESET_VERSION,
-      contentRevision: nexyData.meta.content_revision
+      contentRevision: data.meta.content_revision
     }),
-    []
+    [data.meta.content_revision]
   );
   const initial = useMemo(
     () => initialState(context, window.location.search, currentVersion),
@@ -146,12 +193,15 @@ export function App() {
   const [versionWarning, setVersionWarning] = useState(initial.versionWarning);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [dialogImage, setDialogImage] = useState<DialogImage | null>(null);
-  const [shareLabel, setShareLabel] = useState("Copy battle link");
+  const [shareLabel, setShareLabel] = useState(defaultShareLabel);
+  const [shareStatus, setShareStatus] = useState("");
   const [activeMobileSide, setActiveMobileSide] = useState<MobileFighterSide>("left");
   const [rosterView, setRosterView] = useState<RosterView>("carousel");
   const [theme, toggleTheme] = useTheme();
   const isMobileMatchup = useMobileMatchupViewport();
   const shareResetTimer = useRef<number | undefined>(undefined);
+  const rulesReturnFocus = useRef<HTMLElement | null>(null);
+  const imageReturnFocus = useRef<HTMLElement | null>(null);
   const pendingFocus = useRef<"battle" | "picker" | null>(null);
   const previousMobileViewport = useRef(isMobileMatchup);
   const lastFocusedPicker = useRef<MobileFighterSide>("left");
@@ -303,22 +353,36 @@ export function App() {
   const shareBattle = async (): Promise<void> => {
     const query = writeMatchupUrl(urlState({ left, right, showBattle: true }, currentVersion));
     const address = new URL(`${window.location.pathname}${query}`, window.location.origin).href;
-    try {
-      await copyText(address);
-      setShareLabel("Link copied");
-    } catch {
-      setShareLabel("Copy unavailable");
-    }
+    const leftName = leftProfile?.character.name ?? "Fighter 01";
+    const rightName = rightProfile?.character.name ?? "Fighter 02";
+    const outcome = await shareLink({
+      title: `${leftName} vs ${rightName} — Nexy Battle Lab`,
+      text: `Inspect the deterministic ${leftName} vs ${rightName} battle report.`,
+      url: address
+    });
+    const feedback = {
+      shared: { label: "Shared", status: "Battle link shared." },
+      copied: { label: "Link copied", status: "Battle link copied to the clipboard." },
+      cancelled: { label: defaultShareLabel(), status: "Sharing cancelled." },
+      unavailable: { label: "Share unavailable", status: "This browser could not share or copy the battle link." }
+    } as const;
+    setShareLabel(feedback[outcome].label);
+    setShareStatus(feedback[outcome].status);
 
     if (shareResetTimer.current !== undefined) {
       window.clearTimeout(shareResetTimer.current);
     }
     shareResetTimer.current = window.setTimeout(() => {
-      setShareLabel("Copy battle link");
+      setShareLabel(defaultShareLabel());
+      setShareStatus("");
     }, 2200);
   };
 
   const formCount = roster.reduce((total, character) => total + character.formCount, 0);
+  const openImage = (image: DialogImage, returnFocus: HTMLElement): void => {
+    imageReturnFocus.current = returnFocus;
+    setDialogImage(image);
+  };
 
   return (
     <div
@@ -344,7 +408,14 @@ export function App() {
               <strong>{roster.length}</strong> fighters · {formCount} forms
             </span>
           </span>
-          <button class="quiet-button" type="button" onClick={() => setRulesOpen(true)}>
+          <button
+            class="quiet-button"
+            type="button"
+            onClick={(event) => {
+              rulesReturnFocus.current = event.currentTarget;
+              setRulesOpen(true);
+            }}
+          >
             Rules
           </button>
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
@@ -409,7 +480,7 @@ export function App() {
               onSelect={(selection) => updateSelection("left", selection)}
               onClear={() => updateSelection("left", null)}
               onRandom={(candidates) => chooseRandom("left", candidates)}
-              onOpenImage={setDialogImage}
+              onOpenImage={openImage}
             />
           </div>
           <div class="versus-rail" aria-hidden="true">
@@ -448,7 +519,7 @@ export function App() {
               onSelect={(selection) => updateSelection("right", selection)}
               onClear={() => updateSelection("right", null)}
               onRandom={(candidates) => chooseRandom("right", candidates)}
-              onOpenImage={setDialogImage}
+              onOpenImage={openImage}
             />
           </div>
         </section>
@@ -456,6 +527,8 @@ export function App() {
         <ActionDock
           left={leftProfile}
           right={rightProfile}
+          mobile={isMobileMatchup}
+          battleVisible={showBattle}
           onSwap={() => {
             setLeft(right);
             setRight(left);
@@ -463,12 +536,20 @@ export function App() {
             setVersionWarning(null);
           }}
           onAnalyze={analyze}
+          onChoose={(side) => {
+            lastFocusedPicker.current = side;
+            setActiveMobileSide(side);
+            window.requestAnimationFrame(() => {
+              focusAndScroll(`[data-mobile-fighter-tab="${side}"]`, `#mobile-fighter-${side}-panel`);
+            });
+          }}
         />
 
         {reportState.report ? (
           <BattleResult
             report={reportState.report}
             shareLabel={shareLabel}
+            shareStatus={shareStatus}
             onEdit={editMatchup}
             onShare={() => void shareBattle()}
           />
@@ -495,7 +576,14 @@ export function App() {
             </small>
           </div>
           <div class="site-footer__actions">
-            <button class="text-button" type="button" onClick={() => setRulesOpen(true)}>
+            <button
+              class="text-button"
+              type="button"
+              onClick={(event) => {
+                rulesReturnFocus.current = event.currentTarget;
+                setRulesOpen(true);
+              }}
+            >
               Read the rules
             </button>
             <a class="site-footer__link" href={assetUrl("legal.html")}>
@@ -505,8 +593,8 @@ export function App() {
         </footer>
       </main>
 
-      <RulesDialog open={rulesOpen} onClose={() => setRulesOpen(false)} />
-      <ImageDialog image={dialogImage} onClose={() => setDialogImage(null)} />
+      <RulesDialog open={rulesOpen} returnFocus={rulesReturnFocus.current} onClose={() => setRulesOpen(false)} />
+      <ImageDialog image={dialogImage} returnFocus={imageReturnFocus.current} onClose={() => setDialogImage(null)} />
     </div>
   );
 }

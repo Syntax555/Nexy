@@ -258,6 +258,7 @@
     font-family: var(--font-display);
     font-size: 1.28rem;
     font-style: italic;
+    line-height: 1;
   }
 
   .brand__copy {
@@ -462,8 +463,13 @@
     }
 
     .quiet-button {
-      width: 42px;
-      padding: 0;
+      width: auto;
+      min-width: 42px;
+      padding-inline: 10px;
+    }
+
+    .theme-toggle {
+      padding-inline: 5px;
     }
 
     .rules-grid {
@@ -472,6 +478,12 @@
 
     .modal__panel {
       padding: 18px;
+    }
+  }
+
+  @media (max-width: 356px) {
+    :root {
+      --header-height: max(72px, 3.625rem);
     }
   }
 

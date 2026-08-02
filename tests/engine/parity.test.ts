@@ -1,7 +1,5 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-
-import generatedData from "../../src/generated/nexy-data.json";
 import type {
   BattleReport,
   CharacterEntry,
@@ -14,6 +12,7 @@ import type {
 import { derivedPowerRefs, powerTargetRefLabel, powerTargetRefMatches } from "../../src/engine/capabilities.js";
 import { resistanceBlocksPower } from "../../src/engine/counters.js";
 import { createGameContext, getCharacterProfile, simulateBattle } from "../../src/engine/index.js";
+import generatedData from "../../src/generated/nexy-data.json";
 import legacyFixtureJson from "../fixtures/legacy-parity.json";
 
 interface LegacyMatchupExpectation {

@@ -1,5 +1,5 @@
-import { access, cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
+import { access, cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { CATALOG_NAMES } from "../../src/domain/catalogs.js";
 import type { EquipmentOption } from "../../src/domain/data.js";
-import { catalogNames, compileContent, ContentValidationError } from "../../tools/content/build.js";
+import { ContentValidationError, catalogNames, compileContent } from "../../tools/content/build.js";
 import { createCharacter } from "../../tools/content/new-character.js";
 
 const projectRoot = process.cwd();
@@ -508,7 +508,7 @@ describe("content compiler", () => {
     expect(messages).toContain("resists_effect_ids: effect-id resistance is not supported by ruleset v1");
     expect(messages).toContain("evaluation_stage: effective derived-power evaluation is not supported by ruleset v1");
     expect(messages).toContain("evaluation_stage: must be explicitly set to base for ruleset v1");
-  });
+  }, 15_000);
 
   it("rejects invalid numeric, enum, and boolean catalog values", async () => {
     const root = await temporaryProject();

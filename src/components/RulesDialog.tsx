@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "preact/hooks";
+import { useModalDialog } from "./useModalDialog.js";
 
 interface RulesDialogProps {
   readonly open: boolean;
+  readonly returnFocus: HTMLElement | null;
   readonly onClose: () => void;
 }
 
@@ -28,25 +29,18 @@ const rules = [
   }
 ] as const;
 
-export function RulesDialog({ open, onClose }: RulesDialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
+export function RulesDialog({ open, returnFocus, onClose }: RulesDialogProps) {
+  const { dialogRef, handleCancel, handleClose, requestClose } = useModalDialog(open, onClose, returnFocus);
 
   return (
     <dialog
       class="modal"
       ref={dialogRef}
       aria-labelledby="rules-title"
-      onClose={onClose}
+      onCancel={handleCancel}
+      onClose={handleClose}
       onClick={(event) => {
-        if (event.currentTarget === event.target) event.currentTarget.close();
+        if (event.currentTarget === event.target) requestClose();
       }}
     >
       <div class="modal__panel">
@@ -55,7 +49,13 @@ export function RulesDialog({ open, onClose }: RulesDialogProps) {
             <span class="eyebrow">Transparent by design</span>
             <h2 id="rules-title">How Nexy decides</h2>
           </div>
-          <button class="icon-button" type="button" aria-label="Close rules" onClick={onClose}>
+          <button
+            class="icon-button"
+            type="button"
+            aria-label="Close rules"
+            data-dialog-initial-focus
+            onClick={requestClose}
+          >
             ×
           </button>
         </header>

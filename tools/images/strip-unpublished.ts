@@ -1,5 +1,5 @@
 import type { Dirent } from "node:fs";
-import { readFile, readdir, rm } from "node:fs/promises";
+import { readdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 

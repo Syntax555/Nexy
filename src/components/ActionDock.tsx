@@ -3,8 +3,11 @@ import { type CharacterProfile, RULESET_VERSION } from "../domain/index.js";
 interface ActionDockProps {
   readonly left: CharacterProfile | null;
   readonly right: CharacterProfile | null;
+  readonly mobile: boolean;
+  readonly battleVisible: boolean;
   readonly onSwap: () => void;
   readonly onAnalyze: () => void;
+  readonly onChoose: (side: "left" | "right") => void;
 }
 
 function FighterSummary({
@@ -27,11 +30,27 @@ function FighterSummary({
   );
 }
 
-export function ActionDock({ left, right, onSwap, onAnalyze }: ActionDockProps) {
+export function ActionDock({ left, right, mobile, battleVisible, onSwap, onAnalyze, onChoose }: ActionDockProps) {
   const ready = Boolean(left && right);
+  const nextSide = !left ? "left" : !right ? "right" : null;
+  const canContinue = mobile && nextSide !== null;
+  const actionLabel = ready
+    ? battleVisible
+      ? "View battle report"
+      : "Analyze battle"
+    : mobile
+      ? nextSide === "right"
+        ? "Choose Fighter 02"
+        : "Choose Fighter 01"
+      : "Analyze battle";
 
   return (
-    <fieldset class="action-dock" data-ready={ready ? "true" : "false"}>
+    <fieldset
+      class="action-dock"
+      data-ready={ready ? "true" : "false"}
+      data-mobile={mobile ? "true" : "false"}
+      data-battle-visible={battleVisible ? "true" : "false"}
+    >
       <legend class="visually-hidden">Matchup controls</legend>
       <FighterSummary side="Fighter 01" profile={left} />
       <button
@@ -45,9 +64,23 @@ export function ActionDock({ left, right, onSwap, onAnalyze }: ActionDockProps) 
         ⇄
       </button>
       <FighterSummary side="Fighter 02" profile={right} />
-      <button class="primary-button analyze-button" type="button" disabled={!ready} onClick={onAnalyze}>
-        <span>Analyze battle</span>
-        <small>{ready ? `Run deterministic ruleset v${RULESET_VERSION}` : "Choose two fighters"}</small>
+      <button
+        class="primary-button analyze-button"
+        type="button"
+        disabled={!ready && !canContinue}
+        onClick={() => {
+          if (ready) onAnalyze();
+          else if (nextSide) onChoose(nextSide);
+        }}
+      >
+        <span>{actionLabel}</span>
+        <small>
+          {ready
+            ? `Run deterministic ruleset v${RULESET_VERSION}`
+            : canContinue
+              ? "Continue fighter selection"
+              : "Choose two fighters"}
+        </small>
       </button>
     </fieldset>
   );

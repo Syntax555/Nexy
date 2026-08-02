@@ -74,11 +74,14 @@ describe("CharacterProfile", () => {
       name: `View full image of ${profile.character.name}`
     });
     fireEvent.click(expandImage);
-    expect(onOpenImage).toHaveBeenCalledWith({
-      src: "/images/generated/aaron-fischer-marvel-mainstream/original-640.webp",
-      alt: `${profile.character.name} \u2014 ${imageRecord.name}`,
-      title: `${profile.character.name} \u2014 ${imageRecord.name}`,
-      rightsRecord: imageRecord
-    });
+    expect(onOpenImage).toHaveBeenCalledWith(
+      {
+        src: "/images/generated/aaron-fischer-marvel-mainstream/original-640.webp",
+        alt: `${profile.character.name} \u2014 ${imageRecord.name}`,
+        title: `${profile.character.name} \u2014 ${imageRecord.name}`,
+        rightsRecord: imageRecord
+      },
+      expect.any(HTMLButtonElement)
+    );
   });
 });

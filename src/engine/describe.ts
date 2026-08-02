@@ -7,6 +7,7 @@ import type {
   RankedStatName,
   ResistanceRef
 } from "../domain/index.js";
+import { rankedStatLabels } from "../domain/index.js";
 import {
   formatStatRequirement,
   powerRefEffects,
@@ -19,31 +20,16 @@ import {
   arrayField,
   booleanField,
   byId,
+  type CatalogName,
+  type CatalogRecord,
+  type GameContext,
   numberField,
   objectField,
   optionalStringField,
-  stringField,
-  type CatalogName,
-  type CatalogRecord,
-  type GameContext
+  stringField
 } from "./context.js";
 import type { ResolvedCatalogItem } from "./internal.js";
 import { compositeRank, formatStat, humanizeId, joinText, modifier, normalizeStat, statCatalogs } from "./rank.js";
-
-const statLabels: Readonly<Record<RankedStatName, string>> = {
-  attack_potency: "Attack Potency",
-  attack_speed: "Attack Speed",
-  combat_speed: "Speed",
-  reaction_speed: "Reaction Speed",
-  travel_speed: "Travel Speed",
-  flight_speed: "Flight Speed",
-  lifting_strength: "Lifting Strength",
-  striking_strength: "Striking Strength",
-  durability: "Durability",
-  stamina: "Stamina",
-  range: "Range",
-  intelligence: "Intelligence"
-};
 
 function catalogNames(
   context: GameContext,
@@ -138,11 +124,11 @@ export function describeEffect(context: GameContext, effect: Effect, form?: Char
       const currentDisplay = formatStat(context, current, catalogName);
       lines.push(
         effectRank > currentRank || !currentDisplay
-          ? `${statLabels[statName]}: ${display}${resistanceNote}`
-          : `${statLabels[statName]}: Already ${currentDisplay}`
+          ? `${rankedStatLabels[statName]}: ${display}${resistanceNote}`
+          : `${rankedStatLabels[statName]}: Already ${currentDisplay}`
       );
     } else {
-      lines.push(`${statLabels[statName]}: ${display}${resistanceNote}`);
+      lines.push(`${rankedStatLabels[statName]}: ${display}${resistanceNote}`);
     }
   });
 
@@ -160,12 +146,12 @@ export function describeEffect(context: GameContext, effect: Effect, form?: Char
       const modifierName = stringField(floorEntry, "name") || humanizeId(modifierId);
       lines.push(
         floorEntry && numberField(currentModifier, "rank") >= numberField(floorEntry, "rank")
-          ? `${statLabels[statName]}: Already ${stringField(currentModifier, "name")}`
-          : `${statLabels[statName]}: Raises modifier to ${modifierName}`
+          ? `${rankedStatLabels[statName]}: Already ${stringField(currentModifier, "name")}`
+          : `${rankedStatLabels[statName]}: Raises modifier to ${modifierName}`
       );
       return;
     }
-    floorGroups.set(modifierId, [...(floorGroups.get(modifierId) ?? []), statLabels[statName]]);
+    floorGroups.set(modifierId, [...(floorGroups.get(modifierId) ?? []), rankedStatLabels[statName]]);
   });
   floorGroups.forEach((stats, modifierId) => {
     const modifierName = stringField(byId(context, "stat_modifiers", modifierId), "name") || humanizeId(modifierId);
@@ -174,14 +160,14 @@ export function describeEffect(context: GameContext, effect: Effect, form?: Char
 
   const swap = objectField(effect, "opponent_stat_swap");
   if (swap) {
-    const statNames = arrayField<RankedStatName>(swap, "stat_names").map((name) => statLabels[name]);
+    const statNames = arrayField<RankedStatName>(swap, "stat_names").map((name) => rankedStatLabels[name]);
     const caps = Object.entries(objectField(swap, "max_target_stats") ?? {}).flatMap(([field, stat]) => {
       const name = field as RankedStatName;
       const catalogName = statCatalogs[name];
       const value = catalogName
         ? formatStat(context, stat as RankedStatInput, catalogName).replace(/ level(?=\+?$)/i, "")
         : "";
-      return value ? [`${statLabels[name]} ${value}`] : [];
+      return value ? [`${rankedStatLabels[name]} ${value}`] : [];
     });
     const range = Reflect.get(swap, "max_target_range") as RankedStatInput | undefined;
     const rangeLimit = range ? formatStat(context, range, "range_tiers") : "";
@@ -192,7 +178,7 @@ export function describeEffect(context: GameContext, effect: Effect, form?: Char
       const name = stringField(floor, "stat") as RankedStatName;
       const modifierId = stringField(floor, "modifier");
       const modifierName = stringField(byId(context, "stat_modifiers", modifierId), "name") || humanizeId(modifierId);
-      lines.push(`On use: Raises ${statLabels[name]} modifier to ${modifierName}`);
+      lines.push(`On use: Raises ${rankedStatLabels[name]} modifier to ${modifierName}`);
     });
   }
 

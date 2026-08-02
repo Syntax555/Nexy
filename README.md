@@ -251,6 +251,13 @@ generated JSON is current without rewriting it:
 pnpm content:check
 ```
 
+Guard the roster, form, universe, source, and optional-speed coverage baselines
+against accidental regression:
+
+```bash
+pnpm content:quality
+```
+
 Compile the validated YAML to `src/generated/nexy-data.json`:
 
 ```bash
@@ -260,8 +267,8 @@ pnpm content:build
 Do not edit the generated JSON by hand. Change the YAML source and rebuild it.
 
 Generate allowlisted 160 px roster thumbnails, allowlisted 640 px profile
-images, the public image-rights manifest, and the optimized 1200 x 630 social
-card:
+images, the public image-rights manifest, deterministic install icons, and the
+optimized 1200 x 630 social card:
 
 ```bash
 pnpm images:build
@@ -290,6 +297,7 @@ pnpm build            # Compile content/images and create dist/
 pnpm check:fast       # Content, style, types, and coverage-enforced tests
 pnpm check            # check:fast plus the production build
 pnpm check:full       # check plus the complete real-browser suite
+pnpm site:smoke -- URL # Verify a deployed page and its critical assets
 ```
 
 Use `pnpm check:fast` during normal iteration, `pnpm check` before pushing, and
@@ -311,8 +319,10 @@ its own source and generation notes.
 
 The workflow in `.github/workflows/ci.yml` runs `pnpm check` plus real-browser
 Playwright and axe-core tests for pull requests, pushes to `main`, and manual
-runs. A successful `main` run uploads `dist/` and deploys it with the official
-GitHub Pages actions. Pull requests validate the same code without deploying.
+runs. A successful `main` run uploads `dist/`, deploys it with the official
+GitHub Pages actions, then verifies the live HTML, metadata, manifest, install
+icons, module script, stylesheet, and social image. Pull requests validate the
+same code without deploying.
 
 In the repository settings, configure **Pages > Build and deployment > Source**
 to **GitHub Actions**. No Jekyll theme, Pages gem, or branch-generated `_site/`

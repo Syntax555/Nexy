@@ -18,6 +18,12 @@ function rosterCharacter(name: string): RosterCharacter {
   return character;
 }
 
+function openSelectedRosterTools(container: ParentNode): void {
+  const summary = container.querySelector<HTMLElement>(".roster-tools__summary");
+  if (!summary) throw new Error("Expected compact selected-roster tools.");
+  fireEvent.click(summary);
+}
+
 interface ControlledPickerProps {
   readonly initialSelection?: BattleSelection | null;
   readonly onRandom?: (candidates: readonly RosterCharacter[]) => void;
@@ -162,13 +168,19 @@ describe("fighter selection flow", () => {
     expect(picker.queryByRole("button", { name: /^Next fighter:/ })).toBeNull();
     expect(container.querySelector("#left-carousel-status")).toBeNull();
     expect(featuredCard()).toBeNull();
-    for (const card of container.querySelectorAll<HTMLButtonElement>(".roster-card")) {
-      expect(card.tabIndex).toBe(0);
-    }
+    expect(
+      [...container.querySelectorAll<HTMLButtonElement>(".roster-card")].filter((card) => card.tabIndex === 0)
+    ).toHaveLength(1);
 
     const captainAmerica = picker.getByRole("button", { name: /^Captain America,/ });
     captainAmerica.focus();
-    fireEvent.keyDown(captainAmerica, { key: "ArrowRight" });
+    // Spatial arrow behavior is covered with mocked grid geometry in
+    // roster-carousel.test.tsx. Use the layout-independent End key here so
+    // this integration test only owns the view-state preservation contract.
+    fireEvent.keyDown(captainAmerica, { key: "End" });
+    await waitFor(() => {
+      expect(document.activeElement?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
+    });
     const list = picker.getByRole("list", { name: "Characters" });
     fireEvent.pointerDown(list, { pointerId: 1, clientX: 250, clientY: 180 });
     fireEvent.pointerUp(list, { pointerId: 1, clientX: 120, clientY: 185 });
@@ -178,7 +190,7 @@ describe("fighter selection flow", () => {
     fireEvent.click(carouselView);
     await waitFor(() => {
       expect(rosterRegion()?.dataset.rosterView).toBe("carousel");
-      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Aurora,/);
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Wonder Girl,/);
       expect(document.activeElement).toBe(carouselView);
     });
   });
@@ -322,6 +334,10 @@ describe("fighter selection flow", () => {
     expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
     expect(container.querySelector('.roster-card[aria-pressed="true"] .roster-card__grid-selected')).toBeTruthy();
     expect(picker.queryByRole("group", { name: "Roster view" })).toBeNull();
+    const tools = container.querySelector<HTMLDetailsElement>("details.roster-tools");
+    expect(tools?.open).toBe(false);
+    expect(tools?.querySelector("summary")?.textContent).toContain("Find another fighter");
+    expect(container.textContent).not.toContain("Ruleset v1");
   });
 
   it("keeps focus on Random when that control changes the selection", async () => {
@@ -403,6 +419,7 @@ describe("fighter selection flow", () => {
     const captainAmerica = rosterCharacter("Captain America");
     const { container } = render(<ControlledPicker initialSelection={captainAmerica.defaultSelection} />);
     const picker = within(container as HTMLElement);
+    openSelectedRosterTools(container);
     const search = picker.getByRole("searchbox", {
       name: "Search characters"
     });
@@ -439,6 +456,7 @@ describe("fighter selection flow", () => {
     const captainAmerica = rosterCharacter("Captain America");
     const { container } = render(<ControlledPicker initialSelection={captainAmerica.defaultSelection} />);
     const picker = within(container as HTMLElement);
+    openSelectedRosterTools(container);
 
     fireEvent.input(picker.getByRole("searchbox", { name: "Search characters" }), {
       target: { value: "Captain America" }

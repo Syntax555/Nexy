@@ -1,5 +1,6 @@
 import { characterImageVariant } from "../app/assets.js";
 import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
+import { profileCoverage } from "../app/profile-coverage.js";
 import type { BattleReport, CharacterProfile, ProfileCapability, Side, Winner } from "../domain/index.js";
 import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
 import { CharacterImage } from "./CharacterImage.js";
@@ -7,6 +8,7 @@ import { CharacterImage } from "./CharacterImage.js";
 interface BattleResultProps {
   readonly report: BattleReport;
   readonly shareLabel: string;
+  readonly shareStatus?: string;
   readonly onEdit: () => void;
   readonly onShare: () => void;
 }
@@ -211,7 +213,63 @@ function comparisonRank(stat: { readonly rank: number; readonly note?: string } 
   return `Rank ${stat.rank}${stat.note ? ` · ${stat.note}` : ""}`;
 }
 
-export function BattleResult({ report, shareLabel, onEdit, onShare }: BattleResultProps) {
+interface VerdictReason {
+  readonly label: string;
+  readonly detail: string;
+}
+
+function verdictReasons(report: BattleReport, labels: ReturnType<typeof combatantLabels>): readonly VerdictReason[] {
+  const { score } = report;
+  if (score.interaction) {
+    return [
+      {
+        label: contextualInteractionSummary(report, labels),
+        detail: relabeledInteractionDetail(report, labels)
+      }
+    ];
+  }
+  if (score.tieBreaker) {
+    return [
+      {
+        label: `${score.tieBreaker.label} breaks the tied ranked score`,
+        detail: `${score.tieBreaker.leftValue} vs ${score.tieBreaker.rightValue}`
+      }
+    ];
+  }
+  if (score.winner === "tie") {
+    return [
+      {
+        label: "The ranked totals remain level",
+        detail: `${score.leftScore} to ${score.rightScore} across ${score.statCount} shared statistics`
+      }
+    ];
+  }
+
+  const winner = score.winner;
+  const winnerName = winner === "left" ? labels.left : labels.right;
+  return report.comparisons
+    .filter(
+      (comparison) => comparison.includedInScore && comparison.winner === winner && comparison.left && comparison.right
+    )
+    .sort(
+      (left, right) =>
+        Math.abs((right.left?.rank ?? 0) - (right.right?.rank ?? 0)) -
+        Math.abs((left.left?.rank ?? 0) - (left.right?.rank ?? 0))
+    )
+    .slice(0, 3)
+    .map((comparison) => {
+      const winningStat = winner === "left" ? comparison.left : comparison.right;
+      const losingStat = winner === "left" ? comparison.right : comparison.left;
+      return {
+        label: `${winnerName} leads in ${comparison.label}`,
+        detail: `${winningStat?.value ?? "Not ranked"} (rank ${winningStat?.rank ?? 0}) vs ${
+          losingStat?.value ?? "Not ranked"
+        } (rank ${losingStat?.rank ?? 0})`
+      };
+    });
+}
+
+export function BattleResult({ report, shareLabel, shareStatus = "", onEdit, onShare }: BattleResultProps) {
   const { left, right, score, verdict } = report;
   const labels = combatantLabels(report);
   const labelsAreContextual = labels.left !== left.character.name || labels.right !== right.character.name;
@@ -225,6 +283,9 @@ export function BattleResult({ report, shareLabel, onEdit, onShare }: BattleResu
           ? `${labels.right} wins`
           : `${labels.left} and ${labels.right} draw`;
   const interactionSummary = contextualInteractionSummary(report, labels);
+  const reasons = verdictReasons(report, labels);
+  const leftCoverage = profileCoverage(left);
+  const rightCoverage = profileCoverage(right);
   const decisionDetail = score.interaction
     ? `${interactionSummary}. ${relabeledInteractionDetail(report, labels)}`
     : score.tieBreaker
@@ -249,6 +310,9 @@ export function BattleResult({ report, shareLabel, onEdit, onShare }: BattleResu
           <button class="secondary-button" type="button" onClick={onShare}>
             {shareLabel}
           </button>
+          <span class="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+            {shareStatus}
+          </span>
         </div>
       </header>
 
@@ -276,15 +340,35 @@ export function BattleResult({ report, shareLabel, onEdit, onShare }: BattleResu
             <small>{labels.right}</small>
           </div>
         </div>
+        <div class="verdict-explanation">
+          <h3>Why this result</h3>
+          <ol class="verdict-reasons">
+            {reasons.map((reason) => (
+              <li key={`${reason.label}:${reason.detail}`}>
+                <strong>{reason.label}</strong>
+                <span>{reason.detail}</span>
+              </li>
+            ))}
+          </ol>
+          <p class="battle-coverage">
+            Resolved data coverage: {labels.left} {leftCoverage.authored}/{leftCoverage.total}; {labels.right}{" "}
+            {rightCoverage.authored}/{rightCoverage.total}. This battle scores {score.statCount} shared ranked fields;
+            missing optional values are excluded, never treated as zero.
+          </p>
+        </div>
       </details>
 
-      <details class="battle-fold" open>
+      <details class="battle-fold">
         <summary>
           <h2>Ranked comparison</h2>
           <small>
             {score.statCount} scored stats · gap {score.scoreGap}
           </small>
         </summary>
+        <p class="battle-method">
+          Nexy adds each fighter&apos;s catalog rank across the shared scored fields. The higher total wins. If totals
+          tie, Regeneration is checked first, followed by Martial Arts Mastery; otherwise the result is a draw.
+        </p>
         <table class="comparison-list">
           <caption class="visually-hidden">
             Ranked statistic comparison between {labels.left} and {labels.right}

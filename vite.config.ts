@@ -1,13 +1,14 @@
-import preact from "@preact/preset-vite";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
+import preact from "@preact/preset-vite";
 import { defineConfig, type Plugin } from "vite";
 
 import {
   createRobotsTxt,
   createSiteConfig,
   createSitemapXml,
+  createWebManifest,
   renderSiteTemplate,
   type SiteConfig
 } from "./site.config.js";
@@ -39,6 +40,13 @@ function siteFiles(config: SiteConfig): Plugin {
       {
         type: "application/xml; charset=utf-8",
         source: createSitemapXml(config)
+      }
+    ],
+    [
+      "site.webmanifest",
+      {
+        type: "application/manifest+json; charset=utf-8",
+        source: createWebManifest(config)
       }
     ]
   ]);

@@ -12,6 +12,7 @@
   "scripts": {
     "content:build": "tsx tools/content/build.ts",
     "content:check": "tsx tools/content/build.ts --check",
+    "content:quality": "tsx tools/content/quality.ts",
     "images:build": "tsx tools/images/build.ts",
     "images:strip-unpublished": "tsx tools/images/strip-unpublished.ts",
     "character:new": "tsx tools/content/new-character.ts",
@@ -21,8 +22,8 @@
     "build": "tsc --noEmit && vite build",
     "postbuild": "pnpm images:strip-unpublished",
     "preview": "vite preview",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "format": "biome format --write . && prettier --write \"*.md\" \"content/**/*.md\" \".github/**/*.{md,yml,yaml}\"",
     "format:check": "biome format . && prettier --check \"*.md\" \"content/**/*.md\" \".github/**/*.{md,yml,yaml}\"",
     "typecheck:app": "tsc --noEmit -p tsconfig.json",
@@ -38,7 +39,8 @@
     "test:e2e:run": "playwright test",
     "pretest:e2e:headed": "pnpm build",
     "test:e2e:headed": "playwright test --headed",
-    "check:fast": "pnpm content:check && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test:coverage",
+    "site:smoke": "node tools/site/smoke.ts",
+    "check:fast": "pnpm content:check && pnpm content:quality && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test:coverage",
     "check": "pnpm check:fast && pnpm build",
     "check:full": "pnpm check && pnpm test:e2e:run"
   },

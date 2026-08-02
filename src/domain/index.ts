@@ -2,10 +2,9 @@ export {
   CATALOG_NAMES,
   type CatalogName
 } from "./catalogs.js";
-
 export type {
-  AbsorptionEffect,
   AbilityModifierOption,
+  AbsorptionEffect,
   AgeFilterValue,
   AttackOption,
   BattleItemOption,
@@ -61,6 +60,15 @@ export type {
   StatModifierOption,
   VerseOption
 } from "./data.js";
+export {
+  optionalSpeedStatNames,
+  type RankedStatDefinition,
+  rankedStatCatalogs,
+  rankedStatDefinitions,
+  rankedStatLabels,
+  rankedStatNames,
+  speedDefinitions
+} from "./ranked-stats.js";
 
 export type {
   BattleInteraction,

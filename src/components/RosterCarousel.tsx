@@ -31,6 +31,66 @@ interface SwipeStart {
 
 export type RosterView = "carousel" | "grid";
 
+const gridNavigationKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"] as const;
+type GridNavigationKey = (typeof gridNavigationKeys)[number];
+
+function isGridNavigationKey(key: string): key is GridNavigationKey {
+  return gridNavigationKeys.some((candidate) => candidate === key);
+}
+
+function gridColumnCount(list: HTMLUListElement): number {
+  const entries = [...list.querySelectorAll<HTMLElement>(".roster-entry")];
+  const firstEntry = entries[0];
+  if (!firstEntry || entries.length === 1) return 1;
+
+  const firstTop = firstEntry.getBoundingClientRect().top;
+  const nextRowIndex = entries.findIndex(
+    (entry, index) => index > 0 && Math.abs(entry.getBoundingClientRect().top - firstTop) > 1
+  );
+  if (nextRowIndex > 0) return nextRowIndex;
+
+  const template = window.getComputedStyle(list).gridTemplateColumns;
+  const repeatedColumns = template.match(/^repeat\(\s*(\d+)\s*,/u)?.[1];
+  if (repeatedColumns) return Math.max(1, Number.parseInt(repeatedColumns, 10));
+
+  if (template && template !== "none" && !template.includes("repeat(")) {
+    const explicitColumns = template.split(/\s+/u).filter(Boolean).length;
+    if (explicitColumns > 0) return explicitColumns;
+  }
+
+  const entryWidth = firstEntry.getBoundingClientRect().width;
+  if (list.clientWidth > 0 && entryWidth > 0) {
+    return Math.max(1, Math.floor(list.clientWidth / entryWidth));
+  }
+
+  return 1;
+}
+
+function duplicateDisplayNames(items: readonly RosterCharacter[]): ReadonlySet<string> {
+  const counts = new Map<string, number>();
+  for (const item of items) counts.set(item.name, (counts.get(item.name) ?? 0) + 1);
+  return new Set([...counts].filter(([, count]) => count > 1).map(([name]) => name));
+}
+
+function rosterDisplayName(item: RosterCharacter, repeatedNames: ReadonlySet<string>): string {
+  return repeatedNames.has(item.name) ? `${item.name} — ${item.identity}` : item.name;
+}
+
+function preserveViewportTop(element: HTMLElement, expectedTop: number): void {
+  const restore = (): void => {
+    const scrollRoot = document.scrollingElement;
+    if (!element.isConnected || !scrollRoot) return;
+    const offset = element.getBoundingClientRect().top - expectedTop;
+    if (Math.abs(offset) > 1) scrollRoot.scrollTop += offset;
+  };
+
+  window.requestAnimationFrame(() => {
+    restore();
+    // Firefox can apply focus-following scroll after the first layout frame.
+    window.requestAnimationFrame(restore);
+  });
+}
+
 export function RosterCarousel({
   side,
   accentName,
@@ -58,6 +118,9 @@ export function RosterCarousel({
   const featuredCharacterId = featuredCharacter?.id ?? null;
   const carouselActive = rosterView === "carousel";
   const gridActive = rosterView === "grid";
+  const repeatedNames = duplicateDisplayNames(items);
+  const gridInstructionsId = `${side}-grid-instructions`;
+  const listDescribedBy = [describedBy, gridActive ? gridInstructionsId : ""].filter(Boolean).join(" ");
   const previousFeatured =
     featuredIndex >= 0 ? (items[(featuredIndex - 1 + items.length) % items.length] ?? null) : null;
   const nextFeatured = featuredIndex >= 0 ? (items[(featuredIndex + 1) % items.length] ?? null) : null;
@@ -137,9 +200,11 @@ export function RosterCarousel({
     return () => window.cancelAnimationFrame(frame);
   }, [selectedCharacterId]);
 
-  const featureAtIndex = (index: number, focusCard = false): void => {
+  const featureAtIndex = (index: number, focusCard = false, wrap = true): void => {
     if (items.length === 0) return;
-    const normalizedIndex = ((index % items.length) + items.length) % items.length;
+    const normalizedIndex = wrap
+      ? ((index % items.length) + items.length) % items.length
+      : Math.max(0, Math.min(index, items.length - 1));
     const nextItem = items[normalizedIndex];
     if (!nextItem) return;
     setFeaturedId(nextItem.id);
@@ -149,9 +214,7 @@ export function RosterCarousel({
         const entry = [...(listRef.current?.querySelectorAll<HTMLElement>(".roster-entry") ?? [])].find(
           (item) => item.dataset.characterId === nextItem.id
         );
-        entry?.querySelector<HTMLElement>(".roster-card")?.focus({
-          preventScroll: true
-        });
+        entry?.querySelector<HTMLElement>(".roster-card")?.focus(carouselActive ? { preventScroll: true } : undefined);
       });
     }
   };
@@ -161,19 +224,45 @@ export function RosterCarousel({
     featureAtIndex(featuredIndex + delta, focusCard);
   };
 
+  const moveGridFocus = (index: number, key: GridNavigationKey): void => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const columns = gridColumnCount(list);
+    let targetIndex = index;
+    const column = index % columns;
+    if (key === "ArrowLeft" && column > 0) targetIndex -= 1;
+    else if (key === "ArrowRight" && column < columns - 1 && index + 1 < items.length) targetIndex += 1;
+    else if (key === "ArrowUp" && index - columns >= 0) targetIndex -= columns;
+    else if (key === "ArrowDown" && index + columns < items.length) targetIndex += columns;
+    else if (key === "Home") targetIndex = 0;
+    else if (key === "End") targetIndex = items.length - 1;
+    else return;
+
+    featureAtIndex(targetIndex, true, false);
+  };
+
   return (
     <section
       class="roster-carousel"
       data-empty={visibleRosterCount === 0 ? "true" : "false"}
       data-roster-view={rosterView}
       aria-label={`${accentName} character ${rosterView === "carousel" ? "carousel" : "portrait grid"}`}
-      aria-describedby={carouselActive && featuredCharacter ? `${side}-carousel-status` : undefined}
+      aria-describedby={
+        carouselActive && featuredCharacter ? `${side}-carousel-status` : gridActive ? gridInstructionsId : undefined
+      }
     >
+      {gridActive ? (
+        <p class="visually-hidden" id={gridInstructionsId}>
+          Use the Arrow keys to move through fighters. Home and End jump to the first and last fighter. Press Enter or
+          Space to choose.
+        </p>
+      ) : null}
       {carouselActive && featuredCharacter ? (
         <button
           class="roster-carousel__arrow roster-carousel__arrow--previous"
           type="button"
-          aria-label={`Previous fighter: ${previousFeatured?.name ?? featuredCharacter.name}`}
+          aria-label={`Previous fighter: ${rosterDisplayName(previousFeatured ?? featuredCharacter, repeatedNames)}`}
           disabled={items.length <= 1}
           onClick={(event) => {
             moveFeatured(-1);
@@ -187,7 +276,7 @@ export function RosterCarousel({
         ref={listRef}
         class="roster-list"
         aria-label="Characters"
-        aria-describedby={describedBy}
+        aria-describedby={listDescribedBy || undefined}
         onPointerDown={(event) => {
           if (!carouselActive || items.length <= 1) return;
           swipeRef.current = {
@@ -225,6 +314,9 @@ export function RosterCarousel({
           const gallerySource = displayImage ? characterImageVariant(displayImage.image, 640) : null;
           const isSelected = selection?.characterId === item.id;
           const isFeatured = carouselActive && featuredCharacter?.id === item.id;
+          const isRovingFocusTarget = featuredCharacterId === item.id;
+          const needsGridIdentity = gridActive && repeatedNames.has(item.name);
+          const gridIdentity = item.identity !== item.name ? item.identity : `${item.origin} / ${item.verse}`;
           return (
             <li
               class="roster-entry"
@@ -239,12 +331,20 @@ export function RosterCarousel({
                 aria-label={`${item.name}, ${item.identity}, ${item.media}, ${item.origin}, ${item.verse}, tier ${item.tier}`}
                 aria-pressed={isSelected}
                 aria-current={isFeatured ? "true" : undefined}
-                tabIndex={carouselActive ? (isFeatured ? 0 : -1) : 0}
+                tabIndex={isRovingFocusTarget ? 0 : -1}
                 onFocus={() => {
-                  if (carouselActive && !isFeatured) setFeaturedId(item.id);
+                  if (!isRovingFocusTarget) setFeaturedId(item.id);
                 }}
                 onKeyDown={(event) => {
-                  if (!carouselActive || !isFeatured) return;
+                  if (gridActive) {
+                    if (isGridNavigationKey(event.key)) {
+                      event.preventDefault();
+                      moveGridFocus(index, event.key);
+                    }
+                    return;
+                  }
+
+                  if (!isFeatured) return;
                   if (event.key === "ArrowLeft") {
                     event.preventDefault();
                     moveFeatured(-1, true);
@@ -259,10 +359,15 @@ export function RosterCarousel({
                     featureAtIndex(items.length - 1, true);
                   }
                 }}
-                onClick={() => {
+                onClick={(event) => {
                   if (suppressClickRef.current) return;
                   setFeaturedId(item.id);
-                  if (!isSelected) onSelect(item.defaultSelection);
+                  if (!isSelected) {
+                    const picker = event.currentTarget.closest<HTMLElement>(".fighter-picker");
+                    const pickerTop = picker?.getBoundingClientRect().top;
+                    onSelect(item.defaultSelection);
+                    if (picker && pickerTop !== undefined) preserveViewportTop(picker, pickerTop);
+                  }
                 }}
               >
                 <span class="roster-card__portrait">
@@ -299,6 +404,7 @@ export function RosterCarousel({
                       {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
                     </small>
                   ) : null}
+                  {needsGridIdentity ? <span class="roster-card__grid-identity">{gridIdentity}</span> : null}
                 </span>
                 {carouselActive ? (
                   <span class="roster-card__badges">
@@ -312,7 +418,7 @@ export function RosterCarousel({
                 ) : null}
                 {carouselActive ? (
                   <span class="roster-card__cta" aria-hidden="true">
-                    Choose {item.name}
+                    Choose {rosterDisplayName(item, repeatedNames)}
                   </span>
                 ) : null}
               </button>
@@ -333,7 +439,7 @@ export function RosterCarousel({
         <button
           class="roster-carousel__arrow roster-carousel__arrow--next"
           type="button"
-          aria-label={`Next fighter: ${nextFeatured?.name ?? featuredCharacter.name}`}
+          aria-label={`Next fighter: ${rosterDisplayName(nextFeatured ?? featuredCharacter, repeatedNames)}`}
           disabled={items.length <= 1}
           onClick={(event) => {
             moveFeatured(1);
@@ -346,7 +452,7 @@ export function RosterCarousel({
       {carouselActive && featuredCharacter ? (
         <div class="roster-carousel__status" id={`${side}-carousel-status`}>
           <p role="status" aria-live="polite" aria-atomic="true">
-            <strong>{featuredCharacter.name}</strong>
+            <strong>{rosterDisplayName(featuredCharacter, repeatedNames)}</strong>
             <span>
               {featuredIndex + 1} of {shownRosterCount}
               {remainingRosterCount > 0 ? " shown" : ""}

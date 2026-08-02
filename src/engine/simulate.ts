@@ -1,7 +1,7 @@
 import type { BattleReport, BattleSelection, CharacterProfile } from "../domain/index.js";
 import { RULESET_VERSION } from "../domain/index.js";
-import { withBattleStatuses } from "./counters.js";
 import type { GameContext } from "./context.js";
+import { withBattleStatuses } from "./counters.js";
 import type { EngineView } from "./internal.js";
 import { prepareCharacterProfile, resolveSelection } from "./profile.js";
 import { resolveBattleViews } from "./resolve.js";

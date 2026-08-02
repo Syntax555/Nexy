@@ -1,5 +1,6 @@
 import { characterImageVariant } from "../app/assets.js";
 import { isImageEnabledForPublicDisplay } from "../app/image-rights.js";
+import { profileCoverage } from "../app/profile-coverage.js";
 import type { RosterCharacter } from "../app/roster.js";
 import type { CharacterProfile as CharacterProfileData } from "../domain/index.js";
 import { ArtworkDisclosure } from "./ArtworkDisclosure.js";
@@ -11,7 +12,7 @@ interface CharacterProfileProps {
   readonly rosterCharacter: RosterCharacter | null;
   readonly profile: CharacterProfileData | null;
   readonly onFormChange: (formId: string) => void;
-  readonly onOpenImage: (image: DialogImage) => void;
+  readonly onOpenImage: (image: DialogImage, returnFocus: HTMLElement) => void;
 }
 
 function capabilityCount(profile: CharacterProfileData): number {
@@ -47,6 +48,7 @@ export function CharacterProfile({ side, rosterCharacter, profile, onFormChange,
   const totalCapabilities = capabilityCount(profile);
   const sourceCount = profile.sources.length + (imageRecord ? 1 : 0);
   const formName = profile.key.name || profile.key.names[0] || profile.key.key;
+  const coverage = profileCoverage(profile);
 
   return (
     <article class="fighter-profile">
@@ -58,13 +60,16 @@ export function CharacterProfile({ side, rosterCharacter, profile, onFormChange,
               class="icon-button profile-visual__expand"
               type="button"
               aria-label={`View full image of ${profile.character.name}`}
-              onClick={() => {
-                onOpenImage({
-                  src: characterImageVariant(displayImage.image, 640),
-                  alt: imageTitle,
-                  title: imageTitle,
-                  rightsRecord: displayImage
-                });
+              onClick={(event) => {
+                onOpenImage(
+                  {
+                    src: characterImageVariant(displayImage.image, 640),
+                    alt: imageTitle,
+                    title: imageTitle,
+                    rightsRecord: displayImage
+                  },
+                  event.currentTarget
+                );
               }}
             >
               +
@@ -122,6 +127,10 @@ export function CharacterProfile({ side, rosterCharacter, profile, onFormChange,
           {profile.details.map((detail) => (
             <li key={detail}>{detail}</li>
           ))}
+          <li class="profile-coverage">
+            Data coverage: {coverage.authored}/{coverage.total} ranked fields
+            {coverage.missing.length > 0 ? <small>Missing: {coverage.missing.join(", ")}</small> : null}
+          </li>
         </ul>
 
         <ul class="profile-stats" aria-label={`${profile.character.name} statistics`}>

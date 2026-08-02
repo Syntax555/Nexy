@@ -5,7 +5,6 @@ import type {
   BattleTieBreaker,
   BattleVerdict,
   ComparedStat,
-  OptionalSpeedStatName,
   PowerRef,
   PowerTargetRef,
   RankedStatName,
@@ -40,17 +39,9 @@ function winnerFor(leftRank: number, rightRank: number): Winner {
   return "tie";
 }
 
-const rulesetV1OptionalSpeedScoring = {
-  attack_speed: "both-authored",
-  reaction_speed: "both-authored",
-  travel_speed: "both-authored",
-  flight_speed: "both-authored"
-} as const satisfies Readonly<Record<OptionalSpeedStatName, "both-authored">>;
-
-const rulesetV1SpeedScoring = {
-  combat_speed: "always",
-  ...rulesetV1OptionalSpeedScoring
-} as const satisfies Readonly<Record<SpeedStatName, "always" | "both-authored">>;
+const rulesetV1SpeedScoring = Object.fromEntries(
+  speedDefinitions.map(([field]) => [field, field === "combat_speed" ? "always" : "both-authored"])
+) as Readonly<Record<SpeedStatName, "always" | "both-authored">>;
 
 function hasAuthoredSpeedCategory(view: EngineView, field: SpeedStatName): boolean {
   return Boolean(formStat(view.effectiveKey, field));

@@ -23,6 +23,7 @@ async function chooseListOption(picker: Locator, label: string, option: string):
 }
 
 async function openBrowsePath(picker: Locator): Promise<void> {
+  await picker.waitFor({ state: "attached" });
   const disclosure = picker.locator("details[data-browse-path]");
   if ((await disclosure.count()) === 0 || (await disclosure.getAttribute("open")) !== null) return;
   await disclosure.locator("summary").click();
@@ -57,6 +58,38 @@ async function expectNoHorizontalOverflow(page: Page): Promise<void> {
     dimensions.documentWidth,
     `Overflowing elements: ${JSON.stringify(dimensions.overflowingElements)}`
   ).toBeLessThanOrEqual(dimensions.viewportWidth + 1);
+}
+
+async function expectNoVisibleOverlap(locator: Locator, description: string): Promise<void> {
+  const overlaps = await locator.evaluateAll((elements) => {
+    const visible = elements
+      .map((element) => ({
+        element,
+        bounds: element.getBoundingClientRect()
+      }))
+      .filter(({ element, bounds }) => {
+        const style = getComputedStyle(element);
+        return style.display !== "none" && style.visibility !== "hidden" && bounds.width > 0 && bounds.height > 0;
+      });
+
+    return visible.flatMap((current, index) =>
+      visible.slice(index + 1).flatMap((candidate) => {
+        const horizontalIntersection =
+          Math.min(current.bounds.right, candidate.bounds.right) - Math.max(current.bounds.left, candidate.bounds.left);
+        const verticalIntersection =
+          Math.min(current.bounds.bottom, candidate.bounds.bottom) - Math.max(current.bounds.top, candidate.bounds.top);
+        if (horizontalIntersection <= 1 || verticalIntersection <= 1) return [];
+
+        const label = (element: Element) =>
+          element.getAttribute("aria-label") ??
+          element.textContent?.trim().replace(/\s+/g, " ").slice(0, 60) ??
+          element.tagName;
+        return [`${label(current.element)} overlaps ${label(candidate.element)}`];
+      })
+    );
+  });
+
+  expect(overlaps, description).toEqual([]);
 }
 
 test("loads every core asset and resolves a complete battle", async ({ page }) => {
@@ -218,6 +251,62 @@ test("supports 200% text without page-level horizontal scrolling", async ({ page
   });
   await expectNoHorizontalOverflow(page);
   await expect(page.getByRole("heading", { name: "Build the fight. Inspect the reason." })).toBeVisible();
+
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await leftPicker.waitFor({ state: "attached" });
+  await leftPicker.getByRole("button", { name: "Portrait grid view" }).click();
+  const gridMetrics = await leftPicker.locator(".roster-card").evaluateAll((cards) => ({
+    minimumCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
+    labelsAllowEmergencyWrap: cards.every(
+      (card) => getComputedStyle(card.querySelector("strong") as Element).overflowWrap === "anywhere"
+    )
+  }));
+  expect(gridMetrics.minimumCardWidth, "Portrait cards did not scale with 200% text").toBeGreaterThanOrEqual(120);
+  expect(gridMetrics.labelsAllowEmergencyWrap).toBe(true);
+  await expectNoVisibleOverlap(
+    page.locator(".site-header > .brand, .site-header__actions > button"),
+    "Header controls overlap at 200% text"
+  );
+  await expectNoVisibleOverlap(
+    leftPicker.locator(".roster-meta > *"),
+    "Roster status and view controls overlap at 200% text"
+  );
+  await expectNoHorizontalOverflow(page);
+});
+
+test("selected roster tools reflow at 320px and 200% text", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile-"), "Narrow mobile reflow coverage");
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto("./");
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = "200%";
+  });
+
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  const toolsSummary = leftPicker.locator(".roster-tools__summary");
+  await expect(toolsSummary).toBeVisible();
+  await expectNoVisibleOverlap(
+    toolsSummary.locator("span, small"),
+    "Selected-roster summary labels overlap at narrow 200% text"
+  );
+
+  const reflowMetrics = await page.evaluate(() => {
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const label = document.querySelector<HTMLElement>('.fighter-picker[data-side="left"] .roster-tools__summary span');
+    if (!header || !label) throw new Error("Expected the header and selected-roster summary label.");
+    return {
+      headerHeight: header.getBoundingClientRect().height,
+      headerMinHeight: Number.parseFloat(getComputedStyle(header).minHeight),
+      labelWidth: label.getBoundingClientRect().width
+    };
+  });
+  expect(reflowMetrics.labelWidth, "Selected-roster summary label collapsed").toBeGreaterThan(1);
+  expect(
+    reflowMetrics.headerMinHeight,
+    "Sticky-header offset did not grow with its wrapped content"
+  ).toBeGreaterThanOrEqual(reflowMetrics.headerHeight - 1);
+  await expectNoHorizontalOverflow(page);
 });
 
 test("mobile fighter switcher stays inside the active picker", async ({ page }, testInfo) => {
@@ -243,7 +332,17 @@ test("mobile fighter switcher stays inside the active picker", async ({ page }, 
   await expect(page.locator("#mobile-fighter-left-panel")).not.toHaveAttribute("hidden", "");
   await expect(page.locator("#mobile-fighter-right-panel")).toHaveAttribute("hidden", "");
 
-  await secondSwitch.click();
+  const continueAction = page.getByRole("button", { name: /Choose Fighter 02/ });
+  await expect(continueAction).toBeVisible();
+  await expect
+    .poll(() =>
+      continueAction.evaluate((element) => {
+        const dock = element.closest(".action-dock");
+        return dock ? getComputedStyle(dock).position : "missing";
+      })
+    )
+    .toBe("fixed");
+  await continueAction.click();
   await expect(secondSwitch).toHaveAttribute("aria-pressed", "true");
   await expect(secondSwitch).toBeFocused();
   await expect(page.locator("#mobile-fighter-right-panel")).not.toHaveAttribute("hidden", "");
@@ -410,6 +509,7 @@ test("forced-colors mode preserves selected-state affordances", async ({ page, b
   await page.goto("./");
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  await leftPicker.locator(".roster-tools__summary").click();
   await leftPicker.getByRole("searchbox", { name: "Search characters" }).fill("");
   await expect(leftPicker.locator(".roster-card")).toHaveCount(20);
 
@@ -453,4 +553,53 @@ test("legal page remains reachable and accessible", async ({ page }) => {
 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test("rules dialog supports focus, Escape, backdrop close, and accessibility", async ({ page }) => {
+  await page.goto("./");
+  const rulesButton = page.getByRole("button", { name: "Rules", exact: true });
+  const dialog = page.getByRole("dialog", { name: "How Nexy decides" });
+  const closeButton = dialog.getByRole("button", { name: "Close rules" });
+
+  await rulesButton.click();
+  await expect(dialog).toBeVisible();
+  await expect(closeButton).toBeFocused();
+  const accessibility = await new AxeBuilder({ page })
+    .include("dialog.modal")
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(rulesButton).toBeFocused();
+
+  await rulesButton.click();
+  await expect(dialog).toBeVisible();
+  await page.mouse.click(2, 2);
+  await expect(dialog).not.toBeVisible();
+  await expect(rulesButton).toBeFocused();
+});
+
+test("image dialog restores focus and exposes its artwork disclosure", async ({ page }) => {
+  await page.goto("./");
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  const expandButton = leftPicker.getByRole("button", { name: /^View full image of Captain America/ });
+  await expandButton.click();
+
+  const dialog = page.locator("dialog.image-modal");
+  const closeButton = dialog.getByRole("button", { name: "Close image" });
+  await expect(dialog).toBeVisible();
+  await expect(closeButton).toBeFocused();
+  await expect(dialog.locator(".image-modal__disclosure")).toContainText("Rights unverified");
+  const accessibility = await new AxeBuilder({ page })
+    .include("dialog.image-modal")
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(expandButton).toBeFocused();
 });

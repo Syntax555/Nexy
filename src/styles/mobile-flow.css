@@ -109,6 +109,10 @@
   }
 
   @media (max-width: 1180px) {
+    .main {
+      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    }
+
     .mobile-matchup-panel {
       display: block;
       min-width: 0;
@@ -116,6 +120,19 @@
     }
 
     .versus-rail {
+      display: none;
+    }
+
+    .action-dock[data-mobile="true"] {
+      position: fixed;
+      z-index: 70;
+      right: 0;
+      bottom: max(8px, env(safe-area-inset-bottom));
+      left: 0;
+      margin: 0 auto;
+    }
+
+    .action-dock[data-mobile="true"][data-battle-visible="true"] {
       display: none;
     }
   }
@@ -196,6 +213,31 @@
 
     .action-dock {
       padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .action-dock[data-mobile="true"] {
+      width: min(calc(100% - 20px), 520px);
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .action-dock[data-mobile="true"] .dock-fighter {
+      display: none;
+    }
+
+    .action-dock[data-mobile="true"] .analyze-button {
+      grid-column: auto;
+    }
+
+    .action-dock[data-mobile="true"][data-ready="false"] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .action-dock[data-mobile="true"][data-ready="false"] .swap-button {
+      display: none;
+    }
+
+    .roster-card__grid-identity {
+      font-size: 0.68rem;
     }
   }
 

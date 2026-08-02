@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../../src/app/App.js";
+import { nexyData } from "../../src/data/nexy.js";
 
 const originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia");
 
@@ -66,7 +67,7 @@ describe("mobile matchup flow", () => {
 
   it("embeds one pressed-button switcher in the active picker and preserves each side's state", async () => {
     installMatchMedia(true);
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPanel = container.querySelector<HTMLElement>("#mobile-fighter-left-panel");
     const rightPanel = container.querySelector<HTMLElement>("#mobile-fighter-right-panel");
     if (!leftPanel || !rightPanel) {
@@ -175,7 +176,7 @@ describe("mobile matchup flow", () => {
 
   it("preserves picker state across viewport changes and focus on mobile entry", async () => {
     const media = installMatchMedia(false);
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPanel = container.querySelector<HTMLElement>("#mobile-fighter-left-panel");
     const rightPanel = container.querySelector<HTMLElement>("#mobile-fighter-right-panel");
     if (!leftPanel || !rightPanel) {
@@ -222,7 +223,7 @@ describe("mobile matchup flow", () => {
 
   it("collapses universe browsing on mobile without resetting its filters", async () => {
     installMatchMedia(true);
-    const { container } = render(<App />);
+    const { container } = render(<App data={nexyData} />);
     const leftPanel = container.querySelector<HTMLElement>("#mobile-fighter-left-panel");
     if (!leftPanel) throw new Error("Expected the left mobile fighter panel.");
 

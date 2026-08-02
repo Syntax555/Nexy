@@ -4,42 +4,22 @@ import type {
   RankedStat,
   RankedStatInput,
   RankedStatName,
-  ResistanceRef,
-  SpeedStatName
+  ResistanceRef
 } from "../domain/index.js";
+import { rankedStatCatalogs, speedDefinitions as sharedSpeedDefinitions } from "../domain/index.js";
 import {
   byId,
-  numberField,
-  optionalStringField,
-  stringField,
   type CatalogName,
   type CatalogRecord,
-  type GameContext
+  type GameContext,
+  numberField,
+  optionalStringField,
+  stringField
 } from "./context.js";
 import type { ResolvedStat } from "./internal.js";
 
-export const speedDefinitions = [
-  ["combat_speed", "Combat Speed"],
-  ["attack_speed", "Attack Speed"],
-  ["reaction_speed", "Reaction Speed"],
-  ["travel_speed", "Travel Speed"],
-  ["flight_speed", "Flight Speed"]
-] as const satisfies readonly (readonly [SpeedStatName, string])[];
-
-export const statCatalogs: Readonly<Partial<Record<RankedStatName, CatalogName>>> = {
-  attack_potency: "attack_durability_tiers",
-  attack_speed: "speed_tiers",
-  combat_speed: "speed_tiers",
-  reaction_speed: "speed_tiers",
-  travel_speed: "speed_tiers",
-  flight_speed: "speed_tiers",
-  lifting_strength: "lifting_strength_tiers",
-  striking_strength: "striking_strength_tiers",
-  durability: "attack_durability_tiers",
-  stamina: "stamina_tiers",
-  range: "range_tiers",
-  intelligence: "intelligence_tiers"
-};
+export const speedDefinitions = sharedSpeedDefinitions;
+export const statCatalogs = rankedStatCatalogs;
 
 type ProfileStatDefinition =
   | readonly [string, string, "tier" | "speed", undefined]

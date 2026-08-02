@@ -159,6 +159,62 @@
     line-height: 1.5;
   }
 
+  .verdict-explanation {
+    display: grid;
+    gap: 14px;
+    padding: 22px;
+    border-top: 1px solid var(--line);
+    background: var(--surface-soft);
+  }
+
+  .verdict-explanation h3 {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .verdict-reasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .verdict-reasons li {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .verdict-reasons strong {
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .verdict-reasons span,
+  .battle-coverage,
+  .battle-method {
+    color: var(--ink-soft);
+    font-size: 0.7rem;
+    line-height: 1.55;
+  }
+
+  .battle-coverage {
+    max-width: 100ch;
+  }
+
+  .battle-method {
+    padding: 18px 22px;
+    border-top: 1px solid var(--line);
+    background: var(--surface-soft);
+  }
+
   .comparison-list {
     width: 100%;
     border-collapse: collapse;
@@ -468,6 +524,14 @@
     .verdict__fighter {
       min-height: 120px;
       padding: 20px;
+    }
+
+    .verdict-explanation {
+      padding: 18px;
+    }
+
+    .verdict-reasons {
+      grid-template-columns: 1fr;
     }
 
     .comparison-row {
