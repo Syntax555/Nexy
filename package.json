@@ -50,7 +50,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
     "@biomejs/biome": "2.5.6",
-    "@playwright/test": "1.62.0",
+    "@playwright/test": "1.62.1",
     "@preact/preset-vite": "2.10.6",
     "@testing-library/preact": "3.2.4",
     "@types/node": "24.13.3",
@@ -60,7 +60,7 @@
     "sharp": "0.35.3",
     "tsx": "4.23.1",
     "typescript": "7.0.2",
-    "vite": "8.1.5",
+    "vite": "8.2.0",
     "vitest": "4.1.10",
     "yaml": "2.9.0",
     "zod": "4.4.3"
