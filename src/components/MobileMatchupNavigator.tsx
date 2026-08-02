@@ -10,7 +10,6 @@ interface MobileMatchupNavigatorProps {
   readonly leftName: string | null;
   readonly rightName: string | null;
   readonly onActivate: (side: MobileFighterSide) => void;
-  readonly onAnalyze: () => void;
 }
 
 function queryMatches(query: string): boolean {
@@ -50,13 +49,11 @@ export function MobileMatchupNavigator({
   isMobile,
   leftName,
   rightName,
-  onActivate,
-  onAnalyze
+  onActivate
 }: MobileMatchupNavigatorProps) {
-  const ready = Boolean(leftName && rightName);
   const nextSide = (side: MobileFighterSide): MobileFighterSide => (side === "left" ? "right" : "left");
 
-  const activateAndFocus = (side: MobileFighterSide, focusTarget: "tab" | "heading" = "tab"): void => {
+  const activateAndFocus = (side: MobileFighterSide): void => {
     onActivate(side);
     window.requestAnimationFrame(() => {
       const reducedMotion =
@@ -65,11 +62,7 @@ export function MobileMatchupNavigator({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start"
       });
-      document
-        .querySelector<HTMLElement>(
-          focusTarget === "heading" ? `#${side}-picker-title` : `[data-mobile-fighter-tab="${side}"]`
-        )
-        ?.focus({ preventScroll: true });
+      document.querySelector<HTMLElement>(`[data-mobile-fighter-tab="${side}"]`)?.focus({ preventScroll: true });
     });
   };
 
@@ -88,27 +81,15 @@ export function MobileMatchupNavigator({
     activateAndFocus(target);
   };
 
-  const status = ready
-    ? "Matchup ready. Review either fighter or analyze the battle."
-    : leftName
-      ? "Fighter 01 selected. Choose Fighter 02."
-      : rightName
-        ? "Fighter 02 selected. Choose Fighter 01."
-        : "Choose Fighter 01, then Fighter 02.";
-  const nextIncompleteSide: MobileFighterSide | null = !leftName ? "left" : !rightName ? "right" : null;
-
   return (
     <nav class="mobile-matchup-navigator" aria-label="Fighter selection steps" hidden={!isMobile}>
-      <div class="mobile-matchup-tabs" role="tablist" aria-label="Choose a fighter to edit">
+      <fieldset class="mobile-matchup-tabs">
+        <legend class="visually-hidden">Choose a fighter to edit</legend>
         <button
-          id="mobile-fighter-left-tab"
           class="mobile-matchup-tab"
           type="button"
-          role="tab"
-          aria-controls="mobile-fighter-left-panel"
-          aria-selected={activeSide === "left"}
+          aria-pressed={activeSide === "left"}
           aria-label={stepLabel("01", leftName)}
-          tabIndex={activeSide === "left" ? 0 : -1}
           data-mobile-fighter-tab="left"
           data-complete={leftName ? "true" : "false"}
           onClick={() => activateAndFocus("left")}
@@ -122,14 +103,10 @@ export function MobileMatchupNavigator({
         </button>
         <span class="mobile-matchup-tabs__connector" aria-hidden="true" />
         <button
-          id="mobile-fighter-right-tab"
           class="mobile-matchup-tab"
           type="button"
-          role="tab"
-          aria-controls="mobile-fighter-right-panel"
-          aria-selected={activeSide === "right"}
+          aria-pressed={activeSide === "right"}
           aria-label={stepLabel("02", rightName)}
-          tabIndex={activeSide === "right" ? 0 : -1}
           data-mobile-fighter-tab="right"
           data-complete={rightName ? "true" : "false"}
           onClick={() => activateAndFocus("right")}
@@ -141,25 +118,7 @@ export function MobileMatchupNavigator({
             <strong>{rightName ?? "Choose fighter"}</strong>
           </span>
         </button>
-      </div>
-      <div class="mobile-matchup-status" data-ready={ready ? "true" : "false"}>
-        <p role="status" aria-live="polite">
-          {status}
-        </p>
-        {ready ? (
-          <button class="mobile-matchup-action" type="button" onClick={onAnalyze}>
-            Analyze battle
-          </button>
-        ) : nextIncompleteSide && nextIncompleteSide !== activeSide ? (
-          <button
-            class="mobile-matchup-action"
-            type="button"
-            onClick={() => activateAndFocus(nextIncompleteSide, "heading")}
-          >
-            Choose Fighter {nextIncompleteSide === "left" ? "01" : "02"}
-          </button>
-        ) : null}
-      </div>
+      </fieldset>
     </nav>
   );
 }

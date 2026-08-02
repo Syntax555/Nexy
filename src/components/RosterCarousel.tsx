@@ -12,6 +12,7 @@ interface RosterCarouselProps {
   readonly items: readonly RosterCharacter[];
   readonly selection: BattleSelection | null;
   readonly galleryActive: boolean;
+  readonly rosterView: RosterView;
   readonly shownRosterCount: number;
   readonly visibleRosterCount: number;
   readonly remainingRosterCount: number;
@@ -29,12 +30,15 @@ interface SwipeStart {
   readonly y: number;
 }
 
+export type RosterView = "carousel" | "grid";
+
 export function RosterCarousel({
   side,
   accentName,
   items,
   selection,
   galleryActive,
+  rosterView,
   shownRosterCount,
   visibleRosterCount,
   remainingRosterCount,
@@ -54,6 +58,8 @@ export function RosterCarousel({
   const featuredIndex = items.length === 0 ? -1 : Math.max(0, featuredRosterIndex);
   const featuredCharacter = featuredIndex >= 0 ? (items[featuredIndex] ?? null) : null;
   const featuredCharacterId = featuredCharacter?.id ?? null;
+  const carouselActive = galleryActive && rosterView === "carousel";
+  const gridActive = galleryActive && rosterView === "grid";
   const previousFeatured =
     featuredIndex >= 0 ? (items[(featuredIndex - 1 + items.length) % items.length] ?? null) : null;
   const nextFeatured = featuredIndex >= 0 ? (items[(featuredIndex + 1) % items.length] ?? null) : null;
@@ -76,7 +82,7 @@ export function RosterCarousel({
   }, [featuredId, items]);
 
   useEffect(() => {
-    if (!galleryActive || !featuredCharacterId) return;
+    if (!carouselActive || !featuredCharacterId) return;
 
     const frame = window.requestAnimationFrame(() => {
       const list = listRef.current;
@@ -106,7 +112,12 @@ export function RosterCarousel({
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [featuredCharacterId, galleryActive]);
+  }, [carouselActive, featuredCharacterId]);
+
+  useEffect(() => {
+    if (!gridActive || !listRef.current) return;
+    listRef.current.scrollLeft = 0;
+  }, [gridActive]);
 
   useEffect(() => {
     if (!selectedCharacterId) return;
@@ -156,10 +167,15 @@ export function RosterCarousel({
     <section
       class="roster-carousel"
       data-empty={visibleRosterCount === 0 ? "true" : "false"}
-      aria-label={galleryActive ? `${accentName} character carousel` : `${accentName} character roster`}
-      aria-describedby={galleryActive && featuredCharacter ? `${side}-carousel-status` : undefined}
+      data-roster-view={galleryActive ? rosterView : "list"}
+      aria-label={
+        galleryActive
+          ? `${accentName} character ${rosterView === "carousel" ? "carousel" : "portrait grid"}`
+          : `${accentName} character roster`
+      }
+      aria-describedby={carouselActive && featuredCharacter ? `${side}-carousel-status` : undefined}
     >
-      {galleryActive && featuredCharacter ? (
+      {carouselActive && featuredCharacter ? (
         <button
           class="roster-carousel__arrow roster-carousel__arrow--previous"
           type="button"
@@ -179,7 +195,7 @@ export function RosterCarousel({
         aria-label="Characters"
         aria-describedby={describedBy}
         onPointerDown={(event) => {
-          if (!galleryActive || items.length <= 1) return;
+          if (!carouselActive || items.length <= 1) return;
           swipeRef.current = {
             pointerId: event.pointerId,
             x: event.clientX,
@@ -214,14 +230,14 @@ export function RosterCarousel({
           const thumbnailSource = displayImage ? characterImageVariant(displayImage.image, 160) : null;
           const gallerySource = displayImage ? characterImageVariant(displayImage.image, 640) : null;
           const isSelected = selection?.characterId === item.id;
-          const isFeatured = galleryActive && featuredCharacter?.id === item.id;
+          const isFeatured = carouselActive && featuredCharacter?.id === item.id;
           return (
             <li
               class="roster-entry"
               key={item.id}
               data-character-id={item.id}
               data-featured={isFeatured ? "true" : "false"}
-              aria-label={galleryActive ? `${index + 1} of ${shownRosterCount}` : undefined}
+              aria-label={carouselActive ? `${index + 1} of ${shownRosterCount}` : undefined}
             >
               <button
                 class="roster-card"
@@ -229,12 +245,12 @@ export function RosterCarousel({
                 aria-label={`${item.name}, ${item.identity}, ${item.media}, ${item.origin}, ${item.verse}, tier ${item.tier}`}
                 aria-pressed={isSelected}
                 aria-current={isFeatured ? "true" : undefined}
-                tabIndex={galleryActive ? (isFeatured ? 0 : -1) : 0}
+                tabIndex={carouselActive ? (isFeatured ? 0 : -1) : 0}
                 onFocus={() => {
-                  if (galleryActive && !isFeatured) setFeaturedId(item.id);
+                  if (carouselActive && !isFeatured) setFeaturedId(item.id);
                 }}
                 onKeyDown={(event) => {
-                  if (!galleryActive || !isFeatured) return;
+                  if (!carouselActive || !isFeatured) return;
                   if (event.key === "ArrowLeft") {
                     event.preventDefault();
                     moveFeatured(-1, true);
@@ -260,11 +276,17 @@ export function RosterCarousel({
                     <CharacterImage
                       src={thumbnailSource ?? gallerySource ?? ""}
                       srcSet={
-                        galleryActive && thumbnailSource && gallerySource
+                        carouselActive && thumbnailSource && gallerySource
                           ? `${thumbnailSource} 160w, ${gallerySource} 640w`
                           : undefined
                       }
-                      sizes={galleryActive ? "(max-width: 820px) 84vw, (max-width: 1180px) 68vw, 34vw" : "48px"}
+                      sizes={
+                        carouselActive
+                          ? "(max-width: 820px) 84vw, (max-width: 1180px) 68vw, 34vw"
+                          : gridActive
+                            ? "(max-width: 640px) 22vw, (max-width: 1180px) 14vw, 96px"
+                            : "48px"
+                      }
                       alt=""
                       loading={isFeatured ? "eager" : "lazy"}
                     />
@@ -278,7 +300,7 @@ export function RosterCarousel({
                   <strong>{item.name}</strong>
                   <small>
                     {item.identity !== item.name ? `${item.identity} · ` : ""}
-                    {galleryActive
+                    {carouselActive
                       ? `${item.media} › ${item.origin} / ${item.verse}`
                       : `${item.origin} / ${item.verse}`}
                     {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
@@ -309,7 +331,7 @@ export function RosterCarousel({
           </li>
         ) : null}
       </ul>
-      {galleryActive && featuredCharacter ? (
+      {carouselActive && featuredCharacter ? (
         <button
           class="roster-carousel__arrow roster-carousel__arrow--next"
           type="button"
@@ -323,7 +345,7 @@ export function RosterCarousel({
           <span aria-hidden="true">›</span>
         </button>
       ) : null}
-      {galleryActive && featuredCharacter ? (
+      {carouselActive && featuredCharacter ? (
         <div class="roster-carousel__status" id={`${side}-carousel-status`}>
           <p role="status" aria-live="polite" aria-atomic="true">
             <strong>{featuredCharacter.name}</strong>

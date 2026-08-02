@@ -15,6 +15,7 @@ import {
   type MobileFighterSide,
   useMobileMatchupViewport
 } from "../components/MobileMatchupNavigator.js";
+import type { RosterView } from "../components/RosterCarousel.js";
 import { RulesDialog } from "../components/RulesDialog.js";
 import { ThemeToggle } from "../components/ThemeToggle.js";
 import { assetUrl } from "./assets.js";
@@ -147,12 +148,15 @@ export function App() {
   const [dialogImage, setDialogImage] = useState<DialogImage | null>(null);
   const [shareLabel, setShareLabel] = useState("Copy battle link");
   const [activeMobileSide, setActiveMobileSide] = useState<MobileFighterSide>("left");
+  const [rosterView, setRosterView] = useState<RosterView>("carousel");
   const [theme, toggleTheme] = useTheme();
   const isMobileMatchup = useMobileMatchupViewport();
   const shareResetTimer = useRef<number | undefined>(undefined);
   const pendingFocus = useRef<"battle" | "picker" | null>(null);
   const previousMobileViewport = useRef(isMobileMatchup);
   const lastFocusedPicker = useRef<MobileFighterSide>("left");
+  const mobileSwitcherHadFocus = useRef(false);
+  const pickerHadFocus = useRef(false);
 
   const leftProfile = useMemo(() => profileFor(left, context), [context, left]);
   const rightProfile = useMemo(() => profileFor(right, context), [context, right]);
@@ -211,8 +215,9 @@ export function App() {
           ? focusedElement.closest<HTMLElement>(".fighter-picker")?.dataset.side
           : undefined;
       const side = focusedPicker === "right" ? "right" : lastFocusedPicker.current;
+      const shouldRestoreFocus = Boolean(focusedPicker) || pickerHadFocus.current;
       setActiveMobileSide(side);
-      if (focusedPicker) {
+      if (shouldRestoreFocus) {
         window.requestAnimationFrame(() => {
           document
             .querySelector<HTMLButtonElement>(`[data-mobile-fighter-tab="${side}"]`)
@@ -222,7 +227,8 @@ export function App() {
       return;
     }
 
-    if (focusedElement instanceof HTMLElement && focusedElement.matches("[data-mobile-fighter-tab]")) {
+    if (mobileSwitcherHadFocus.current) {
+      mobileSwitcherHadFocus.current = false;
       const side = lastFocusedPicker.current;
       window.requestAnimationFrame(() => {
         document.querySelector<HTMLElement>(`#${side}-picker-title`)?.focus({ preventScroll: true });
@@ -315,7 +321,14 @@ export function App() {
   const formCount = roster.reduce((total, character) => total + character.formCount, 0);
 
   return (
-    <div class="app-shell">
+    <div
+      class="app-shell"
+      onFocusCapture={(event) => {
+        const target = event.target instanceof HTMLElement ? event.target : null;
+        mobileSwitcherHadFocus.current = Boolean(target?.matches("[data-mobile-fighter-tab]"));
+        pickerHadFocus.current = Boolean(target?.closest(".fighter-picker"));
+      }}
+    >
       <a class="skip-link" href="#main">
         Skip to matchup builder
       </a>
@@ -363,26 +376,9 @@ export function App() {
         ) : null}
 
         <section class="arena-grid" id="arena" aria-label="Matchup builder">
-          <MobileMatchupNavigator
-            activeSide={activeMobileSide}
-            isMobile={isMobileMatchup}
-            leftName={leftProfile?.character.name ?? null}
-            rightName={rightProfile?.character.name ?? null}
-            onActivate={(side) => {
-              lastFocusedPicker.current = side;
-              setActiveMobileSide(side);
-            }}
-            onAnalyze={analyze}
-          />
           <div
             id="mobile-fighter-left-panel"
             class="mobile-matchup-panel"
-            {...(isMobileMatchup
-              ? {
-                  role: "tabpanel",
-                  "aria-labelledby": "mobile-fighter-left-tab"
-                }
-              : {})}
             hidden={isMobileMatchup && activeMobileSide !== "left"}
             onFocusCapture={() => {
               lastFocusedPicker.current = "left";
@@ -393,6 +389,23 @@ export function App() {
               roster={roster}
               selection={left}
               profile={leftProfile}
+              collapseBrowse={isMobileMatchup}
+              rosterView={rosterView}
+              onRosterViewChange={setRosterView}
+              mobileNavigation={
+                isMobileMatchup && activeMobileSide === "left" ? (
+                  <MobileMatchupNavigator
+                    activeSide={activeMobileSide}
+                    isMobile={isMobileMatchup}
+                    leftName={leftProfile?.character.name ?? null}
+                    rightName={rightProfile?.character.name ?? null}
+                    onActivate={(side) => {
+                      lastFocusedPicker.current = side;
+                      setActiveMobileSide(side);
+                    }}
+                  />
+                ) : null
+              }
               onSelect={(selection) => updateSelection("left", selection)}
               onClear={() => updateSelection("left", null)}
               onRandom={(candidates) => chooseRandom("left", candidates)}
@@ -405,12 +418,6 @@ export function App() {
           <div
             id="mobile-fighter-right-panel"
             class="mobile-matchup-panel"
-            {...(isMobileMatchup
-              ? {
-                  role: "tabpanel",
-                  "aria-labelledby": "mobile-fighter-right-tab"
-                }
-              : {})}
             hidden={isMobileMatchup && activeMobileSide !== "right"}
             onFocusCapture={() => {
               lastFocusedPicker.current = "right";
@@ -421,6 +428,23 @@ export function App() {
               roster={roster}
               selection={right}
               profile={rightProfile}
+              collapseBrowse={isMobileMatchup}
+              rosterView={rosterView}
+              onRosterViewChange={setRosterView}
+              mobileNavigation={
+                isMobileMatchup && activeMobileSide === "right" ? (
+                  <MobileMatchupNavigator
+                    activeSide={activeMobileSide}
+                    isMobile={isMobileMatchup}
+                    leftName={leftProfile?.character.name ?? null}
+                    rightName={rightProfile?.character.name ?? null}
+                    onActivate={(side) => {
+                      lastFocusedPicker.current = side;
+                      setActiveMobileSide(side);
+                    }}
+                  />
+                ) : null
+              }
               onSelect={(selection) => updateSelection("right", selection)}
               onClear={() => updateSelection("right", null)}
               onRandom={(candidates) => chooseRandom("right", candidates)}

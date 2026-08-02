@@ -1,5 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
-import { cleanup } from "@testing-library/preact";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "../../src/app/App.js";
@@ -165,6 +164,9 @@ describe("Nexy application", () => {
     const browseStatus = leftPicker.querySelector<HTMLElement>("[data-browse-path-status]");
     if (!browsePath || !browseStatus) throw new Error("Expected the progressive browse path.");
 
+    expect(browsePath.tagName).toBe("FIELDSET");
+    expect(picker.getByRole("group", { name: "Browse by universe" })).toBe(browsePath);
+    expect(leftPicker.querySelector("details.roster-path")).toBeNull();
     expect(originSelect.disabled).toBe(true);
     expect(universeSelect.disabled).toBe(true);
     expect(originSelect.textContent).toBe("Choose media first");

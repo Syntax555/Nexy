@@ -1,8 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/preact";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/preact";
+import { useState } from "preact/hooks";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { buildRoster, type RosterCharacter } from "../../src/app/roster.js";
 import { FighterPicker } from "../../src/components/FighterPicker.js";
+import type { RosterView } from "../../src/components/RosterCarousel.js";
 import { nexyData } from "../../src/data/nexy.js";
 import { createGameContext } from "../../src/engine/index.js";
 
@@ -28,6 +30,7 @@ function largeRoster(size: number): readonly RosterCharacter[] {
 }
 
 function Picker({ roster, selectedId }: { readonly roster: readonly RosterCharacter[]; readonly selectedId?: string }) {
+  const [rosterView, setRosterView] = useState<RosterView>("carousel");
   const selection = selectedId ? (roster.find((item) => item.id === selectedId)?.defaultSelection ?? null) : null;
   return (
     <FighterPicker
@@ -35,6 +38,8 @@ function Picker({ roster, selectedId }: { readonly roster: readonly RosterCharac
       roster={roster}
       selection={selection}
       profile={selection ? (roster.find((item) => item.id === selectedId)?.defaultProfile ?? null) : null}
+      rosterView={rosterView}
+      onRosterViewChange={setRosterView}
       onSelect={() => undefined}
       onClear={() => undefined}
       onRandom={() => undefined}
@@ -46,10 +51,17 @@ function Picker({ roster, selectedId }: { readonly roster: readonly RosterCharac
 describe("large roster rendering", () => {
   afterEach(cleanup);
 
-  it("renders roster pages progressively and resets the page after sorting", async () => {
+  it("renders portrait-grid pages progressively and retains the view after sorting", async () => {
     const roster = largeRoster(125);
     const { container } = render(<Picker roster={roster} />);
     const cards = () => container.querySelectorAll(".roster-card");
+    const viewSwitcher = screen.getByRole("group", { name: "Roster view" });
+    const gridView = within(viewSwitcher).getByRole("button", { name: "Portrait grid view" });
+
+    fireEvent.click(gridView);
+    await waitFor(() => {
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    });
 
     expect(cards()).toHaveLength(60);
     fireEvent.click(screen.getByRole("button", { name: "Show next 60 fighters" }));
@@ -61,6 +73,8 @@ describe("large roster rendering", () => {
       target: { value: "name-desc" }
     });
     await waitFor(() => expect(cards()).toHaveLength(60));
+    expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    expect(gridView.getAttribute("aria-pressed")).toBe("true");
     expect(container.querySelector<HTMLButtonElement>(".roster-card")?.getAttribute("aria-label")).toMatch(
       /^Scale Fighter 125,/
     );

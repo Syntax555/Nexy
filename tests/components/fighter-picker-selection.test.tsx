@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { buildRoster, type RosterCharacter } from "../../src/app/roster.js";
 import { FighterPicker } from "../../src/components/FighterPicker.js";
+import type { RosterView } from "../../src/components/RosterCarousel.js";
 import { nexyData } from "../../src/data/nexy.js";
 import type { BattleSelection } from "../../src/domain/index.js";
 import { createGameContext, getCharacterProfile } from "../../src/engine/index.js";
@@ -29,6 +30,7 @@ function ControlledPicker({
   rosterItems = roster
 }: ControlledPickerProps) {
   const [selection, setSelection] = useState<BattleSelection | null>(initialSelection);
+  const [rosterView, setRosterView] = useState<RosterView>("carousel");
   const profile = useMemo(() => (selection ? getCharacterProfile(context, selection) : null), [selection]);
 
   return (
@@ -37,6 +39,8 @@ function ControlledPicker({
       roster={rosterItems}
       selection={selection}
       profile={profile}
+      rosterView={rosterView}
+      onRosterViewChange={setRosterView}
       onSelect={setSelection}
       onClear={() => setSelection(null)}
       onRandom={onRandom}
@@ -126,6 +130,101 @@ describe("fighter selection flow", () => {
     await waitFor(() => {
       expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Agent Venom,/);
     });
+  });
+
+  it("switches accessibly between carousel and portrait grid while preserving the featured fighter", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+    const viewSwitcher = picker.getByRole("group", { name: "Roster view" });
+    const carouselView = within(viewSwitcher).getByRole("button", { name: "Carousel view" });
+    const gridView = within(viewSwitcher).getByRole("button", { name: "Portrait grid view" });
+    const rosterRegion = () => container.querySelector<HTMLElement>(".roster-carousel");
+    const featuredCard = () => container.querySelector<HTMLButtonElement>('.roster-card[aria-current="true"]');
+
+    expect(carouselView.getAttribute("aria-pressed")).toBe("true");
+    expect(gridView.getAttribute("aria-pressed")).toBe("false");
+    expect(rosterRegion()?.dataset.rosterView).toBe("carousel");
+
+    fireEvent.click(picker.getByRole("button", { name: "Next fighter: Aurora" }));
+    await waitFor(() => expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Aurora,/));
+
+    gridView.focus();
+    fireEvent.click(gridView);
+
+    await waitFor(() => {
+      expect(rosterRegion()?.dataset.rosterView).toBe("grid");
+      expect(gridView.getAttribute("aria-pressed")).toBe("true");
+      expect(carouselView.getAttribute("aria-pressed")).toBe("false");
+      expect(document.activeElement).toBe(gridView);
+    });
+    expect(picker.getByRole("region", { name: "Cyan corner character portrait grid" })).toBeTruthy();
+    expect(picker.queryByRole("button", { name: /^Previous fighter:/ })).toBeNull();
+    expect(picker.queryByRole("button", { name: /^Next fighter:/ })).toBeNull();
+    expect(container.querySelector("#left-carousel-status")).toBeNull();
+    expect(featuredCard()).toBeNull();
+    for (const card of container.querySelectorAll<HTMLButtonElement>(".roster-card")) {
+      expect(card.tabIndex).toBe(0);
+    }
+
+    const captainAmerica = picker.getByRole("button", { name: /^Captain America,/ });
+    captainAmerica.focus();
+    fireEvent.keyDown(captainAmerica, { key: "ArrowRight" });
+    const list = picker.getByRole("list", { name: "Characters" });
+    fireEvent.pointerDown(list, { pointerId: 1, clientX: 250, clientY: 180 });
+    fireEvent.pointerUp(list, { pointerId: 1, clientX: 120, clientY: 185 });
+    expect(container.querySelector('.roster-card[aria-pressed="true"]')).toBeNull();
+
+    carouselView.focus();
+    fireEvent.click(carouselView);
+    await waitFor(() => {
+      expect(rosterRegion()?.dataset.rosterView).toBe("carousel");
+      expect(featuredCard()?.getAttribute("aria-label")).toMatch(/^Aurora,/);
+      expect(document.activeElement).toBe(carouselView);
+    });
+  });
+
+  it("selects directly from the portrait grid and restores that view after removal", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+
+    const gridView = picker.getByRole("button", { name: "Portrait grid view" });
+    fireEvent.click(gridView);
+    await waitFor(() => {
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    });
+
+    fireEvent.click(picker.getByRole("button", { name: /^Captain America,/ }));
+    await waitFor(() => {
+      expect(container.querySelector(".fighter-picker")?.getAttribute("data-view")).toBe("profile");
+      expect(container.querySelector('.roster-card[aria-pressed="true"]')?.getAttribute("aria-label")).toMatch(
+        /^Captain America,/
+      );
+    });
+    expect(picker.getByRole("heading", { name: "Captain America", level: 3 })).toBeTruthy();
+    expect(picker.queryByRole("group", { name: "Roster view" })).toBeNull();
+
+    fireEvent.click(picker.getByRole("button", { name: "Remove fighter" }));
+    await waitFor(() => {
+      expect(container.querySelector(".fighter-picker")?.getAttribute("data-view")).toBe("gallery");
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+      expect(picker.getByRole("button", { name: "Portrait grid view" }).getAttribute("aria-pressed")).toBe("true");
+    });
+  });
+
+  it("loads only the compact artwork candidate in portrait grid view", async () => {
+    const { container } = render(<ControlledPicker />);
+    const picker = within(container as HTMLElement);
+
+    fireEvent.click(picker.getByRole("button", { name: "Portrait grid view" }));
+    await waitFor(() => {
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    });
+
+    const image = container.querySelector<HTMLImageElement>(".roster-card img");
+    if (!image) throw new Error("Expected portrait-grid artwork.");
+    expect(image.getAttribute("src")).toMatch(/-160\.webp$/);
+    expect(image.getAttribute("srcset")).toBeNull();
+    expect(image.getAttribute("sizes")).toContain("22vw");
   });
 
   it("supports swipe previews and disables navigation for one matching fighter", async () => {

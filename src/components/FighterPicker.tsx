@@ -1,3 +1,4 @@
+import type { ComponentChildren } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import type { RosterCharacter, RosterTier } from "../app/roster.js";
@@ -6,7 +7,7 @@ import { getCachedSearchIndex, searchIndex } from "../search/search.js";
 import "../styles/roster-scale.css";
 import { CharacterProfile } from "./CharacterProfile.js";
 import type { DialogImage } from "./ImageDialog.js";
-import { RosterCarousel } from "./RosterCarousel.js";
+import { RosterCarousel, type RosterView } from "./RosterCarousel.js";
 import { SearchableSelect } from "./SearchableSelect.js";
 
 type SortOrder = "name" | "name-desc" | "tier-desc" | "tier-asc";
@@ -42,6 +43,10 @@ interface FighterPickerProps {
   readonly roster: readonly RosterCharacter[];
   readonly selection: BattleSelection | null;
   readonly profile: CharacterProfileData | null;
+  readonly collapseBrowse?: boolean;
+  readonly mobileNavigation?: ComponentChildren;
+  readonly rosterView?: RosterView;
+  readonly onRosterViewChange?: (view: RosterView) => void;
   readonly onSelect: (selection: BattleSelection) => void;
   readonly onClear: () => void;
   readonly onRandom: (candidates: readonly RosterCharacter[]) => void;
@@ -109,6 +114,10 @@ export function FighterPicker({
   roster,
   selection,
   profile,
+  collapseBrowse = false,
+  mobileNavigation,
+  rosterView,
+  onRosterViewChange,
   onSelect,
   onClear,
   onRandom,
@@ -124,10 +133,13 @@ export function FighterPicker({
   const [classification, setClassification] = useState("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("name");
   const [visibleLimit, setVisibleLimit] = useState(ROSTER_PAGE_SIZE);
+  const [localRosterView, setLocalRosterView] = useState<RosterView>("carousel");
   const searchRef = useRef<HTMLInputElement>(null);
   const fighterNumber = side === "left" ? "01" : "02";
   const accentName = side === "left" ? "Cyan corner" : "Magenta corner";
   const searchIndexForRoster = useMemo(() => getCachedSearchIndex(roster, rosterSearchText), [roster]);
+  const activeRosterView = rosterView ?? localRosterView;
+  const updateRosterView = onRosterViewChange ?? setLocalRosterView;
   const mediaOptions = useMemo(
     () => sortedUniqueOptions(roster.map((item) => ({ id: item.mediaId, label: item.media }))),
     [roster]
@@ -239,6 +251,7 @@ export function FighterPicker({
         : selectedMedia
           ? `${selectedMedia.label} selected. Choose a publisher or origin.`
           : "Choose media, then publisher or origin, then universe.";
+  const browsePathSummary = selectedVerse?.label ?? selectedOrigin?.label ?? selectedMedia?.label ?? "All universes";
   const rosterResetKey = [
     query,
     media,
@@ -315,6 +328,71 @@ export function FighterPicker({
       classification !== "all" ||
       sortOrder !== "name"
   );
+  const browsePathControls = (
+    <>
+      <p
+        class="roster-path__status"
+        id={`${side}-browse-path-status`}
+        data-browse-path-status
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {browsePathStatus}
+      </p>
+      <div class="roster-path__steps">
+        <SearchableSelect
+          id={`${side}-media-filter`}
+          label="Media"
+          step={1}
+          browseStep="media"
+          value={media}
+          options={mediaOptions}
+          allLabel="All media"
+          describedBy={`${side}-browse-path-status`}
+          onChange={(value) => {
+            setMedia(value);
+            setOrigin("all");
+            setVerse("all");
+            resetMetadataFilters();
+          }}
+        />
+        <SearchableSelect
+          id={`${side}-origin-filter`}
+          label="Publisher / origin"
+          step={2}
+          browseStep="publisher"
+          value={origin}
+          options={originOptions}
+          allLabel={selectedMedia ? `All ${selectedMedia.label} publishers / origins` : "All publishers / origins"}
+          disabled={media === "all"}
+          disabledHint="Choose media first"
+          describedBy={`${side}-browse-path-status`}
+          onChange={(value) => {
+            setOrigin(value);
+            setVerse("all");
+            resetMetadataFilters();
+          }}
+        />
+        <SearchableSelect
+          id={`${side}-verse-filter`}
+          label="Universe / verse"
+          step={3}
+          browseStep="universe"
+          value={verse}
+          options={verseOptions}
+          allLabel={selectedOrigin ? `All ${selectedOrigin.label} universes` : "All universes"}
+          disabled={origin === "all"}
+          disabledHint="Choose publisher / origin first"
+          describedBy={`${side}-browse-path-status`}
+          onChange={(value) => {
+            setVerse(value);
+            resetMetadataFilters();
+          }}
+        />
+      </div>
+    </>
+  );
   return (
     <section
       class="fighter-picker"
@@ -322,6 +400,7 @@ export function FighterPicker({
       data-view={galleryActive ? "gallery" : "profile"}
       aria-labelledby={`${side}-picker-title`}
     >
+      {mobileNavigation}
       <header class="fighter-picker__header">
         <div>
           <span class="eyebrow">
@@ -330,11 +409,6 @@ export function FighterPicker({
           <h2 id={`${side}-picker-title`} tabIndex={-1}>
             {selectedCharacter?.name ?? "Select fighter"}
           </h2>
-          <p>
-            {selectedCharacter
-              ? `${profile?.names[0] ?? selectedCharacter.identity} · ${profile?.key.name || "Base form"}`
-              : "Search the complete character roster"}
-          </p>
         </div>
         <div class="fighter-picker__actions">
           <button class="text-button" type="button" disabled={!randomAvailable} onClick={() => onRandom(visibleRoster)}>
@@ -379,72 +453,23 @@ export function FighterPicker({
             ) : null}
           </label>
 
-          <fieldset class="roster-path" data-browse-path data-browse-level={browsePathLevel}>
-            <legend class="roster-path__legend">Browse by universe</legend>
-            <p
-              class="roster-path__status"
-              id={`${side}-browse-path-status`}
-              data-browse-path-status
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              {browsePathStatus}
-            </p>
-            <div class="roster-path__steps">
-              <SearchableSelect
-                id={`${side}-media-filter`}
-                label="Media"
-                step={1}
-                browseStep="media"
-                value={media}
-                options={mediaOptions}
-                allLabel="All media"
-                describedBy={`${side}-browse-path-status`}
-                onChange={(value) => {
-                  setMedia(value);
-                  setOrigin("all");
-                  setVerse("all");
-                  resetMetadataFilters();
-                }}
-              />
-              <SearchableSelect
-                id={`${side}-origin-filter`}
-                label="Publisher / origin"
-                step={2}
-                browseStep="publisher"
-                value={origin}
-                options={originOptions}
-                allLabel={
-                  selectedMedia ? `All ${selectedMedia.label} publishers / origins` : "All publishers / origins"
-                }
-                disabled={media === "all"}
-                disabledHint="Choose media first"
-                describedBy={`${side}-browse-path-status`}
-                onChange={(value) => {
-                  setOrigin(value);
-                  setVerse("all");
-                  resetMetadataFilters();
-                }}
-              />
-              <SearchableSelect
-                id={`${side}-verse-filter`}
-                label="Universe / verse"
-                step={3}
-                browseStep="universe"
-                value={verse}
-                options={verseOptions}
-                allLabel={selectedOrigin ? `All ${selectedOrigin.label} universes` : "All universes"}
-                disabled={origin === "all"}
-                disabledHint="Choose publisher / origin first"
-                describedBy={`${side}-browse-path-status`}
-                onChange={(value) => {
-                  setVerse(value);
-                  resetMetadataFilters();
-                }}
-              />
-            </div>
-          </fieldset>
+          {collapseBrowse ? (
+            <details class="roster-path roster-path--disclosure" data-browse-path data-browse-level={browsePathLevel}>
+              <summary class="roster-path__summary">
+                <span>Browse by universe</span>
+                <small>{browsePathSummary}</small>
+              </summary>
+              <fieldset class="roster-path__content">
+                <legend class="visually-hidden">Browse by universe</legend>
+                {browsePathControls}
+              </fieldset>
+            </details>
+          ) : (
+            <fieldset class="roster-path" data-browse-path data-browse-level={browsePathLevel}>
+              <legend class="roster-path__legend">Browse by universe</legend>
+              {browsePathControls}
+            </fieldset>
+          )}
 
           <div class="filter-primary filter-primary--order">
             <label class="filter-field">
@@ -517,17 +542,41 @@ export function FighterPicker({
             <span role="status" aria-live="polite" aria-atomic="true">
               {visibleRoster.length} of {roster.length} fighters
             </span>
-            {filtersActive ? (
-              <button class="text-button" type="button" onClick={resetFilters}>
-                Reset
-              </button>
-            ) : (
-              <span>Ruleset v1</span>
-            )}
+            <div class="roster-meta__actions">
+              {filtersActive ? (
+                <button class="text-button" type="button" onClick={resetFilters}>
+                  Reset
+                </button>
+              ) : null}
+              {galleryActive ? (
+                <fieldset class="roster-view-switcher">
+                  <legend class="visually-hidden">Roster view</legend>
+                  <div>
+                    <button
+                      type="button"
+                      aria-pressed={activeRosterView === "carousel"}
+                      aria-label="Carousel view"
+                      onClick={() => updateRosterView("carousel")}
+                    >
+                      <span aria-hidden="true">&#9635;</span>
+                      Carousel
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={activeRosterView === "grid"}
+                      aria-label="Portrait grid view"
+                      onClick={() => updateRosterView("grid")}
+                    >
+                      <span aria-hidden="true">&#9638;</span>
+                      Grid
+                    </button>
+                  </div>
+                </fieldset>
+              ) : !filtersActive ? (
+                <span>Ruleset v1</span>
+              ) : null}
+            </div>
           </div>
-          <p class="roster-artwork-note" id={`${side}-roster-artwork-note`}>
-            Third-party artwork may have unverified rights. Select a fighter for its exact source record.
-          </p>
           {selectedOutsideFilters ? (
             <p class="roster-selection-note" id={`${side}-roster-selection-note`} role="status">
               Selected fighter shown outside the current filters.
@@ -540,6 +589,7 @@ export function FighterPicker({
             items={renderedRoster}
             selection={selection}
             galleryActive={galleryActive}
+            rosterView={activeRosterView}
             shownRosterCount={shownRosterCount}
             visibleRosterCount={visibleRoster.length}
             remainingRosterCount={remainingRosterCount}
@@ -556,6 +606,9 @@ export function FighterPicker({
             onResetFilters={resetFilters}
             onShowMore={() => setVisibleLimit((current) => Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length))}
           />
+          <p class="roster-artwork-note" id={`${side}-roster-artwork-note`}>
+            Third-party artwork may have unverified rights. Select a fighter for its exact source record.
+          </p>
           <span id={`${side}-rendered-roster-count`} class="visually-hidden">
             Showing {shownRosterCount} of {visibleRoster.length} matching fighters.
             {selectedOutsideFilters ? " Plus the selected fighter outside the filters." : ""}

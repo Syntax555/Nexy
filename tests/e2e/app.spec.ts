@@ -22,6 +22,13 @@ async function chooseListOption(picker: Locator, label: string, option: string):
   await expect(trigger).toBeFocused();
 }
 
+async function openBrowsePath(picker: Locator): Promise<void> {
+  const disclosure = picker.locator("details[data-browse-path]");
+  if ((await disclosure.count()) === 0 || (await disclosure.getAttribute("open")) !== null) return;
+  await disclosure.locator("summary").click();
+  await expect(disclosure).toHaveAttribute("open", "");
+}
+
 async function selectFighter(picker: Locator, query: string, buttonName: RegExp): Promise<void> {
   await picker.getByRole("searchbox", { name: "Search characters" }).fill(query);
   await expect(picker.locator(".roster-card")).toHaveCount(1);
@@ -77,11 +84,9 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
-  const chooseSecondFighter = page.getByRole("button", {
-    name: "Choose Fighter 02"
-  });
-  if (await chooseSecondFighter.isVisible()) {
-    await chooseSecondFighter.click();
+  const secondFighterSwitch = page.getByRole("button", { name: /^Fighter 02:/ });
+  if ((await secondFighterSwitch.count()) === 1) {
+    await secondFighterSwitch.click();
   }
   await selectFighter(rightPicker, "Dagger", /^Dagger,/);
 
@@ -98,7 +103,8 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   await expect(visibleProfile.locator(".profile-sources")).toContainText("Rights status: Unverified Third Party");
   await expect(page.locator("dialog.image-modal")).not.toBeVisible();
 
-  const analyze = page.getByRole("button", { name: /Analyze battle/ }).first();
+  const analyze = page.getByRole("button", { name: /Analyze battle/ });
+  await expect(analyze).toHaveCount(1);
   await expect(analyze).toBeEnabled();
   await analyze.click();
   await expect(page.getByRole("heading", { level: 2, name: "Battle report" })).toBeVisible();
@@ -132,6 +138,7 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
 test("browses the roster through media, publisher, and universe", async ({ page }) => {
   await page.goto("./");
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await openBrowsePath(leftPicker);
 
   const mediaTrigger = hierarchyTrigger(leftPicker, "Media");
   await expect(mediaTrigger).toHaveAccessibleName("Media: All media");
@@ -209,25 +216,38 @@ test("supports 200% text without page-level horizontal scrolling", async ({ page
   await expect(page.getByRole("heading", { name: "Build the fight. Inspect the reason." })).toBeVisible();
 });
 
-test("mobile flow advances only after the explicit Fighter 02 action", async ({ page }, testInfo) => {
+test("mobile fighter switcher stays inside the active picker", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile-"), "Mobile-only flow");
   await page.goto("./");
 
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  const leftBrowse = leftPicker.locator("details[data-browse-path]");
+  await expect(leftBrowse).not.toHaveAttribute("open", "");
+  await expect(leftBrowse.locator("summary")).toContainText("Browse by universe");
+  await expect(leftBrowse.locator("summary")).toContainText("All universes");
+  await expect(page.locator(".hero__copy > p")).toBeHidden();
+  await expect(page.locator(".mobile-matchup-navigator")).toHaveCount(1);
+  await expect(leftPicker.locator(".mobile-matchup-navigator")).toHaveCount(1);
+  await expect(page.locator(".mobile-matchup-status")).toHaveCount(0);
+
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
 
-  const firstTab = page.getByRole("tab", { name: /Fighter 01/ });
-  const secondTab = page.getByRole("tab", { name: /Fighter 02/ });
-  await expect(firstTab).toHaveAttribute("aria-selected", "true");
-  await expect(firstTab).toHaveAccessibleName(/Captain America, chosen/);
+  const firstSwitch = page.getByRole("button", { name: /^Fighter 01:/ });
+  const secondSwitch = page.getByRole("button", { name: /^Fighter 02:/ });
+  await expect(firstSwitch).toHaveAttribute("aria-pressed", "true");
+  await expect(firstSwitch).toHaveAccessibleName(/Captain America, chosen/);
   await expect(page.locator("#mobile-fighter-left-panel")).not.toHaveAttribute("hidden", "");
   await expect(page.locator("#mobile-fighter-right-panel")).toHaveAttribute("hidden", "");
 
-  await page.getByRole("button", { name: "Choose Fighter 02" }).click();
-  await expect(secondTab).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("heading", { name: "Select fighter", level: 2 })).toBeFocused();
+  await secondSwitch.click();
+  await expect(secondSwitch).toHaveAttribute("aria-pressed", "true");
+  await expect(secondSwitch).toBeFocused();
   await expect(page.locator("#mobile-fighter-right-panel")).not.toHaveAttribute("hidden", "");
   await expect(page.locator("#mobile-fighter-right-panel")).toBeInViewport();
+
+  await firstSwitch.click();
+  await expect(firstSwitch).toHaveAttribute("aria-pressed", "true");
+  await expect(leftPicker.locator('.roster-card[aria-pressed="true"]')).toHaveAccessibleName(/^Captain America,/);
 });
 
 test("mobile spotlight track follows the featured fighter", async ({ page }, testInfo) => {
