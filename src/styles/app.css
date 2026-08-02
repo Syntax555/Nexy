@@ -627,12 +627,16 @@
     border-color: rgba(var(--fighter-rgb), 0.52);
     background: rgba(var(--fighter-rgb), 0.13);
     box-shadow: inset 0 0 0 1px rgba(var(--fighter-rgb), 0.08);
-    color: var(--fighter);
+    color: var(--ink);
   }
 
   .roster-view-switcher button > span {
     font-size: 1rem;
     line-height: 1;
+  }
+
+  .roster-view-switcher button[aria-pressed="true"] > span {
+    color: var(--fighter);
   }
 
   .roster-carousel__arrow,
