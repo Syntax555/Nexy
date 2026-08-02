@@ -238,6 +238,11 @@ export function FighterPicker({
   const shownRosterCount = Math.min(visibleLimit, visibleRoster.length);
   const remainingRosterCount = Math.max(0, visibleRoster.length - shownRosterCount);
   const galleryActive = !(selectedCharacter && profile);
+  const displayedRosterView: RosterView = galleryActive ? activeRosterView : "grid";
+  const selectRosterFighter = (nextSelection: BattleSelection): void => {
+    if (activeRosterView !== "grid") updateRosterView("grid");
+    onSelect(nextSelection);
+  };
   const selectedMedia = mediaOptions.find((option) => option.id === media) ?? null;
   const selectedOrigin = originOptions.find((option) => option.id === origin) ?? null;
   const selectedVerse = verseOptions.find((option) => option.id === verse) ?? null;
@@ -588,8 +593,7 @@ export function FighterPicker({
             accentName={accentName}
             items={renderedRoster}
             selection={selection}
-            galleryActive={galleryActive}
-            rosterView={activeRosterView}
+            rosterView={displayedRosterView}
             shownRosterCount={shownRosterCount}
             visibleRosterCount={visibleRoster.length}
             remainingRosterCount={remainingRosterCount}
@@ -602,7 +606,7 @@ export function FighterPicker({
             ]
               .filter(Boolean)
               .join(" ")}
-            onSelect={onSelect}
+            onSelect={selectRosterFighter}
             onResetFilters={resetFilters}
             onShowMore={() => setVisibleLimit((current) => Math.min(current + ROSTER_PAGE_SIZE, visibleRoster.length))}
           />

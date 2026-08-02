@@ -270,7 +270,7 @@ describe("fighter selection flow", () => {
     });
   });
 
-  it("turns the spotlight carousel into a focused profile without duplicating fighters", async () => {
+  it("turns a carousel selection into a focused profile with a compact portrait grid", async () => {
     const { container } = render(<ControlledPicker />);
     const picker = within(container as HTMLElement);
     const pickerElement = container.querySelector<HTMLElement>(".fighter-picker");
@@ -292,12 +292,36 @@ describe("fighter selection flow", () => {
       expect(document.activeElement).toBe(captainAmerica);
     });
     expect(picker.getByRole("heading", { name: "Captain America", level: 3 })).toBeTruthy();
+    const portraitGrid = picker.getByRole("region", { name: "Cyan corner character portrait grid" });
+    expect(portraitGrid.getAttribute("data-roster-view")).toBe("grid");
+    expect(picker.queryByRole("button", { name: /Previous fighter:/ })).toBeNull();
+    expect(picker.queryByRole("button", { name: /Next fighter:/ })).toBeNull();
+    expect(container.querySelector("#left-carousel-status")).toBeNull();
+    expect(container.querySelectorAll('.roster-card[aria-pressed="true"]')).toHaveLength(1);
+    expect(captainAmerica.querySelector(".roster-card__grid-selected")).toBeTruthy();
+    expect(captainAmerica.querySelector(".roster-card__copy small")).toBeNull();
+    expect(captainAmerica.querySelector(".roster-card__badges")).toBeNull();
+    expect(captainAmerica.querySelector(".roster-card__cta")).toBeNull();
 
     fireEvent.click(picker.getByRole("button", { name: "Remove fighter" }));
     await waitFor(() => {
       expect(pickerElement?.dataset.view).toBe("gallery");
       expect(picker.getByRole("searchbox", { name: "Search characters" })).toBe(document.activeElement);
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+      expect(picker.getByRole("button", { name: "Portrait grid view" }).getAttribute("aria-pressed")).toBe("true");
     });
+  });
+
+  it("renders an existing selection in the compact portrait grid", () => {
+    const captainAmerica = rosterCharacter("Captain America");
+    const { container } = render(<ControlledPicker initialSelection={captainAmerica.defaultSelection} />);
+    const picker = within(container as HTMLElement);
+
+    expect(container.querySelector(".fighter-picker")?.getAttribute("data-view")).toBe("profile");
+    expect(picker.getByRole("region", { name: "Cyan corner character portrait grid" })).toBeTruthy();
+    expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    expect(container.querySelector('.roster-card[aria-pressed="true"] .roster-card__grid-selected')).toBeTruthy();
+    expect(picker.queryByRole("group", { name: "Roster view" })).toBeNull();
   });
 
   it("keeps focus on Random when that control changes the selection", async () => {
@@ -310,6 +334,7 @@ describe("fighter selection flow", () => {
 
     await waitFor(() => {
       expect(container.querySelector(".fighter-picker")?.getAttribute("data-view")).toBe("profile");
+      expect(container.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
       expect(document.activeElement).toBe(random);
     });
   });

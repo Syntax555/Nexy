@@ -99,9 +99,7 @@ describe("mobile matchup flow", () => {
     expect(rightSwitch().tabIndex).toBe(0);
     expect(leftPanel.hidden).toBe(false);
     expect(rightPanel.hidden).toBe(true);
-
-    fireEvent.click(screen.getByRole("button", { name: "Portrait grid view" }));
-    expect(leftPanel.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
+    expect(leftPanel.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("carousel");
 
     fireEvent.input(leftSearch, { target: { value: "Captain America" } });
     await waitFor(() => {
@@ -114,11 +112,16 @@ describe("mobile matchup flow", () => {
 
     await waitFor(() => {
       expect(leftSwitch().getAttribute("aria-label")).toMatch(/fighter 01: captain america, chosen/i);
+      expect(leftPanel.querySelector(".roster-carousel")?.getAttribute("data-roster-view")).toBe("grid");
     });
     expect(leftPanel.hidden).toBe(false);
     expect(rightPanel.hidden).toBe(true);
     expect(leftSwitch().getAttribute("aria-pressed")).toBe("true");
     expect(document.activeElement).toBe(leftFighter);
+    expect(within(leftPanel).getByRole("region", { name: "Cyan corner character portrait grid" })).toBeTruthy();
+    expect(leftPanel.querySelector(".roster-carousel__arrow")).toBeNull();
+    expect(leftPanel.querySelector("#left-carousel-status")).toBeNull();
+    expect(leftPanel.querySelector(".roster-card__grid-selected")).toBeTruthy();
 
     fireEvent.click(rightSwitch());
     await waitFor(() => {

@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -84,6 +84,10 @@ test("loads every core asset and resolves a complete battle", async ({ page }) =
   const leftPicker = page.locator('.fighter-picker[data-side="left"]');
   const rightPicker = page.locator('.fighter-picker[data-side="right"]');
   await selectFighter(leftPicker, "Captain America", /^Captain America,/);
+  await expect(leftPicker.getByRole("region", { name: "Cyan corner character portrait grid" })).toHaveAttribute(
+    "data-roster-view",
+    "grid"
+  );
   const secondFighterSwitch = page.getByRole("button", { name: /^Fighter 02:/ });
   if ((await secondFighterSwitch.count()) === 1) {
     await secondFighterSwitch.click();
@@ -342,9 +346,17 @@ test("desktop spotlight carousel previews fighters before a stable master-detail
   const pickerViewportYBeforeSelection = await leftPicker.evaluate((element) => element.getBoundingClientRect().y);
   await featuredCard.click();
   await expect(leftPicker).toHaveAttribute("data-view", "profile");
+  const portraitGrid = leftPicker.getByRole("region", { name: "Cyan corner character portrait grid" });
+  await expect(portraitGrid).toHaveAttribute("data-roster-view", "grid");
+  await expect(portraitGrid.locator(".roster-carousel__arrow")).toHaveCount(0);
+  await expect(leftPicker.locator("#left-carousel-status")).toHaveCount(0);
   const selectedCard = leftPicker.locator('.roster-card[aria-pressed="true"]');
   await expect(selectedCard).toHaveAccessibleName(/^Aurora,/);
   await expect(selectedCard).toBeFocused();
+  await expect(selectedCard.locator(".roster-card__grid-selected")).toBeVisible();
+  await expect(selectedCard.locator(".roster-card__copy small")).toHaveCount(0);
+  await expect(selectedCard.locator(".roster-card__badges")).toHaveCount(0);
+  await expect(selectedCard.locator(".roster-card__cta")).toHaveCount(0);
 
   const [leftBox, rightBox, selectedBodyBox, selectedRosterBox, profileBox] = await Promise.all([
     leftPicker.boundingBox(),
@@ -380,7 +392,11 @@ test("desktop spotlight carousel previews fighters before a stable master-detail
 
   await leftPicker.getByRole("button", { name: "Remove fighter" }).click();
   await expect(leftPicker).toHaveAttribute("data-view", "gallery");
-  await expect(featuredCard).toHaveAccessibleName(/^Aurora,/);
+  await expect(leftPicker.getByRole("region", { name: "Cyan corner character portrait grid" })).toHaveAttribute(
+    "data-roster-view",
+    "grid"
+  );
+  await expect(featuredCard).toHaveCount(0);
   const [restoredBodyBox, restoredRosterBox] = await Promise.all([
     pickerBody.boundingBox(),
     rosterBrowser.boundingBox()

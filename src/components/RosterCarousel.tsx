@@ -11,7 +11,6 @@ interface RosterCarouselProps {
   readonly accentName: string;
   readonly items: readonly RosterCharacter[];
   readonly selection: BattleSelection | null;
-  readonly galleryActive: boolean;
   readonly rosterView: RosterView;
   readonly shownRosterCount: number;
   readonly visibleRosterCount: number;
@@ -37,7 +36,6 @@ export function RosterCarousel({
   accentName,
   items,
   selection,
-  galleryActive,
   rosterView,
   shownRosterCount,
   visibleRosterCount,
@@ -58,8 +56,8 @@ export function RosterCarousel({
   const featuredIndex = items.length === 0 ? -1 : Math.max(0, featuredRosterIndex);
   const featuredCharacter = featuredIndex >= 0 ? (items[featuredIndex] ?? null) : null;
   const featuredCharacterId = featuredCharacter?.id ?? null;
-  const carouselActive = galleryActive && rosterView === "carousel";
-  const gridActive = galleryActive && rosterView === "grid";
+  const carouselActive = rosterView === "carousel";
+  const gridActive = rosterView === "grid";
   const previousFeatured =
     featuredIndex >= 0 ? (items[(featuredIndex - 1 + items.length) % items.length] ?? null) : null;
   const nextFeatured = featuredIndex >= 0 ? (items[(featuredIndex + 1) % items.length] ?? null) : null;
@@ -167,12 +165,8 @@ export function RosterCarousel({
     <section
       class="roster-carousel"
       data-empty={visibleRosterCount === 0 ? "true" : "false"}
-      data-roster-view={galleryActive ? rosterView : "list"}
-      aria-label={
-        galleryActive
-          ? `${accentName} character ${rosterView === "carousel" ? "carousel" : "portrait grid"}`
-          : `${accentName} character roster`
-      }
+      data-roster-view={rosterView}
+      aria-label={`${accentName} character ${rosterView === "carousel" ? "carousel" : "portrait grid"}`}
       aria-describedby={carouselActive && featuredCharacter ? `${side}-carousel-status` : undefined}
     >
       {carouselActive && featuredCharacter ? (
@@ -298,25 +292,29 @@ export function RosterCarousel({
                 </span>
                 <span class="roster-card__copy">
                   <strong>{item.name}</strong>
-                  <small>
-                    {item.identity !== item.name ? `${item.identity} · ` : ""}
-                    {carouselActive
-                      ? `${item.media} › ${item.origin} / ${item.verse}`
-                      : `${item.origin} / ${item.verse}`}
-                    {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
-                  </small>
-                </span>
-                <span class="roster-card__badges">
-                  <span class="tier-badge">{item.tier}</span>
-                  {isSelected ? (
-                    <span class="roster-card__selected" aria-hidden="true">
-                      <span>✓</span> Selected
-                    </span>
+                  {carouselActive ? (
+                    <small>
+                      {item.identity !== item.name ? `${item.identity} · ` : ""}
+                      {item.media} › {item.origin} / {item.verse}
+                      {item.formCount > 1 ? ` · ${item.formCount} forms` : ""}
+                    </small>
                   ) : null}
                 </span>
-                <span class="roster-card__cta" aria-hidden="true">
-                  Choose {item.name}
-                </span>
+                {carouselActive ? (
+                  <span class="roster-card__badges">
+                    <span class="tier-badge">{item.tier}</span>
+                  </span>
+                ) : null}
+                {gridActive && isSelected ? (
+                  <span class="roster-card__grid-selected" aria-hidden="true">
+                    ✓
+                  </span>
+                ) : null}
+                {carouselActive ? (
+                  <span class="roster-card__cta" aria-hidden="true">
+                    Choose {item.name}
+                  </span>
+                ) : null}
               </button>
             </li>
           );
