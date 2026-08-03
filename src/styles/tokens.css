@@ -28,6 +28,7 @@
     --radius-medium: 16px;
     --radius-large: 24px;
     --content: 1480px;
+    --page-gutter: 32px;
     --header-height: 84px;
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -55,5 +56,17 @@
     --focus: #533df5;
     --shadow-small: 0 12px 36px rgba(28, 34, 48, 0.1);
     --shadow-large: 0 30px 90px rgba(28, 34, 48, 0.16);
+  }
+
+  @media (min-width: 1760px) {
+    :root {
+      --content: clamp(1480px, 86vw, 2160px);
+    }
+  }
+
+  @media (max-width: 640px) {
+    :root {
+      --page-gutter: 20px;
+    }
   }
 }

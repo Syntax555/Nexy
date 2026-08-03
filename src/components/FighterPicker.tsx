@@ -100,7 +100,7 @@ export function FighterPicker({
     onSelect(nextSelection);
   };
   const browsePathControls = (
-    <>
+    <div class="roster-path__body">
       <p
         class="roster-path__status"
         id={`${side}-browse-path-status`}
@@ -162,7 +162,7 @@ export function FighterPicker({
           }}
         />
       </div>
-    </>
+    </div>
   );
   return (
     <section

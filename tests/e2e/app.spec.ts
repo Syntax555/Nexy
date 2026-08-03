@@ -274,6 +274,117 @@ test("supports 200% text without page-level horizontal scrolling", async ({ page
   await expectNoHorizontalOverflow(page);
 });
 
+test("uses wide desktop space without stretching compact layouts", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.startsWith("mobile-"), "Wide desktop layout coverage");
+  await page.setViewportSize({ width: 2560, height: 1440 });
+  await page.goto("./");
+
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  const rightPicker = page.locator('.fighter-picker[data-side="right"]');
+  const [featuredCardBox, pickerBodyBox] = await Promise.all([
+    leftPicker.locator('.roster-card[aria-current="true"]').boundingBox(),
+    leftPicker.locator(".fighter-picker__body").boundingBox()
+  ]);
+  expect(featuredCardBox).not.toBeNull();
+  expect(pickerBodyBox).not.toBeNull();
+  expect((featuredCardBox?.width ?? 0) / (pickerBodyBox?.width ?? 1)).toBeGreaterThanOrEqual(0.55);
+  expect((featuredCardBox?.width ?? 0) / (pickerBodyBox?.width ?? 1)).toBeLessThanOrEqual(0.7);
+  await leftPicker.getByRole("button", { name: "Portrait grid view" }).click();
+
+  const metrics = await page.evaluate(() => {
+    const main = document.querySelector<HTMLElement>(".main");
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const heroHeading = document.querySelector<HTMLElement>(".hero h1");
+    const arena = document.querySelector<HTMLElement>(".arena-grid");
+    const pickers = Array.from(document.querySelectorAll<HTMLElement>(".fighter-picker"));
+    const browsePaths = Array.from(document.querySelectorAll<HTMLElement>(".roster-path"));
+    const browseSteps = Array.from(document.querySelectorAll<HTMLElement>(".roster-path__step"));
+    const gridList = document.querySelector<HTMLElement>(
+      '.fighter-picker[data-side="left"] .roster-carousel[data-roster-view="grid"] .roster-list'
+    );
+    if (!main || !header || !heroHeading || !arena || !gridList || pickers.length !== 2 || browsePaths.length !== 2) {
+      throw new Error("Expected the complete wide-screen matchup layout.");
+    }
+
+    return {
+      viewportWidth: document.documentElement.clientWidth,
+      main: main.getBoundingClientRect(),
+      header: header.getBoundingClientRect(),
+      heroLineCount: Math.round(
+        heroHeading.getBoundingClientRect().height / Number.parseFloat(getComputedStyle(heroHeading).lineHeight)
+      ),
+      arenaWidth: arena.getBoundingClientRect().width,
+      minimumPickerWidth: Math.min(...pickers.map((picker) => picker.getBoundingClientRect().width)),
+      minimumBrowseWidth: Math.min(...browsePaths.map((path) => path.getBoundingClientRect().width)),
+      minimumBrowseStepWidth: Math.min(...browseSteps.map((step) => step.getBoundingClientRect().width)),
+      gridColumnCount: getComputedStyle(gridList).gridTemplateColumns.split(/\s+/).filter(Boolean).length
+    };
+  });
+
+  expect(metrics.main.width / metrics.viewportWidth).toBeGreaterThanOrEqual(0.82);
+  expect(metrics.main.width / metrics.viewportWidth).toBeLessThanOrEqual(0.88);
+  expect(Math.abs(metrics.main.x - metrics.header.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(metrics.main.width - metrics.header.width)).toBeLessThanOrEqual(1);
+  expect(Math.abs(metrics.main.width - metrics.arenaWidth)).toBeLessThanOrEqual(1);
+  expect(metrics.heroLineCount).toBeLessThanOrEqual(2);
+  expect(metrics.minimumPickerWidth).toBeGreaterThanOrEqual(980);
+  expect(metrics.minimumBrowseWidth).toBeGreaterThanOrEqual(940);
+  expect(metrics.minimumBrowseStepWidth).toBeGreaterThanOrEqual(220);
+  expect(metrics.gridColumnCount).toBeGreaterThanOrEqual(9);
+  await expect(leftPicker).toBeVisible();
+  await expect(rightPicker).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.reload();
+  await expect(leftPicker).toBeAttached();
+  await expect(rightPicker).toBeAttached();
+  const compactMetrics = await page.evaluate(() => {
+    const main = document.querySelector<HTMLElement>(".main");
+    const pickers = Array.from(document.querySelectorAll<HTMLElement>(".fighter-picker"));
+    if (!main || pickers.length !== 2) throw new Error("Expected the compact desktop matchup layout.");
+    return {
+      viewportWidth: document.documentElement.clientWidth,
+      main: main.getBoundingClientRect(),
+      pickerBoxes: pickers.map((picker) => picker.getBoundingClientRect())
+    };
+  });
+  expect(compactMetrics.main.width).toBeLessThanOrEqual(compactMetrics.viewportWidth);
+  const [compactLeftPicker, compactRightPicker] = compactMetrics.pickerBoxes;
+  if (!compactLeftPicker || !compactRightPicker) throw new Error("Expected both compact desktop fighter panels.");
+  expect(Math.abs(compactLeftPicker.y - compactRightPicker.y)).toBeLessThanOrEqual(1);
+  expect(Math.min(...compactMetrics.pickerBoxes.map((picker) => picker.width))).toBeGreaterThanOrEqual(600);
+  await expectNoHorizontalOverflow(page);
+
+  await page.setViewportSize({ width: 2560, height: 720 });
+  await page.reload();
+  const shortViewportBodyHeight = await page
+    .locator('.fighter-picker[data-side="left"] .fighter-picker__body')
+    .evaluate((element) => element.getBoundingClientRect().height);
+  expect(shortViewportBodyHeight).toBeLessThanOrEqual(700);
+  await expectNoHorizontalOverflow(page);
+});
+
+test("wide desktop remains usable at 200% text", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium", "Wide zoom coverage runs once in Chromium");
+  await page.setViewportSize({ width: 2560, height: 1440 });
+  await page.goto("./");
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = "200%";
+  });
+
+  const leftPicker = page.locator('.fighter-picker[data-side="left"]');
+  await expectNoVisibleOverlap(
+    page.locator(".site-header > .brand, .site-header__actions > button"),
+    "Wide header controls overlap at 200% text"
+  );
+  await expectNoVisibleOverlap(
+    leftPicker.locator(".roster-path__step"),
+    "Wide Browse by universe controls overlap at 200% text"
+  );
+  await expectNoHorizontalOverflow(page);
+});
+
 test("selected roster tools reflow at 320px and 200% text", async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile-"), "Narrow mobile reflow coverage");
   await page.setViewportSize({ width: 320, height: 640 });
